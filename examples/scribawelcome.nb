@@ -1,0 +1,187 @@
+<notebook title="" engine="beanshell">
+    <output-cell-style borderColor="255,255,255" fgColor="0,128,0"/>
+    <cell-group index="0">
+        <cell index="14" html-preview="true" readonly="true" engine="html">
+            <data><![CDATA[<h1>Welcome To Scriba!
+</h1>
+]]>            </data>
+        </cell>
+        <cell index="27" html-preview="true" readonly="true" engine="html">
+            <data><![CDATA[<p>Scriba is a programming environment for Java based scripting languages. It provides extensive support for editing and managing scripts of all sizes and in any dynamic language compliant with the JSR 223 Java standard specification. While the most obvious use of this environment is for prototyping, experimentation and testing, it aims to grow into a complete platform for software construction. In a nutshell Scriba currently offers the following facilities:
+</p>
+<ul>
+  <li>A versatile interface for script expression evaluation.  
+  </li>
+  <li>Support for a live-like system with active objects being intermixed together with code and documenation.  
+  </li>
+  <li>Advanced code assistance (IntelliSense) for some scripting languages (currently BeanShell).  
+  </li>
+  <li>A common run-time environment for scripts of different languages to interroperate.  
+  </li>
+  <li>HTML editing for comments.  
+  </li>
+  <li>An embedded database for storing idiomatic Java objects and relationships between them.  
+  </li>
+</ul>
+]]>            </data>
+        </cell>
+        <cell index="28" html-preview="true" readonly="true" engine="html">
+            <data><![CDATA[<h2>Language Support
+</h2>
+<p>Currently the following scripting languages are supported in Scriba:
+</p>
+<ul>
+  <li>
+    <span style="font-weight:bold;">BeanShell</span> - This is a very Java like language. You can find more about it at the <a href="http://www.beanshell.org">BeanShell Home Page</a>.  
+  </li>
+  <li><span style="font-weight:bold;">JScheme</span> - This an implementation of the Scheme programming language. You can find more about it at the <a href="http://jscheme.sourceforge.net">JScheme Home Page.</a>  
+  </li>
+</ul>
+<p>Other languages can be easily added for evaluation purposes. However, for syntax suppot and code completion more extensive work is required. If you'd like to incorporate your favoriate dynamic language running on the Java platform, please let us know!
+</p>
+]]>            </data>
+        </cell>
+        <cell index="17" html-preview="true" readonly="true" engine="html">
+            <data><![CDATA[<h2>Notebooks
+</h2>
+<p>The user interface is inspired very much by the Mathematica notebook concept from Wolfram Research. Notebooks are the files that you can save and open from the 
+  <span style="font-style:italic;">File</span> menu. A notebook is composed of cells that can be arbitrarly nested into cell groups. Each cell contains something of a specific type - a script, the result of an evaluation of a script, the exception that ocurred during script evaluation or some HTML documentation.
+</p>
+<p>Cells and cell groups can be visually hidden from the current display. The the thin blue bars that you see on the right are cell handles. You can manipulate cells with the mouse through those handles. You can select one or more cells and group them together, move them around etc.You can shrink and expand cells double-clicking on the cell handles.
+</p>
+<p>Input cells are assumed to contain text in the default language of the current notebook. You can change the language for a particular cell from the context menu (also avaible by hitting <span style="font-weight:bold;">Ctrl+Space</span>). You can also change the default language for the whole notebook. The default for new notebooks is BeanShell.
+</p>
+<p style="text-align:left;">A special kind of cell is the <span style="font-style:italic;">initialization c</span>ell. An initialization cell is evaluated automatically when a notebook is loaded.This is useful for common code that needs to be executed to prepare your evaluation environment, such as import declarations, certain resources initialization, module loading and the like. Cell groups can also be marked as <span style="font-style:italic;">initialization groups</span>. All the cells within those groups will be treated as initialization cells. A common practice is, for example, to create several initialization cells, put them in a group and then hide that group from the visual display by shrinking it. Then opening a notebook gives a ready environment for work.
+</p>
+]]>            </data>
+        </cell>
+        <cell index="30" html-preview="true" readonly="true" engine="html">
+            <data><![CDATA[<h2>Runtime Contexts
+</h2>
+<p>Perhaps the first question you'd ask when trying to do something useful with Scriba would be &quot; 
+  <span style="font-style:italic;">ok, so how do I add a Java library to my classpath?</span>&quot;. Top-level namespaces in Scriba, including classpaths, are managed by <span style="font-style:italic;">runtime contexts</span>. A runtime context is sort of like a project in conventional IDE, and also sort of like a workspace. It is a named entity that holds a classpath and a set of global bindings. You can have many runtime contexts. Currently only the classpath portion of a runtime context is persisted between Scriba sessions, the set of active bindings is not. Each notebook is associated to one and only one runtime context. To associate a notebook to a runtime context, right-click on the notebook's tab title and use the<span style="font-style:italic;"> </span><span style="font-style:italic; font-weight:bold;">Set Runtime Context</span><span style="font-style:italic; font-weight:normal;"> </span><span style="font-weight:normal;">submenu. </span>
+</p>
+<p>There is a default runtime context, called <span style="font-style:italic;">top</span> to which all newly created notebooks are associated. You may chose to just work within that context and create different niches for your projects. Alternatively, you can have a single niche on your machine and have multiple runtime contexts active in your workspace.
+</p>
+]]>            </data>
+        </cell>
+        <cell index="31" html-preview="true" readonly="true" engine="html">
+            <data><![CDATA[<h2>What Is a Niche Anyway?
+</h2>
+<p>A niche is essentially a backing store for your working environment. It is based on HyperGraphDB (please visit the <a href="http://www.kobrix.com/hgdb.jsp">HyperGraphDB home page</a> for more information). Scriba will record information in this backing store pertaining to configuration, runtime contexts, current live objects etc. You can also use the store for your own purposes, as an embedded object-oriented, transactional database management system.
+</p>
+]]>            </data>
+        </cell>
+        <cell index="30" html-preview="true" readonly="true" engine="html">
+            <data><![CDATA[<h2>IntelliSense Assistance
+</h2>
+<p style="text-align:left;">Modern programming environments offer a great deal of support to programmers based on static information available in mainstream languages such as Java and C#. With Scriba, we aim to provide a similar type of support to dynamic languages. A first step towards that goal is providing code completion (a.k.a. intellisense) for the BeanShell scripting language. Code completation is currently primitive since it doesn't attempt to do any type inference. It only relies on previously evaluated values. You will notice that this is already very useful. In the future, we hope to augment this facility with some type inference heuristics for BeanShell and other languages that allow this approach.
+</p>
+]]>            </data>
+        </cell>
+
+    </cell-group>
+    <cell-group index="33">
+        <cell index="94" html-preview="true" engine="html">
+            <data><![CDATA[<span style="font-weight:bold;">To see some examples, expand the following cell group group by double-clicking on the rightmost handle and play on...</span>
+]]>            </data>
+        </cell>
+
+    </cell-group>
+    <cell-group index="95" collapsed="true">
+        <cell-group index="96">
+            <cell index="89" html-preview="true" engine="html">
+                <data><![CDATA[<h2>Some Examples
+</h2>
+]]>                </data>
+            </cell>
+
+        </cell-group>
+        <cell-group index="98">
+            <cell index="90" html-preview="true" engine="html">
+                <data><![CDATA[You can evaluate scripts directly in input cells by pressing the 
+<span style="font-weight:bold;">Shift + Enter</span> key combination. In the following code snippets, you are invited to navigate, cursor-wise, to each cell and evaluate it. For example, start with the next one:
+]]>                </data>
+            </cell>
+
+        </cell-group>
+        <cell index="105">
+            <data><![CDATA[// This is a BeanShell expression documented by a BeanShell comment.
+"The value of 2 + 2 is " + (2+2);
+]]>            </data>
+        </cell>
+        <cell index="104" engine="jscheme">
+            <data><![CDATA[; This is a JScheme expression documented by a JScheme comment.
+(string-append "The value of 2 + 2 is " (+ 2 2))
+]]>            </data>
+        </cell>
+        <cell-group index="107">
+            <cell index="81" html-preview="true" engine="html">
+                <data><![CDATA[Both beanshell and jscheme share the same namespace context, so global variable declared in one are automatically visible in the other. For example:
+]]>                </data>
+            </cell>
+
+        </cell-group>
+        <cell index="98">
+            <data><![CDATA[s = "A variable is accessible in BeanShell"
+]]>            </data>
+        </cell>
+        <cell index="97" engine="jscheme">
+            <data><![CDATA[(.replace s "BeanShell" "Jscheme")
+]]>            </data>
+        </cell>
+        <cell index="96" html-preview="true" engine="html">
+            <data><![CDATA[It is possible for results to contain embedded Java UI components:
+]]>            </data>
+        </cell>
+        <cell index="101">
+            <data><![CDATA[btn = new  JButton("Show Selected");
+list = new JList(new String[] { "Item 1", "Item 2" });
+btn.addActionListener(
+new ActionListener() {
+    actionPerformed( event ) {  JOptionPane.showMessageDialog(null, "Select: " + 
+         (list.getSelectedIndex() > -1 ? list.getModel().getElementAt(list.getSelectedIndex()) : "none")); }
+});
+panel = new JPanel();
+panel.add(btn);
+panel.add(list);
+panel
+]]>            </data>
+        </cell>
+        <cell index="103" html-preview="true" engine="html">
+            <data><![CDATA[<html>
+  <body>
+    <p style="margin:0;">And, of course, the same thing can be achieved with JScheme (note that the following uses a few of the functions from the JScheme Swing library):    
+    </p>  
+  </body>
+</html>
+]]>            </data>
+        </cell>
+        <cell-group index="114">
+            <cell index="47" engine="jscheme">
+                <data><![CDATA[(let 
+   ((l (jlist (lambda (x) '()) ))) 
+   (jlistwrite l '("Item 1" "Item 2")) 
+   (flow (button "Show Selected" (action 
+             (lambda (e) 
+                  (let ((i (.getSelectedIndex l))) 
+                        (JOptionPane.showMessageDialog #null 
+                                                                        (string-append "Selected: " (if  (> i -1) (.getElementAt (.getModel l) i) "none")))))))
+   l)
+)
+]]>                </data>
+            </cell>
+
+        </cell-group>
+
+    </cell-group>
+    <cell-group index="116">
+        <cell index="49" html-preview="true" engine="html">
+            <data><![CDATA[<h3>
+  <span style="font-style:italic;">Have Fun!</span>
+</h3>
+]]>            </data>
+        </cell>
+
+    </cell-group>
+</notebook>
