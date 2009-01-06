@@ -50,38 +50,38 @@ import seco.notebook.util.IconManager;
  */
 public class JavaPaintComponent extends JPanel {
     
-    static final String PACKAGE = "com/kobrix/notebook/syntax/resources/completion/defaultFolder.gif"; // NOI18N
-    static final String CLASS = "com/kobrix/notebook/syntax/resources/completion/class_16.png"; // NOI18N
-    static final String INTERFACE = "com/kobrix/notebook/syntax/resources/completion/interface.png"; // NOI18N
-    static final String ENUM = "com/kobrix/syntax/notebook/resources/completion/enum.png"; // NOI18N
-    static final String ANNOTATION = "com/kobrix/notebook/syntax/resources/completion/annotation_type.png"; // NOI18N
+    static final String PACKAGE = "seco/notebook/syntax/resources/completion/defaultFolder.gif"; // NOI18N
+    static final String CLASS = "seco/notebook/syntax/resources/completion/class_16.png"; // NOI18N
+    static final String INTERFACE = "seco/notebook/syntax/resources/completion/interface.png"; // NOI18N
+    static final String ENUM = "seco/syntax/notebook/resources/completion/enum.png"; // NOI18N
+    static final String ANNOTATION = "seco/notebook/syntax/resources/completion/annotation_type.png"; // NOI18N
 
-    static final String LOCAL_VARIABLE = "com/kobrix/syntax/notebook/resources/completion/localVariable.gif"; // NOI18N
+    static final String LOCAL_VARIABLE = "seco/syntax/notebook/resources/completion/localVariable.gif"; // NOI18N
 
-    static final String FIELD_PUBLIC = "com/kobrix/notebook/syntax/resources/completion/field_16.png"; //NOI18N
-    static final String FIELD_PROTECTED = "com/kobrix/notebook/syntax/resources/completion/field_protected_16.png"; //NOI18N
-    static final String FIELD_PACKAGE = "com/kobrix/notebook/syntax/resources/completion/field_package_private_16.png"; //NOI18N
-    static final String FIELD_PRIVATE = "com/kobrix/notebook/syntax/resources/completion/field_private_16.png"; //NOI18N        
+    static final String FIELD_PUBLIC = "seco/notebook/syntax/resources/completion/field_16.png"; //NOI18N
+    static final String FIELD_PROTECTED = "seco/notebook/syntax/resources/completion/field_protected_16.png"; //NOI18N
+    static final String FIELD_PACKAGE = "seco/notebook/syntax/resources/completion/field_package_private_16.png"; //NOI18N
+    static final String FIELD_PRIVATE = "seco/notebook/syntax/resources/completion/field_private_16.png"; //NOI18N        
     
-    static final String FIELD_ST_PUBLIC = "com/kobrix/notebook/syntax/resources/completion/field_static_16.png"; //NOI18N
-    static final String FIELD_ST_PROTECTED = "com/kobrix/notebook/syntax/resources/completion/field_static_protected_16.png"; //NOI18N
-    static final String FIELD_ST_PACKAGE = "com/kobrix/notebook/syntax/resources/completion/field_static_package_private_16.png"; //NOI18N
-    static final String FIELD_ST_PRIVATE = "com/kobrix/notebook/syntax/resources/completion/field_static_private_16.png"; //NOI18N
+    static final String FIELD_ST_PUBLIC = "seco/notebook/syntax/resources/completion/field_static_16.png"; //NOI18N
+    static final String FIELD_ST_PROTECTED = "seco/notebook/syntax/resources/completion/field_static_protected_16.png"; //NOI18N
+    static final String FIELD_ST_PACKAGE = "seco/notebook/syntax/resources/completion/field_static_package_private_16.png"; //NOI18N
+    static final String FIELD_ST_PRIVATE = "seco/notebook/syntax/resources/completion/field_static_private_16.png"; //NOI18N
 
-    static final String CONSTRUCTOR_PUBLIC = "com/kobrix/notebook/syntax/resources/completion/constructor_16.png"; //NOI18N
-    static final String CONSTRUCTOR_PROTECTED = "com/kobrix/notebook/syntax/resources/completion/constructor_protected_16.png"; //NOI18N
-    static final String CONSTRUCTOR_PACKAGE = "com/kobrix/notebook/syntax/resources/completion/constructor_package_private_16.png"; //NOI18N
-    static final String CONSTRUCTOR_PRIVATE = "com/kobrix/notebook/syntax/resources/completion/constructor_private_16.png"; //NOI18N
+    static final String CONSTRUCTOR_PUBLIC = "seco/notebook/syntax/resources/completion/constructor_16.png"; //NOI18N
+    static final String CONSTRUCTOR_PROTECTED = "seco/notebook/syntax/resources/completion/constructor_protected_16.png"; //NOI18N
+    static final String CONSTRUCTOR_PACKAGE = "seco/notebook/syntax/resources/completion/constructor_package_private_16.png"; //NOI18N
+    static final String CONSTRUCTOR_PRIVATE = "seco/notebook/syntax/resources/completion/constructor_private_16.png"; //NOI18N
 
-    static final String METHOD_PUBLIC = "com/kobrix/notebook/syntax/resources/completion/method_16.png"; //NOI18N
-    static final String METHOD_PROTECTED = "com/kobrix/notebook/syntax/resources/completion/method_protected_16.png"; //NOI18N
-    static final String METHOD_PACKAGE = "com/kobrix/notebook/syntax/resources/completion/method_package_private_16.png"; //NOI18N
-    static final String METHOD_PRIVATE = "com/kobrix/notebook/syntax/resources/completion/method_private_16.png"; //NOI18N        
+    static final String METHOD_PUBLIC = "seco/notebook/syntax/resources/completion/method_16.png"; //NOI18N
+    static final String METHOD_PROTECTED = "seco/notebook/syntax/resources/completion/method_protected_16.png"; //NOI18N
+    static final String METHOD_PACKAGE = "seco/notebook/syntax/resources/completion/method_package_private_16.png"; //NOI18N
+    static final String METHOD_PRIVATE = "seco/notebook/syntax/resources/completion/method_private_16.png"; //NOI18N        
 
-    static final String METHOD_ST_PUBLIC = "com/kobrix/notebook/syntax/resources/completion/method_static_16.png"; //NOI18N
-    static final String METHOD_ST_PROTECTED = "com/kobrix/notebook/syntax/resources/completion/method_static_protected_16.png"; //NOI18N
-    static final String METHOD_ST_PRIVATE = "com/kobrix/notebook/syntax/resources/completion/method_static_private_16.png"; //NOI18N
-    static final String METHOD_ST_PACKAGE = "com/kobrix/notebook/syntax/resources/completion/method_static_package_private_16.png"; //NOI18N
+    static final String METHOD_ST_PUBLIC = "seco/notebook/syntax/resources/completion/method_static_16.png"; //NOI18N
+    static final String METHOD_ST_PROTECTED = "seco/notebook/syntax/resources/completion/method_static_protected_16.png"; //NOI18N
+    static final String METHOD_ST_PRIVATE = "seco/notebook/syntax/resources/completion/method_static_private_16.png"; //NOI18N
+    static final String METHOD_ST_PACKAGE = "seco/notebook/syntax/resources/completion/method_static_package_private_16.png"; //NOI18N
     
     private static final int ICON_WIDTH = 16;
     private static final int ICON_TEXT_GAP = 5;

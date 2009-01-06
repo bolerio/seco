@@ -7,6 +7,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -231,6 +232,8 @@ public class CellUtils
     public static HGHandle getOutCellHandle(HGHandle cellH)
     {
         if (cellH == null) return null;
+        //TODO: hg.findAll throws error???
+        try{
         List<EventPubSub> subscriptions = hg.findAll(ThisNiche.hg, hg.apply(hg
                 .deref(ThisNiche.hg), hg.and(hg.type(EventPubSub.class), hg
                 .incident(EvalResultEventType.HANDLE), hg.incident(cellH), hg
@@ -242,6 +245,23 @@ public class CellUtils
             Object handler = ThisNiche.hg.get(s.getEventHandler());
             if (handler instanceof Cell) return s.getEventHandler();
         }
+        }catch(Exception ex)
+        {
+        	System.out.println("ERROR - getOutCellHandle" + ThisNiche.hg.getPersistentHandle(cellH));
+        	ex.printStackTrace();
+        }
+//        Iterator it = ThisNiche.hg.getIncidenceSet(cellH).iterator();
+//        while(it.hasNext())
+//        {
+//           Object m = ThisNiche.hg.get((HGHandle)it.next());
+//           if(m instanceof EventPubSub)
+//           {
+//               //o = ThisNiche.hg.get(m.getSubscriber());
+//               if(EvalResultEventType.HANDLE.equals(
+//            		   ((EventPubSub)m).getEventType()))
+//                 return ((EventPubSub)m).getEventHandler();
+//           }
+//        }
         return null;
     }
 

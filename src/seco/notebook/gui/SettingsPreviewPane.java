@@ -39,7 +39,7 @@ import seco.things.CellUtils;
 
 public class SettingsPreviewPane extends JSplitPane
 {
-	private final static String TEMPLATE = "com/kobrix/notebook/gui/JavaTemplate.txt";
+	private final static String TEMPLATE = "seco/notebook/gui/JavaTemplate.txt";
 	protected NotebookDocument doc;
 	protected NotebookUI previewPane = null;
 	protected CellGroup book;

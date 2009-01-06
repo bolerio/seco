@@ -31,7 +31,6 @@
 package seco.notebook.syntax;
 
 import java.util.Stack;
-//import com.kobrix.webfaces.standalone.editor.util.Log;
 
 /**
  * Path name manipulation, string manipulation, and more.

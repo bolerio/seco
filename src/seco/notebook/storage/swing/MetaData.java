@@ -55,7 +55,7 @@ import seco.notebook.storage.swing.types.AddOnFactory;
 public class MetaData
 {
 
-    private static final String PACKAGE_NAME = "com.kobrix.notebook.storage.swing.";
+    private static final String PACKAGE_NAME = "seco.notebook.storage.swing.";
     private static Map<String, DefaultConverter> converters = new HashMap<String, DefaultConverter>();
     private static Map<String, Vector<String>> transientProperties = new HashMap<String, Vector<String>>();
 

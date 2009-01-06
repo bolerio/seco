@@ -92,7 +92,7 @@ public class ClassGenerator
 		mv.visitLineNumber(22, l0);
 		mv.visitVarInsn(ALOAD, 0);
 		mv.visitMethodInsn(INVOKESPECIAL,
-				"com/kobrix/notebook/storage/swing/types/GeneratedClass", "<init>", "()V");
+				"seco/notebook/storage/swing/types/GeneratedClass", "<init>", "()V");
 		mv.visitInsn(RETURN);
 		Label l1 = new Label();
 		mv.visitLabel(l1);
@@ -237,7 +237,7 @@ public class ClassGenerator
 		mv.visitLdcInsn(f.getName());
 		mv
 				.visitMethodInsn(INVOKESTATIC,
-						"com/kobrix/notebook/storage/swing/RefUtils",
+						"seco/notebook/storage/swing/RefUtils",
 						"getPrivateFieldValue",
 						"(Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Object;");
 		mv.visitMethodInsn(INVOKEVIRTUAL, BASE_CLS_NAME, "setValue",
@@ -332,7 +332,7 @@ public class ClassGenerator
 		mv.visitVarInsn(ALOAD, 5);
 		Label l11 = new Label();
 		mv.visitLabel(l11);
-        mv.visitMethodInsn(INVOKESTATIC, "com/kobrix/notebook/storage/swing/RefUtils", "setPrivateFieldValue", 
+        mv.visitMethodInsn(INVOKESTATIC, "seco/notebook/storage/swing/RefUtils", "setPrivateFieldValue", 
         		 "(Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Object;)V");
 		mv.visitLabel(l0);
 	}

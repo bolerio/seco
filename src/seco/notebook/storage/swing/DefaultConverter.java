@@ -147,7 +147,7 @@ public class DefaultConverter // implements Converter
     /*
      * (non-Javadoc)
      * 
-     * @see com.kobrix.notebook.storage.swing.Converter#getSlots()
+     * @see seco.notebook.storage.swing.Converter#getSlots()
      */
     public Map<String, Class<?>> getSlots()
     {

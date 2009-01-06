@@ -71,7 +71,7 @@ import seco.notebook.storage.swing.types.ClassGenerator;
 
 public class MasterTest
 {
-	private static final String IMAGE_BASE = "com/kobrix/notebook/images/";
+	private static final String IMAGE_BASE = "seco/notebook/images/";
 	private static final String PATH = "F:\\kosta\\xpackTest27";
 	private static boolean ADD = !true;
 
@@ -82,7 +82,7 @@ public class MasterTest
 		try
 		{
 			url = new URL(
-					"file:/F:/kosta/ticl/scriba/build/com/kobrix/notebook/images/Undo16.gif");
+					"file:/F:/kosta/ticl/seco/build/seco/notebook/images/Undo16.gif");
 		}
 		catch (Exception ex)
 		{

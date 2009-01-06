@@ -1,8 +1,8 @@
 (import "javax.swing.*")
-(import "com.kobrix.scriba.*")
-(import "com.kobrix.scriba.gui.*")
-(import "com.kobrix.scriba.rtenv.*")
-(import "com.kobrix.notebook.gui.*")
+(import "seco.*")
+(import "seco.gui.*")
+(import "seco.rtenv.*")
+(import "seco.notebook.gui.*")
 
 (use-module "elf/basic.scm")
 (use-module "jlib/Swing.scm")

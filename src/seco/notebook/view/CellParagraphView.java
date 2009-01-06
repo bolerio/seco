@@ -27,7 +27,7 @@ import javax.swing.text.Position.Bias;
 
 import seco.notebook.NotebookUI;
 
-import com.kobrix.notebook.*;
+import seco.notebook.*;
 
 /**
  */

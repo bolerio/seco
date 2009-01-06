@@ -663,7 +663,7 @@ public class ClassRepository
     {
         if (instance == null)
         {
-            // System.out.println("ClassRepository Path : " + repositoryPath);
+            System.out.println("ClassRepository Path : " + repositoryPath);
             instance = new ClassRepository(new HyperGraph(repositoryPath));
         }
         return instance;

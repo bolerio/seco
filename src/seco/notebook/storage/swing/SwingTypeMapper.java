@@ -98,7 +98,6 @@ public class SwingTypeMapper extends JavaObjectMapper {
 		}
 	}
 	
-	//com.kobrix.notebook.NotebookEditorKit
 	protected boolean checkClass(Class<?> javaClass)
 	{
 		if (!(classes.contains(javaClass.getName())

@@ -656,7 +656,7 @@ public class NotebookDocument extends DefaultStyledDocument
         else
             DocUtil.createCellGroup(this, child, attr, vec);
         if (top) DocUtil.createInsertionPoint(attr, vec);
-        Log.Trace("insert - offset: " + offset + "new_cell: " + child
+        System.out.println("insert - offset: " + offset + "new_cell: " + child
                 + " index:" + (ind) + " parent: " + parent);
         insert(offset, vec.toArray(new ElementSpec[vec.size()]));
         update(UpdateAction.tokenize);
@@ -1058,6 +1058,8 @@ public class NotebookDocument extends DefaultStyledDocument
         CellGroupMember nb = getNBElement(nb_el);
         ElementType type = (nb instanceof Cell) ? wholeCell : cellGroupBox;
         nb_el = getUpperElement(nb_el, type);
+        //TODO:why???
+        if(nb_el == null) return;
         Log.Trace("1.removeCellBoxElement0 - length: "
                 + (nb_el.getEndOffset() - nb_el.getStartOffset()) + " offset: "
                 + nb_el.getStartOffset() + " nb: " + nb);

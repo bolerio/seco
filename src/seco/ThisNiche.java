@@ -109,7 +109,7 @@ public final class ThisNiche
                  "jscheme.scriptingapi.JSchemeScriptEngineFactory",
                  new String [] {"jsint", "jscheme", "jscheme.scriptingapi"});
         ctx.addLanguage("jruby", 
-                "com.kobrix.notebook.ruby.JRubyScriptEngineFactory",
+                "seco.notebook.ruby.JRubyScriptEngineFactory",
                 new String [] {}); //TODO: which packages to exclude?
         ctx.addLanguage("html", null, new String [0]);
         ctx.onLoad();

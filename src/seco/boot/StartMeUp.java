@@ -211,6 +211,7 @@ public class StartMeUp
 
     public static void main(String[] argv)
     {
+    	System.out.println("java.library.path: " + System.getProperty("java.library.path"));
     	ClassRepository.getInstance();
         readNiches();
         //Frame f = new Frame("Scriba");

@@ -295,7 +295,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                     new CellGroupPropsProvider()));
             popupMenu.addSeparator();
             popupMenu.add(new EnhancedMenu("Grouping", new GroupingProvider()));
-            ThisNiche.hg.define(POPUP_HANDLE, popupMenu);
+            //ThisNiche.hg.define(POPUP_HANDLE, popupMenu);
         }
     }
 

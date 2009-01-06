@@ -48,10 +48,10 @@ import seco.notebook.util.IconManager;
  */
 public class DocumentationScrollPane extends JScrollPane {
 
-    private static final String BACK = "com/kobrix/notebook/syntax/resources/back.png"; //NOI18N
-    private static final String FORWARD = "com/kobrix/notebook/syntax/resources/forward.png"; //NOI18N
-    private static final String GOTO_SOURCE = "com/kobrix/notebook/syntax/resources/open_source_in_editor.png"; //NOI18N
-    private static final String SHOW_WEB = "com/kobrix/notebook/syntax/resources/open_in_external_browser.png"; //NOI18N
+    private static final String BACK = "seco/notebook/syntax/resources/back.png"; //NOI18N
+    private static final String FORWARD = "seco/notebook/syntax/resources/forward.png"; //NOI18N
+    private static final String GOTO_SOURCE = "seco/notebook/syntax/resources/open_source_in_editor.png"; //NOI18N
+    private static final String SHOW_WEB = "seco/notebook/syntax/resources/open_in_external_browser.png"; //NOI18N
 
     private static final String JAVADOC_ESCAPE = "javadoc-escape"; //NOI18N
     private static final String JAVADOC_BACK = "javadoc-back"; //NOI18N

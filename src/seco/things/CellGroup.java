@@ -77,8 +77,10 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
     public void notifyTargetHandleUpdate(int i, HGHandle handle)
     {
         // outgoingSet.set(i, handle);
-        remove(i);
-        insert(i, (CellGroupMember) ThisNiche.hg.get(handle));
+    	
+    	//TODO:??? This is called during simple hg.get()
+       // remove(i);
+       // insert(i, (CellGroupMember) ThisNiche.hg.get(handle));
     }
 
     public void notifyTargetRemoved(int i)

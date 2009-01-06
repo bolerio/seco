@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.util.EventListener;
 import java.util.Map;
 
-import org.hypergraphdb.HGException;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.IncidenceSetRef;
@@ -17,7 +16,6 @@ import org.hypergraphdb.type.TypeUtils;
 public abstract class GeneratedClass extends SwingBinding
 {
   	public GeneratedClass(){
-		
 	}
 	
 	public GeneratedClass(HGHandle typeHandle, SwingType hgType) {

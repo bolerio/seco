@@ -17,11 +17,9 @@ import seco.notebook.util.IconManager;
 
 public class HTMLUtils
 {
-	static final String IMAGE_BASE = "com/kobrix/notebook/images/";
-
 	public static ImageIcon resolveIcon(String img)
 	{
-		return new ImageIcon(IconManager.getIcon(IMAGE_BASE + img));
+		return IconManager.resolveIcon(img);
 	}
 
 	static void removeTag(HTMLEditor parent, Element element)

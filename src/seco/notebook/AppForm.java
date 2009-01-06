@@ -116,7 +116,7 @@ import seco.things.IOUtils;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 import com.jgoodies.looks.plastic.theme.DesertBluer;
-// com.kobrix.notebook.gui.CloseableTabbedPane;
+// seco.notebook.gui.CloseableTabbedPane;
 
 /**
  * 
@@ -126,7 +126,7 @@ public class AppForm extends javax.swing.JFrame
 {
     public static boolean PICCOLO = true;
 
-    public static final String LOGO_IMAGE_RESOURCE = "/com/kobrix/scriba/resources/logoicon.gif";
+    public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
     private static final boolean DRAGGABLE_TABS = !PICCOLO;
     private static final String TAB_INDEX = "tab_index";
     static final String UNTITLED = "Untitled";
@@ -359,7 +359,7 @@ public class AppForm extends javax.swing.JFrame
             menuBar.add(createFormatMenu());
             menuBar.add(createToolsMenu());
             menuBar.add(createRuntimeMenu());
-            ThisNiche.hg.define(MENUBAR_HANDLE, menuBar);
+           // ThisNiche.hg.define(MENUBAR_HANDLE, menuBar);
             //force the creation of the NotebookUI static popup
             NotebookUI.getPopupMenu();
         }
@@ -830,7 +830,7 @@ public class AppForm extends javax.swing.JFrame
         if (tabbedPane.getTabCount() == 0)
         {
             currentBook = null;
-            setTitle("Scriba");
+            setTitle("Seco");
         } else
         {
             currentBook = (NotebookUI) ((JScrollPane) tabbedPane
@@ -983,7 +983,7 @@ public class AppForm extends javax.swing.JFrame
         htmlToolBar = new HTMLToolBar();
         htmlToolBar.init();
         htmlToolBar.setEnabled(false);
-        ThisNiche.hg.define(HTML_TOOLBAR_HANDLE, htmlToolBar);
+        //ThisNiche.hg.define(HTML_TOOLBAR_HANDLE, htmlToolBar);
         return htmlToolBar;
     }
 
@@ -992,7 +992,7 @@ public class AppForm extends javax.swing.JFrame
         toolBar = (JToolBar) ThisNiche.hg.get(TOOLBAR_HANDLE);
         if (toolBar != null) return toolBar;
         // ThisNiche.hg.getTypeSystem().getJavaTypeFactory().getSwingTypeMapper()
-        // .addClass(com.kobrix.notebook.gui.ToolbarButton.class);
+        // .addClass(seco.notebook.gui.ToolbarButton.class);
         ActionManager man = ActionManager.getInstance();
         toolBar = new JToolBar("Main");
         toolBar.putClientProperty("JToolBar.isRollover", Boolean.TRUE);
@@ -1019,7 +1019,7 @@ public class AppForm extends javax.swing.JFrame
         toolBar.add(new ToolbarButton(kit
                 .getActionByName(NotebookEditorKit.htmlAction),
                 "HTML Preview ON/OFF"));
-        ThisNiche.hg.define(TOOLBAR_HANDLE, toolBar);
+        //ThisNiche.hg.define(TOOLBAR_HANDLE, toolBar);
         return toolBar;
     }
 
@@ -1255,7 +1255,7 @@ public class AppForm extends javax.swing.JFrame
         public ExitAction()
         {
             this.putValue(Action.NAME, EXIT);
-            this.putValue(Action.SHORT_DESCRIPTION, "Exit Scriba");
+            this.putValue(Action.SHORT_DESCRIPTION, "Exit Seco");
         }
 
         public void actionPerformed(java.awt.event.ActionEvent evt)

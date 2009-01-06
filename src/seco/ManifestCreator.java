@@ -23,7 +23,7 @@ public class ManifestCreator
     String manifestJarRelativePath = args.length > 1 ? args[1] : "lib/";
     // We use print() instead of println() because we want newlines to be same
     // regardless of which system the manifest (and jar file) are built on.
-    System.out.print("Main-Class: com.kobrix.scriba.boot.StartMeUp\n");
+    System.out.print("Main-Class: seco.boot.StartMeUp\n");
     System.out.print("Class-Path: ");
     //  Get All JAR Files in lib directory.
     File libDir = new File(libDirName);

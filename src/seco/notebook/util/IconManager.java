@@ -428,7 +428,7 @@ public final class IconManager extends Object {
 		return new ImageIcon(getIcon(IconManager.IMAGE_BASE + img));
 	}
 
-	public static final String IMAGE_BASE = "com/kobrix/notebook/images/";
+	public static final String IMAGE_BASE = "seco/notebook/images/";
 }
 
 
