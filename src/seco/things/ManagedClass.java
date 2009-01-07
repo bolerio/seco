@@ -14,7 +14,6 @@ public class ManagedClass
 {
 	private byte [] code;
 	private String name;
-	private String packageName;
 	
 	public byte[] getCode()
 	{
@@ -32,12 +31,4 @@ public class ManagedClass
 	{
 		this.name = name;
 	}
-	public String getPackageName()
-	{
-		return packageName;
-	}
-	public void setPackageName(String packageName)
-	{
-		this.packageName = packageName;
-	}	
 }

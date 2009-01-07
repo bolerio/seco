@@ -15,6 +15,8 @@ import javax.swing.JComponent;
 import javax.swing.JTextField;
 import org.hypergraphdb.HGException;
 import org.hypergraphdb.HGHandleFactory;
+import org.hypergraphdb.HGLink;
+import org.hypergraphdb.HGPlainLink;
 import org.hypergraphdb.HGValueLink;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.type.BonesOfBeans;
@@ -195,19 +197,17 @@ public class GenUtils
 		}
 	}
 
-	public static Map<String, Class> getCtrSlots(HyperGraph hg, SwingType type)
+	public static Map<String, Class<?>> getCtrSlots(HyperGraph hg, SwingType type)
 	{
 		ConstructorLink link = (ConstructorLink) hg.get(type.getCtrHandle());
 		if (link == null) return null;
 		boolean factory = (link instanceof FactoryConstructorLink);
-		Map<String, Class> map = new HashMap<String, Class>();
+		Map<String, Class<?>> map = new HashMap<String, Class<?>>();
 		int nArgs = (factory) ? link.getArity() - 2 : link.getArity();
 		for (int i = 0; i < nArgs; i++)
 		{
-			HGValueLink l = (HGValueLink) hg.get((factory) ? link
-					.getTargetAt(i + 2) : link.getTargetAt(i));
-			Class c = (Class) l.getValue();
-			Slot s = (Slot) hg.get(l.getTargetAt(0));
+			Class<?> c = link.getTypeAt(hg, i);
+			Slot s = link.getSlotAt(hg, i);
 			if(s != null)
 			   map.put(s.getLabel(), c);
 		}
@@ -223,9 +223,7 @@ public class GenUtils
 		String[] names = new String[nArgs];
 		for (int i = 0; i < nArgs; i++)
 		{
-			HGValueLink l = (HGValueLink) hg.get((factory) ? link
-					.getTargetAt(i + 2) : link.getTargetAt(i));
-			Slot s = (Slot) hg.get(l.getTargetAt(0));
+			Slot s = link.getSlotAt(hg, i);
 			if(s != null)
 			   names[i] = s.getLabel();
 			else{
@@ -244,23 +242,22 @@ public class GenUtils
 		ConstructorLink link = (ConstructorLink) hg.get(type.getCtrHandle());
 		if (link == null) return null;
 		if (link instanceof FactoryConstructorLink) return getFactoryMethod(hg, type);
-		Class[] types = new Class[0];
+		Class<?>[] types = new Class[0];
 		if (link != null)
 		{
 			int nArgs = link.getArity();
 			types = new Class[nArgs];
 			for (int i = 0; i < nArgs; i++)
 			{
-				HGValueLink l = (HGValueLink) hg.get(link.getTargetAt(i));
-				if(l != null)
-				   types[i] = (Class) l.getValue();
+				Class<?> c = link.getTypeAt(hg, i);
+				if(c != null)
+				  types[i] = c;
 				else
-					System.err.println("getCtr: " + i + ":" + 
-							type.getJavaClass() + ":" +	l);
+					System.err.println("getCtr - null arg: " + i + ":" + type.getJavaClass());
 			}
 		}
-		Class beanClass = type.getJavaClass();
-		Constructor ctr = null;
+		Class<?> beanClass = type.getJavaClass();
+		Constructor<?> ctr = null;
 		try
 		{
 			ctr = beanClass.getDeclaredConstructor(types);
@@ -300,19 +297,31 @@ public class GenUtils
 		       hg.get(type.getCtrHandle());
 		if (link == null) return null;
 		int nArgs = link.getArity() - 2;
-		Class[] types  = new Class[nArgs];
-		Class c = (Class) hg.get(link.getTargetAt(0));
-		String method_name = (String) hg.get(link.getTargetAt(1));
-		for (int i = 0; i < nArgs; i++)
-		{
-			HGValueLink l = (HGValueLink) hg.get(link.getTargetAt(i + 2));
-			types[i] = (Class) l.getValue();
-		}
+		Class<?>[] types  = new Class[nArgs];
+		Class<?> c = null;
+		String method_name = null;
 		try{
+		//Class<?> 
+		 c = link.getDeclaringClass(hg);
+		//String
+		 method_name = link.getMethodName(hg);
+		for (int i = 0; i < nArgs; i++)
+			types[i] = link.getTypeAt(hg, i);
+		//try{
 			return c.getMethod(method_name, types);
 		}catch(Exception ex){
-			throw new HGException("Unable to find factory method: " + method_name +
-					" on " + c.getName() + ". Reason: " + ex);
+			
+			try
+			{
+				for (int i = 0; i < types.length; i++)
+					types[i] = BonesOfBeans.primitiveEquivalentOf(types[i]);
+				return c.getMethod(method_name, types);
+			}
+			catch (Exception ex1)
+			{
+				throw new HGException("Unable to find factory method: " + method_name +
+						" on " + type.getJavaClass().getName() + ". Reason: " + ex);
+			}
 		}
 	}
 }

@@ -181,18 +181,17 @@ public class AddOnFactory
     static Object instantiateFactoryConstructorLink(HyperGraph hg,
             SwingType type, FactoryConstructorLink link, Record record)
     {
-        Class[] types = new Class[0];
+    	Class<?>[] types = new Class[0];
         Object[] args = new Object[0];
         int nArgs = link.getArity() - 2;
         args = new Object[nArgs];
         types = new Class[nArgs];
-        Class c = (Class) hg.get(link.getTargetAt(0));
-        String method_name = (String) hg.get(link.getTargetAt(1));
+        Class<?> c = link.getDeclaringClass(hg);
+        String method_name = link.getMethodName(hg);
         for (int i = 0; i < nArgs; i++)
         {
-            HGValueLink l = (HGValueLink) hg.get(link.getTargetAt(i + 2));
-            types[i] = (Class) l.getValue();
-            Slot s = (Slot) hg.get(l.getTargetAt(0));
+            types[i] = link.getTypeAt(hg, i);
+            Slot s = link.getSlotAt(hg, i);
             args[i] = record.get(s);
             // System.out.println("AddOnFactory - instantiate - args: " +
             // types[i]);
@@ -211,7 +210,7 @@ public class AddOnFactory
     static Object instantiateConstructorLink(HyperGraph hg, SwingType type,
             ConstructorLink link, Record record)
     {
-        Class[] types = new Class[0];
+        Class<?>[] types = new Class[0];
         Object[] args = new Object[0];
         if (link != null)
         {
@@ -220,13 +219,11 @@ public class AddOnFactory
             types = new Class[nArgs];
             for (int i = 0; i < nArgs; i++)
             {
-                HGValueLink l = (HGValueLink) hg.get(link.getTargetAt(i));
-                types[i] = (Class) l.getValue();
-                Slot s = (Slot) hg.get(l.getTargetAt(0));
+            	types[i] = link.getTypeAt(hg, i);
+                Slot s = link.getSlotAt(hg, i);
                 args[i] = record.get(s);
                 // System.out.println("SB - instantiate - args: " + s.getLabel()
-                // + ":" +
-                // args[i]);
+                // + ":" +  args[i]);
             }
         }
 

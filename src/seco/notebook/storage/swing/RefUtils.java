@@ -23,11 +23,6 @@ import org.hypergraphdb.type.BonesOfBeans;
 import org.hypergraphdb.type.Record;
 import org.hypergraphdb.type.Slot;
 
-import seco.notebook.storage.swing.types.AddOnFactory;
-import seco.notebook.storage.swing.types.AddOnLink;
-import seco.notebook.storage.swing.types.ConstructorLink;
-import seco.notebook.storage.swing.types.FactoryConstructorLink;
-import seco.notebook.storage.swing.types.SwingType;
 
 public class RefUtils
 {

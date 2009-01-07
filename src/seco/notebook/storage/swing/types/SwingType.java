@@ -10,6 +10,7 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGLink;
 import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.HGPlainLink;
 import org.hypergraphdb.HGQuery;
 import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HGTypeSystem;
@@ -76,24 +77,28 @@ public class SwingType extends RecordType
 		if (c.getFactoryCtr() != null)
 		{
 			HGHandle[] targets = new HGHandle[args.length + 2];
-			targets[0] = graph.add(c.getFactoryCtr().getDeclaringClass());
+			targets[0] = graph.add(//getTypeSystem().getTypeHandle(
+					c.getFactoryCtr().getDeclaringClass());
 			targets[1] = graph.add(c.getFactoryCtr().getName());
 			for (int i = 0; i < types.length; i++)
 			{
-				HGHandle[] r = new HGHandle[] { slotHandles.get(args[i]) };
-				targets[i + 2] = graph.add(new HGValueLink(types[i], r));
+				//HGHandle[] r = new HGHandle[] { slotHandles.get(args[i]) };
+				targets[i + 2] = graph.add(//new HGValueLink(types[i], r));
+						new HGPlainLink(graph.add(types[i]),
+	  							   slotHandles.get(args[i])));
 			}
 			return graph.add(new FactoryConstructorLink(targets));
 		}
 		HGHandle[] targets = new HGHandle[args.length];
 		for (int i = 0; i < types.length; i++)
 		{
-			HGHandle[] r = new HGHandle[] { slotHandles.get(args[i]) };
+			//HGHandle[] r = new HGHandle[] { slotHandles.get(args[i]) };
 			//if(targets[i] == null)
 			//	System.err.println("CTRLink: " + args[i] + ":" + javaClass);
 			if(types[i] == null)
 				System.err.println("CTRLink - NULL type: " + args[i] + ":" + javaClass);
-			targets[i] = graph.add(new HGValueLink(types[i], r));
+			targets[i] = graph.add(new HGPlainLink(graph.add(types[i]),
+					  							   slotHandles.get(args[i])));
 			
 		}
 		return graph.add(new ConstructorLink(targets));

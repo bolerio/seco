@@ -24,7 +24,7 @@ public class SwingTypeIntrospector
 	protected Map<String, Method> setters = new HashMap<String, Method>();
 	protected Map<String, Method> getters = new HashMap<String, Method>();
 	protected Map<String, EventSetDescriptor> esd = new HashMap<String, EventSetDescriptor>();
-	protected Map<String, Class> ctrs;
+	protected Map<String, Class<?>> ctrs;
 	protected Map<String, Class> addons;
 
 	public SwingTypeIntrospector(HyperGraph hg, SwingType type)
@@ -108,7 +108,7 @@ public class SwingTypeIntrospector
 		return addons;
 	}
 
-	public Map<String, Class> getCtrsMap()
+	public Map<String, Class<?>> getCtrsMap()
 	{
 		return ctrs;
 	}

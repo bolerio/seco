@@ -146,6 +146,7 @@ public class SwingBinding extends HGAtomTypeBase
             {
                 Field f = insp.getPrivFieldsMap().get(label);
                 f.setAccessible(true);
+                
                 f.set(bean, value);
             }
             catch (IllegalAccessException ex)

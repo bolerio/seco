@@ -359,7 +359,7 @@ public class AppForm extends javax.swing.JFrame
             menuBar.add(createFormatMenu());
             menuBar.add(createToolsMenu());
             menuBar.add(createRuntimeMenu());
-           // ThisNiche.hg.define(MENUBAR_HANDLE, menuBar);
+            ThisNiche.hg.define(MENUBAR_HANDLE, menuBar);
             //force the creation of the NotebookUI static popup
             NotebookUI.getPopupMenu();
         }

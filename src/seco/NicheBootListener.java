@@ -15,6 +15,7 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.event.HGEvent;
 import org.hypergraphdb.event.HGListener;
+import org.hypergraphdb.type.HGAtomType;
 
 import seco.notebook.AppForm;
 import seco.notebook.PiccoloFrame;
@@ -22,12 +23,23 @@ import seco.notebook.storage.swing.SwingTypeMapper;
 import seco.notebook.storage.swing.types.SwingType;
 import seco.notebook.storage.swing.types.SwingTypeConstructor;
 import seco.rtenv.RuntimeContext;
+import seco.things.HGClassType;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 public class NicheBootListener implements HGListener
 {
+    private void loadPredefinedTypes(HyperGraph graph)
+    {
+        HGAtomType type = new HGClassType();
+        type.setHyperGraph(graph);
+        graph.getTypeSystem().addPredefinedType(
+                HGHandleFactory.makeHandle("0b4503c0-dcd5-11dd-acb1-0002a5d5c51b"), 
+                type, 
+                Class.class);
+    }
+    
     private String getNicheName(HyperGraph hg)
     {
         return (String) hg.get(ThisNiche.NICHE_NAME_HANDLE);
@@ -48,6 +60,7 @@ public class NicheBootListener implements HGListener
     {
         // Initialize the niche core objects.
         ThisNiche.hg = hg;
+        loadPredefinedTypes(hg);
         ThisNiche.name = getNicheName(hg);
         RuntimeContext topRuntime = (RuntimeContext) ThisNiche.hg
                 .freeze(ThisNiche.TOP_CONTEXT_HANDLE);
