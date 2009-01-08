@@ -34,7 +34,8 @@ public class SwingTypeConstructor extends HGAtomTypeBase {
 		return result;
 	}
 
-	public HGPersistentHandle store(Object instance) {
+	public HGPersistentHandle store(Object instance) 
+	{
 		SwingType recordType = (SwingType) instance;
 		HGPersistentHandle[] layout = new HGPersistentHandle[recordType
 				.slotCount() + 3];

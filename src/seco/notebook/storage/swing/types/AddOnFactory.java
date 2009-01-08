@@ -285,8 +285,6 @@ public class AddOnFactory
         // System.out.println("getAddOnSlots00: " + type.getJavaClass() + ":");
 
         AddOnLink addons = (AddOnLink) hg.get(type.getAddOnsHandle());
-        // System.out.println("getAddOnSlots01: " + type + ":" + addons);
-
         if (addons == null) return null;
         Map<String, Class> res = new HashMap<String, Class>();
         for (int i = 0; i < addons.getArity(); i++)

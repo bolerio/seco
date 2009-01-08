@@ -11,7 +11,7 @@ import org.hypergraphdb.IncidenceSetRef;
 import org.hypergraphdb.LazyRef;
 import org.hypergraphdb.atom.HGRelType;
 import org.hypergraphdb.type.Record;
-import org.hypergraphdb.type.TypeUtils;
+import org.hypergraphdb.type.TypeUtils; 
 
 public abstract class GeneratedClass extends SwingBinding
 {

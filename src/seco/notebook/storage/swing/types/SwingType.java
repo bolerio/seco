@@ -12,6 +12,7 @@ import org.hypergraphdb.HGLink;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGPlainLink;
 import org.hypergraphdb.HGQuery;
+import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HGTypeSystem;
 import org.hypergraphdb.HGValueLink;
@@ -77,8 +78,11 @@ public class SwingType extends RecordType
 		if (c.getFactoryCtr() != null)
 		{
 			HGHandle[] targets = new HGHandle[args.length + 2];
-			targets[0] = graph.add(//getTypeSystem().getTypeHandle(
-					c.getFactoryCtr().getDeclaringClass());
+			Class<?> declaring = c.getFactoryCtr().getDeclaringClass();
+			targets[0] = hg.addUnique(graph, 
+			                          declaring, 
+			                          hg.and(hg.type(Class.class),
+			                                 hg.eq("name", declaring.getName()))); 
 			targets[1] = graph.add(c.getFactoryCtr().getName());
 			for (int i = 0; i < types.length; i++)
 			{
@@ -107,8 +111,8 @@ public class SwingType extends RecordType
 	protected void createSlots(DefaultConverter c)
 	{
 		Map<String, Class<?>> slots = c.getSlots();
-		System.out.println("SwingType: " + javaClass + ":" + slots.size() + ":" + 
-				((DefaultConverter)c).getType() + ":" + graph);
+		//System.out.println("SwingType: " + javaClass + ":" + slots.size() + ":" + 
+		//		((DefaultConverter)c).getType() + ":" + graph);
 		
 		HGTypeSystem typeSystem = graph.getTypeSystem();
 		HGHandle slotType = typeSystem.getTypeHandle(Slot.class);

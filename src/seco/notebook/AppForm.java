@@ -983,14 +983,16 @@ public class AppForm extends javax.swing.JFrame
         htmlToolBar = new HTMLToolBar();
         htmlToolBar.init();
         htmlToolBar.setEnabled(false);
-        //ThisNiche.hg.define(HTML_TOOLBAR_HANDLE, htmlToolBar);
+        ThisNiche.hg.define(HTML_TOOLBAR_HANDLE, htmlToolBar);
         return htmlToolBar;
     }
 
     private JToolBar createMainToolBar()
-    {
+    {        
         toolBar = (JToolBar) ThisNiche.hg.get(TOOLBAR_HANDLE);
-        if (toolBar != null) return toolBar;
+        
+        if (toolBar != null) //return toolBar = new JToolBar("Main");
+            return toolBar;
         // ThisNiche.hg.getTypeSystem().getJavaTypeFactory().getSwingTypeMapper()
         // .addClass(seco.notebook.gui.ToolbarButton.class);
         ActionManager man = ActionManager.getInstance();
@@ -1019,7 +1021,7 @@ public class AppForm extends javax.swing.JFrame
         toolBar.add(new ToolbarButton(kit
                 .getActionByName(NotebookEditorKit.htmlAction),
                 "HTML Preview ON/OFF"));
-        //ThisNiche.hg.define(TOOLBAR_HANDLE, toolBar);
+        ThisNiche.hg.define(TOOLBAR_HANDLE, toolBar);
         return toolBar;
     }
 

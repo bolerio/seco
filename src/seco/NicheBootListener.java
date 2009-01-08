@@ -15,6 +15,7 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.event.HGEvent;
 import org.hypergraphdb.event.HGListener;
+import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.type.HGAtomType;
 
 import seco.notebook.AppForm;
@@ -32,12 +33,11 @@ public class NicheBootListener implements HGListener
 {
     private void loadPredefinedTypes(HyperGraph graph)
     {
+        HGPersistentHandle handle = HGHandleFactory.makeHandle("0b4503c0-dcd5-11dd-acb1-0002a5d5c51b"); 
         HGAtomType type = new HGClassType();
         type.setHyperGraph(graph);
-        graph.getTypeSystem().addPredefinedType(
-                HGHandleFactory.makeHandle("0b4503c0-dcd5-11dd-acb1-0002a5d5c51b"), 
-                type, 
-                Class.class);
+        graph.getTypeSystem().addPredefinedType(handle, type, Class.class);
+        graph.getIndexManager().register(new ByPartIndexer(handle, "name"));
     }
     
     private String getNicheName(HyperGraph hg)

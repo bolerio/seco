@@ -71,18 +71,18 @@ import seco.notebook.storage.swing.types.ClassGenerator;
 
 public class MasterTest
 {
-	private static final String IMAGE_BASE = "seco/notebook/images/";
-	private static final String PATH = "F:\\kosta\\xpackTest27";
-	private static boolean ADD = !true;
+	public static final String IMAGE_BASE = "seco/notebook/images/";
+	public static final String PATH = "F:\\kosta\\xpackTest27";
+	public static boolean ADD = !true;
 
-	private static ImageIcon makeIcon()
+	public static ImageIcon makeIcon()
 	{
 		URL url = null;
 		//javax.swing.DefaultBoundedRangeModel
 		try
 		{
 			url = new URL(
-					"file:/F:/kosta/ticl/seco/build/seco/notebook/images/Undo16.gif");
+					"file:/F:/kosta/ticl/seco/src/seco/notebook/images/Undo16.gif");
 		}
 		catch (Exception ex)
 		{
@@ -97,14 +97,14 @@ public class MasterTest
 		return null;
 	}
 
-	private static JMenuBar makeBar()
+	public static JMenuBar makeBar()
 	{
 		JMenuBar bar = new JMenuBar();
 		JMenu menu = new JMenu("File");
 		menu.setMnemonic('f');
 		JMenuItem mi = new JMenuItem("New");
 		mi.addActionListener(new MyActionListener());
-		mi.setIcon(makeIcon());
+//		mi.setIcon(makeIcon());
 		mi.setToolTipText("New Tooltip");
 		mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
 				ActionEvent.CTRL_MASK));
@@ -113,7 +113,7 @@ public class MasterTest
 		Action a = getAction();
 		if(a!=null){
 		a.putValue(Action.NAME, "Very Long Name Here");
-		a.putValue(Action.SMALL_ICON, makeIcon());
+//		a.putValue(Action.SMALL_ICON, makeIcon());
 		a.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(
 				KeyEvent.VK_N, ActionEvent.CTRL_MASK));}
 		// mi = new JMenuItem(a);
@@ -137,7 +137,7 @@ public class MasterTest
 		return bar;
 	}
 
-	private static final Action getAction()
+	public static final Action getAction()
 	{
 		StyledEditorKit kit = new StyledEditorKit();
 		Action[] actions = kit.getActions();
@@ -147,7 +147,7 @@ public class MasterTest
 		return null;
 	}
 
-	private static JButton makeButton()
+	public static JButton makeButton()
 	{
 		JButton button = new JButton("test");
 		button.setIcon(makeIcon());
@@ -156,7 +156,7 @@ public class MasterTest
 		return button;
 	}
 
-	private static Component makePanel()
+	public static Component makePanel()
 	{
 		JPanel panel = new JPanel();//new AddRemoveListPanel();//new JPanel();
 		//panel.add(makeButton());
@@ -173,7 +173,7 @@ public class MasterTest
 		//return makeButton();
 	}
 
-	private static Object find(HyperGraph hg, Class cls)
+	public static Object find(HyperGraph hg, Class cls)
 	{
 		System.out.println("Find: " + cls);
 		HGSearchResult res = hg.find(new AtomTypeCondition(cls));
@@ -361,7 +361,7 @@ public class MasterTest
 		}
 	}
 
-	private static class TestBean
+	public static class TestBean
 	{
 		List<ActionListener> listeners = new ArrayList<ActionListener>();
 
@@ -396,7 +396,7 @@ public class MasterTest
 			super(TestBean.class);
 		}
 
-		private final Map<String, Class> map = new HashMap<String, Class>();
+		public final Map<String, Class> map = new HashMap<String, Class>();
 
 		protected Map<String, Class> getAuxSlots()
 		{
