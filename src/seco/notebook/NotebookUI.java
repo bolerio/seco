@@ -951,7 +951,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         if (c instanceof NotebookUI)
         {
             AppContext.getAppContext().put(FOCUSED_COMPONENT, (NotebookUI) c);
-            AppForm.getInstance().currentBook = (NotebookUI) c;
+            AppForm.getInstance().setCurrentNotebook((NotebookUI) c);
             // System.out.println("Focused: " +
             // AppForm.getInstance().currentBook.getDoc().getBook().getName());
         }

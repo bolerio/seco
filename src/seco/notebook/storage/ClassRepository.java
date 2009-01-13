@@ -35,7 +35,7 @@ import org.hypergraphdb.query.AtomTypeCondition;
 
 import seco.U;
 import seco.boot.StartMeUp;
-import seco.notebook.AppForm;
+import seco.notebook.AppConfig;
 import seco.notebook.util.RequestProcessor;
 
 
@@ -95,9 +95,9 @@ public class ClassRepository
                     addLibDir(
                             new File(new File(path), "lib").getAbsolutePath(),
                             true);
-                    addLibDir(new File(AppForm.getConfigDirectory(), "lib")
+                    addLibDir(new File(AppConfig.getConfigDirectory(), "lib")
                             .getAbsolutePath(), false);
-                    addJar(new File(AppForm.getConfigDirectory(), "scriba.jar")
+                    addJar(new File(AppConfig.getConfigDirectory(), "scriba.jar")
                             .getAbsolutePath(), false);
                     System.out.println("Repository creation finished.");
                 }

@@ -40,6 +40,11 @@ public class Cell extends BaseCellGroupMember implements EventHandler
         }
     }
 
+    public HGHandle getAtomHandle()
+    {
+        return ref.getReferent();
+    }
+    
     public void handle(HGHandle eventType, Object event, HGHandle publisher, HGHandle subscriber)
     {
         if (eventType.equals(EvalResultEventType.HANDLE))

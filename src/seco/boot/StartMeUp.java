@@ -15,6 +15,8 @@ import org.hypergraphdb.event.*;
 
 import seco.ThisNiche;
 import seco.classloader.AdaptiveClassLoader;
+import seco.notebook.GUIHelper;
+import seco.notebook.PiccoloFrame;
 import seco.notebook.storage.ClassRepository;
 import seco.rtenv.RuntimeContext;
 import seco.things.Scriptlet;
@@ -190,7 +192,7 @@ public class StartMeUp
             						  seco.NicheBootListener.class.getName()));
             hg.define(ThisNiche.NICHE_NAME_HANDLE, name);
             hg.define(ThisNiche.TOP_CONTEXT_HANDLE, new RuntimeContext("top"));
-           // Scriptlet s = new Scriptlet("jscheme", "(load \"jscheme/scribaui.scm\")(install-runtime-menu)");            
+            // Scriptlet s = new Scriptlet("jscheme", "(load \"jscheme/scribaui.scm\")(install-runtime-menu)");            
           //  hg.add(new HGValueLink("on-load", new HGHandle[] {ThisNiche.TOP_CONTEXT_HANDLE, hg.add(s)}));
             hg.close();
         }

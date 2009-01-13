@@ -16,6 +16,7 @@ import javax.swing.*;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
+import seco.notebook.AppConfig;
 import seco.notebook.AppForm;
 import seco.things.CellGroup;
 
@@ -43,7 +44,7 @@ public class RecentFilesProvider implements DynamicMenuProvider, Serializable
 	public void update(JMenu menu)
 	{
 		
-		final Vector<HGHandle> recentH = new Vector<HGHandle>(AppForm.getInstance().getConfig().getMRUF());
+		final Vector<HGHandle> recentH = new Vector<HGHandle>(AppConfig.getInstance().getMRUF());
 		final Vector<String> recentVector = new Vector<String>(recentH.size());
 		if(recentVector.size() == 0)
 		{

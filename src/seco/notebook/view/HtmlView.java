@@ -56,6 +56,7 @@ import javax.swing.text.html.CSS;
 
 import seco.notebook.AppForm;
 import seco.notebook.ElementType;
+import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookEditorKit;
 import seco.notebook.NotebookUI;
@@ -157,7 +158,7 @@ public class HtmlView extends HidableComponentView
             addCaretListener(new CaretListener() {
                 public void caretUpdate(CaretEvent e)
                 {
-                    AppForm.getInstance().getHTMLToolBar().showAttributes(
+                    GUIHelper.getHTMLToolBar().showAttributes(
                             InnerHTMLEditor.this, getCaretPosition());
                 }
             });

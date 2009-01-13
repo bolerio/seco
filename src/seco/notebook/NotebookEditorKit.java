@@ -78,8 +78,8 @@ public class NotebookEditorKit extends StyledEditorKit
     public static final String evalCellGroupAction = "Eval CellGroup";
     public static final String undoAction = "Undo";
     public static final String redoAction = "Redo";
-    static UndoAction undo = new UndoAction();
-    static RedoAction redo = new RedoAction();
+    public static UndoAction undo = new UndoAction();
+    public static RedoAction redo = new RedoAction();
     public static final String escapeAction = "escape";
     public static final String formatAction = "format";
     public static final String deleteCellAction = "Delete Cell";

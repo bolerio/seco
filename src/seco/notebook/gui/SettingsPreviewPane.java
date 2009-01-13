@@ -27,7 +27,7 @@ import javax.swing.border.TitledBorder;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
-import seco.notebook.AppForm;
+import seco.notebook.AppConfig;
 import seco.notebook.NBStyle;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
@@ -116,7 +116,7 @@ public class SettingsPreviewPane extends JSplitPane
 	{
 		try
 		{
-			InputStream is = AppForm.getClassLoader()
+			InputStream is = AppConfig.getClassLoader()
 					.getResourceAsStream(TEMPLATE);
 			InputStreamReader in = new InputStreamReader(is);
 			char[] buff = new char[1024];

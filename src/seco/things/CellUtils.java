@@ -81,7 +81,7 @@ public class CellUtils
     } 
     
     
-    private static CellGroup getContainer(CellGroup cg)
+    public static CellGroup getParentGroup(CellGroupMember cg)
     {
         HGHandle thisHandle = ThisNiche.hg.getHandle(cg);
         CellGroup c = (CellGroup) hg.getOne(ThisNiche.hg, hg.and(hg

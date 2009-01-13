@@ -202,6 +202,17 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
             fireCellGroupChanged(new CellGroupChangeEvent(grH, i, new HGHandle[0], new HGHandle[] { rem }));
         }
     }
+    
+    public void removeAll()
+    {
+        HGHandle grH = ThisNiche.handleOf(this);
+        if (grH  == null)
+            throw new NullPointerException("Group with NULL handle: " + this);
+        HGHandle[] rem = outgoingSet.toArray(new HGHandle[getArity()]);
+        outgoingSet.clear();
+        fireCellGroupChanged(new CellGroupChangeEvent(
+                grH, 0, new HGHandle[0], rem));
+    }
 
     public boolean equals(Object other)
     {

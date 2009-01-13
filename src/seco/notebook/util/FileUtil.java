@@ -11,6 +11,7 @@ import java.awt.FileDialog;
 import java.awt.Frame;
 import javax.swing.JFileChooser;
 
+import seco.notebook.AppConfig;
 import seco.notebook.AppForm;
 
 import java.io.File;
@@ -76,7 +77,7 @@ public abstract class FileUtil
 		File start = null;
 		if (start_dir == null)
 		{
-			String dir = frame.getConfig().getMRUD();
+			String dir = AppConfig.getInstance().getMRUD();
 			if(dir == null)
 				dir = System.getProperty("java.home");
 			start = new File(dir);
@@ -118,7 +119,7 @@ public abstract class FileUtil
 						+ chooser.getFile());
 				if (chooser.getDirectory() != null)
 				{
-					frame.getConfig().setMRUD(chooser.getDirectory());
+				    AppConfig.getInstance().setMRUD(chooser.getDirectory());
 				}
 				return result;
 			}
@@ -161,7 +162,7 @@ public abstract class FileUtil
 				}
 			}
 			if (result != null && start_dir == null)
-				frame.getConfig().setMRUD(
+			    AppConfig.getInstance().setMRUD(
 						chooser.getCurrentDirectory().getAbsolutePath());
 			return result;
 		}

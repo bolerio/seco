@@ -276,7 +276,8 @@ public class CellHandleView extends HidableComponentView
 
 		public void removeNotify()
 		{
-			selectionManager.remove(view.getEnclosingElement());
+		    if(selectionManager != null)
+			  selectionManager.remove(view.getEnclosingElement());
 			super.removeNotify();
 		}
 

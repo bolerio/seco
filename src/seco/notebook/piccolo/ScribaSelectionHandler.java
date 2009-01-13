@@ -29,6 +29,7 @@ import seco.notebook.PiccoloFrame.PSwing0;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.PRoot;
 import edu.umd.cs.piccolo.event.PDragSequenceEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.nodes.PPath;
@@ -360,7 +361,12 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
         presspt = pie.getPosition();
         pressNode = pie.getPath().getPickedNode();
         if (pressNode instanceof PCamera)
-            pressNode = null;
+        {
+            if (pressNode.getParent() instanceof PRoot)
+                pressNode = null;
+            else
+                pressNode = pressNode.getParent();
+        }
         if (pressNode != null)
         {
             int onmask = InputEvent.ALT_DOWN_MASK

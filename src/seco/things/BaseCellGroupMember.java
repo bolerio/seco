@@ -1,28 +1,28 @@
 package seco.things;
 
-import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
-import javax.swing.event.DocumentListener;
-import javax.swing.event.EventListenerList;
-import javax.swing.text.Document;
-
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.atom.HGAtomRef;
-
 import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
 import seco.events.EventDispatcher;
 
-
-
-
 public class BaseCellGroupMember implements CellGroupMember
 {
+    protected Object visualInstance;
+    public Object getVisualInstance()
+    {
+        return visualInstance;
+    }
+
+    public void setVisualInstance(Object visual)
+    {
+        this.visualInstance = visual;
+    }
+
     protected Map<Object, Object> attributes = new HashMap<Object, Object>(7);
-  
+    protected HGHandle visual;
+    
     public Object getAttribute(Object key)
     {
         return attributes.get(key);
@@ -42,13 +42,27 @@ public class BaseCellGroupMember implements CellGroupMember
         fireAttributeChanged(new AttributeChangeEvent(h, key, value, old));
     }
 
-    public Map getAttributes(){
+    public Map<Object, Object> getAttributes()
+    {
         return attributes;
     }
-  
+    
+    private static final String VISUAL_HANDLE_KEY = "VISUAL_HANDLE_KEY"; 
+    
+    public HGHandle getVisual()
+    {
+        //return visual;
+        return (HGHandle) getAttributes().get(VISUAL_HANDLE_KEY);
+    }
+
+    public void setVisual(HGHandle visual)
+    {
+        this.visual = visual;
+        setAttribute(VISUAL_HANDLE_KEY, visual);
+    }
+
     void fireAttributeChanged(AttributeChangeEvent e)
     {
        EventDispatcher.dispatch(AttributeChangeEvent.HANDLE, ThisNiche.handleOf(this), e);
     }
-
 }

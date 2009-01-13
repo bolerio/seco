@@ -12,6 +12,7 @@ import java.awt.Toolkit;
 
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.HGTypeSystem;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.event.HGEvent;
 import org.hypergraphdb.event.HGListener;
@@ -19,11 +20,23 @@ import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.type.HGAtomType;
 
 import seco.notebook.AppForm;
+import seco.notebook.CellDocument;
+import seco.notebook.CellDocumentType;
+import seco.notebook.GUIHelper;
+import seco.notebook.NotebookDocument;
+import seco.notebook.NotebookDocumentType;
+import seco.notebook.NotebookUI;
+import seco.notebook.NotebookUIType;
 import seco.notebook.PiccoloFrame;
 import seco.notebook.storage.swing.SwingTypeMapper;
 import seco.notebook.storage.swing.types.SwingType;
 import seco.notebook.storage.swing.types.SwingTypeConstructor;
 import seco.rtenv.RuntimeContext;
+import seco.things.Cell;
+import seco.things.CellGroup;
+import seco.things.CellGroupType;
+import seco.things.CellType;
+import seco.things.CellVisual;
 import seco.things.HGClassType;
 
 import javax.swing.JFrame;
@@ -33,13 +46,14 @@ public class NicheBootListener implements HGListener
 {
     private void loadPredefinedTypes(HyperGraph graph)
     {
-        HGPersistentHandle handle = HGHandleFactory.makeHandle("0b4503c0-dcd5-11dd-acb1-0002a5d5c51b"); 
+        HGPersistentHandle handle = HGHandleFactory
+                .makeHandle("0b4503c0-dcd5-11dd-acb1-0002a5d5c51b");
         HGAtomType type = new HGClassType();
         type.setHyperGraph(graph);
         graph.getTypeSystem().addPredefinedType(handle, type, Class.class);
         graph.getIndexManager().register(new ByPartIndexer(handle, "name"));
     }
-    
+
     private String getNicheName(HyperGraph hg)
     {
         return (String) hg.get(ThisNiche.NICHE_NAME_HANDLE);
@@ -66,17 +80,21 @@ public class NicheBootListener implements HGListener
                 .freeze(ThisNiche.TOP_CONTEXT_HANDLE);
 
         initSwingStuff(hg);
+        initSecoStuff(hg);
 
         if (AppForm.PICCOLO)
         {
             PiccoloFrame s = PiccoloFrame.getInstance();
             topRuntime.getBindings().put("desktop", AppForm.getInstance());
             ThisNiche.hg.update(topRuntime);
-            s.loadComponents();
-            AppForm.getInstance().openBooks();
-            ThisNiche.topContext = ThisNiche
-                    .getEvaluationContext(ThisNiche.TOP_CONTEXT_HANDLE);
-            s.getCanvas().loadDims();
+//            s.loadComponents();
+//            AppForm.getInstance().openBooks();
+//            ThisNiche.topContext = ThisNiche
+//                    .getEvaluationContext(ThisNiche.TOP_CONTEXT_HANDLE);
+//            s.getCanvas().loadDims();
+            CellGroup group = (CellGroup) hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+            CellVisual v = (CellVisual) hg.get(group.getVisual());
+            v.bind(group, null);
             s.setVisible(true);
             return Result.ok;
         }
@@ -87,7 +105,7 @@ public class NicheBootListener implements HGListener
         topRuntime.getBindings().put("desktop", topFrame);
         ThisNiche.topContext = ThisNiche
                 .getEvaluationContext(ThisNiche.TOP_CONTEXT_HANDLE);
-        ((seco.notebook.AppForm) topFrame).openBooks();
+        //((seco.notebook.AppForm) topFrame).openBooks();
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run()
@@ -114,5 +132,33 @@ public class NicheBootListener implements HGListener
             hg.getTypeSystem()
                     .addPredefinedType(pHandle, type, SwingType.class);
         }
+    }
+
+    private void initSecoStuff(HyperGraph hg)
+    {
+        HGTypeSystem ts = hg.getTypeSystem();
+        if (ts.getType(CellGroupType.HGHANDLE) == null)
+        {
+            HGAtomType type = new CellGroupType();
+            type.setHyperGraph(hg);
+            ts.addPredefinedType(CellGroupType.HGHANDLE, type, CellGroup.class);
+            type = new CellType();
+            type.setHyperGraph(hg);
+            ts.addPredefinedType(CellType.HGHANDLE, type, Cell.class);
+            type = new NotebookDocumentType();
+            type.setHyperGraph(hg);
+            ts.addPredefinedType(NotebookDocumentType.HGHANDLE, type,
+                    NotebookDocument.class);
+            type = new NotebookUIType();
+            type.setHyperGraph(hg);
+            ts.addPredefinedType(NotebookUIType.HGHANDLE, type,
+                    NotebookUI.class);
+            type = new CellDocumentType();
+            type.setHyperGraph(hg);
+            ts.addPredefinedType(CellDocumentType.HGHANDLE, type,
+                    CellDocument.class);
+        }
+        if(hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE) == null)
+           GUIHelper.makeTopCellGroup(hg);
     }
 }

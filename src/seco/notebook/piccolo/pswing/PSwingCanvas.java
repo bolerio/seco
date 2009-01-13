@@ -11,6 +11,8 @@
 package seco.notebook.piccolo.pswing;
 
 import edu.umd.cs.piccolo.PCanvas;
+import edu.umd.cs.piccolo.PNode;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -29,19 +31,31 @@ public class PSwingCanvas extends PCanvas {
     private SwingWrapper swingWrapper;
     private PSwingEventHandler swingEventHandler;
 
-    /**
-     * Construct a new PSwingCanvas.
-     */
-    public PSwingCanvas() {
+    private void init()
+    {
         swingWrapper = new SwingWrapper( this );
         add( swingWrapper );
         RepaintManager.setCurrentManager( pSwingRepaintManager );
         pSwingRepaintManager.addPSwingCanvas( this );
 
         swingEventHandler = new PSwingEventHandler( this, getCamera() );//todo or maybe getCameraLayer() or getRoot()?
-        swingEventHandler.setActive( true );
+        swingEventHandler.setActive( true );               
     }
-
+    
+    /**
+     * Construct a new PSwingCanvas.
+     */
+    public PSwingCanvas() 
+    {
+        init();
+    }
+    
+    public PSwingCanvas(PNode parent)
+    {
+        super(parent);
+        init();
+    }
+    
     JComponent getSwingWrapper() {
         return swingWrapper;
     }
