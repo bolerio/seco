@@ -1,29 +1,20 @@
 package seco.notebook;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import javax.swing.JComponent;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
-import org.hypergraphdb.HGTypeSystem;
-import org.hypergraphdb.type.HGAtomType;
-
 import seco.ThisNiche;
 import seco.events.EvalCellEvent;
-import seco.gui.CellContainerVisual;
-import seco.gui.JComponentVisual;
 import seco.gui.VisualAttribs;
+import seco.gui.VisualsManager;
 import seco.notebook.PiccoloFrame.PSwing0;
 import seco.notebook.piccolo.ScribaSelectionHandler;
 import seco.notebook.piccolo.pswing.PSwing;
@@ -31,11 +22,8 @@ import seco.notebook.piccolo.pswing.PSwingCanvas;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
-import seco.things.CellGroupType;
-import seco.things.CellType;
 import seco.things.CellUtils;
 
-import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
@@ -46,7 +34,8 @@ import edu.umd.cs.piccolo.util.PPaintContext;
 
 public class PiccoloCanvas extends PSwingCanvas
 {
-    // private static final String DIM_MAP = "PiccoloCanvas.CompMap";
+	private static final long serialVersionUID = 8650227944556777541L;
+	// private static final String DIM_MAP = "PiccoloCanvas.CompMap";
     // private final Map<HGHandle, BeanRect> compMap = new HashMap<HGHandle,
     // BeanRect>();
     // private Set<PSwing0> comps = new HashSet<PSwing0>();
@@ -185,8 +174,7 @@ public class PiccoloCanvas extends PSwingCanvas
             h = CellUtils.addSerializable(comp);
             ps.setHandle(GUIHelper.addToTopCellGroup(ThisNiche.hg, h,
                     (CellGroup) ThisNiche.hg
-                            .get(ThisNiche.TOP_CELL_GROUP_HANDLE), ThisNiche.hg
-                            .add(new JComponentVisual()), ps.getFullBounds()
+                            .get(ThisNiche.TOP_CELL_GROUP_HANDLE), VisualsManager.defaultVisualForType(h), ps.getFullBounds()
                             .getBounds()));
         }
     }
