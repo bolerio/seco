@@ -23,6 +23,41 @@ import java.util.*;
  */
 public class U
 {
+	private static final String ESCAPE = "\\";
+	private static final String ESCAPE_ESCAPE = "\\\\";
+	private static final String	QUOTE = "\"";
+	private static final String	QUOTE_ESCAPE = "\\\"";
+
+    public static String quote(String s)
+    {
+    	if (s == null)
+    		return s;
+    	s.replace(ESCAPE, ESCAPE_ESCAPE).replace(QUOTE, QUOTE_ESCAPE);
+    	StringBuffer result = new StringBuffer(s);
+    	result.insert(0, QUOTE);
+    	result.append(QUOTE);
+    	return result.toString();
+    }
+    
+    public static String unquote(String s)
+    {
+    	s = s.substring(1, s.length() - 1);
+    	return s.replace(QUOTE_ESCAPE, QUOTE).replace(ESCAPE_ESCAPE, ESCAPE);
+    }
+    
+    public static String findUserHome()
+    {
+    	// unix and cygwin take precedence over the long and not often used by developers
+    	// windows "user.home"
+        String home = System.getenv().get("HOME");
+        if(home == null)
+           home = System.getProperty("user.home");
+        //on my Windows System.getenv().get("HOME") return a quoted value 
+        if(home != null && home.startsWith(QUOTE))
+           home = unquote(home);
+        return home;
+    }
+    
     /**
      * <p>
      * An inteface to define a "closure" with an arbitrary number

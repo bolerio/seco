@@ -59,6 +59,7 @@ import seco.gui.CellContainerVisual;
 import seco.gui.JComponentVisual;
 import seco.gui.TabbedPaneVisual;
 import seco.gui.VisualAttribs;
+import seco.gui.VisualsManager;
 import seco.notebook.gui.CloseableDnDTabbedPane;
 import seco.notebook.gui.DialogDisplayer;
 import seco.notebook.gui.GUIUtilities;
@@ -763,17 +764,27 @@ public class GUIHelper
     {
         CellGroup group = new CellGroup("TOP_CELL_GROUP");
         hg.define(ThisNiche.TOP_CELL_GROUP_HANDLE, group);
-        group.setVisual(hg.add(new CellContainerVisual()));
-        HGHandle visualH = hg.getPersistentHandle(hg.add(new JComponentVisual()));
+        group.setVisual(CellContainerVisual.getHandle());
         getMenuBar();
-        addToTopCellGroup(hg, MENUBAR_HANDLE, group, visualH, new Rectangle(0, 0, 200, 27));
+        addToTopCellGroup(hg, 
+        				  MENUBAR_HANDLE, 
+        				  group, 
+        				  VisualsManager.defaultVisualForAtom(MENUBAR_HANDLE), 
+        				  new Rectangle(0, 0, 200, 27));
         getMainToolBar();
-        addToTopCellGroup(hg, TOOLBAR_HANDLE, group, visualH, new Rectangle(0, 30, 260, 28));
+        addToTopCellGroup(hg, 
+        				  TOOLBAR_HANDLE, 
+        				  group, 
+        				  VisualsManager.defaultVisualForAtom(TOOLBAR_HANDLE), 
+        				  new Rectangle(0, 30, 260, 28));
         getHTMLToolBar();
-        addToTopCellGroup(hg, HTML_TOOLBAR_HANDLE, group, visualH, new Rectangle(0, 60, 600, 28));
+        addToTopCellGroup(hg, 
+        				  HTML_TOOLBAR_HANDLE, 
+        				  group, 
+        				  VisualsManager.defaultVisualForAtom(HTML_TOOLBAR_HANDLE), 
+        				  new Rectangle(0, 60, 600, 28));
         getJTabbedPane();
-        group.insert(group.getArity(), TABBED_PANE_GROUP_HANDLE);
-        
+        group.insert(group.getArity(), TABBED_PANE_GROUP_HANDLE);        
         hg.update(group);
     }
     

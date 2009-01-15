@@ -23,7 +23,6 @@ import java.util.jar.JarFile;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGIndex;
-import org.hypergraphdb.HGLink;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery;
 import org.hypergraphdb.HGRandomAccessResult;
@@ -34,7 +33,6 @@ import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.query.AtomTypeCondition;
 
 import seco.U;
-import seco.boot.StartMeUp;
 import seco.notebook.AppConfig;
 import seco.notebook.util.RequestProcessor;
 
@@ -46,7 +44,7 @@ public class ClassRepository
     // .getAbsolutePath()
     // + "/.notebook/repository";
     public static final String REPOSITORY_NAME = ".scribaRepository";
-    static String repositoryPath = new File(new File(StartMeUp.findUserHome()),
+    static String repositoryPath = new File(new File(U.findUserHome()),
             REPOSITORY_NAME).getAbsolutePath();
     static final HGPersistentHandle JARS_MAP_HANDLE = HGHandleFactory
             .makeHandle("1d3b7df9-f109-11dc-9512-073dfab2b15a");

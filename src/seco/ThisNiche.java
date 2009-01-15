@@ -14,6 +14,7 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.query.*;
 
+import seco.boot.NicheManager;
 import seco.rtenv.ContextLink;
 import seco.rtenv.EvaluationContext;
 
@@ -50,6 +51,16 @@ public final class ThisNiche
         {
         	U.closeNoException(rs);
         }
+    }
+    
+    public static void bindNiche(HyperGraph graph)
+    {
+        hg = graph;
+        NicheManager.loadPredefinedTypes(hg);
+        name = NicheManager.getNicheName(hg);
+        hg.freeze(TOP_CONTEXT_HANDLE); 
+        allContexts.clear();
+        topContext = getEvaluationContext(TOP_CONTEXT_HANDLE);
     }
     
     public static HGHandle getContextHandleFor(HGHandle entityHandle)

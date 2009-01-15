@@ -8,7 +8,6 @@
 package seco.boot;
 
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -19,6 +18,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+import seco.U;
+
 import java.util.*;
 import java.io.File;
 
@@ -26,8 +27,11 @@ import java.io.File;
  *
  * @author  boris
  */
-public class NicheSelectDialog extends javax.swing.JDialog {
-    private boolean succeeded = false;
+public class NicheSelectDialog extends javax.swing.JDialog 
+{
+	private static final long serialVersionUID = 3767176947488620291L;
+	
+	private boolean succeeded = false;
     private Map<String, File> niches = new HashMap<String, File>();
     
     private void updateNichesModel()
@@ -203,7 +207,7 @@ public class NicheSelectDialog extends javax.swing.JDialog {
                 niches.remove(selected);
                 updateNichesModel();
             }
-            StartMeUp.saveNiches();            
+            NicheManager.saveNiches(niches);            
         }
     }//GEN-LAST:event_cmdEditNiche
 
@@ -225,10 +229,10 @@ public class NicheSelectDialog extends javax.swing.JDialog {
                                                   "Do you want to also delete the niche location directory? All data will be lost!", 
                                                   "Niche Removal",
                                                   JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-                    StartMeUp.deleteDirectory(location);
+                	NicheManager.deleteDirectory(location);
             }
             niches.remove(selected);
-            StartMeUp.saveNiches();
+            NicheManager.saveNiches(niches);
             updateNichesModel();
         }
     }//GEN-LAST:event_cmdRemoveNiche
@@ -250,7 +254,7 @@ public class NicheSelectDialog extends javax.swing.JDialog {
 
     private void cmdNewNiche(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdNewNiche
         NicheEditDialog dlg = new NicheEditDialog(this, true);
-        dlg.setDefaultDirectory(StartMeUp.findUserHome());
+        dlg.setDefaultDirectory(U.findUserHome());
         java.awt.Rectangle bounds = dlg.getBounds();
         bounds.x = this.getBounds().x;
         bounds.y = this.getBounds().y;
@@ -283,9 +287,9 @@ public class NicheSelectDialog extends javax.swing.JDialog {
             
         	File location = dlg.getNicheLocation();
         	
-            if (!StartMeUp.isLocationOk(location))
+            if (!NicheManager.isLocationOk(location))
             {
-                if (StartMeUp.isNicheLocation(location))
+                if (NicheManager.isNicheLocation(location))
                 {
                     if (JOptionPane.showConfirmDialog(null, 
                           "There is an existing HyperGraph Database at that location. Use it as the new niche?", 
@@ -301,17 +305,17 @@ public class NicheSelectDialog extends javax.swing.JDialog {
                 	File newDir = new File(location, dlg.getNicheName());
                 	newDir.mkdir();
                 	location = newDir;
-                	StartMeUp.createNiche(dlg.getNicheName(), location);
+                	NicheManager.createNiche(dlg.getNicheName(), location);
                 }
                 else
                 	continue;
             }
             else
-            	StartMeUp.createNiche(dlg.getNicheName(), location);
+            	NicheManager.createNiche(dlg.getNicheName(), location);
             
             // if we reach here, it means we're done 
             niches.put(dlg.getNicheName(), location);
-            StartMeUp.saveNiches();
+            NicheManager.saveNiches(niches);
             updateNichesModel();
             break;
         }

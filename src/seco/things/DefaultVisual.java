@@ -5,6 +5,11 @@ import org.hypergraphdb.HGPlainLink;
 
 public class DefaultVisual extends HGPlainLink
 {
+	public DefaultVisual(HGHandle...targets)
+	{
+		super(targets);
+	}
+	
     public DefaultVisual(HGHandle atomType, HGHandle visual)
     {
         super(atomType, visual);

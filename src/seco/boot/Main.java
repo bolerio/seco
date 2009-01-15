@@ -8,8 +8,6 @@
 package seco.boot;
 
 import org.hypergraphdb.HGEnvironment;
-import org.hypergraphdb.HyperGraph;
-
 
 /**
  * Main class loaded reflectively with a custom class loader.
@@ -25,15 +23,6 @@ class Main
 	 */
 	public static void go(String nicheLocation)
 	{
-        final HyperGraph hg = HGEnvironment.get(nicheLocation);            
-//        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable()
-//        {
-//            public void run()
-//            {
-//                try { hg.close(); }
-//                catch (Throwable t) { t.printStackTrace(System.err); }
-//            }
-//        }
-//        ));
+        HGEnvironment.get(nicheLocation); // boots from HG LOAD listeners            
 	}
 }
