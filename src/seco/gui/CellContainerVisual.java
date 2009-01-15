@@ -1,6 +1,8 @@
 package seco.gui;
 
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGHandleFactory;
+import org.hypergraphdb.HGPersistentHandle;
 
 import seco.ThisNiche;
 import seco.notebook.PiccoloCanvas;
@@ -11,6 +13,14 @@ import seco.things.CellVisual;
 
 public class CellContainerVisual implements CellVisual
 {
+	private static final HGPersistentHandle handle = 
+		HGHandleFactory.makeHandle("cc88ae4c-f70b-4536-814c-95a6ac6a7b62");
+	
+	public static HGPersistentHandle getHandle()
+	{
+		return handle;
+	}
+	
     public void bind(CellGroupMember element, Object parentVisual)
     {
         CellGroup group = (CellGroup) element;
