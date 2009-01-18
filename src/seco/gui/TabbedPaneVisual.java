@@ -1,10 +1,5 @@
 package seco.gui;
 
-import java.awt.Rectangle;
-
-import javax.swing.JComponent;
-import javax.swing.JTabbedPane;
-
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
@@ -30,9 +25,7 @@ public class TabbedPaneVisual implements CellVisual
             NotebookUI ui = new NotebookUI(cell.getAtomHandle());
             AppForm.getInstance().addNotebookTab(ui);
         } 
-        canvas.addComponent(GUIHelper.getJTabbedPane(), 
-                (Rectangle) group.getAttribute(VisualAttribs.rect),
-                ThisNiche.handleOf(element));
+        canvas.addComponent(GUIHelper.getJTabbedPane(), group);
     }
 
 }

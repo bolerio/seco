@@ -16,9 +16,12 @@ import javax.swing.JFrame;
 import org.hypergraphdb.HGHandle;
 
 
+import seco.ThisNiche;
+import seco.gui.VisualAttribs;
 import seco.notebook.piccolo.PiccoloTransferHandler;
 import seco.notebook.piccolo.pswing.PSwing;
 import seco.notebook.piccolo.pswing.PSwingCanvas;
+import seco.things.CellGroup;
 
 
 import edu.umd.cs.piccolo.PCamera;
@@ -26,7 +29,7 @@ import edu.umd.cs.piccolox.swing.PScrollPane;
 
 public class PiccoloFrame extends JFrame
 {
-    private PiccoloCanvas canvas;
+    private PiccoloCanvasContainer container;
     private static PiccoloFrame instance;
 
     public static PiccoloFrame getInstance()
@@ -39,22 +42,23 @@ public class PiccoloFrame extends JFrame
     {
         super();
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        canvas = new PiccoloCanvas();
-        canvas.setTransferHandler(new PiccoloTransferHandler());
+        container = new PiccoloCanvasContainer();
+        container.getCanvas().setTransferHandler(new PiccoloTransferHandler());
         // Set up basic frame
         setBounds(50, 50, 750, 750);
         setResizable(true);
         setBackground(null);
 
-        PScrollPane scroll = new PScrollPane(canvas);
-        add(scroll, BorderLayout.CENTER);
-        validate();
+        PScrollPane scroll = new PScrollPane(container.getCanvas());
+        getContentPane().add(scroll, BorderLayout.CENTER);
+        //getContentPane().add(container, BorderLayout.CENTER);
+         validate();
     }
 
  
     void saveDims()
     {
-        canvas.saveDims();
+        container.getCanvas().saveDims();
     }
 
    
@@ -72,7 +76,12 @@ public class PiccoloFrame extends JFrame
         if (e.getID() != WindowEvent.WINDOW_CLOSING) super
                 .processWindowEvent(e);
         else
+        {
+            CellGroup group = (CellGroup) ThisNiche.hg.get(
+                    ThisNiche.TOP_CELL_GROUP_HANDLE);
+            group.setAttribute(VisualAttribs.rect, getBounds());
             AppForm.getInstance().exit();
+        }
     }
     
 
@@ -99,6 +108,15 @@ public class PiccoloFrame extends JFrame
         }
 
         @Override
+        public void translate(double dx, double dy)
+        {
+            super.translate(dx, dy);
+            //System.out.println("PSwing0 - translate: " + dx + ":" + dy);
+            //getComponent().setBounds(this.getFullBounds().getBounds());
+            //getComponent().y = (int) dy;
+        }
+
+        @Override
         public boolean setBounds(double x, double y, double width, double height)
         {
             boolean b = super.setBounds(x, y, width, height);
@@ -120,7 +138,7 @@ public class PiccoloFrame extends JFrame
 
     public PiccoloCanvas getCanvas()
     {
-        return canvas;
+        return container.getCanvas();
     }
     
     
@@ -168,8 +186,8 @@ public class PiccoloFrame extends JFrame
 
     private PSwing0 add_comp(JComponent c, Rectangle r)
     {
-        PSwing0 p = new PSwing0(canvas, c);
-        canvas.getNodeLayer().addChild(p);
+        PSwing0 p = new PSwing0(container.getCanvas(), c);
+        container.getCanvas().getNodeLayer().addChild(p);
         p.setBounds(r);
         p.translate(r.x, r.y);
         return p;

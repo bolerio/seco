@@ -167,22 +167,21 @@ public class AppForm extends javax.swing.JFrame
 
     public void exit()
     {
-        //AppConfig.getInstance().getOpenedGroups().clear();
-        clearTabbedPaneGroup();
-        JTabbedPane tabbedPane = GUIHelper.getJTabbedPane();
-        tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
-        for (int i = tabbedPane.getTabCount() - 1; i >= 0; i--)
-        {
-            tabbedPane.setSelectedIndex(i);
-            currentBook = (NotebookUI) ((JScrollPane) tabbedPane
-                    .getSelectedComponent()).getViewport().getView();
-            HGHandle h = getCurrentNotebook().getDoc().getHandle();
-            if (h != null)
-                addTabToTabbedPaneGroup(h);
-                //AppConfig.getInstance().getOpenedGroups().add(h);
-        }
+        //clearTabbedPaneGroup();
+//        JTabbedPane tabbedPane = GUIHelper.getJTabbedPane();
+//        tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
+//        for (int i = tabbedPane.getTabCount() - 1; i >= 0; i--)
+//        {
+//            tabbedPane.setSelectedIndex(i);
+//            currentBook = (NotebookUI) ((JScrollPane) tabbedPane
+//                    .getSelectedComponent()).getViewport().getView();
+//            HGHandle h = getCurrentNotebook().getDoc().getHandle();
+//            if (h != null)
+//                addTabToTabbedPaneGroup(h, false);
+//       }
         if (AppForm.PICCOLO)
             PiccoloFrame.getInstance().saveDims();
+        
         Log.end();
         System.exit(0);
     }
@@ -270,7 +269,7 @@ public class AppForm extends javax.swing.JFrame
         ThisNiche.hg.update(group);
     }
     
-    private static void addTabToTabbedPaneGroup(HGHandle h)
+    private static void addTabToTabbedPaneGroup(HGHandle h, boolean update)
     {
         CellGroup group = (CellGroup)ThisNiche.hg.get(GUIHelper.TABBED_PANE_GROUP_HANDLE);
         HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.hard);
@@ -279,7 +278,13 @@ public class AppForm extends javax.swing.JFrame
         if(outH == null)
             outH = ThisNiche.hg.add(out);
         group.insert(group.getArity(), outH);
-        ThisNiche.hg.update(group);
+        if(update)
+           ThisNiche.hg.update(group);
+    }
+    
+    private static void addTabToTabbedPaneGroup(HGHandle h)
+    {
+        addTabToTabbedPaneGroup(h, true);
     }
 
     private boolean allready_opened(HGHandle h, boolean focus)
@@ -314,7 +319,9 @@ public class AppForm extends javax.swing.JFrame
     public void closeAt(int i)
     {
         JTabbedPane tabbedPane = GUIHelper.getJTabbedPane();
-        ThisNiche.hg.unfreeze(ThisNiche.hg.getHandle(getNotebookAt(i)));
+        HGHandle h = ThisNiche.handleOf(getNotebookAt(i));
+        ThisNiche.hg.unfreeze(h);
+        GUIHelper.removeFromTopCellGroup(h);
         tabbedPane.removeTabAt(i);
         if (tabbedPane.getTabCount() == 0)
         {

@@ -19,6 +19,7 @@ import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookTransferHandler;
 import seco.notebook.NotebookUI;
 import seco.notebook.PiccoloCanvas;
+import seco.notebook.PiccoloCanvasContainer;
 import seco.notebook.PiccoloFrame.PSwing0;
 import seco.notebook.piccolo.pswing.PSwingCanvas;
 import seco.things.Cell;
@@ -59,6 +60,7 @@ public class PiccoloTransferHandler extends TransferHandler
                 Vector<Element> els = (Vector<Element>) t
                         .getTransferData(elFlavor);
                 PiccoloCanvas canvas = (PiccoloCanvas) c;
+                    //((PiccoloCanvasContainer) c).getCanvas();
                 for (Element e : els)
                 {
                     HGHandle nbH = NotebookDocument.getNBElementH(e);

@@ -1,5 +1,7 @@
 package seco.gui;
 
+import java.awt.Rectangle;
+
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
@@ -29,6 +31,9 @@ public class CellContainerVisual implements CellVisual
         if (parentVisual == null) // top container
         {
             canvas = PiccoloFrame.getInstance().getCanvas();
+            Rectangle r = (Rectangle) element.getAttribute(VisualAttribs.rect);
+            if(r != null) 
+                PiccoloFrame.getInstance().setBounds(r);
         }
         else
         {            

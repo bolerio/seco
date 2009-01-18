@@ -25,6 +25,7 @@ import java.io.File;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -56,7 +57,6 @@ import org.wonderly.swing.tabs.TabCloseListener;
 
 import seco.ThisNiche;
 import seco.gui.CellContainerVisual;
-import seco.gui.JComponentVisual;
 import seco.gui.TabbedPaneVisual;
 import seco.gui.VisualAttribs;
 import seco.gui.VisualsManager;
@@ -75,10 +75,12 @@ import seco.notebook.gui.menu.RCListProvider;
 import seco.notebook.gui.menu.RecentFilesProvider;
 import seco.notebook.gui.menu.VisPropsProvider;
 import seco.notebook.html.HTMLToolBar;
+import seco.notebook.piccolo.pswing.PSwing;
 import seco.notebook.util.FileUtil;
 import seco.notebook.util.IconManager;
 import seco.things.Cell;
 import seco.things.CellGroup;
+import seco.things.CellGroupMember;
 import seco.things.IOUtils;
 
 public class GUIHelper
@@ -301,7 +303,7 @@ public class GUIHelper
 
     // disable menuItems if no notebook presented
     // use GlobMenuItem to prevent disabling
-    public static class NBMenu extends JMenu implements MenuListener
+    public static class NBMenu extends PiccoloMenu implements MenuListener
     {
         public NBMenu()
         {
@@ -338,6 +340,37 @@ public class GUIHelper
         {
         }
     }
+    
+    public static class PiccoloMenu extends JMenu
+    {
+        public PiccoloMenu()
+        {
+            super();
+        }
+    
+        public PiccoloMenu(String s)
+        {
+            super(s);
+        }
+    
+        @Override
+        protected Point getPopupMenuOrigin()
+        {
+            Point pt = super.getPopupMenuOrigin();
+            if(getParent() != null && getParent() instanceof JComponent)
+            {
+               PSwing p = (PSwing) 
+               ((JComponent)getParent()).getClientProperty(PSwing.PSWING_PROPERTY);
+               if(p!=null)
+               {
+                   Rectangle r = p.getFullBounds().getBounds();
+                   return new Point(pt.x + r.x, pt.y + r.y); 
+               }
+            }
+            return pt;
+        }
+    }
+
 
     // JMenuItem that can't be disabled
     public static class GlobMenuItem extends JMenuItem
@@ -558,7 +591,7 @@ public class GUIHelper
 
     private static JMenu createRuntimeMenu()
     {
-        JMenu menu = new JMenu("Runtime");
+        JMenu menu = new PiccoloMenu("Runtime");
         menu.setMnemonic('r');
         String lang = "jscheme";
         String code = "(load \"jscheme/scribaui.scm\")\n(.show (edit-context-dialog #null (RuntimeContext.)))";
@@ -799,9 +832,10 @@ public class GUIHelper
         return cellH;
     }
     
-    public static void removeFromTopCellGroup()
+    public static void removeFromTopCellGroup(HGHandle h)
     {
-        //TODO:
+        CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        top.remove((CellGroupMember) ThisNiche.hg.get(h));
     }
 
     static final boolean DRAGGABLE_TABS = !AppForm.PICCOLO;

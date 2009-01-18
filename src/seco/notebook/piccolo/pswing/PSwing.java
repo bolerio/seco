@@ -192,11 +192,6 @@ public class PSwing extends PNode implements Serializable,
         this.pSwingCanvas.getSwingWrapper().add(component);
         component.revalidate();
         component.addPropertyChangeListener(pPropertyChangeListener);
-        // new PropertyChangeListener() {
-        // public void propertyChange( PropertyChangeEvent evt ) {
-        // reshape();
-        // }
-        // } );
         reshape();
     }
 
@@ -206,7 +201,7 @@ public class PSwing extends PNode implements Serializable,
      */
     public void reshape()
     {
-        // System.out.println("PSwing-reshape: " + this.getBounds());
+        //System.out.println("PSwing-reshape: " + this.getBounds());
         component.setBounds(0, 0, component.getPreferredSize().width, component
                 .getPreferredSize().height);
         setBounds(0, 0, component.getPreferredSize().width, component

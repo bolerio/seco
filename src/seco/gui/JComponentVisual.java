@@ -28,8 +28,7 @@ public class JComponentVisual implements CellVisual
         Cell cell = (Cell)element;
         JComponent comp = (JComponent)ThisNiche.hg.get(cell.getAtomHandle());
         PiccoloCanvas canvas = (PiccoloCanvas)parentVisual;
-        canvas.addComponent(comp, (Rectangle) cell.getAttribute(VisualAttribs.rect),
-                ThisNiche.handleOf(element));
+        canvas.addComponent(comp, element);
     }
  
 }

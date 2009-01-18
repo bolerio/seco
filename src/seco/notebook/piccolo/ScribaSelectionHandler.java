@@ -24,7 +24,7 @@ import java.util.Map;
 
 import seco.notebook.NotebookUI;
 import seco.notebook.PiccoloFrame.PSwing0;
-
+import seco.notebook.piccolo.pswing.PSwing;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
@@ -140,10 +140,7 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
 
     public void select(PNode node)
     {
-        if (isSelected(node))
-        {
-            return;
-        }
+        if (isSelected(node)) { return; }
         if (node == null)
             return;
         selection.put(node, Boolean.TRUE);
@@ -169,10 +166,7 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
 
     public void unselect(PNode node)
     {
-        if (!isSelected(node))
-        {
-            return;
-        }
+        if (!isSelected(node)) { return; }
         undecorateSelectedNode(node);
         selection.remove(node);
         // PNotificationCenter.defaultCenter().postNotification("SELECTION_REMOVED_NOTIFICATION",
@@ -333,6 +327,12 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
     protected void endDrag(PInputEvent e)
     {
         super.endDrag(e);
+//        if (pressNode != null && pressNode instanceof PSwing)
+//        {
+//            System.out.println("endDrag: " + pressNode.getFullBounds());
+//            ((PSwing) pressNode).getComponent().setBounds(
+//                    pressNode.getFullBounds().getBounds());
+//        }
         if (isMarqueeSelection(e))
         {
             endMarqueeSelection(e);
@@ -362,8 +362,7 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
         pressNode = pie.getPath().getPickedNode();
         if (pressNode instanceof PCamera)
         {
-            if (pressNode.getParent() instanceof PRoot)
-                pressNode = null;
+            if (pressNode.getParent() instanceof PRoot) pressNode = null;
             else
                 pressNode = pressNode.getParent();
         }
@@ -405,7 +404,8 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
             unselectAll();
             // if (isSelectable(pressNode)) {
             select(pressNode);
-            if(pressNode != null) pie.getInputManager().setMouseFocus(pie.getPath());
+            if (pressNode != null)
+                pie.getInputManager().setMouseFocus(pie.getPath());
             // }
         }
     }
@@ -521,10 +521,7 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
 
     protected PBounds getMarqueeBounds()
     {
-        if (marquee != null)
-        {
-            return marquee.getBounds();
-        }
+        if (marquee != null) { return marquee.getBounds(); }
         return new PBounds();
     }
 
@@ -575,14 +572,14 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
     public void keyPressed(PInputEvent e)
     {
         System.out.println("ScribaSelectionHandler - keyPressed: " + e);
-        
+
         switch (e.getKeyCode())
         {
         case KeyEvent.VK_DELETE:
             deleteSelection(e);
         }
     }
-    
+
     public void deleteSelection(PInputEvent e)
     {
         System.out.println("TSH - deleteSelection:" + e.getComponent());
@@ -592,10 +589,10 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
             {
                 if (node instanceof PSwing0 && !((PSwing0) node).isDeleteable())
                     continue;
-               // Object ui =  ((PSwing0) node).getComponent();
-               // if(ui instanceof NotebookUI)
-               //     PiccoloSync.getInstance().removeAuxDoc(
-               //             ((NotebookUI) ui).getDoc());
+                // Object ui = ((PSwing0) node).getComponent();
+                // if(ui instanceof NotebookUI)
+                // PiccoloSync.getInstance().removeAuxDoc(
+                // ((NotebookUI) ui).getDoc());
                 node.removeFromParent();
             }
             selection.clear();
@@ -657,10 +654,7 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
                     PNode parent = (PNode) i.next();
                     if (parent instanceof PCamera)
                     {
-                        if (((PCamera) parent).indexOfLayer((PLayer) node) != -1)
-                        {
-                            return true;
-                        }
+                        if (((PCamera) parent).indexOfLayer((PLayer) node) != -1) { return true; }
                     }
                 }
             }
