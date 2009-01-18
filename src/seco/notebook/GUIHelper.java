@@ -817,13 +817,13 @@ public class GUIHelper
         				  VisualsManager.defaultVisualForAtom(HTML_TOOLBAR_HANDLE), 
         				  new Rectangle(0, 60, 600, 28));
         getJTabbedPane();
-        group.insert(group.getArity(), TABBED_PANE_GROUP_HANDLE);        
-        hg.update(group);
+        group.insert(group.getArity(), TABBED_PANE_GROUP_HANDLE);   
+//        hg.update(group);
     }
     
     public static HGHandle addToTopCellGroup(HyperGraph hg, HGHandle h, CellGroup group, HGHandle visualH, Rectangle r)
     {
-        HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.hard);
+        HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
         HGHandle cellH = hg.add(out);
         out.setAttribute(VisualAttribs.rect, r);

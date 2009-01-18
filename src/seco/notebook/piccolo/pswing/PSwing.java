@@ -147,8 +147,7 @@ import java.io.Serializable;
  * &#064;author Lance E. Good
  * 
  */
-public class PSwing extends PNode implements Serializable,
-        PropertyChangeListener
+public class PSwing extends PNode implements Serializable, PropertyChangeListener
 {
 
     /**

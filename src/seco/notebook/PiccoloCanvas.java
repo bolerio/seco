@@ -11,6 +11,7 @@ import javax.swing.JComponent;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
+
 import seco.ThisNiche;
 import seco.events.EvalCellEvent;
 import seco.gui.VisualAttribs;
@@ -35,11 +36,7 @@ import edu.umd.cs.piccolo.util.PPaintContext;
 public class PiccoloCanvas extends PSwingCanvas
 {
 	private static final long serialVersionUID = 8650227944556777541L;
-	// private static final String DIM_MAP = "PiccoloCanvas.CompMap";
-    // private final Map<HGHandle, BeanRect> compMap = new HashMap<HGHandle,
-    // BeanRect>();
-    // private Set<PSwing0> comps = new HashSet<PSwing0>();
-
+	
     PLayer nodeLayer;
     ScribaSelectionHandler sel_handler;
 
@@ -99,28 +96,6 @@ public class PiccoloCanvas extends PSwingCanvas
         removeComponents(sel_handler.getSelection());
     }
 
-    // public void loadDims()
-    // {
-    // Map<HGHandle, BeanRect> map =
-    // (Map<HGHandle, BeanRect>) AppConfig.getInstance().getProperty(DIM_MAP);
-    // if (map == null) return;
-    // PLayer nodeLayer = getNodeLayer();
-    // System.out.println("PiccoloCanvas - loadDims: " + map);
-    // for (HGHandle h : map.keySet())
-    // {
-    // JComponent comp = (JComponent) ThisNiche.hg.get(h);
-    // if (comp == null) return;
-    // Rectangle r = map.get(h).getRect();
-    // comp.setPreferredSize(new Dimension(r.width, r.height));
-    // PSwing0 p = new PSwing0(this, comp);
-    // p.deleteable = true;
-    // p.setBounds(r);
-    // p.translate(r.x, r.y);
-    // nodeLayer.addChild(p);
-    // comps.add(p);
-    // }
-    // }
-
     void saveDims()
     {
         for (Object o : getNodeLayer().getAllNodes())
@@ -133,11 +108,6 @@ public class PiccoloCanvas extends PSwingCanvas
             if (cm != null)
                 cm.setAttribute(VisualAttribs.rect, p.getFullBounds()
                         .getBounds());
-            // Component c = p.getComponent();
-            // HGHandle h = ThisNiche.handleOf(c);
-            // if (h == null) h = CellUtils.addSerializable(c);
-            // if(c instanceof NotebookUI) ((NotebookUI) c).getDoc().save();
-            // System.out.println("PiccoloCanvas - saveDims: " + h + ":" + c);
         }
     }
 
@@ -179,10 +149,15 @@ public class PiccoloCanvas extends PSwingCanvas
         }
     }
 
-    public PSwing addComponent(JComponent comp, Rectangle r, HGHandle cellH)
+    public PSwing addComponent(JComponent comp, CellGroupMember cell)
     {
-        PSwing0 p = new PSwing0(this, comp, cellH);
+        PSwing0 p = new PSwing0(this, comp, ThisNiche.handleOf(cell));
         getNodeLayer().addChild(p);
+        if(((Boolean)cell.getAttribute(VisualAttribs.pinned)))
+        {
+            
+        }
+        Rectangle r = (Rectangle) cell.getAttribute(VisualAttribs.rect);
         if (r != null)
         {
             p.setBounds(r);
@@ -191,21 +166,19 @@ public class PiccoloCanvas extends PSwingCanvas
         return p;
     }
 
-    // private static DelEventHandler del_handler= new DelEventHandler();
+    // private static DelEventHandler del_handler = new DelEventHandler();
 
     void removeComponents(Collection<PNode> selection)
     {
         for (PNode node : selection)
         {
-            if (node instanceof PSwing0 && !((PSwing0) node).isDeleteable())
+            if (node instanceof PSwing0 && false)// && !((PSwing0) node).isDeleteable())
                 continue;
+            GUIHelper.removeFromTopCellGroup(((PSwing0) node).getHandle());
             Object ui = ((PSwing0) node).getComponent();
             if (ui instanceof NotebookUI)
                 remove_and_clean((NotebookUI) ui);
             node.removeFromParent();
-            // comps.remove(node);
-            // TODO
-            GUIHelper.removeFromTopCellGroup();
         }
     }
 
@@ -266,7 +239,6 @@ public class PiccoloCanvas extends PSwingCanvas
 
     private static class DelEventHandler extends PBasicInputEventHandler
     {
-
         @Override
         public void keyPressed(PInputEvent e)
         {
@@ -274,6 +246,5 @@ public class PiccoloCanvas extends PSwingCanvas
             if (e.getKeyCode() == KeyEvent.VK_DELETE)
                 PiccoloFrame.getInstance().getCanvas().deleteSelection();
         }
-
     }
 }

@@ -52,7 +52,7 @@ public class Cell extends BaseCellGroupMember implements EventHandler
             HGHandle h = ThisNiche.handleOf(event);
             if (h == null)
                 h = CellUtils.addSerializable(event);
-            ref = new HGAtomRef(h, HGAtomRef.Mode.hard);
+            ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
             ThisNiche.hg.update(this);
         }
     }

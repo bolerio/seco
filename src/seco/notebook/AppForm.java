@@ -272,7 +272,7 @@ public class AppForm extends javax.swing.JFrame
     private static void addTabToTabbedPaneGroup(HGHandle h, boolean update)
     {
         CellGroup group = (CellGroup)ThisNiche.hg.get(GUIHelper.TABBED_PANE_GROUP_HANDLE);
-        HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.hard);
+        HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
         HGHandle outH = ThisNiche.handleOf(out);
         if(outH == null)

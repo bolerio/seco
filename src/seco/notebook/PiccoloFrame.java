@@ -5,9 +5,6 @@ import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
 import java.awt.event.WindowEvent;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -29,7 +26,8 @@ import edu.umd.cs.piccolox.swing.PScrollPane;
 
 public class PiccoloFrame extends JFrame
 {
-    private PiccoloCanvasContainer container;
+	private static final long serialVersionUID = 6929648456637555149L;
+	private PiccoloCanvasContainer container;
     private static PiccoloFrame instance;
 
     public static PiccoloFrame getInstance()
@@ -87,7 +85,8 @@ public class PiccoloFrame extends JFrame
 
     public static class PSwing0 extends PSwing
     {
-        public boolean deleteable;
+		private static final long serialVersionUID = 4732523747800268384L;
+		public boolean deleteable;
         private HGHandle handle; 
 
         public PSwing0(PSwingCanvas canvas, JComponent component,
