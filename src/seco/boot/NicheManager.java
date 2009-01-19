@@ -30,6 +30,8 @@ import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookDocumentType;
 import seco.notebook.NotebookUI;
 import seco.notebook.NotebookUIType;
+import seco.notebook.ScriptletDocument;
+import seco.notebook.ScriptletDocumentType;
 import seco.notebook.storage.swing.SwingTypeMapper;
 import seco.notebook.storage.swing.types.SwingType;
 import seco.notebook.storage.swing.types.SwingTypeConstructor;
@@ -236,6 +238,10 @@ public class NicheManager
             type.setHyperGraph(hg);
             ts.addPredefinedType(OutputCellDocumentType.HGHANDLE, type,
                     OutputCellDocument.class);
+            type = new ScriptletDocumentType();
+            type.setHyperGraph(hg);
+            ts.addPredefinedType(ScriptletDocumentType.HGHANDLE, type,
+                    ScriptletDocument.class);
         }
         if(hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE) == null)
            GUIHelper.makeTopCellGroup(hg);

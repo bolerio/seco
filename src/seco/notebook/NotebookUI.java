@@ -88,6 +88,7 @@ import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import seco.things.Scriptlet;
 import sun.awt.AppContext;
 import bsh.BshScriptSupport;
 import com.microstar.xml.XmlException;
@@ -123,8 +124,12 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         NotebookDocument doc = null;
         if (o instanceof CellGroupMember)
         {
-            doc = (o instanceof CellGroup) ? new NotebookDocument(book,
-                    evalContext) : new OutputCellDocument(book);
+            if(o instanceof CellGroup)
+                doc = new NotebookDocument(book, evalContext);
+            else if(((Cell)o).getValue() instanceof Scriptlet)
+               doc = new  ScriptletDocument(book);
+            else
+               doc =  new OutputCellDocument(book);
         } else
             doc = (NotebookDocument) o;
         if (doc == null) return;
@@ -233,6 +238,13 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         key = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,
                 InputEvent.CTRL_DOWN_MASK);
         inputMap.put(key, NotebookEditorKit.showInputTypePopup);
+        //NotebookEditorKit kit = new NotebookEditorKit();
+        key = KeyStroke.getKeyStroke(KeyEvent.VK_Z,
+                InputEvent.CTRL_DOWN_MASK);
+        inputMap.put(key,NotebookEditorKit.undo);
+        key = KeyStroke.getKeyStroke(KeyEvent.VK_Y,
+                InputEvent.CTRL_DOWN_MASK);
+        inputMap.put(key,NotebookEditorKit.redo);
     }
 
     void restoreCaret()

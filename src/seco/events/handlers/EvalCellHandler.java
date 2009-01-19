@@ -4,7 +4,6 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
-import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
 import seco.events.EventDispatcher;
 import seco.events.EventHandler;

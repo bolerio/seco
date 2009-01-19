@@ -676,8 +676,9 @@ public class GUIHelper
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
         if (ui == null)
             return;
-        CellGroup book = (CellGroup) ui.getDoc().getBook();
-        JDialog dialog = new JDialog(TopFrame.getInstance(), book.getName());
+        CellGroupMember book = ui.getDoc().getBook();
+        String title = (book instanceof CellGroup) ? ((CellGroup) book).getName() : "Cell";
+        JDialog dialog = new JDialog(TopFrame.getInstance(), title);
         dialog.setSize(500, 800);
         JTree tree = new NotebookCellsTree(new NotebookTreeModel(book));
         JScrollPane pane = new JScrollPane(tree);

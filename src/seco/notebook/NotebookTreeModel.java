@@ -19,9 +19,9 @@ import seco.things.CellUtils;
 
 class NotebookTreeModel implements TreeModel
 {
-	protected CellGroup book;
+	protected CellGroupMember book;
 	
-	public  NotebookTreeModel(CellGroup nb){
+	public  NotebookTreeModel(CellGroupMember nb){
 		book = nb;
 	}
 	
@@ -45,6 +45,8 @@ class NotebookTreeModel implements TreeModel
 
 	public int getIndexOfChild(Object parent, Object child)
 	{
+	    if(!(parent instanceof CellGroup))
+	        return -1;
 		return ((CellGroup) parent).indexOf((CellGroupMember)child);
 	}
 

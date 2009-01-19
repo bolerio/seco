@@ -19,7 +19,6 @@ import seco.notebook.OutputCellDocument;
 import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
-import seco.notebook.OutputCellDocument.CopyEvalCellHandler;
 import seco.notebook.piccolo.ScribaSelectionHandler;
 import seco.notebook.piccolo.pswing.PSwing;
 import seco.notebook.piccolo.pswing.PSwingCanvas;
@@ -124,9 +123,15 @@ public class PiccoloCanvas extends PSwingCanvas
             comp = new NotebookUI(h);
             comp.setPreferredSize(new Dimension(200, 200));
             HGHandle par = CellUtils.getOutCellParent(masterH);
-            CellUtils.setOutputCell(par, null);
-            CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, par,
-                    HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
+            if(par == null) //normal cell
+            {
+                par = masterH;
+                CellUtils.addCopyListeners(h, masterH);
+            }
+            //TODO: should we remove the Cell from parent or not? 
+            //CellUtils.setOutputCell(par, null);
+            //CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, par,
+            //        HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
             CellUtils.addEventPubSub(EvalCellEvent.HANDLE, par,
                     ((NotebookUI) comp).getDoc().getHandle(),
                     OutputCellDocument.CopyEvalCellHandler.getInstance());
