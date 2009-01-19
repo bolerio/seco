@@ -9,29 +9,17 @@ package seco.notebook.gui;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseListener;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.script.ScriptEngineFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 
-import seco.notebook.AppForm;
+import seco.notebook.NotebookUI;
 import seco.notebook.gui.menu.DynamicMenuProvider;
 
 
 public class ScriptEngineProvider implements DynamicMenuProvider 
 {
-	protected transient AppForm app;
-
-	public ScriptEngineProvider(final AppForm app) 
-	{
-		this.app = app;
-	}
-
 	public boolean updateEveryTime() 
 	{
 		return true;
@@ -39,11 +27,11 @@ public class ScriptEngineProvider implements DynamicMenuProvider
 
 	public void update(JMenu menu) 
 	{		
-		if(app.getCurrentNotebook() == null)
-			return;
-		String def_name = app.getCurrentNotebook().getDoc().getDefaultEngineName();
+	    final NotebookUI ui = NotebookUI.getFocusedNotebookUI();
+        if (ui == null) return;
+		String def_name = ui.getDoc().getDefaultEngineName();
 		ButtonGroup group = new ButtonGroup();		
-		java.util.Iterator<String> all = app.getCurrentNotebook().getDoc().getEvaluationContext().getLanguages();
+		java.util.Iterator<String> all = ui.getDoc().getEvaluationContext().getLanguages();
 		while (all.hasNext())			
 		{
 			final String language = all.next();
@@ -54,7 +42,7 @@ public class ScriptEngineProvider implements DynamicMenuProvider
 				public void itemStateChanged(ItemEvent e) 
 				{
 					if (m.isSelected())
-						app.getCurrentNotebook().getDoc().setDefaultEngineName(language);
+						ui.getDoc().setDefaultEngineName(language);
 				}
 			});
 			group.add(m);

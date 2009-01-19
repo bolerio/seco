@@ -7,6 +7,8 @@
  */
 package seco.notebook;
 
+import seco.gui.TopFrame;
+
 /**
  *
  * @author bolerio
@@ -23,8 +25,7 @@ public class Main
      */
     public static void main(String[] args) 
     {
-        AppForm mainForm = AppForm.getInstance();
-        mainForm.setVisible(true);
+        TopFrame.getInstance().setVisible(true);
     }
     
 }

@@ -15,6 +15,7 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.text.Element;
 import javax.swing.*;
 
+import seco.gui.AppForm;
 import seco.notebook.syntax.ScriptSupport;
 import seco.things.Cell;
 import seco.things.CellUtils;
@@ -84,10 +85,10 @@ public class StatusBar extends JPanel implements CaretListener
 			cellEngine.setText(engine_name);
 		else
 			cellEngine.setText(DEFAULT);
-		
+		final NotebookUI ui = NotebookUI.getFocusedNotebookUI();
+        
 		ButtonGroup group = new ButtonGroup();
-		Iterator<String> all = 	view.getCurrentNotebook().
-		   getDoc().getEvaluationContext().getLanguages();
+		Iterator<String> all = 	ui.getDoc().getEvaluationContext().getLanguages();
 		
 		//for (final ScriptEngineFactory f : set.values())
 		while(all.hasNext())
@@ -101,7 +102,6 @@ public class StatusBar extends JPanel implements CaretListener
 					if (m.isSelected())
 					{
 						cellEngine.setText(s);
-						NotebookUI ui = view.getCurrentNotebook();
 						ui.setCellEngine(s, el.getStartOffset());
 					}
 				}
@@ -197,7 +197,7 @@ public class StatusBar extends JPanel implements CaretListener
 	public void updateCaretStatus(final int dot, final int mark)
 	{
 		if (!isShowing0() || dot < 0) return;
-		NotebookUI ui = view.getCurrentNotebook();
+		NotebookUI ui = NotebookUI.getFocusedNotebookUI();
 		NotebookDocument doc = ui.getDoc();
 		//System.out.println("updateCaretStatus: " + dot + ":" + doc.getBook().getFilename());
 		

@@ -22,7 +22,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.text.Element;
 
-import seco.notebook.AppForm;
+import seco.gui.AppForm;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.gui.GUIUtilities;
@@ -52,7 +52,7 @@ public class CellLangProvider implements DynamicMenuProvider
 		//app = (AppForm) GUIUtilities.getFrame(menu);
 		//if (app != null) 
 		//	nbui = app.getCurrentNotebook();
-		nbui = NotebookUI.getFocusedComponentEx();
+		nbui = NotebookUI.getFocusedNotebookUI();
 		//System.out.println("CellLangProvider - update0: " + nbui + ":" + app);
 		if (nbui == null) return;
 		Collection<JMenuItem> items = getLanguages(nbui);

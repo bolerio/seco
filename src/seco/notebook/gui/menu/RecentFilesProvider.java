@@ -16,8 +16,10 @@ import javax.swing.*;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
+import seco.gui.AppForm;
+import seco.gui.TopFrame;
 import seco.notebook.AppConfig;
-import seco.notebook.AppForm;
+import seco.notebook.GUIHelper;
 import seco.things.CellGroup;
 
 
@@ -72,8 +74,8 @@ public class RecentFilesProvider implements DynamicMenuProvider, Serializable
 		        public void actionPerformed(ActionEvent evt)
 		        {
 		            int i = recentVector.indexOf(evt.getActionCommand());
-		            AppForm.getInstance().open(recentH.get(i));
-		            AppForm.getInstance().getStatus().setMessage(null);
+		            GUIHelper.openNotebook(recentH.get(i));
+		            TopFrame.getInstance().setStatusBarMessage(null);
 		        }
 		    } );
 			menuItem.addMouseListener(mouseListener);
@@ -85,14 +87,14 @@ public class RecentFilesProvider implements DynamicMenuProvider, Serializable
 	{
 		public void mouseEntered(MouseEvent evt)
 		{
-			AppForm.getInstance().getStatus().setMessage(
+		    TopFrame.getInstance().setStatusBarMessage(
 				((JMenuItem)evt.getSource())
 				.getActionCommand());
 		}
 
 		public void mouseExited(MouseEvent evt)
 		{
-			AppForm.getInstance().getStatus().setMessage(null);
+		    TopFrame.getInstance().setStatusBarMessage(null);
 		}
 	} 
 }

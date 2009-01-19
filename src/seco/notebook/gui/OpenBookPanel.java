@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import seco.ThisNiche;
-import seco.notebook.AppForm;
+import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.things.CellUtils;
 
@@ -115,7 +115,7 @@ public class OpenBookPanel extends JPanel
         for(int i=0; i < removed.length; i++)
         {
             NotebookDocument gr = (NotebookDocument) removed[i];
-           AppForm.getInstance().open(ThisNiche.handleOf(gr));
+           GUIHelper.openNotebook(ThisNiche.handleOf(gr));
         }
     }    
 }

@@ -31,6 +31,7 @@ import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 
 import seco.ThisNiche;
+import seco.gui.TopFrame;
 import seco.notebook.NotebookDocument.UpdateAction;
 import seco.notebook.gui.DialogDescriptor;
 import seco.notebook.gui.DialogDisplayer;
@@ -823,7 +824,7 @@ public class NotebookEditorKit extends StyledEditorKit
 
         public void actionPerformed(java.awt.event.ActionEvent evt)
         {
-            JDialog dialog = new JDialog(AppForm.getInstance(),
+            JDialog dialog = new JDialog(TopFrame.getInstance(),
                     javaDocManagerAction);
             dialog.setSize(500, 500);
             dialog.add(new JavaDocPanel());
@@ -840,7 +841,7 @@ public class NotebookEditorKit extends StyledEditorKit
 
         protected void action(NotebookUI ui) throws Exception
         {
-            JDialog dialog = new JDialog(AppForm.getInstance(),
+            JDialog dialog = new JDialog(GUIUtilities.getFrame(ui),
                     ctxInspectorAction);
             dialog.setSize(500, 500);
             dialog.add(new RuntimeContextPanel(ui));
@@ -962,9 +963,7 @@ public class NotebookEditorKit extends StyledEditorKit
 
         public boolean isEnabled()
         {
-            NotebookUI editor = AppForm.getInstance().getCurrentNotebook();
-            if (editor == null)
-                editor = NotebookUI.getFocusedComponentEx();
+            NotebookUI editor = NotebookUI.getFocusedNotebookUI();
             if (editor == null)
                 return false;
             return isEnabled(editor);

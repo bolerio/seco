@@ -37,7 +37,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTML;
 
-import seco.notebook.AppForm;
+import seco.gui.TopFrame;
 import seco.notebook.gui.ToolbarButton;
 
 import static javax.swing.text.html.HTML.Tag.*;
@@ -199,7 +199,7 @@ public class HTMLToolBar extends JToolBar
     public void showAttributes(HTMLEditor editor, int p)
     {
         //TODO: change this method, because buttons are not persistent
-        if(AppForm.PICCOLO) return;
+        if(TopFrame.PICCOLO) return;
             
         AttributeSet attr = editor.getDoc().getCharacterElement(p)
                 .getAttributes();

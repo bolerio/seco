@@ -13,18 +13,9 @@ import javax.swing.text.Element;
 
 import org.hypergraphdb.HGHandle;
 
-import seco.ThisNiche;
-import seco.notebook.ElementType;
+import seco.gui.PiccoloCanvas;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookTransferHandler;
-import seco.notebook.NotebookUI;
-import seco.notebook.PiccoloCanvas;
-import seco.notebook.PiccoloCanvasContainer;
-import seco.notebook.PiccoloFrame.PSwing0;
-import seco.notebook.piccolo.pswing.PSwingCanvas;
-import seco.things.Cell;
-import seco.things.CellGroup;
-import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
 

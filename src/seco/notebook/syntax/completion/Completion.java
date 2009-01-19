@@ -52,8 +52,9 @@ import javax.swing.text.Document;
 import javax.swing.text.EditorKit;
 import javax.swing.text.JTextComponent;
 
-import seco.notebook.AppForm;
+import seco.gui.AppForm;
 import seco.notebook.NotebookDocument;
+import seco.notebook.NotebookUI;
 import seco.notebook.Utilities;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.util.DocumentUtilities;
@@ -348,7 +349,7 @@ CaretListener, KeyListener, FocusListener, ListSelectionListener, ChangeListener
         //???assert (SwingUtilities.isEventDispatchThread()); // expected in AWT only
 
         boolean cancel = false;
-        JTextComponent component = AppForm.getInstance().getCurrentNotebook();
+        JTextComponent component = NotebookUI.getFocusedNotebookUI();
         if(component == null) return;
         if (component != getActiveComponent()) {
                 
@@ -374,7 +375,7 @@ CaretListener, KeyListener, FocusListener, ListSelectionListener, ChangeListener
             installKeybindings();
             cancel = true;
         }
-        Document document = AppForm.getInstance().getCurrentNotebook().getDocument();
+        Document document = NotebookUI.getFocusedNotebookUI().getDoc();
         if (document != getActiveDocument()) {
             activeDocument = new WeakReference<Document>(document);
             cancel = true;

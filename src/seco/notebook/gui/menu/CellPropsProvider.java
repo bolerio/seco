@@ -13,7 +13,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.text.Element;
 
-import seco.notebook.AppForm;
+import seco.gui.AppForm;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.XMLConstants;
@@ -102,7 +102,7 @@ public class CellPropsProvider implements DynamicMenuProvider
 	{
 		//AppForm app = (AppForm) GUIUtilities.getFrame(menu);
 		//if (app == null) return;
-		NotebookUI nbui = NotebookUI.getFocusedComponentEx();//app.getCurrentNotebook();
+		NotebookUI nbui = NotebookUI.getFocusedNotebookUI();//app.getCurrentNotebook();
 		if (nbui == null) return;
 		int offset = nbui.getCaretPosition();
 		_update(menu, nbui, offset);

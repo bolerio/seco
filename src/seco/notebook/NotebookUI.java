@@ -67,6 +67,7 @@ import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 
 import seco.ThisNiche;
+import seco.gui.TopFrame;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.UpdatablePopupMenu;
 import seco.notebook.gui.menu.CellGroupPropsProvider;
@@ -132,7 +133,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         setCaretPosition(0);
         initKeyBindings();
         setDragEnabled(true);
-        setDoubleBuffered(!AppForm.PICCOLO);
+        setDoubleBuffered(!TopFrame.PICCOLO);
         setTransferHandler(new NotebookTransferHandler());
         if (popupMenu == null)
         {
@@ -941,7 +942,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     private static final Object FOCUSED_COMPONENT = new StringBuilder(
             "JTextComponent_FocusedComponent");
 
-    public static final NotebookUI getFocusedComponentEx()
+    public static final NotebookUI getFocusedNotebookUI()
     {
         return (NotebookUI) AppContext.getAppContext().get(FOCUSED_COMPONENT);
     }
@@ -951,8 +952,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         if (c instanceof NotebookUI)
         {
             AppContext.getAppContext().put(FOCUSED_COMPONENT, (NotebookUI) c);
-            AppForm.getInstance().setCurrentNotebook((NotebookUI) c);
-            // System.out.println("Focused: " +
+           // System.out.println("Focused: " +
             // AppForm.getInstance().currentBook.getDoc().getBook().getName());
         }
     }

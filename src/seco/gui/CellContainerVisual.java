@@ -7,8 +7,6 @@ import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 
 import seco.ThisNiche;
-import seco.notebook.PiccoloCanvas;
-import seco.notebook.PiccoloFrame;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellVisual;
@@ -30,10 +28,10 @@ public class CellContainerVisual implements CellVisual
         //container canvas....
         if (parentVisual == null) // top container
         {
-            canvas = PiccoloFrame.getInstance().getCanvas();
+            canvas = TopFrame.getInstance().getCanvas();
             Rectangle r = (Rectangle) element.getAttribute(VisualAttribs.rect);
             if(r != null) 
-                PiccoloFrame.getInstance().setBounds(r);
+                TopFrame.getInstance().setBounds(r);
         }
         else
         {            

@@ -54,7 +54,8 @@ import javax.swing.text.View;
 import javax.swing.text.Position.Bias;
 import javax.swing.text.html.CSS;
 
-import seco.notebook.AppForm;
+import seco.gui.AppForm;
+import seco.gui.TopFrame;
 import seco.notebook.ElementType;
 import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
@@ -140,18 +141,17 @@ public class HtmlView extends HidableComponentView
             addFocusListener(new FocusListener() {
                 public void focusGained(FocusEvent e)
                 {
-
-                    AppForm f = AppForm.getInstance();
-                    f.getCurrentNotebook().getSelectionManager()
-                            .clearSelections();
+                    NotebookUI ui = getNotebookUI();
+                    if (ui == null) return;
+                    ui.getSelectionManager().clearSelections();
                     // .setCaretPosition(getElement().getStartOffset());
-                    f.showHTMLToolBar(true);
+                    TopFrame.getInstance().showHTMLToolBar(true);
                     editor = InnerHTMLEditor.this;
                 }
 
                 public void focusLost(FocusEvent e)
                 {
-                    AppForm.getInstance().showHTMLToolBar(false);
+                    TopFrame.getInstance().showHTMLToolBar(false);
                 }
             });
 

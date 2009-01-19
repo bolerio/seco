@@ -12,7 +12,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import seco.notebook.AppForm;
+import seco.gui.AppForm;
 import seco.notebook.NotebookUI;
 import seco.notebook.gui.GUIUtilities;
 
@@ -32,7 +32,7 @@ public class GroupingProvider implements DynamicMenuProvider
 		//app = (AppForm) GUIUtilities.getFrame(menu);
 		//if(app != null)	
 		//	nbui = app.getCurrentNotebook();
-		nbui = NotebookUI.getFocusedComponentEx();
+		nbui = NotebookUI.getFocusedNotebookUI();
 		if(nbui == null) return;
 		
 		JMenuItem mi = new JMenuItem(new AbstractAction("Group Cells"){

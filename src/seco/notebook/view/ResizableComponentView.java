@@ -32,7 +32,7 @@ import javax.swing.text.Position;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.View;
 
-import seco.notebook.AppForm;
+import seco.gui.TopFrame;
 import seco.notebook.NotebookUI;
 import seco.notebook.SelectionManager;
 import seco.notebook.SelectionManager.Selection;
@@ -94,7 +94,7 @@ public class ResizableComponentView extends HidableComponentView implements
         Component comp = (Component) attr
                 .getAttribute(StyleConstants.ComponentAttribute);
         panel = new ResizableComponent(comp);
-        panel.setDoubleBuffered(!AppForm.PICCOLO);
+        panel.setDoubleBuffered(!TopFrame.PICCOLO);
        
         final NotebookUI ui = (NotebookUI) getContainer();
         ui.getSelectionManager().put(getElement(), this);

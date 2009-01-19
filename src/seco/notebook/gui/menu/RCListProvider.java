@@ -28,7 +28,9 @@ import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
 import seco.U;
-import seco.notebook.AppForm;
+import seco.gui.AppForm;
+import seco.gui.TopFrame;
+import seco.notebook.NotebookUI;
 import seco.rtenv.RuntimeContext;
 
 
@@ -47,7 +49,7 @@ public class RCListProvider implements DynamicMenuProvider
 				RuntimeContext rc = (RuntimeContext) hget(rh);			
 				final JRadioButtonMenuItem item = new JRadioButtonMenuItem(rc.getName());
 				final HGHandle bh = ThisNiche.getHyperGraph().getHandle(
-					AppForm.getInstance().getCurrentNotebook().getDoc().getBook());
+				        NotebookUI.getFocusedNotebookUI().getDoc().getBook());
 				if (ThisNiche.getContextHandleFor(bh).equals(rh))
 					item.setSelected(true);
 				group.add(item);			
@@ -58,7 +60,7 @@ public class RCListProvider implements DynamicMenuProvider
 					{
 						ThisNiche.setContextFor(bh, rh);
 						item.setSelected(true);
-						AppForm.getInstance().setCurrentEvaluationContext(rh);
+						TopFrame.setCurrentEvaluationContext(rh);
 					}
 				};
 				act.putValue(Action.NAME, rc.getName());

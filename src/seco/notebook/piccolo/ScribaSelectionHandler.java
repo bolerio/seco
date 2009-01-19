@@ -22,8 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import seco.gui.PiccoloFrame.PSwing0;
 import seco.notebook.NotebookUI;
-import seco.notebook.PiccoloFrame.PSwing0;
 import seco.notebook.piccolo.pswing.PSwing;
 
 import edu.umd.cs.piccolo.PCamera;

@@ -11,8 +11,8 @@ import java.awt.FileDialog;
 import java.awt.Frame;
 import javax.swing.JFileChooser;
 
+import seco.gui.AppForm;
 import seco.notebook.AppConfig;
-import seco.notebook.AppForm;
 
 import java.io.File;
 import java.util.Iterator;
@@ -51,7 +51,7 @@ public abstract class FileUtil
 	 * @param filters an array of ExtFileFilters that let you filter based on
 	 * extension
 	 */
-	public static File getFile(AppForm frame, String title, int load_save_custom,
+	public static File getFile(Frame frame, String title, int load_save_custom,
 			ExtFileFilter[] filters)
 	{
 		return getFile(frame, title, load_save_custom, filters, null, null, false);
@@ -70,7 +70,7 @@ public abstract class FileUtil
 	 * @param custom_approve_text if this is a custom dialog, then custom text
 	 * should be on the approve button.
 	 */
-	public static File getFile(AppForm frame, String title, int load_save_custom,
+	public static File getFile(Frame frame, String title, int load_save_custom,
 			ExtFileFilter[] filters, String start_dir,
 			String custom_approve_text, boolean dir_only)
 	{

@@ -210,6 +210,11 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         return (CellGroupMember) ThisNiche.hg.get(bookH);
     }
+    
+    public HGHandle getBookHandle()
+    {
+        return bookH;
+    }
 
     public void updateCell(Element inner, UpdateAction action)
             throws BadLocationException

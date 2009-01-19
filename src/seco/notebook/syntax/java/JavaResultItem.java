@@ -38,8 +38,9 @@ import javax.swing.text.EditorKit;
 import javax.swing.text.JTextComponent;
 import javax.swing.*;
 
-import seco.notebook.AppForm;
+import seco.gui.AppForm;
 import seco.notebook.NotebookDocument;
+import seco.notebook.NotebookUI;
 import seco.notebook.Utilities;
 import seco.notebook.storage.PackageInfo;
 import seco.notebook.syntax.completion.AsyncCompletionTask;
@@ -223,8 +224,9 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
 	public CompletionTask createDocumentationTask()
 	{
 		return new AsyncCompletionTask(
-				new BshCompletionProvider.DocQuery(this), AppForm.getInstance()
-						.getCurrentNotebook());
+				new BshCompletionProvider.DocQuery(this), 
+				NotebookUI.getFocusedNotebookUI());
+	            
 	}
 
 	public CompletionTask createToolTipTask()

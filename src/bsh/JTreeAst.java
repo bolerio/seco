@@ -30,7 +30,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import seco.notebook.AppForm;
+import seco.gui.AppForm;
 import seco.notebook.NotebookUI;
 import bsh.engine.ScriptContextEngineView;
 
@@ -77,7 +77,7 @@ public class JTreeAst extends JTree
 	
 	private void setNS(Interpreter inter)
 	{
-		NotebookUI ui = AppForm.getInstance().getCurrentNotebook();
+	    NotebookUI ui = NotebookUI.getFocusedNotebookUI();
 		if(ui == null)	return;
 		ScriptContext scriptContext = ui.getDoc().getScriptingContext();
 		bsh.NameSpace contextNameSpace = getEngineNameSpace( scriptContext);
@@ -90,7 +90,7 @@ public class JTreeAst extends JTree
 		final SimpleNode node = (SimpleNode) getLastSelectedPathComponent();
 		//node.getLineNumber();
 		final Interpreter inter = new Interpreter();
-		NotebookUI ui = AppForm.getInstance().getCurrentNotebook();
+		NotebookUI ui = NotebookUI.getFocusedNotebookUI();
 		ScriptContext scriptContext = ui.getDoc().getScriptingContext();
 		final CallStack callstack = new CallStack(getEngineNameSpace( scriptContext) ); //inter.get.globalNameSpace );
 		

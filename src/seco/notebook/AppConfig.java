@@ -25,6 +25,7 @@ import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
 import seco.U;
+import seco.gui.AppForm;
 
 
 

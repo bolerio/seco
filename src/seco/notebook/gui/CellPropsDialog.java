@@ -11,6 +11,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -73,7 +74,7 @@ public class CellPropsDialog extends JDialog
 	protected StyleType style_type;
 	protected NBStyle style;
 
-	public CellPropsDialog(final JFrame parent, NotebookDocument doc,
+	public CellPropsDialog(final Frame parent, NotebookDocument doc,
 			StyleType style_type)
 	{
 		super(parent, "Properties for: " + style_type.getDescription(), true);

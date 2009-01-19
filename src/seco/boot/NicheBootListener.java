@@ -11,8 +11,9 @@ import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.event.HGEvent;
 import org.hypergraphdb.event.HGListener;
 import seco.ThisNiche;
-import seco.notebook.AppForm;
-import seco.notebook.PiccoloFrame;
+import seco.gui.AppForm;
+import seco.gui.PiccoloFrame;
+import seco.gui.TopFrame;
 import seco.rtenv.RuntimeContext;
 import seco.things.CellGroup;
 import seco.things.CellVisual;
@@ -22,9 +23,9 @@ public class NicheBootListener implements HGListener
     public Result handle(HyperGraph hg, HGEvent event)
     {
     	ThisNiche.bindNiche(hg);
-        PiccoloFrame s = PiccoloFrame.getInstance();
+    	TopFrame s = TopFrame.getInstance();
         RuntimeContext topRuntime = ThisNiche.getTopContext().getRuntimeContext(); 
-        topRuntime.getBindings().put("desktop", AppForm.getInstance());
+        topRuntime.getBindings().put("desktop", TopFrame.getInstance());
         ThisNiche.hg.update(topRuntime);
 //            s.loadComponents();
 //            AppForm.getInstance().openBooks();
