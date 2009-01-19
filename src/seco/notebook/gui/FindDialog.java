@@ -35,7 +35,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
-import seco.gui.AppForm;
+import seco.gui.StandaloneFrame;
 
 
 public class FindDialog extends JDialog  

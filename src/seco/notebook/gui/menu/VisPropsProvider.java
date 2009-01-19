@@ -9,7 +9,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import seco.gui.AppForm;
+import seco.gui.StandaloneFrame;
 import seco.notebook.NotebookUI;
 import seco.notebook.StyleType;
 import seco.notebook.gui.CellPropsDialog;

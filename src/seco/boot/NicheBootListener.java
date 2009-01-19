@@ -11,7 +11,7 @@ import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.event.HGEvent;
 import org.hypergraphdb.event.HGListener;
 import seco.ThisNiche;
-import seco.gui.AppForm;
+import seco.gui.StandaloneFrame;
 import seco.gui.PiccoloFrame;
 import seco.gui.TopFrame;
 import seco.rtenv.RuntimeContext;

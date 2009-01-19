@@ -22,7 +22,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.text.Element;
 
-import seco.gui.AppForm;
+import seco.gui.StandaloneFrame;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.gui.GUIUtilities;
@@ -35,7 +35,7 @@ import seco.things.CellUtils;
 public class CellLangProvider implements DynamicMenuProvider
 {
 	protected transient NotebookUI nbui;
-	protected transient AppForm app;
+	protected transient StandaloneFrame app;
 	transient MouseListener mouseListener;
 
 	public CellLangProvider()

@@ -25,7 +25,7 @@ import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
 import seco.U;
-import seco.gui.AppForm;
+import seco.gui.StandaloneFrame;
 
 
 
@@ -137,7 +137,7 @@ public class AppConfig
         // if (true) return new File(HARDCODED);
         try
         {
-            CodeSource cs = AppForm.class.getProtectionDomain().getCodeSource();
+            CodeSource cs = StandaloneFrame.class.getProtectionDomain().getCodeSource();
             URL url = null;
             if (cs != null)
             {
@@ -147,9 +147,9 @@ public class AppConfig
                     // Try to find 'cls' definition as a resource; this is not
                     // documented to be legal, but Sun's implementations seem to
                     // allow this:
-                    final ClassLoader clsLoader = AppForm.class
+                    final ClassLoader clsLoader = StandaloneFrame.class
                             .getClassLoader();
-                    final String clsAsResource = AppForm.class.getName()
+                    final String clsAsResource = StandaloneFrame.class.getName()
                             .replace('.', '/').concat(".class");
                     url = clsLoader != null ? clsLoader
                             .getResource(clsAsResource) : ClassLoader
@@ -197,7 +197,7 @@ public class AppConfig
                 }
             }
             AppConfig.classLoader = new URLClassLoader(pluginURLs
-                    .toArray(new URL[pluginURLs.size()]), AppForm.class
+                    .toArray(new URL[pluginURLs.size()]), StandaloneFrame.class
                     .getClassLoader());
             Thread.currentThread().setContextClassLoader(AppConfig.classLoader);
         }

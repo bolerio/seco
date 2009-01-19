@@ -12,15 +12,14 @@ import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import seco.gui.AppForm;
+import seco.gui.StandaloneFrame;
 import seco.notebook.NotebookUI;
-import seco.notebook.gui.GUIUtilities;
 
 
 public class GroupingProvider implements DynamicMenuProvider
 {
 	protected NotebookUI nbui;
-	protected AppForm app;
+	protected StandaloneFrame app;
 	
 	public boolean updateEveryTime()
 	{
@@ -29,9 +28,6 @@ public class GroupingProvider implements DynamicMenuProvider
 
 	public void update(JMenu menu)
 	{
-		//app = (AppForm) GUIUtilities.getFrame(menu);
-		//if(app != null)	
-		//	nbui = app.getCurrentNotebook();
 		nbui = NotebookUI.getFocusedNotebookUI();
 		if(nbui == null) return;
 		

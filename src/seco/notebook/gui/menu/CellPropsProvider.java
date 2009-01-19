@@ -13,7 +13,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.text.Element;
 
-import seco.gui.AppForm;
+import seco.gui.StandaloneFrame;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.XMLConstants;

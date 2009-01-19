@@ -15,7 +15,7 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.text.Element;
 import javax.swing.*;
 
-import seco.gui.AppForm;
+import seco.gui.StandaloneFrame;
 import seco.notebook.syntax.ScriptSupport;
 import seco.things.Cell;
 import seco.things.CellUtils;
@@ -51,11 +51,11 @@ public class StatusBar extends JPanel implements CaretListener
 	private boolean showCaretStatus;
 	private boolean showCellEngine;
 	static final String caretTestStr = "9999(99,999)";
-	private AppForm view;
+	private StandaloneFrame view;
 	private static final String DEFAULT = "DEFAULT";
     private static final Border BORDER = new BevelBorder(BevelBorder.LOWERED);
     
-	public StatusBar(AppForm view)
+	public StatusBar(StandaloneFrame view)
 	{
 		super(new BorderLayout());
 		setBorder(new CompoundBorder(new EmptyBorder(4, 0, 0, 0), UIManager

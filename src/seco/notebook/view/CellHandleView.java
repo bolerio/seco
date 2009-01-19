@@ -34,7 +34,7 @@ import javax.swing.text.Element;
 import javax.swing.text.View;
 import javax.swing.text.Position.Bias;
 
-import seco.gui.AppForm;
+import seco.gui.StandaloneFrame;
 import seco.notebook.ElementType;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;

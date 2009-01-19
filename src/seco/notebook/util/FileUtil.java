@@ -11,7 +11,7 @@ import java.awt.FileDialog;
 import java.awt.Frame;
 import javax.swing.JFileChooser;
 
-import seco.gui.AppForm;
+import seco.gui.StandaloneFrame;
 import seco.notebook.AppConfig;
 
 import java.io.File;
@@ -35,7 +35,7 @@ public abstract class FileUtil
 	 * @param title the title of the dialog box
 	 * @param load_save_custom a flag for the type of file dialog
 	 */
-	public static File getFile(AppForm frame, String title, int load_save_custom)
+	public static File getFile(StandaloneFrame frame, String title, int load_save_custom)
 	{
 		return getFile(frame, title, load_save_custom, new ExtFileFilter[] {}, null,
 				null, false);

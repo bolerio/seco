@@ -28,7 +28,7 @@ import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
 import seco.U;
-import seco.gui.AppForm;
+import seco.gui.StandaloneFrame;
 import seco.gui.TopFrame;
 import seco.notebook.NotebookUI;
 import seco.rtenv.RuntimeContext;

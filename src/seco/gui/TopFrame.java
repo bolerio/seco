@@ -30,7 +30,7 @@ public abstract class TopFrame extends JFrame
     public static TopFrame getInstance()
     { 
         if (instance == null) 
-            instance = (PICCOLO) ? new PiccoloFrame() : new AppForm();
+            instance = (PICCOLO) ? new PiccoloFrame() : new StandaloneFrame();
         return instance;
     }
     

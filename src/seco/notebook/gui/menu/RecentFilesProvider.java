@@ -16,7 +16,7 @@ import javax.swing.*;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
-import seco.gui.AppForm;
+import seco.gui.StandaloneFrame;
 import seco.gui.TopFrame;
 import seco.notebook.AppConfig;
 import seco.notebook.GUIHelper;
