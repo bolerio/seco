@@ -630,7 +630,9 @@ public class GUIHelper
                 return;
             JScrollPane comp = (JScrollPane) getJTabbedPane().getComponentAt(
                     getJTabbedPane().getSelectedIndex());
-             updateTitle(true);
+            NotebookUI.setFocusedNotebookUI(
+                    (NotebookUI)comp.getViewport().getView());
+            updateTitle(true);
             // System.out.println("TabbedPaneChangeListener: " + e);
         }
     }

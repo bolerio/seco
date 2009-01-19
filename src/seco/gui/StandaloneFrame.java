@@ -30,17 +30,9 @@ public class StandaloneFrame extends TopFrame
     private StatusBar status;
     private JPanel statusPane;
 
-    public StandaloneFrame()
+    StandaloneFrame()
     {
-        // XXX
-        PlasticLookAndFeel.setPlasticTheme(new DesertBluer());
-        try
-        {
-            UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
-        }
-        catch (Exception e)
-        {
-        }
+       
     }
 
     protected void initFrame()
@@ -53,7 +45,7 @@ public class StandaloneFrame extends TopFrame
 
         setJMenuBar(GUIHelper.getMenuBar());
         getContentPane().setLayout(new AKDockLayout());
-        GUIHelper.getMainToolBar().setFloatable(true);
+        //GUIHelper.getMainToolBar().setFloatable(true);
         getContentPane().add(GUIHelper.getMainToolBar(), AKDockLayout.NORTH);
         getContentPane().add(GUIHelper.getJTabbedPane(), BorderLayout.CENTER);
         getContentPane().add(statusPane, BorderLayout.SOUTH);

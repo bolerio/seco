@@ -5,9 +5,14 @@ import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 import javax.swing.event.CaretListener;
 
 import org.hypergraphdb.HGHandle;
+
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
+import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
+import com.jgoodies.looks.plastic.theme.DesertBluer;
 
 import seco.ThisNiche;
 import seco.notebook.GUIHelper;
@@ -36,6 +41,16 @@ public abstract class TopFrame extends JFrame
     
     public TopFrame() throws HeadlessException
     {
+        // XXX
+        PlasticLookAndFeel.setPlasticTheme(new DesertBluer());
+        try
+        {
+            UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
+        }
+        catch (Exception e)
+        {
+        }
+        
         setIconImage(Toolkit.getDefaultToolkit().getImage(
                 getClass().getResource(GUIHelper.LOGO_IMAGE_RESOURCE)));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
