@@ -99,7 +99,10 @@ public class GUIHelper
     public static final HGPersistentHandle TABBED_PANE_GROUP_HANDLE = HGHandleFactory
             .makeHandle("7b01b680-e186-11dd-ad8b-0800200c9a66");
 
-    public static JTabbedPane tabbedPane;
+    private static final String TAB_INDEX = "tab_index";
+    public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
+
+    private static JTabbedPane tabbedPane;
 
     public static JTabbedPane getJTabbedPane()
     {
@@ -164,6 +167,7 @@ public class GUIHelper
         toolBar.add(new ToolbarButton( kit
                 .getActionByName(NotebookEditorKit.htmlAction),
                 "HTML Preview ON/OFF"));
+        toolBar.setFloatable(false);
         ThisNiche.hg.define(TOOLBAR_HANDLE, toolBar);
         return toolBar;
     }
@@ -177,12 +181,10 @@ public class GUIHelper
         htmlToolBar = new HTMLToolBar();
         htmlToolBar.init();
         htmlToolBar.setEnabled(false);
+        htmlToolBar.setFloatable(false);
         ThisNiche.hg.define(HTML_TOOLBAR_HANDLE, htmlToolBar);
         return htmlToolBar;
     }
-
-    public static final String TAB_INDEX = "tab_index";
-    public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
 
     // disable menuItems if no notebook presented
     // use GlobMenuItem to prevent disabling
@@ -796,15 +798,13 @@ public class GUIHelper
         EvaluationContext ctx = 
             ThisNiche.getEvaluationContext(TopFrame.getCurrentEvaluationContext());
         CellGroup nb = new CellGroup("CG");
-        HGHandle nbHandle = ThisNiche.hg.add(nb); // HGSystemFlags.MUTABLE |
-        // HGSystemFlags.MANAGED);
+        HGHandle nbHandle = ThisNiche.hg.add(nb); 
         ThisNiche.hg.freeze(nbHandle);
         ui = new NotebookUI(nbHandle, ctx);
         ThisNiche.hg.add(new ContextLink(nbHandle, TopFrame.getCurrentEvaluationContext()));
         ui.setCaretPosition(0);
         ui.getDoc().setModified(true);
          addNotebookTab(ui);
-        //AppConfig.getInstance().getOpenedGroups().add(ui.getDoc().getHandle());
         addTabToTabbedPaneGroup(ui.getDoc().getHandle());
     }
 

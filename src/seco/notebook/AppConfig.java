@@ -41,7 +41,6 @@ public class AppConfig
 	private String mrud = null;
     //Most-Recently-Used-Files
 	private HashSet<HGHandle> mrufs = new HashSet<HGHandle>(10);
-	private HashSet<HGHandle> openedGroupes = new HashSet<HGHandle>(10);
 	private Map<String, Object> properties = new HashMap<String, Object>();
     static URLClassLoader classLoader;
     // dir for additional jars/plugins
@@ -87,16 +86,6 @@ public class AppConfig
 	{
 		mrufs = m;
 	}
-
-//	public HashSet<HGHandle> getOpenedGroups() 
-//	{
-//		return openedGroupes;
-//	}
-//
-//	public void setOpenedGroups(HashSet<HGHandle> openedFiles) 
-//	{
-//		this.openedGroupes = openedFiles;
-//	}
 
 	public Object getProperty(String key)
 	{

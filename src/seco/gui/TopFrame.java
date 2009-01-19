@@ -26,12 +26,11 @@ public abstract class TopFrame extends JFrame
 {
     public static boolean PICCOLO = true;
    
-    private static TopFrame instance;
     protected NotebookDocument.ModificationListener docListener;
     //current RuntimeContext
     public static HGHandle currentRC = ThisNiche.TOP_CONTEXT_HANDLE; 
 
-    
+    private static TopFrame instance;
     public static TopFrame getInstance()
     { 
         if (instance == null) 

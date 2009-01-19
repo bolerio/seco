@@ -11,15 +11,11 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 import javax.swing.event.CaretListener;
 
 import seco.notebook.GUIHelper;
 import seco.notebook.StatusBar;
 import seco.notebook.gui.AKDockLayout;
-import com.jgoodies.looks.plastic.PlasticLookAndFeel;
-import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
-import com.jgoodies.looks.plastic.theme.DesertBluer;
 
 /**
  * 
@@ -45,7 +41,6 @@ public class StandaloneFrame extends TopFrame
 
         setJMenuBar(GUIHelper.getMenuBar());
         getContentPane().setLayout(new AKDockLayout());
-        //GUIHelper.getMainToolBar().setFloatable(true);
         getContentPane().add(GUIHelper.getMainToolBar(), AKDockLayout.NORTH);
         getContentPane().add(GUIHelper.getJTabbedPane(), BorderLayout.CENTER);
         getContentPane().add(statusPane, BorderLayout.SOUTH);
