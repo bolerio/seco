@@ -16,7 +16,7 @@ public class CellDocumentType extends HGAtomTypeBase
     public Object make(HGPersistentHandle valueHandle, LazyRef<HGHandle[]> targetSet, IncidenceSetRef incidenceSet) 
     {
         HGPersistentHandle [] layout = graph.getStore().getLink(valueHandle);
-        CellDocument doc = new CellDocument(layout[0]); 
+        OutputCellDocument doc = new OutputCellDocument(layout[0]); 
         return doc;
     }
 
@@ -27,7 +27,7 @@ public class CellDocumentType extends HGAtomTypeBase
     public HGPersistentHandle store(Object instance) 
     {       
         HGPersistentHandle [] layout = new HGPersistentHandle[1];
-        CellDocument doc = (CellDocument)instance;
+        OutputCellDocument doc = (OutputCellDocument)instance;
         layout[0] =  graph.getPersistentHandle(doc.bookH);
         return graph.getStore().store(layout);
     }

@@ -124,7 +124,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         if (o instanceof CellGroupMember)
         {
             doc = (o instanceof CellGroup) ? new NotebookDocument(book,
-                    evalContext) : new CellDocument(book);
+                    evalContext) : new OutputCellDocument(book);
         } else
             doc = (NotebookDocument) o;
         if (doc == null) return;
@@ -354,6 +354,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 
     public void deleteSelectedElements()
     {
+        if(getDoc() instanceof OutputCellDocument) return;
         int offset = 0;
         for (Element el : new Vector<Element>(getSelectionManager()
                 .getSelection()))

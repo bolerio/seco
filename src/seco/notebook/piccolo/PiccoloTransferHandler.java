@@ -1,10 +1,7 @@
 package seco.notebook.piccolo;
 
-import java.awt.Dimension;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.JComponent;
