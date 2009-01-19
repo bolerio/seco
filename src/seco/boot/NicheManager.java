@@ -23,8 +23,8 @@ import seco.ThisNiche;
 import seco.U;
 import seco.gui.CellContainerVisual;
 import seco.gui.JComponentVisual;
-import seco.notebook.CellDocument;
-import seco.notebook.CellDocumentType;
+import seco.notebook.OutputCellDocument;
+import seco.notebook.OutputCellDocumentType;
 import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookDocumentType;
@@ -232,10 +232,10 @@ public class NicheManager
             type.setHyperGraph(hg);
             ts.addPredefinedType(NotebookUIType.HGHANDLE, type,
                     NotebookUI.class);
-            type = new CellDocumentType();
+            type = new OutputCellDocumentType();
             type.setHyperGraph(hg);
-            ts.addPredefinedType(CellDocumentType.HGHANDLE, type,
-                    CellDocument.class);
+            ts.addPredefinedType(OutputCellDocumentType.HGHANDLE, type,
+                    OutputCellDocument.class);
         }
         if(hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE) == null)
            GUIHelper.makeTopCellGroup(hg);

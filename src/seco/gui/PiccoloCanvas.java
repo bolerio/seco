@@ -15,11 +15,11 @@ import org.hypergraphdb.HGHandleFactory;
 import seco.ThisNiche;
 import seco.events.EvalCellEvent;
 import seco.gui.PiccoloFrame.PSwing0;
-import seco.notebook.CellDocument;
+import seco.notebook.OutputCellDocument;
 import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
-import seco.notebook.CellDocument.CopyEvalCellHandler;
+import seco.notebook.OutputCellDocument.CopyEvalCellHandler;
 import seco.notebook.piccolo.ScribaSelectionHandler;
 import seco.notebook.piccolo.pswing.PSwing;
 import seco.notebook.piccolo.pswing.PSwingCanvas;
@@ -129,7 +129,7 @@ public class PiccoloCanvas extends PSwingCanvas
                     HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
             CellUtils.addEventPubSub(EvalCellEvent.HANDLE, par,
                     ((NotebookUI) comp).getDoc().getHandle(),
-                    CellDocument.CopyEvalCellHandler.getInstance());
+                    OutputCellDocument.CopyEvalCellHandler.getInstance());
         } else
         {
             comp = new NotebookUI(h);
