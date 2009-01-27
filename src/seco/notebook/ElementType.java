@@ -30,7 +30,7 @@ public enum ElementType
 {
     notebook,
     //those 4 are the most important ones
-    wholeCell,
+    //wholeCell,
     cellGroupBox,
     inputCellBox,
     outputCellBox,
@@ -42,5 +42,6 @@ public enum ElementType
     charContent,
     expandHandle,
     component,
-    htmlCell
+    htmlCell,
+    fakeParagraph
 }

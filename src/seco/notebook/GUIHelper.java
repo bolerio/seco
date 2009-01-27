@@ -510,7 +510,7 @@ public class GUIHelper
         Action act = new AbstractAction("Close") {
             public void actionPerformed(ActionEvent e)
             {
-                System.out.println("AppForm - Close:");
+                //System.out.println("AppForm - Close:");
                 int res = promptAndSaveDoc();
                 if (res == JOptionPane.CANCEL_OPTION
                         || res == JOptionPane.CLOSED_OPTION)
@@ -736,6 +736,12 @@ public class GUIHelper
         CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         top.remove((CellGroupMember) ThisNiche.hg.get(h));
     }
+    
+    private static void removeFromTabbedPaneCellGroup(HGHandle h)
+    {
+        CellGroup top = ThisNiche.hg.get(TABBED_PANE_GROUP_HANDLE);
+        top.remove((CellGroupMember) ThisNiche.hg.get(h));
+    }
 
     static final boolean DRAGGABLE_TABS = !TopFrame.PICCOLO;
 
@@ -771,9 +777,11 @@ public class GUIHelper
     static void closeAt(int i)
     {
         JTabbedPane tabbedPane = getJTabbedPane();
-        HGHandle h = ThisNiche.handleOf( getNotebookAt(i));
+        HGHandle h = ThisNiche.handleOf(getNotebookAt(i));
         ThisNiche.hg.unfreeze(h);
-        removeFromTopCellGroup(h);
+        //removeFromTabbedPaneCellGroup(h);
+        CellGroup top = ThisNiche.hg.get(TABBED_PANE_GROUP_HANDLE);
+        top.remove(i);
         tabbedPane.removeTabAt(i);
         if (tabbedPane.getTabCount() == 0)
             TopFrame.getInstance().setTitle("Seco");

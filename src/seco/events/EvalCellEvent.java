@@ -7,11 +7,7 @@ import javax.swing.undo.CannotUndoException;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
-import org.safehaus.uuid.UUIDGenerator;
 
-import seco.ThisNiche;
-import seco.things.Cell;
-import seco.things.CellGroup;
 import seco.things.CellUtils;
 
 
@@ -56,7 +52,7 @@ public class EvalCellEvent extends AbstractUndoableEdit
     public void redo() throws CannotRedoException
     {
         super.redo();
-        CellUtils.setOutputCell(cellH, value);
+        //CellUtils.setOutputCell(cellH, value);
         EvalCellEvent e = new EvalCellEvent(cellH, value, oldValue); 
         EventDispatcher.dispatch(EvalCellEvent.HANDLE, cellH, e);
     }
@@ -70,7 +66,7 @@ public class EvalCellEvent extends AbstractUndoableEdit
     public void undo() throws CannotUndoException
     {
         super.undo();
-        CellUtils.setOutputCell(cellH, oldValue);
+        //CellUtils.setOutputCell(cellH, oldValue);
         EvalCellEvent e = new EvalCellEvent(cellH, oldValue, value); 
         EventDispatcher.dispatch(EvalCellEvent.HANDLE, cellH, e);
     }

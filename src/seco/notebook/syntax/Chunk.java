@@ -291,7 +291,8 @@ public class Chunk extends Token implements TabExpander
 		super(id, offset, length, rules);
 		accessable = true;
 		style = styles[id];
-		background = style.getBackgroundColor();
+		if(style == null) style = styles[defaultID];
+		background =  style.getBackgroundColor();
 		if (background == null)
 			background = styles[defaultID].getBackgroundColor();
 	}

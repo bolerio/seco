@@ -114,8 +114,7 @@ public class InputCellView extends HidableBoxView
 	String getCaption()
 	{
 		return (makeNumLabel((Cell) NotebookDocument
-				.getNBElement(NotebookDocument.getUpperElement(getElement(),
-						ElementType.wholeCell))));
+				.getNBElement(((NotebookDocument)getDocument()).getWholeCellElement(getElement().getStartOffset()))));
 	}
 
 	String makeNumLabel(Cell cell)

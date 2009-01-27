@@ -16,8 +16,6 @@ import seco.events.EvalResultEventType;
 import seco.events.EventDispatcher;
 import seco.events.EventHandler;
 
-
-
 public class Cell extends BaseCellGroupMember implements EventHandler
 {
     HGAtomRef ref;
@@ -49,12 +47,17 @@ public class Cell extends BaseCellGroupMember implements EventHandler
     {
         if (eventType.equals(EvalResultEventType.HANDLE))
         {
-            HGHandle h = ThisNiche.handleOf(event);
-            if (h == null)
-                h = CellUtils.addSerializable(event);
-            ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
-            ThisNiche.hg.update(this);
+            updateValue(event);
         }
+    }
+    
+    public void updateValue(Object val)
+    {
+        HGHandle h = ThisNiche.handleOf(val);
+        if (h == null)
+            h = CellUtils.addSerializable(val);
+        ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
+        ThisNiche.hg.update(this);
     }
 
     @Override

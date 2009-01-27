@@ -948,7 +948,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         CellGroupMember nb = NotebookDocument.getNBElement(el);
         // some handle is selected, check if it's of the needed type
         if (type == ElementType.outputCellBox) return el;
-        if (type == ElementType.wholeCell && nb instanceof CellGroup) return null;
+        //if (type == ElementType.wholeCell && nb instanceof CellGroup) return null;
         return NotebookDocument.getUpperElement(el, type);
     }
 

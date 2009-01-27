@@ -7,33 +7,49 @@
  */
 package seco.notebook;
 
+import static seco.notebook.ElementType.cellGroup;
+import static seco.notebook.ElementType.cellGroupBox;
+import static seco.notebook.ElementType.cellHandle;
+import static seco.notebook.ElementType.charContent;
+import static seco.notebook.ElementType.commonCell;
+import static seco.notebook.ElementType.htmlCell;
+import static seco.notebook.ElementType.inputCellBox;
+import static seco.notebook.ElementType.insertionPoint;
+import static seco.notebook.ElementType.notebook;
+import static seco.notebook.ElementType.outputCellBox;
+import static seco.notebook.ElementType.paragraph;
+
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventListener;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Window;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import javax.script.*;
+
+import javax.script.ScriptContext;
+import javax.script.ScriptEngineManager;
+import javax.script.SimpleScriptContext;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
-import javax.swing.text.*;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Element;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.Position;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
 import javax.swing.undo.CompoundEdit;
 import javax.swing.undo.UndoableEdit;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGSystemFlags;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
@@ -42,7 +58,6 @@ import seco.events.CellGroupChangeEvent;
 import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
 import seco.events.EventDispatcher;
-import seco.events.EventPubSub;
 import seco.events.CellTextChangeEvent.EventType;
 import seco.events.handlers.AttributeChangeHandler;
 import seco.events.handlers.CellGroupChangeHandler;
@@ -58,13 +73,6 @@ import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
-import seco.things.EventListenerMap;
-import seco.things.IOUtils;
-import seco.things.Scriptlet;
-
-
-
-import static seco.notebook.ElementType.*;
 
 /**
  * 
@@ -116,27 +124,16 @@ public class NotebookDocument extends DefaultStyledDocument
                 .getAttribute(XMLConstants.CELL_STYLE);
         if (map != null) for (NBStyle s : map.values())
             addStyle(s);
-        Vector<ElementSpec> parseBuffer = new Vector<ElementSpec>();
+        Vector<ElementSpec> vec = new Vector<ElementSpec>();
         SimpleAttributeSet attr = new SimpleAttributeSet();
         attr.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
         attr.addAttribute(ATTR_CELL, bookH);
-        DocUtil.startTag(notebook, attr, 0, parseBuffer);
-        if (book.getArity() == 0) DocUtil.createInsertionPoint(attr,
-                parseBuffer);
+        DocUtil.startTag(notebook, attr, 0, vec);
+        DocUtil.createInsertionPoint(attr, vec);
         for (int i = 0; i < book.getArity(); i++)
-        {
-            DocUtil.createInsertionPoint(attr, parseBuffer);
-            CellGroupMember el = book.getElement(i);
-            if (el instanceof CellGroup) DocUtil.createCellGroup(this, book
-                    .getTargetAt(i), attr, parseBuffer);
-            else
-                DocUtil.createCell(this, book.getTargetAt(i), attr,
-                        parseBuffer, false);
-            if (i == book.getArity() - 1) DocUtil.createInsertionPoint(attr,
-                    parseBuffer);
-        }
-        DocUtil.endTag(parseBuffer);
-        create(parseBuffer.toArray(new ElementSpec[parseBuffer.size()]));
+            DocUtil.createCellGroupMember(this, book.getTargetAt(i), attr, vec);
+        DocUtil.endTag(vec);
+        create(vec.toArray(new ElementSpec[vec.size()]));
         update(UpdateAction.tokenize);
         update(UpdateAction.evalInitCells);
         setModified(false);
@@ -155,7 +152,8 @@ public class NotebookDocument extends DefaultStyledDocument
         Set<HGHandle> list = CellUtils.findAll(ThisNiche.hg, hg
                 .type(NotebookDocument.class));
         for (HGHandle h : list)
-            if (bookH.equals(((NotebookDocument) ThisNiche.hg.get(h)).bookH)) return handle = h;
+            if (bookH.equals(((NotebookDocument) ThisNiche.hg.get(h)).bookH))
+                return handle = h;
         // System.out.println("Adding DOC: " + getTitle());
         handle = ThisNiche.hg.add(this);
 
@@ -164,13 +162,11 @@ public class NotebookDocument extends DefaultStyledDocument
 
     protected AbstractElement createDefaultRoot()
     {
-        // grabs a write-lock for this initialization and
-        // abandon it during initialization so in normal
-        // operation we can detect an illegitimate attempt
-        // to mutate attributes.
         writeLock();
-        BranchElement section = new BlockElement(null, null);
-        BranchElement paragraph = new BranchElement(section, null);
+        SimpleAttributeSet attr = new SimpleAttributeSet();
+        attr.addAttribute(StyleConstants.NameAttribute, ElementType.fakeParagraph);
+        BranchElement section = new BlockElement(null, attr);
+        BranchElement paragraph = new BranchElement(section, attr);
 
         LeafElement brk = new LeafElement(paragraph, null, 0, 1);
         Element[] buff = new Element[1];
@@ -179,6 +175,8 @@ public class NotebookDocument extends DefaultStyledDocument
 
         buff[0] = paragraph;
         section.replace(0, 0, buff);
+       
+        
         writeUnlock();
         return section;
     }
@@ -186,8 +184,8 @@ public class NotebookDocument extends DefaultStyledDocument
     JTree getParseTree(int offset)
     {
         ScriptSupport man = getScriptSupport(offset);
-        if (man != null && man.getParser() != null) return man.getParser()
-                .getAstTree();
+        if (man != null && man.getParser() != null)
+            return man.getParser().getAstTree();
         return null;
     }
 
@@ -210,7 +208,7 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         return (CellGroupMember) ThisNiche.hg.get(bookH);
     }
-    
+
     public HGHandle getBookHandle()
     {
         return bookH;
@@ -219,14 +217,17 @@ public class NotebookDocument extends DefaultStyledDocument
     public void updateCell(Element inner, UpdateAction action)
             throws BadLocationException
     {
-        if (wholeCell != getElementType(inner)) return;
+        // if (wholeCell != getElementType(inner)) return;
+        // ???
+        if (!(getNBElement(inner) instanceof Cell)) return;
         if (UpdateAction.index == action)
         {
             indexes.put(getNBElementH(inner), createPosition(inner
                     .getStartOffset()));
             Element out_el = getLowerElement(inner, outputCellBox);
-            if (out_el != null) indexes.put(getNBElementH(out_el),
-                    createPosition(out_el.getStartOffset()));
+            if (out_el != null)
+                indexes.put(getNBElementH(out_el), createPosition(out_el
+                        .getStartOffset()));
             return;
         }
 
@@ -235,7 +236,8 @@ public class NotebookDocument extends DefaultStyledDocument
         {
             Cell cell = (Cell) getNBElement(inner);
             if (CellUtils.isInitCell(cell)) insertOutputCell(inner);
-        } else if (UpdateAction.reEvaluateOutputCells == action) insertOutputCell(inner);
+        }
+        else if (UpdateAction.reEvaluateOutputCells == action) insertOutputCell(inner);
         else if (UpdateAction.syncronize == action
                 || UpdateAction.tokenize == action
                 || UpdateAction.resetTokenMarker == action)
@@ -256,7 +258,8 @@ public class NotebookDocument extends DefaultStyledDocument
                     HTMLEditor ed = (HTMLEditor) html.getAttributes()
                             .getAttribute(ATTR_HTML_EDITOR);
                     CellUtils.setCellText(cell, ed.getContent());
-                } else if (e != null)
+                }
+                else if (e != null)
                 {
                     // CellUtils.setCellText(cell, getText(e.getStartOffset(), e
                     // .getEndOffset()
@@ -297,7 +300,9 @@ public class NotebookDocument extends DefaultStyledDocument
                         ex.printStackTrace();
                     }
                 }
-            } else if (wholeCell == getElementType(el))
+            }
+            else if (inputCellBox == getElementType(el)
+                    || outputCellBox == getElementType(el))
             {
                 try
                 {
@@ -323,14 +328,14 @@ public class NotebookDocument extends DefaultStyledDocument
             throws BadLocationException
     {
         if (cellGroup != getElementType(el)) return;
-        if (UpdateAction.index == action) indexes.put(getNBElementH(el),
-                createPosition(el.getStartOffset()));
+        if (UpdateAction.index == action)
+            indexes.put(getNBElementH(el), createPosition(el.getStartOffset()));
         for (int i = 0; i < el.getElementCount(); i++)
         {
             Element inner = el.getElement(i);
             if (cellGroupBox == getElementType(inner)) updateGroup(
                     getLowerElement(inner, cellGroup), action);
-            else if (wholeCell == getElementType(inner))
+            else if (getWholeCellElement(inner.getStartOffset()) != null)
             {
                 updateCell(inner, action);
             }
@@ -383,7 +388,7 @@ public class NotebookDocument extends DefaultStyledDocument
         writeUnlock();
     }
 
-    void resetScriptSupport(Element el)
+    private void resetScriptSupport(Element el)
     {
         ScriptSupport sup = getScriptSupport(el.getStartOffset());
         if (sup == null) return;
@@ -454,40 +459,47 @@ public class NotebookDocument extends DefaultStyledDocument
         return res.isError();
     }
 
+    private void update_output_cell(final EvalCellEvent e, int offset)
+            throws BadLocationException
+    {
+        Element el = getUpperElement(offset, outputCellBox);
+        int off = el.getStartOffset();
+        Vector<ElementSpec> vec = new Vector<ElementSpec>();
+        SimpleAttributeSet attr = new SimpleAttributeSet();
+        super.remove(off, (el.getEndOffset() - off) + 1);
+        DocUtil.endTag(vec);
+        DocUtil.endTag(vec);
+        DocUtil.createOutputCell(this, getNBElementH(el), attr, vec);
+        insert(off, vec.toArray(new ElementSpec[vec.size()]));
+    }
+
     public void cellEvaled(EvalCellEvent e)
     {
-        int offset = findElementOffset(e.getCellHandle());
+        HGHandle cellH = e.getCellHandle();
+        int offset = findElementOffset(cellH);
         if (offset < 0) return;
-        Element el = getUpperElement(offset, wholeCell);
-        Element el1 = getLowerElement(el, inputCellBox);
-        Element out_el = getLowerElement(el, outputCellBox);
+        boolean create_new_output_cell = true;
         try
         {
-            beginCompoundEdit("");
-            this.supressEvents = true;
-            if (out_el != null) super.remove(out_el.getStartOffset(), out_el
-                    .getEndOffset()
-                    - out_el.getStartOffset());
-            if (e.getValue() == null) return;
-
-            Vector<ElementSpec> vec = new Vector<ElementSpec>();
-            SimpleAttributeSet attr = new SimpleAttributeSet();
-            DocUtil.endTag(vec);
-            DocUtil.endTag(vec);
-            DocUtil.endTag(vec);
-            HGHandle cell = CellUtils.getOutCellHandle(e.getCellHandle());
-            DocUtil.createOutputCell(this, cell, attr, vec);
-            insert(el1.getEndOffset(), vec.toArray(new ElementSpec[vec.size()]));
+            for (HGHandle o : CellUtils.getOutCellHandles(cellH))
+            {
+                Cell cell = (Cell) ThisNiche.hg.get(o);
+                cell.updateValue(e.getValue());
+                int off = findElementOffset(o);
+                if (off < 0) continue;
+                create_new_output_cell = false;
+                update_output_cell(e, off);
+            }
         }
-        catch (BadLocationException ex)
+        catch (Exception ex)
         {
             ex.printStackTrace();
         }
-        finally
-        {
-            this.supressEvents = false;
-            endCompoundEdit();
-        }
+        if (!create_new_output_cell) return;
+        HGHandle outH = CellUtils.createOutputCellH(cellH, e.getValue());
+        Element el = getUpperElement(offset, inputCellBox);
+        CellGroup gr = (CellGroup) ThisNiche.hg.get(getContainerH(el));
+        gr.insert(gr.indexOf(cellH) + 1, outH);
     }
 
     // Element at offset should be InsertionPoint
@@ -508,7 +520,8 @@ public class NotebookDocument extends DefaultStyledDocument
                 HGHandle prev_gr = (isOutputCell(offset - 1)) ? getNBElementH(getWholeCellElement(offset - 1))
                         : getNBElementH(getParagraphElement(offset - 1));
                 i = par.indexOf(prev_gr) + 1;
-            } else
+            }
+            else
             {
                 par = (CellGroup) getNBElement(p);
                 int n = 1;
@@ -534,7 +547,8 @@ public class NotebookDocument extends DefaultStyledDocument
                 child = CellUtils.createGroupHandle();
                 CellGroup group = (CellGroup) ThisNiche.hg.get(child);
                 group.insert(0, CellUtils.createCellHandle(str));
-            } else
+            }
+            else
             {
                 child = CellUtils.createCellHandle(str);
                 result--;
@@ -542,7 +556,7 @@ public class NotebookDocument extends DefaultStyledDocument
         }
 
         Object childAtom = ThisNiche.hg.get(child);
-        
+
         if (!(childAtom instanceof CellGroup) && par == book)
         {
             HGHandle enc_gr = CellUtils.createGroupHandle();
@@ -552,7 +566,8 @@ public class NotebookDocument extends DefaultStyledDocument
             fireCellGroupChanged(new CellGroupChangeEvent(ThisNiche
                     .handleOf(par), i, new HGHandle[] { enc_gr },
                     new HGHandle[0]));
-        } else
+        }
+        else
         {
             // par.insert(i, child);
             fireCellGroupChanged(new CellGroupChangeEvent(ThisNiche
@@ -566,7 +581,7 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         Element el = getWholeCellElement(pos);
         // System.out.println("NBDoc - findNextInsPoint: " + pos + "->" + el);
-        if (el != null) return el.getEndOffset() - 1;
+        if (el != null) return el.getEndOffset() + 1;
         return pos;
     }
 
@@ -575,7 +590,7 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         Log.Trace("NBDoc - insertElements: " + offset + ":" + elements + ":"
                 + elements.size());
-        Element c_el = getUpperElement(offset, wholeCell);
+        Element c_el = getWholeCellElement(offset);
         Element gr_el = getUpperElement(offset, cellGroup);
         CellGroup cg = (CellGroup) getNBElement(gr_el);
         boolean isInsP = getUpperElement(offset, insertionPoint) != null;
@@ -596,48 +611,16 @@ public class NotebookDocument extends DefaultStyledDocument
         return true;
     }
 
-    void insert_first(HGHandle child, HGHandle parent, int offset)
-            throws BadLocationException
-    {
-        Element el = getUpperElement(offset, parent, true);
-        HGHandle par_parH = getContainerH(el);
-        CellGroup par_par = (CellGroup) ThisNiche.hg.get(par_parH);
-        int ind = par_par.indexOf(parent);
-        if (ind == -1) throw new BadLocationException("Wrong index", ind);
-        // just remove the old box and insert the newly updated one
-        if (notebook != getElementType(el)) removeCellBoxElement0(el);
-        insert(parent, par_parH, ind);
-    }
-
     public void insert(HGHandle child, HGHandle parentH, int ind)
             throws BadLocationException
     {
         if (ind == -1) throw new BadLocationException("Wrong index", ind);
         int offset = findElementOffset(parentH);
         CellGroup parent = (CellGroup) ThisNiche.hg.get(parentH);
-        boolean top = parentH.equals(bookH);
-        if (ind == 0)
-        {
-            if (!top)
-            {
-                insert_first(child, parentH, offset + 1);
-                return;
-            } else
-            {
-                offset++;
-            }
-        }
-
-        if (ind > 0 && ind < parent.getArity() - 1)
-        {
-            offset = findElementOffset(parent.getTargetAt(ind + 1));
-            // if(offset == -1)
-            // System.err.println("ERRROR: " + parentH + ":" +
-            // parent.getTargetAt(ind + 1) + ":" + indexes);
-        }
-
-        if((ind > 0 && ind == parent.getArity() - 1) || offset == -1)
-        { // last in a group
+       if (ind == 0)
+            offset++;
+        else 
+        { 
             HGHandle h = parent.getTargetAt(ind - 1);
             Element prev = getUpperElement(findElementOffset(h), h, true);
             offset = prev.getEndOffset() + 1;
@@ -645,24 +628,9 @@ public class NotebookDocument extends DefaultStyledDocument
 
         Vector<ElementSpec> vec = new Vector<ElementSpec>();
         SimpleAttributeSet attr = new SimpleAttributeSet();
-        if (!top)
-        {
-            DocUtil.endTag(vec);
-            DocUtil.endTag(vec);
-        } else
-            DocUtil.endTag(vec);
-        boolean cell_group_ins_p = false;
-        Element e = getUpperElement(offset - 1, insertionPoint);
-        if (e != null && cellGroup == getElementType(e.getParentElement())) cell_group_ins_p = true;
-        if (!cell_group_ins_p) DocUtil.endTag(vec);
-        Object ch = ThisNiche.hg.get(child);
-        if (ch instanceof Cell) DocUtil
-                .createCell(this, child, attr, vec, false);
-        else
-            DocUtil.createCellGroup(this, child, attr, vec);
-        if (top) DocUtil.createInsertionPoint(attr, vec);
-        System.out.println("insert - offset: " + offset + "new_cell: " + child
-                + " index:" + (ind) + " parent: " + parent);
+        
+        DocUtil.endTag(vec);  DocUtil.endTag(vec);
+        DocUtil.createCellGroupMember(this, child, attr, vec);
         insert(offset, vec.toArray(new ElementSpec[vec.size()]));
         update(UpdateAction.tokenize);
     }
@@ -685,20 +653,18 @@ public class NotebookDocument extends DefaultStyledDocument
         return getUpperElement(el, type, true);
     }
 
-    public Element getUpperElement(int offset, HGHandle type, boolean topmost)
+    private Element getUpperElement(int offset, HGHandle type, boolean topmost)
     {
         return getUpperElement(getParagraphElement(offset), type, topmost);
     }
 
-    public Element getUpperElement(Element el, HGHandle type, boolean topmost)
+    private Element getUpperElement(Element el, HGHandle type, boolean topmost)
     {
-        Log.Trace("getUpperElement: " + el + " type: " + type);
         boolean found = false;
         while (el != null && type != null)
         {
             found = type.equals(getNBElementH(el))
                     && getElementType(el) != insertionPoint;
-            // Log.Trace("getUpperElement: " + el + " found:" + found);
             if (found)
             {
                 if (!topmost) return el;
@@ -706,13 +672,14 @@ public class NotebookDocument extends DefaultStyledDocument
                 if (par != null)
                 {
                     if (!type.equals(getNBElementH(par))
-                            && getElementType(par) != insertionPoint) return el;
-                } else
+                            && getElementType(par) != insertionPoint)
+                        return el;
+                }
+                else
                     return el;
             }
             el = el.getParentElement();
         }
-        // Log.Trace("getUpperElement return default");
         return getDefaultRootElement();
     }
 
@@ -739,10 +706,9 @@ public class NotebookDocument extends DefaultStyledDocument
     public void insertString(int offset, String str, AttributeSet a)
             throws BadLocationException
     {
-        // Log.Trace("NBDOC - insertString -start: " + supressEvents);
         if (getUpperElement(offset, outputCellBox) != null) return;
-        if (getUpperElement(offset, insertionPoint) != null) insPointInsert(
-                offset, str);
+        if (getUpperElement(offset, insertionPoint) != null) 
+            insPointInsert(offset, str);
         else if (!CellUtils
                 .isReadonly(getNBElement(getEnclosingCellElement(offset))))
         {
@@ -753,7 +719,6 @@ public class NotebookDocument extends DefaultStyledDocument
                             .length());
             fireCellTextChanged(e);
         }
-        // Log.Trace("NBDOC - insertString - end");
     }
 
     // hack due to a possible bug in insert(int, ElementSpec[]), which calls
@@ -782,8 +747,8 @@ public class NotebookDocument extends DefaultStyledDocument
         CompoundEdit cE = null;
         if (DocumentEvent.EventType.INSERT.equals(dde.getType())) cE = makeCompoundEdit(
                 insertUndo, dde);
-        else if (DocumentEvent.EventType.REMOVE.equals(dde.getType())) cE = makeCompoundEdit(
-                removeUndo, dde);
+        else if (DocumentEvent.EventType.REMOVE.equals(dde.getType()))
+            cE = makeCompoundEdit(removeUndo, dde);
         if (cE != null) super.fireUndoableEditUpdate(new UndoableEditEvent(e
                 .getSource(), cE));
         else
@@ -897,13 +862,14 @@ public class NotebookDocument extends DefaultStyledDocument
         {
             if (!(o instanceof BlockElement)) return false;
             BlockElement el = (BlockElement) o;
-            if (this.getChildCount() == 0 || el.getChildCount() == 0) return super
-                    .equals(o);
-            if (this.getDocument().equals(el.getDocument())) if (this
-                    .getStartOffset() == el.getStartOffset()
-                    && this.getEndOffset() == el.getEndOffset()
-                    && ((getName() != null && getName().equals(el.getName())) || (getName() == null && el
-                            .getName() == null))) return true;
+            if (this.getChildCount() == 0 || el.getChildCount() == 0)
+                return super.equals(o);
+            if (this.getDocument().equals(el.getDocument()))
+                if (this.getStartOffset() == el.getStartOffset()
+                        && this.getEndOffset() == el.getEndOffset()
+                        && ((getName() != null && getName()
+                                .equals(el.getName())) || (getName() == null && el
+                                .getName() == null))) return true;
             return false;
         }
 
@@ -970,7 +936,8 @@ public class NotebookDocument extends DefaultStyledDocument
                         getNBElementH(el0), EventType.REMOVE, getText(offset,
                                 len), offset - el0.getStartOffset(), len);
                 fireCellTextChanged(e);
-            } else
+            }
+            else
                 // insPoint
                 super.remove(offset, len);
             return res;
@@ -1058,53 +1025,34 @@ public class NotebookDocument extends DefaultStyledDocument
         // endCompoundEdit();
     }
 
-    void removeCellBoxElement0(Element nb_el) throws BadLocationException
+    private void remove_cell_group_member(Element nb_el) throws BadLocationException
     {
         CellGroupMember nb = getNBElement(nb_el);
-        ElementType type = (nb instanceof Cell) ? wholeCell : cellGroupBox;
-        nb_el = getUpperElement(nb_el, type);
-        //TODO:why???
-        if(nb_el == null) return;
-        Log.Trace("1.removeCellBoxElement0 - length: "
-                + (nb_el.getEndOffset() - nb_el.getStartOffset()) + " offset: "
-                + nb_el.getStartOffset() + " nb: " + nb);
+        nb_el = (nb instanceof Cell) ? getWholeCellElement(nb_el
+                .getStartOffset()) : getUpperElement(nb_el, cellGroupBox);
+        if (nb_el == null) return;
         // + the insPoint after the cell
-        super.remove(nb_el.getStartOffset(), nb_el.getEndOffset()
-                - nb_el.getStartOffset() + 1);
+        super.remove(nb_el.getStartOffset(), (nb_el.getEndOffset()
+                - nb_el.getStartOffset()) + 1);
         setModified(true);
     }
 
     void removeCellBoxElement(Element el) throws BadLocationException
     {
-        removeCellBoxElement(el, true);
-    }
-
-    void removeCellBoxElement(Element el, boolean delete_empty)
-            throws BadLocationException
-    {
         HGHandle nb = getNBElementH(el);
         Element nb_el = getEnclosingCellElement(el);
-        if (isOutputCell(nb_el) && delete_empty)
+        Element gr_el = getContainerEl(nb_el, false);
+        while (gr_el != getRootElements()[0])
         {
-            Element up = getUpperElement(nb_el, wholeCell);
-            create_and_fire_eval_event(getNBElementH(up), null);
-
-        } else
-        {
-            Element gr_el = getContainerEl(nb_el, false);
-            if (delete_empty) while (gr_el != getRootElements()[0])
-            {
-                CellGroup gr = (CellGroup) getNBElement(gr_el);
-                if (gr.getArity() != 1) break;
-                nb_el = gr_el;
-                nb = getNBElementH(gr_el);
-                gr_el = getContainerEl(gr_el, false);
-            }
             CellGroup gr = (CellGroup) getNBElement(gr_el);
-            fireCellGroupChanged(new CellGroupChangeEvent(getNBElementH(gr_el),
-                    gr.indexOf(nb), new HGHandle[0], new HGHandle[] { nb }));
-            // gr.remove(nb);
+            if (gr.getArity() != 1) break;
+            nb_el = gr_el;
+            nb = getNBElementH(gr_el);
+            gr_el = getContainerEl(gr_el, false);
         }
+        CellGroup gr = (CellGroup) getNBElement(gr_el);
+        fireCellGroupChanged(new CellGroupChangeEvent(getNBElementH(gr_el), gr
+                .indexOf(nb), new HGHandle[0], new HGHandle[] { nb }));
     }
 
     private void create_and_fire_eval_event(HGHandle cellH, Object value)
@@ -1113,8 +1061,8 @@ public class NotebookDocument extends DefaultStyledDocument
         Object old = (oldH != null) ? ((Cell) ThisNiche.hg.get(oldH))
                 .getValue() : null;
         EvalCellEvent e = new EvalCellEvent(cellH, value, old);
-        if (e instanceof UndoableEdit) fireUndoableEditUpdate(new UndoableEditEvent(
-                this, (UndoableEdit) e));
+        if (e instanceof UndoableEdit)
+            fireUndoableEditUpdate(new UndoableEditEvent(this, (UndoableEdit) e));
         supressEvents = true;
         EventDispatcher.dispatch(EvalCellEvent.HANDLE, getHandle(), e);
         supressEvents = false;
@@ -1171,7 +1119,8 @@ public class NotebookDocument extends DefaultStyledDocument
         {
             outputCellFont = getFont(doc_style);
             // updateStyles();
-        } else if (style.getStyleType() == StyleType.inputCell)
+        }
+        else if (style.getStyleType() == StyleType.inputCell)
         {
             inputCellFont = getFont(doc_style);
             updateStyles();
@@ -1190,9 +1139,11 @@ public class NotebookDocument extends DefaultStyledDocument
     }
 
     // return the cell element which enclose the given offset
-    Element getWholeCellElement(int offset)
+    public Element getWholeCellElement(int offset)
     {
-        return getUpperElement(offset, wholeCell);
+        Element el = getUpperElement(offset, outputCellBox);
+        if (el == null) el = getUpperElement(offset, inputCellBox);
+        return el;
     }
 
     public boolean isInputCell(int offset)
@@ -1240,12 +1191,13 @@ public class NotebookDocument extends DefaultStyledDocument
         if (el == null) return null;
         ElementType type = getElementType(el);
         if (check_passed_in_el
-                && (type == outputCellBox || type == inputCellBox || type == cellGroupBox)) return el;
+                && (type == outputCellBox || type == inputCellBox || type == cellGroupBox))
+            return el;
         Element top = getUpperElement(el, outputCellBox, check_passed_in_el);
-        if (top == null) top = getUpperElement(el, inputCellBox,
-                check_passed_in_el);
-        if (top == null) top = getUpperElement(el, cellGroupBox,
-                check_passed_in_el);
+        if (top == null)
+            top = getUpperElement(el, inputCellBox, check_passed_in_el);
+        if (top == null)
+            top = getUpperElement(el, cellGroupBox, check_passed_in_el);
         if (top == null) top = el.getDocument().getRootElements()[0];
         return top;
     }
@@ -1297,9 +1249,11 @@ public class NotebookDocument extends DefaultStyledDocument
             // toggleInitCell(offset, c instanceof Cell);
             // else if(key.equals(XMLConstants.ATTR_READONLY))
             // toggleReadonlyCell(el, c instanceof Cell);
-            else if (key.equals(XMLConstants.ATTR_HTML)) toggleHTMLCell(offset);
-            if (evt instanceof UndoableEdit) fireUndoableEditUpdate(new UndoableEditEvent(
-                    this, (UndoableEdit) evt));
+            else if (key.equals(XMLConstants.ATTR_HTML))
+                toggleHTMLCell(offset);
+            if (evt instanceof UndoableEdit)
+                fireUndoableEditUpdate(new UndoableEditEvent(this,
+                        (UndoableEdit) evt));
         }
         finally
         {
@@ -1327,7 +1281,7 @@ public class NotebookDocument extends DefaultStyledDocument
                 {
                     int rem_offset = findElementOffset(removed[i]);
                     Element el = getUpperElement(rem_offset, removed[i], true);
-                    if (el != null) removeCellBoxElement0(el);
+                    if (el != null) remove_cell_group_member(el);
                 }
             }
             if (added != null && added.length > 0)
@@ -1372,7 +1326,7 @@ public class NotebookDocument extends DefaultStyledDocument
         int ind = par.indexOf(cell);
         try
         {
-            removeCellBoxElement0(el);
+            remove_cell_group_member(el);
             insert(cell, parH, ind);
         }
         catch (BadLocationException ex)
@@ -1418,7 +1372,7 @@ public class NotebookDocument extends DefaultStyledDocument
                     .getSyntaxStyles(support);
             styles = new SyntaxStyle[main.size()];
             Font f = getInputCellFont();
-            for (int i = 0; i < main.size(); i++)
+            for (int i = 0; i < main.size() - 1; i++)
                 styles[i] = main.get(i).makeSyntaxStyle(f);
             syntaxStyleMap.put(support.getScriptEngineName(), styles);
         }
@@ -1427,8 +1381,8 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public void fireCellTextChanged(CellTextChangeEvent e)
     {
-        if (e instanceof UndoableEdit) fireUndoableEditUpdate(new UndoableEditEvent(
-                this, (UndoableEdit) e));
+        if (e instanceof UndoableEdit)
+            fireUndoableEditUpdate(new UndoableEditEvent(this, (UndoableEdit) e));
         supressEvents = true;
         // Log.Trace("NBDOC - fireCellTextChanged: " + e);
         EventDispatcher.dispatch(CellTextChangeEvent.HANDLE, getHandle(), e);
@@ -1437,8 +1391,8 @@ public class NotebookDocument extends DefaultStyledDocument
 
     void fireCellGroupChanged(CellGroupChangeEvent e)
     {
-        if (e instanceof UndoableEdit) fireUndoableEditUpdate(new UndoableEditEvent(
-                this, (UndoableEdit) e));
+        if (e instanceof UndoableEdit)
+            fireUndoableEditUpdate(new UndoableEditEvent(this, (UndoableEdit) e));
         supressEvents = true;
         EventDispatcher.dispatch(CellGroupChangeEvent.HANDLE, getHandle(), e);
         supressEvents = false;
@@ -1540,8 +1494,8 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         Object[] listeners = listenerList.getListenerList();
         for (int i = listeners.length - 2; i >= 0; i -= 2)
-            if (listeners[i] == ModificationListener.class) ((ModificationListener) listeners[i + 1])
-                    .documentModified(o);
+            if (listeners[i] == ModificationListener.class)
+                ((ModificationListener) listeners[i + 1]).documentModified(o);
     }
 
     public static interface ModificationListener extends EventListener

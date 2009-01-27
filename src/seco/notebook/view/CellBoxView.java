@@ -55,12 +55,13 @@ public class CellBoxView extends HidableBoxView implements CollapsibleView
 			set_all_but_first(ElementType.cellGroup, true);
 			//the other stuff in first one
 			if(collapsed){
-			    set_all_but_first(ElementType.wholeCell, true);
+			    //set_all_but_first(ElementType.wholeCell, true); ???
+			    set_all_but_first(ElementType.inputCellBox, true);
 				set_all_but_first(ElementType.commonCell, true);
 			}
 			else
-				((HidableView)ViewUtils.getLowerView(this, ElementType.wholeCell)).setVisible(true);
-			//collapsed = ((CollapsibleView)ViewUtils.getLowerView(this, ElementType.wholeCell)).collapse(collapsed);
+			    ((HidableView)ViewUtils.getLowerView(this, ElementType.inputCellBox)).setVisible(true);
+				//???((HidableView)ViewUtils.getLowerView(this, ElementType.wholeCell)).setVisible(true);
 		}
 		else if (NotebookDocument.isOutputCell(getElement()))
 		{
@@ -76,7 +77,8 @@ public class CellBoxView extends HidableBoxView implements CollapsibleView
 			else
 			{
 				CollapsibleView v = (CollapsibleView)
-				    ViewUtils.getUpperView(this, ElementType.wholeCell);
+				ViewUtils.getUpperView(this, ElementType.inputCellBox);
+				    //???ViewUtils.getUpperView(this, ElementType.wholeCell);
 			    if(v != null){ 
 				collapsed = v.collapse(collapsed);
 				set_all_but_first(ElementType.commonCell, true);

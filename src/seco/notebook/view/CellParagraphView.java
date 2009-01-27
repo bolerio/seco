@@ -63,7 +63,7 @@ public class CellParagraphView extends javax.swing.text.ParagraphView implements
 	{
 		return 0;
 	}
-
+	
 	protected SizeRequirements calculateMinorAxisRequirements(int axis,
 			SizeRequirements r)
 	{
@@ -177,5 +177,15 @@ public class CellParagraphView extends javax.swing.text.ParagraphView implements
 			}
 		}
 	}
+	
+	/*
+     * Terrible hack to prevent infinite loop in FlowView.FlowStrategy.layout
+     * */
+    @Override
+    protected int getViewIndexAtPosition(int pos)
+    {
+        if(pos < 0) return 0;
+        return super.getViewIndexAtPosition(pos);
+    }
 	
 }

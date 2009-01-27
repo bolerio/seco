@@ -39,7 +39,7 @@ public class EvalCellHandler implements EventHandler
             {
                 if (e.getCellHandle().equals(subscriber))
                 {
-                    CellUtils.setOutputCell(e.getCellHandle(), e.getValue());
+                    //CellUtils.setOutputCell(e.getCellHandle(), e.getValue());
                     EventDispatcher.dispatch(EvalCellEvent.HANDLE, e.getCellHandle(), e);
                 }
             } else if (pub instanceof CellGroupMember 

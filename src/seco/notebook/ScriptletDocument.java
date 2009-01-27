@@ -4,7 +4,6 @@ import static seco.notebook.ElementType.commonCell;
 import static seco.notebook.ElementType.htmlCell;
 import static seco.notebook.ElementType.inputCellBox;
 import static seco.notebook.ElementType.notebook;
-import static seco.notebook.ElementType.wholeCell;
 
 import java.util.Map;
 import java.util.Vector;
@@ -58,9 +57,6 @@ public class ScriptletDocument extends NotebookDocument
     {
         Cell cell = (Cell) ThisNiche.hg.get(cellH);
         // System.out.println("createCell: " + cellH + ":" + cell);
-        attr.addAttribute(ATTR_CELL, cellH);
-        DocUtil.startTag(wholeCell, attr, 0, vec);
-        attr.removeAttribute(ATTR_CELL);
         attr = DocUtil.getDocStyle(doc, StyleType.inputCell);
         DocUtil.startTag(inputCellBox, attr, 0, vec);
         if (!CellUtils.isHTML(cell)) DocUtil.startTag(commonCell, attr, 0, vec);
@@ -74,7 +70,7 @@ public class ScriptletDocument extends NotebookDocument
         //attr.addAttribute(ATTR_CELL, cellH);
        // DocUtil.createCellHandle(attr, vec);
        // attr.removeAttribute(ATTR_CELL);
-        DocUtil.endTag(vec);
+
 //        boolean eval = CellUtils.isInitCell(cell);
 //        HGHandle out = CellUtils.getOutCellHandle(cellH);
 //        //System.out.println("createOutputCell: " + ((Cell)ThisNiche.hg.get(out)).getValue());

@@ -33,26 +33,27 @@ import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.IOUtils;
-
-
+import seco.things.Scriptlet;
 
 abstract class DocUtil
 {
     static final String ATTR_CELL = "CELL";
     private static final char[] NEWLINE = new char[] { '\n' };
-    
-    protected static void addSubContent(char[] data, int offs, Vector<ElementSpec> vec)
+
+    protected static void addSubContent(char[] data, int offs,
+            Vector<ElementSpec> vec)
     {
-        ElementSpec es1 = new ElementSpec(NotebookDocument.charAttrSet, ElementSpec.StartTagType);
+        ElementSpec es1 = new ElementSpec(NotebookDocument.charAttrSet,
+                ElementSpec.StartTagType);
         vec.addElement(es1);
         ElementSpec es = new ElementSpec(NotebookDocument.contentAttrSet,
                 ElementSpec.ContentType, data, offs, data.length);
         vec.addElement(es);
         vec.addElement(new ElementSpec(null, ElementSpec.EndTagType));
     }
-    
-    protected static void addContent(char[] data, int offs, Vector<ElementSpec> vec,
-            int start)
+
+    protected static void addContent(char[] data, int offs,
+            Vector<ElementSpec> vec, int start)
     {
         // System.out.println("addContent:" + data.length + ":" + start);
         int end = data.length;
@@ -79,8 +80,8 @@ abstract class DocUtil
         addSubContent(data1, offs + end, vec);
     }
 
-    protected static void startTag(ElementType e, MutableAttributeSet a, int pos,
-            Vector<ElementSpec> vec)
+    protected static void startTag(ElementType e, MutableAttributeSet a,
+            int pos, Vector<ElementSpec> vec)
     {
         a.addAttribute(StyleConstants.NameAttribute, e);
         ElementSpec es = new ElementSpec(a.copyAttributes(),
@@ -92,7 +93,7 @@ abstract class DocUtil
     {
         vec.addElement(new ElementSpec(null, ElementSpec.EndTagType));
     }
-    
+
     static void createComponent(Component c, MutableAttributeSet attr,
             Vector<ElementSpec> vec)
     {
@@ -111,7 +112,7 @@ abstract class DocUtil
         FontEx f = (FontEx) style.getDefaultValue(StyleAttribs.FONT);
         f.populateStyle(doc_style);
     }
-    
+
     static void createCellHandle(MutableAttributeSet attr,
             Vector<ElementSpec> vec)
     {
@@ -119,7 +120,7 @@ abstract class DocUtil
         addSubContent(NEWLINE, 0, vec);
         endTag(vec);
     }
-    
+
     static void createInsertionPoint(MutableAttributeSet attr,
             Vector<ElementSpec> vec)
     {
@@ -130,53 +131,59 @@ abstract class DocUtil
         endTag(vec);
         if (old != null) attr.addAttribute(NotebookDocument.ATTR_CELL, old);
     }
-    
-    static void createCell(NotebookDocument doc, HGHandle cellH, 
-            MutableAttributeSet attr,
-            Vector<ElementSpec> vec, boolean gen_insP)
+
+    static void createCellGroupMember(NotebookDocument doc, HGHandle cellH,
+            MutableAttributeSet attr, Vector<ElementSpec> vec)
     {
+        CellGroupMember cgm = (CellGroupMember) ThisNiche.hg.get(cellH);
+        if(cgm instanceof CellGroup)
+            createCellGroup(doc, cellH, attr, vec);
+        else if(cgm instanceof Cell)
+        {
+            if (!(((Cell) cgm).getValue() instanceof Scriptlet))
+                createOutputCell(doc, cellH, attr, vec);
+            else
+                createCell(doc, cellH, attr, vec);
+        }
+    }
+    static void createCell(NotebookDocument doc, HGHandle cellH,
+            MutableAttributeSet attr, Vector<ElementSpec> vec)
+    {
+
         Cell cell = (Cell) ThisNiche.hg.get(cellH);
-        // System.out.println("createCell: " + cellH + ":" + cell);
-        attr.addAttribute(ATTR_CELL, cellH);
-        startTag(wholeCell, attr, 0, vec);
-        attr.removeAttribute(ATTR_CELL);
         attr = getDocStyle(doc, StyleType.inputCell);
+        attr.addAttribute(ATTR_CELL, cellH);
         startTag(inputCellBox, attr, 0, vec);
+        // attr.removeAttribute(ATTR_CELL);
         if (!CellUtils.isHTML(cell)) startTag(commonCell, attr, 0, vec);
         else
             startTag(htmlCell, attr, 0, vec);
         String text = CellUtils.getText(cell);
         if (!text.endsWith("\n")) text += "\n";
-        // System.out.println("NDOC-createCell: " + text);
         addContent(text.toCharArray(), 0, vec, 0);
         endTag(vec);
         attr.addAttribute(ATTR_CELL, cellH);
         createCellHandle(attr, vec);
         attr.removeAttribute(ATTR_CELL);
         endTag(vec);
-        boolean eval = CellUtils.isInitCell(cell);
-        HGHandle out = CellUtils.getOutCellHandle(cellH);
-        //System.out.println("createOutputCell: " + ((Cell)ThisNiche.hg.get(out)).getValue());
-        if (out != null && !eval) createOutputCell(doc, out, attr, vec);
-        else if (eval)
+        createInsertionPoint(attr, vec);
+        CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cellH, doc
+                .getHandle(), AttributeChangeHandler.getInstance());
+        CellUtils.addMutualEventPubSub(CellTextChangeEvent.HANDLE, cellH, doc
+                .getHandle(), CellTextChangeHandler.getInstance());
+        CellUtils.addMutualEventPubSub(EvalCellEvent.HANDLE, cellH, doc
+                .getHandle(), EvalCellHandler.getInstance());
+
+        if (CellUtils.isInitCell(cell))
         {
             EvalResult res = eval_result(doc, cell);
-            createOutputCell(doc, CellUtils.createOutputCellH(cellH, res.getText(),
-                    res.getComponent()), attr, vec);
+            createOutputCell(doc, CellUtils.createOutputCellH(cellH, res
+                    .getText(), res.getComponent()), attr, vec);
         }
-        endTag(vec);
-        if (gen_insP) createInsertionPoint(attr, vec);
-        CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cellH,
-                doc.getHandle(), AttributeChangeHandler.getInstance());
-        CellUtils.addMutualEventPubSub(CellTextChangeEvent.HANDLE, cellH,
-                doc.getHandle(), CellTextChangeHandler.getInstance());
-        CellUtils.addMutualEventPubSub(EvalCellEvent.HANDLE, cellH,
-                doc.getHandle(), EvalCellHandler.getInstance());
-
     }
-    
-    static void createOutputCell(NotebookDocument doc, HGHandle cellH, MutableAttributeSet attr,
-            Vector<ElementSpec> vec)
+
+    static void createOutputCell(NotebookDocument doc, HGHandle cellH,
+            MutableAttributeSet attr, Vector<ElementSpec> vec, boolean genInsP)
     {
         attr.addAttribute(ATTR_CELL, cellH);
         Cell c = (Cell) ThisNiche.hg.get(cellH);
@@ -184,6 +191,25 @@ abstract class DocUtil
         attr.removeAttribute(ATTR_CELL);
         attr = (CellUtils.isError(c)) ? getDocStyle(doc, StyleType.error)
                 : getDocStyle(doc, StyleType.outputCell);
+        createOutputCellContents(doc, c, attr, vec);
+        attr.addAttribute(ATTR_CELL, cellH);
+        createCellHandle(attr, vec);
+        attr.removeAttribute(ATTR_CELL);
+        endTag(vec);
+        if(genInsP)   createInsertionPoint(attr, vec);
+        CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, cellH, doc
+                .getHandle(), AttributeChangeHandler.getInstance()); 
+    }
+    
+    static void createOutputCell(NotebookDocument doc, HGHandle cellH,
+            MutableAttributeSet attr, Vector<ElementSpec> vec)
+    {
+        createOutputCell(doc, cellH, attr, vec, true);
+    }
+
+    private static void createOutputCellContents(NotebookDocument doc, Cell c,
+            MutableAttributeSet attr, Vector<ElementSpec> vec)
+    {
         startTag(commonCell, attr, 0, vec);
         Object val = c.getValue();
         String text = "";
@@ -194,27 +220,27 @@ abstract class DocUtil
             else
                 comp = (Component) val;
         }
-        if (!text.endsWith("\n")) text += "\n";
-        addContent(text.toCharArray(), 0, vec, 0);
-        createComponent(comp, attr, vec);
+        if (text.length() > 0)
+        {
+            if (!text.endsWith("\n")) text += "\n";
+            addContent(text.toCharArray(), 0, vec, 0);
+        }
+        else
+            createComponent(comp, attr, vec);
         endTag(vec);
-        attr.addAttribute(ATTR_CELL, cellH);
-        createCellHandle(attr, vec);
-        attr.removeAttribute(ATTR_CELL);
-        endTag(vec);
-        CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, cellH,
-                doc.getHandle(), AttributeChangeHandler.getInstance());
     }
 
-    static javax.swing.text.Style getDocStyle(NotebookDocument doc, StyleType type)
+    static javax.swing.text.Style getDocStyle(NotebookDocument doc,
+            StyleType type)
     {
-        if (doc.getStyle(type.toString()) != null) return doc.getStyle(type.toString());
+        if (doc.getStyle(type.toString()) != null)
+            return doc.getStyle(type.toString());
         javax.swing.text.Style doc_style = doc.addStyle(type.toString(), null);
         CellGroupMember book = (CellGroupMember) ThisNiche.hg.get(doc.bookH);
         populateDocStyle(doc_style, CellUtils.getStyle(book, type));
         return doc_style;
     }
-    
+
     static EvalResult eval_result(NotebookDocument doc, Cell cell)
     {
         EvalResult res = new EvalResult(null, null);
@@ -233,17 +259,20 @@ abstract class DocUtil
                             .setComponent(maybe_clone((Component) o));
                     else
                         res.setText("" + o);
-                } else
+                }
+                else
                 {
                     res.setError(true);
                     res.setText("Unknown scripting engine: " + name);
                 }
-            } else
+            }
+            else
             {
-                if(doc.evalContext == null)
+                if (doc.evalContext == null)
                     doc.evalContext = ThisNiche.getTopContext();
-                if(doc.evalContext == null)
-                    doc.evalContext = ThisNiche.getEvaluationContext(ThisNiche.TOP_CONTEXT_HANDLE);
+                if (doc.evalContext == null)
+                    doc.evalContext = ThisNiche
+                            .getEvaluationContext(ThisNiche.TOP_CONTEXT_HANDLE);
                 Object o = doc.evalContext.eval(name, CellUtils.getText(cell));
                 if (o instanceof Component)
                 {
@@ -251,7 +280,8 @@ abstract class DocUtil
                     if (c instanceof Window)
                     {
                         res.setText("Window: " + c);
-                    } else if (c.getParent() != null)
+                    }
+                    else if (c.getParent() != null)
                     {
                         // If this component is displayed in some output cell,
                         // detach it from
@@ -261,13 +291,16 @@ abstract class DocUtil
                         {
                             c.getParent().remove(c);
                             res.setComponent(c);
-                        } else
+                        }
+                        else
                             res.setText("AWT Component - " + c.toString()
                                     + " -- belongs to parent component "
                                     + c.getParent().toString());
-                    } else
+                    }
+                    else
                         res.setComponent(c);
-                } else
+                }
+                else
                     res.setText("" + o);
             }
         }
@@ -281,7 +314,7 @@ abstract class DocUtil
         }
         return res;
     }
-    
+
     static Component maybe_clone(Component c)
     {
         if (c.getParent() != null)
@@ -291,7 +324,7 @@ abstract class DocUtil
         }
         return c;
     }
-    
+
     static void createCellGroup(NotebookDocument doc, HGHandle cell_groupH,
             MutableAttributeSet attr, Vector<ElementSpec> vec)
     {
@@ -299,19 +332,11 @@ abstract class DocUtil
         startTag(cellGroupBox, attr, 0, vec);
         startTag(cellGroup, attr, 0, vec);
         CellGroup cell_group = (CellGroup) ThisNiche.hg.get(cell_groupH);
-        // System.out
-        // .println("createCellGroup: " + cell_groupH + ":" + cell_group);
+        attr.removeAttribute(ATTR_CELL);
         for (int i = 0; i < cell_group.getArity(); i++)
         {
             if (i == 0) createInsertionPoint(attr, vec);
-            CellGroupMember el = cell_group.getElement(i);
-            if (el instanceof CellGroup)
-            {
-                createCellGroup(doc, cell_group.getTargetAt(i), attr, vec);
-                createInsertionPoint(attr, vec);
-                continue;
-            }
-            createCell(doc, cell_group.getTargetAt(i), attr, vec, true);
+            createCellGroupMember(doc, cell_group.getTargetAt(i), attr, vec);
         }
         endTag(vec);
         // refresh damaged ATTR_CELL attib
@@ -319,9 +344,12 @@ abstract class DocUtil
         createCellHandle(attr, vec);
         attr.removeAttribute(ATTR_CELL);
         endTag(vec);
-        CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, cell_groupH,
-                doc.getHandle(), CellGroupChangeHandler.getInstance());
+        createInsertionPoint(attr, vec);
+        CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE,
+                cell_groupH, doc.getHandle(), CellGroupChangeHandler
+                        .getInstance());
         CellUtils.addMutualEventPubSub(CellGroupChangeEvent.HANDLE,
-                cell_groupH, doc.getHandle(), CellGroupChangeHandler.getInstance());
+                cell_groupH, doc.getHandle(), CellGroupChangeHandler
+                        .getInstance());
     }
 }

@@ -3,11 +3,11 @@ package seco.things;
 import java.awt.Color;
 import java.awt.Component;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -228,15 +228,13 @@ public class CellUtils
     {
         if (cell instanceof CellGroup)
             return null;
-        HGHandle publisher = ThisNiche.handleOf(cell);
-        return getOutCellHandle(publisher);
+        return getOutCellHandle(ThisNiche.handleOf(cell));
     }
 
-    public static HGHandle getOutCellHandle(HGHandle cellH)
+    public static List<HGHandle> getOutCellHandles(HGHandle cellH)
     {
-        if (cellH == null)
-            return null;
-        // TODO: hg.findAll throws error???
+        List<HGHandle> list = new ArrayList<HGHandle>();
+        if (cellH == null)  return null;
         try
         {
             List<EventPubSub> subscriptions = hg.findAll(ThisNiche.hg, hg
@@ -251,7 +249,7 @@ public class CellUtils
             {
                 Object handler = ThisNiche.hg.get(s.getEventHandler());
                 if (handler instanceof Cell)
-                    return s.getEventHandler();
+                    list.add(s.getEventHandler());
             }
         }
         catch (Exception ex)
@@ -260,19 +258,13 @@ public class CellUtils
                     + ThisNiche.hg.getPersistentHandle(cellH));
             ex.printStackTrace();
         }
-        // Iterator it = ThisNiche.hg.getIncidenceSet(cellH).iterator();
-        // while(it.hasNext())
-        // {
-        // Object m = ThisNiche.hg.get((HGHandle)it.next());
-        // if(m instanceof EventPubSub)
-        // {
-        // //o = ThisNiche.hg.get(m.getSubscriber());
-        // if(EvalResultEventType.HANDLE.equals(
-        // ((EventPubSub)m).getEventType()))
-        // return ((EventPubSub)m).getEventHandler();
-        // }
-        // }
-        return null;
+        return list;
+    }
+    
+    public static HGHandle getOutCellHandle(HGHandle cellH)
+    {
+        List<HGHandle> l = getOutCellHandles(cellH);
+        return (l != null && !l.isEmpty()) ? l.get(0) : null ;
     }
 
     public static Cell getOutCell(CellGroupMember cell)
@@ -281,6 +273,15 @@ public class CellUtils
         return (h != null) ? (Cell) ThisNiche.hg.get(h) : null;
     }
 
+    public static HGHandle createOutputCellH(HGHandle par, Object value)
+    {
+       if(value == null) 
+           return createOutputCellH(par, "null", null);
+       else if (value instanceof Component) 
+           return createOutputCellH(par, null, (Component) value);
+       return createOutputCellH(par, value.toString(), null);
+    }
+    
     public static HGHandle createOutputCellH(HGHandle par, String text,
             Component comp)
     {
@@ -334,8 +335,8 @@ public class CellUtils
             return;
         } else if (old_h == null && value != null)
         {
-            if (value instanceof String) createOutputCellH(cellH,
-                    (String) value, null);
+            if (value instanceof String) 
+                createOutputCellH(cellH, (String) value, null);
             else if (value instanceof HGHandle)
             {
                 CellUtils.addEventPubSub(EvalResultEventType.HANDLE, cellH,

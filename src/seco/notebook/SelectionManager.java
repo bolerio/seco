@@ -93,7 +93,6 @@ public class SelectionManager extends
         Element common_par = null;
         for (Element el : selection)
         {
-            if (NotebookDocument.isOutputCell(el)) continue;
             HGHandle nb = NotebookDocument.getNBElementH(el);
             if (index < 0)
             {
@@ -291,9 +290,6 @@ public class SelectionManager extends
         CellGroupMember nb_from = NotebookDocument.getNBElement(from);
         CellGroupMember nb_to = NotebookDocument.getNBElement(to);
         NotebookDocument doc = notebookUI.getDoc();
-        if (NotebookDocument.isOutputCell(from)) nb_from = doc
-                .getContainer(from);
-        if (NotebookDocument.isOutputCell(to)) nb_to = doc.getContainer(to);
         // System.out.println("addRange: " + nb_from + ":" + nb_to +
         // ":" + select_first + ":" + select_last);
         Element par_el = NotebookDocument.getContainerEl(from, false);

@@ -50,6 +50,7 @@ import seco.notebook.view.CellBoxView;
 import seco.notebook.view.CellHandleView;
 import seco.notebook.view.CellParagraphView;
 import seco.notebook.view.ExpandHandleView;
+import seco.notebook.view.FakeParagraphView;
 import seco.notebook.view.HtmlView;
 import seco.notebook.view.InlineView;
 import seco.notebook.view.InputCellView;
@@ -204,7 +205,7 @@ public class NotebookEditorKit extends StyledEditorKit
                 case cellHandle:
                     return new CellHandleView(elem);
                 case cellGroup:
-                case wholeCell:
+                //case wholeCell:
                     return new WholeCellView(elem);
                 case commonCell:
                     return new InputCellView(elem);
@@ -218,6 +219,8 @@ public class NotebookEditorKit extends StyledEditorKit
                     return new InlineView(elem);
                 case htmlCell:
                     return new HtmlView(elem);
+                case fakeParagraph:
+                    return new FakeParagraphView(elem);
                 default:
                     return new InlineView(elem);
                 }

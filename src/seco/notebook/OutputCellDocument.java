@@ -53,7 +53,7 @@ public class OutputCellDocument extends NotebookDocument
         attr.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
         attr.addAttribute(ATTR_CELL, bookH);
         DocUtil.startTag(notebook, attr, 0, parseBuffer);
-        DocUtil.createOutputCell(this, bookH, attr, parseBuffer);
+        DocUtil.createOutputCell(this, bookH, attr, parseBuffer, false);
         DocUtil.endTag(parseBuffer);
         create(parseBuffer.toArray(new ElementSpec[parseBuffer.size()]));
     }

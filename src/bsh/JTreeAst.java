@@ -91,8 +91,8 @@ public class JTreeAst extends JTree
 		//node.getLineNumber();
 		final Interpreter inter = new Interpreter();
 		NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-		ScriptContext scriptContext = ui.getDoc().getScriptingContext();
-		final CallStack callstack = new CallStack(getEngineNameSpace( scriptContext) ); //inter.get.globalNameSpace );
+		//ScriptContext scriptContext = ui.getDoc().getScriptingContext();
+		//final CallStack callstack = new CallStack(getEngineNameSpace( scriptContext) ); //inter.get.globalNameSpace );
 		
 		JPopupMenu popup = new JPopupMenu();
 		JMenuItem menuItem = new JMenuItem("Eval"); // NOI18N
