@@ -23,11 +23,11 @@ import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
+import seco.events.EvalResult;
 import seco.events.handlers.AttributeChangeHandler;
 import seco.events.handlers.CellGroupChangeHandler;
 import seco.events.handlers.CellTextChangeHandler;
 import seco.events.handlers.EvalCellHandler;
-import seco.notebook.eval.EvalResult;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -178,7 +178,7 @@ abstract class DocUtil
         {
             EvalResult res = eval_result(doc, cell);
             createOutputCell(doc, CellUtils.createOutputCellH(cellH, res
-                    .getText(), res.getComponent()), attr, vec);
+                    .getText(), res.getComponent(),false), attr, vec);
         }
     }
 
@@ -243,7 +243,7 @@ abstract class DocUtil
 
     static EvalResult eval_result(NotebookDocument doc, Cell cell)
     {
-        EvalResult res = new EvalResult(null, null);
+        EvalResult res = new EvalResult();
         try
         {
             String name = CellUtils.getEngine(cell);

@@ -8,6 +8,7 @@ import org.hypergraphdb.HGQuery.hg;
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EvalCellEvent;
+import seco.events.EvalResult;
 import seco.events.EventDispatcher;
 import seco.events.EventHandler;
 import seco.notebook.NotebookDocument;
@@ -43,10 +44,10 @@ public class CopyEvalCellHandler implements EventHandler
             {
                 CellUtils.removeEventPubSub(EvalCellEvent.HANDLE,
                         subscriber, publisher, getInstance());
-                Object val = e.getValue();
-                if(val instanceof Component)
-                    val = IOUtils.cloneCellComp((Component) val);
-                CellUtils.setOutputCell(subscriber, val);
+               // EvalResult res = e.getValue();
+               // Object val  = (res.getComponent() != null) ?
+               //     IOUtils.cloneCellComp(res.getComponent()) : res.getText();
+               // CellUtils.setOutputCell(subscriber, val);
                 EvalCellEvent n = new EvalCellEvent(subscriber, e.getValue(), e.getOldValue());
                 EventDispatcher.dispatch(EvalCellEvent.HANDLE, e.getCellHandle(), n);
                 CellUtils.addEventPubSub(EvalCellEvent.HANDLE,

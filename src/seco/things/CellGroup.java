@@ -36,11 +36,11 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
         this.name = name;
     }
 
-    public CellGroup(String name, Map attribs)
-    {
-        this.name = name;
-        this.attributes = attribs;
-    }
+//    public CellGroup(String name, Map attribs)
+//    {
+//        this.name = name;
+//        this.attributes = attribs;
+//    }
 
     public CellGroup(List<HGHandle> outgoingSet)
     {

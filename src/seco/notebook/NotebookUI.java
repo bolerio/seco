@@ -34,10 +34,10 @@ import java.util.*;
 import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.JTree;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
@@ -817,6 +817,14 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     {
         // clear undos
         undo.discardAllEdits();
+    }
+    
+    JTree getParseTree(int offset)
+    {
+        ScriptSupport sup = getDoc().getScriptSupport(offset);
+        if (sup != null && sup.getParser() != null)
+            return sup.getParser().getAstTree();
+        return null;
     }
 
     public void adjustmentValueChanged(AdjustmentEvent e)

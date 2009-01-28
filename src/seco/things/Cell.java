@@ -12,9 +12,11 @@ import org.hypergraphdb.atom.HGAtomRef;
 
 import seco.ThisNiche;
 import seco.events.CellTextChangeEvent;
+import seco.events.EvalCellEvent;
 import seco.events.EvalResultEventType;
 import seco.events.EventDispatcher;
 import seco.events.EventHandler;
+import seco.notebook.XMLConstants;
 
 public class Cell extends BaseCellGroupMember implements EventHandler
 {
@@ -47,12 +49,15 @@ public class Cell extends BaseCellGroupMember implements EventHandler
     {
         if (eventType.equals(EvalResultEventType.HANDLE))
         {
-            updateValue(event);
+            updateValue((EvalCellEvent) event);
         }
     }
     
-    public void updateValue(Object val)
+    public void updateValue(EvalCellEvent e)
     {
+        Object val = (e.getValue().getComponent() != null) ?
+                e.getValue().getComponent() : e.getValue().getText();
+        attributes.put(XMLConstants.ATTR_ERROR, e.getValue().isError());        
         HGHandle h = ThisNiche.handleOf(val);
         if (h == null)
             h = CellUtils.addSerializable(val);

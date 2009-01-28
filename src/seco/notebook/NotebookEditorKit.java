@@ -241,19 +241,13 @@ public class NotebookEditorKit extends StyledEditorKit
             final NotebookDocument doc = ui.getDoc();
             Element el = ui.getSelectedCellElement();
             // System.out.println("EVAL: " + el);
-            if (el == null)
-                return;
+            if (el == null) return;
             int pos = ui.getCaretPosition();
             final ScriptSupport sup = doc.getScriptSupport(pos);
-            // System.out.println("EVAL: " + pos + ":" + sup);
-            if (sup == null)
-                return;
-            if (doc.evalCell(pos))
-            {
-                sup.unMarkErrors();
-                pos = doc.findNextInsPoint(pos);
-            }
-            ui.setCaretPosition(pos);
+            if (sup == null) return;
+            if (doc.evalCell(el))
+                 sup.unMarkErrors();
+            //ui.setCaretPosition(pos);
             Utilities.adjustScrollBar(ui, pos, Position.Bias.Forward);
         }
 
@@ -338,21 +332,7 @@ public class NotebookEditorKit extends StyledEditorKit
             NotebookDocument doc = ui.getDoc();
             Element el = doc.getEnclosingCellElement(ui.getCaretPosition());
             // System.out.println("DeleteCellAction: " + el);
-            if (el == null)
-                return;
-            // try
-            // {
-            // doc.beginCompoundEdit("Delete Cell");
-            // doc.removeCellBoxElement(el);
-            // }
-            // catch (Exception ex)
-            // {
-            // ex.printStackTrace();
-            // }
-            // finally
-            // {
-            // doc.endCompoundEdit();
-            // }
+            if (el == null) return;
             CellGroup p = (CellGroup) NotebookDocument
                     .getContainerEl(el, false);
             p.remove(NotebookDocument.getNBElement(el));

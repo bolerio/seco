@@ -282,9 +282,9 @@ public class IOUtils
                                 + inner.getTagName());
         }
         Cell cell = (Cell) ThisNiche.hg.get(
-                CellUtils.createOutputCellH(par, text, component));
-        if (isError)
-            CellUtils.setError(cell, isError);
+                CellUtils.createOutputCellH(par, text, component, isError));
+        //if (isError)
+        //    CellUtils.setError(cell, isError);
         if (collapsed)
             CellUtils.setCollapsed(cell, collapsed);
         return cell;

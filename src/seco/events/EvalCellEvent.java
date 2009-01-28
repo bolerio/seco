@@ -10,17 +10,15 @@ import org.hypergraphdb.HGPersistentHandle;
 
 import seco.things.CellUtils;
 
-
-
 public class EvalCellEvent extends AbstractUndoableEdit
 {
     public static final HGPersistentHandle HANDLE = HGHandleFactory
             .makeHandle("22061f39-d011-11dc-b0cc-9759d91d7754");
     private HGHandle cellH;
-    private Object value;
-    private Object oldValue;
+    private EvalResult value;
+    private EvalResult oldValue;
 
-    public EvalCellEvent(HGHandle owner, Object value, Object old_value)
+    public EvalCellEvent(HGHandle owner, EvalResult value, EvalResult old_value)
     {
         super();
         this.cellH = owner;
@@ -33,12 +31,12 @@ public class EvalCellEvent extends AbstractUndoableEdit
         return cellH;
     }
 
-    public Object getValue()
+    public EvalResult getValue()
     {
         return value;
     }
 
-    public Object getOldValue()
+    public EvalResult getOldValue()
     {
         return oldValue;
     }
@@ -52,7 +50,6 @@ public class EvalCellEvent extends AbstractUndoableEdit
     public void redo() throws CannotRedoException
     {
         super.redo();
-        //CellUtils.setOutputCell(cellH, value);
         EvalCellEvent e = new EvalCellEvent(cellH, value, oldValue); 
         EventDispatcher.dispatch(EvalCellEvent.HANDLE, cellH, e);
     }
@@ -66,7 +63,6 @@ public class EvalCellEvent extends AbstractUndoableEdit
     public void undo() throws CannotUndoException
     {
         super.undo();
-        //CellUtils.setOutputCell(cellH, oldValue);
         EvalCellEvent e = new EvalCellEvent(cellH, oldValue, value); 
         EventDispatcher.dispatch(EvalCellEvent.HANDLE, cellH, e);
     }

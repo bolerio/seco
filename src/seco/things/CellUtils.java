@@ -26,6 +26,7 @@ import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
+import seco.events.EvalResult;
 import seco.events.EvalResultEventType;
 import seco.events.EventDispatcher;
 import seco.events.EventPubSub;
@@ -112,14 +113,14 @@ public class CellUtils
 
     public static boolean isError(CellGroupMember c)
     {
+        if (c == null) return false;
         Boolean b = (Boolean) c.getAttribute(XMLConstants.ATTR_ERROR);
         return b != null && b.booleanValue();
     }
 
     public static boolean isReadonly(CellGroupMember c)
     {
-        if (c == null)
-            return false;
+        if (c == null) return false;
         Boolean b = (Boolean) c.getAttribute(XMLConstants.ATTR_READONLY);
         return b != null && b.booleanValue();
     }
@@ -273,17 +274,13 @@ public class CellUtils
         return (h != null) ? (Cell) ThisNiche.hg.get(h) : null;
     }
 
-    public static HGHandle createOutputCellH(HGHandle par, Object value)
+    public static HGHandle createOutputCellH(HGHandle par, EvalResult res)
     {
-       if(value == null) 
-           return createOutputCellH(par, "null", null);
-       else if (value instanceof Component) 
-           return createOutputCellH(par, null, (Component) value);
-       return createOutputCellH(par, value.toString(), null);
+       return createOutputCellH(par, res.getText(), res.getComponent(), res.isError());
     }
     
     public static HGHandle createOutputCellH(HGHandle par, String text,
-            Component comp)
+            Component comp, boolean error)
     {
         HGHandle h = (comp == null) ? ThisNiche.handleOf(text) : ThisNiche
                 .handleOf(comp);
@@ -291,8 +288,8 @@ public class CellUtils
             h = addSerializable(comp == null ? text : comp);
         HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
-
         HGHandle res = ThisNiche.hg.add(out);
+        if(error) CellUtils.setError(h, error);
         if (par != null)
             CellUtils.addEventPubSub(EvalResultEventType.HANDLE, par, res, res);
         return res;
@@ -323,33 +320,6 @@ public class CellUtils
         return ThisNiche.hg.add(out); // , HGSystemFlags.MUTABLE);
     }
 
-    public static void setOutputCell(HGHandle cellH, Object value)
-    {
-        HGHandle old_h = getOutCellHandle(cellH);
-        if (old_h == null && value == null)
-            return;
-        if (old_h != null && value != null)
-        {
-            // System.out.println("DISPATCH: " + value);
-            EventDispatcher.dispatch(EvalResultEventType.HANDLE, cellH, value);
-            return;
-        } else if (old_h == null && value != null)
-        {
-            if (value instanceof String) 
-                createOutputCellH(cellH, (String) value, null);
-            else if (value instanceof HGHandle)
-            {
-                CellUtils.addEventPubSub(EvalResultEventType.HANDLE, cellH,
-                        (HGHandle) value, (HGHandle) value);
-            } else
-                createOutputCellH(cellH, null, (Component) value);
-        } else if (old_h != null && value == null)
-        {
-            removeOutputCellSubscription(old_h);
-            EventDispatcher.dispatch(EvalResultEventType.HANDLE, cellH, value);
-        }
-    }
-
     public static void removeOutputCellSubscription(HGHandle cell_handle)
     {
         System.out.println("removeOutputCell: " + cell_handle);
@@ -377,15 +347,21 @@ public class CellUtils
             {
                 Scriptlet s = (Scriptlet) val;
                 out = makeCellH(s.getCode(), s.getLanguage());
-                HGHandle c = getOutCellHandle(in_h);
-                if (c != null)
-                    setOutputCell(out, makeCopy(c));
+                List<HGHandle> list = getOutCellHandles(in_h);
+                if (list != null && !list.isEmpty())
+                   for(HGHandle c: list)
+                   {
+                       //TODO: should we add those output cells as listeners
+                       //to the newly created copy, or should we clone them too
+                       CellUtils.addEventPubSub(EvalCellEvent.HANDLE, c, out, c);
+                   }
             } else
             {
                 HGHandle par = getOutCellParent(in_h);
+                boolean er = CellUtils.isError(in);
                 return (val instanceof String) ? createOutputCellH(par,
-                        (String) val, null) : createOutputCellH(par, null,
-                        (Component) val);
+                        (String) val, null, er) : createOutputCellH(par, null,
+                        (Component) val, er);
             }
         } else
         {

@@ -144,6 +144,7 @@ public class CellParagraphView extends javax.swing.text.ParagraphView implements
 
 	public void paint(Graphics g, Shape a)
 	{
+	    if(!isVisible()) return;
 		Rectangle alloc = (a instanceof Rectangle) ? (Rectangle) a : a
 				.getBounds();
 		// tabBase = alloc.x + getLeftInset();

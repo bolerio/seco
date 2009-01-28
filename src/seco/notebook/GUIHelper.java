@@ -663,7 +663,7 @@ public class GUIHelper
             return;
         JDialog dialog = new JDialog(GUIUtilities.getFrame(ui));
         dialog.setSize(500, 800);
-        JTree tree = ui.getDoc().getParseTree(ui.getCaretPosition());
+        JTree tree = ui.getParseTree(ui.getCaretPosition());
         if (tree == null)
             return;
         JScrollPane pane = new JScrollPane(tree);

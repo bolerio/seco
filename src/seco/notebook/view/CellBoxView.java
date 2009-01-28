@@ -33,35 +33,20 @@ public class CellBoxView extends HidableBoxView implements CollapsibleView
 	public boolean collapse(boolean collapse)
 	{
 	    CellGroupMember nb = NotebookDocument.getNBElement(getElement());
-		//System.out.println("CellBoxView - collapse: " + collapse + ":" + nb
-		//		+ ":" + getElement());
 		if (nb == null) return false;
 		collapsed = collapse;
 		if (nb instanceof CellGroup)
 		{
-			CellGroup group = (CellGroup) nb;
-			if (group.getArity() == 1)
-			{
-			    CellGroupMember inner = group.getElement(0);
-				if (inner instanceof Cell
-						&& CellUtils.getOutCell((Cell) inner) == null)
-				{
-					set_all_but_first(ElementType.commonCell, true);
-					return false;
-				}
-			}
-			
 			//all cells except the first one 
 			set_all_but_first(ElementType.cellGroup, true);
 			//the other stuff in first one
 			if(collapsed){
-			    //set_all_but_first(ElementType.wholeCell, true); ???
+			   
 			    set_all_but_first(ElementType.inputCellBox, true);
 				set_all_but_first(ElementType.commonCell, true);
 			}
 			else
 			    ((HidableView)ViewUtils.getLowerView(this, ElementType.inputCellBox)).setVisible(true);
-				//???((HidableView)ViewUtils.getLowerView(this, ElementType.wholeCell)).setVisible(true);
 		}
 		else if (NotebookDocument.isOutputCell(getElement()))
 		{
@@ -70,20 +55,12 @@ public class CellBoxView extends HidableBoxView implements CollapsibleView
 			else
 				collapsed = false;
 		}
-		else
+		else //inputCell
 		{
 			if(CellUtils.isHTML((Cell)nb))
 			   collapsed = false;
 			else
-			{
-				CollapsibleView v = (CollapsibleView)
-				ViewUtils.getUpperView(this, ElementType.inputCellBox);
-				    //???ViewUtils.getUpperView(this, ElementType.wholeCell);
-			    if(v != null){ 
-				collapsed = v.collapse(collapsed);
-				set_all_but_first(ElementType.commonCell, true);
-				}
-			}
+			   set_all_but_first(ElementType.commonCell, true);
 		}
 		return collapsed;
 	}
