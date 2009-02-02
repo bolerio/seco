@@ -27,7 +27,7 @@ import seco.events.CellGroupChangeEvent;
 import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
 import seco.events.EvalResult;
-import seco.events.EvalResultEventType;
+//import seco.events.EvalResultEventType;
 import seco.events.EventDispatcher;
 import seco.events.EventPubSub;
 import seco.events.handlers.CopyAttributeChangeHandler;
@@ -162,6 +162,13 @@ public class CellUtils
     {
         c.setAttribute(XMLConstants.ATTR_INIT_CELL, b);
     }
+    
+    public static boolean isInputCell(CellGroupMember m)
+    {
+        if(m instanceof CellGroup) return false;
+        Cell c = (Cell) m;
+        return c.getValue() instanceof Scriptlet;
+    }
 
     public static void setCellText(Cell c, String text)
     {
@@ -241,9 +248,9 @@ public class CellUtils
             List<EventPubSub> subscriptions = hg.findAll(ThisNiche.hg, hg
                     .apply(hg.deref(ThisNiche.hg), hg.and(hg
                             .type(EventPubSub.class), hg
-                            .incident(EvalResultEventType.HANDLE), hg
+                            .incident(EvalCellEvent.HANDLE), hg
                             .incident(cellH), hg.orderedLink(new HGHandle[] {
-                            EvalResultEventType.HANDLE, cellH,
+                                    EvalCellEvent.HANDLE, cellH,
                             HGHandleFactory.anyHandle,
                             HGHandleFactory.anyHandle }))));
             for (EventPubSub s : subscriptions)
@@ -291,7 +298,7 @@ public class CellUtils
         HGHandle res = ThisNiche.hg.add(out);
         if(error) CellUtils.setError(h, error);
         if (par != null)
-            CellUtils.addEventPubSub(EvalResultEventType.HANDLE, par, res, res);
+           addEventPubSub(EvalCellEvent.HANDLE, par, res, res);
         return res;
     }
 
@@ -325,9 +332,9 @@ public class CellUtils
         System.out.println("removeOutputCell: " + cell_handle);
         Set<HGHandle> set = CellUtils.findAll(ThisNiche.hg, hg.and(hg
                 .type(EventPubSub.class), hg
-                .incident(EvalResultEventType.HANDLE),
+                .incident(EvalCellEvent.HANDLE),
                 hg.incident(cell_handle), hg.orderedLink(new HGHandle[] {
-                        EvalResultEventType.HANDLE, HGHandleFactory.anyHandle,
+                        EvalCellEvent.HANDLE, HGHandleFactory.anyHandle,
                         cell_handle, HGHandleFactory.anyHandle })));
         for (HGHandle s : set)
             if (set != null)
@@ -484,7 +491,11 @@ public class CellUtils
             if (master.getElement(i) instanceof CellGroup) addCellGroupCopyListeners(
                     master.getTargetAt(i), copy.getTargetAt(i));
             else
-                addCellCopyListeners(master.getTargetAt(i), copy.getTargetAt(i));
+            {
+                if(CellUtils.isInputCell((CellGroupMember)
+                        ThisNiche.hg.get(master.getTargetAt(i))))
+                   addCellCopyListeners(master.getTargetAt(i), copy.getTargetAt(i));
+            }
     }
 
     private static void addCellCopyListeners(HGHandle masterH, HGHandle copyH)

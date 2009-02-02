@@ -14,6 +14,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.text.*;
 import javax.swing.undo.UndoManager;
@@ -27,10 +29,12 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 
 import seco.ThisNiche;
+import seco.events.CellGroupChangeEvent;
 import seco.gui.TopFrame;
 import seco.notebook.NotebookDocument.UpdateAction;
 import seco.notebook.gui.DialogDescriptor;
@@ -58,7 +62,9 @@ import seco.notebook.view.InsertionPointView;
 import seco.notebook.view.NotebookView;
 import seco.notebook.view.ResizableComponentView;
 import seco.notebook.view.WholeCellView;
+import seco.things.Cell;
 import seco.things.CellGroup;
+import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
 
@@ -259,6 +265,7 @@ public class NotebookEditorKit extends StyledEditorKit
 
     public static class ImportAction extends BaseAction
     {
+        
         public ImportAction()
         {
             super(importAction);
@@ -314,9 +321,30 @@ public class NotebookEditorKit extends StyledEditorKit
         protected void action(NotebookUI ui) throws Exception
         {
             NotebookDocument doc = ui.getDoc();
-            doc.beginCompoundEdit("Remove Output Cells");
-            doc.update(UpdateAction.removeOutputCells);
-            doc.endCompoundEdit();
+            CellGroup g = (CellGroup) doc.getBook();
+            processCellGroup(doc, g);
+            //doc.beginCompoundEdit("Remove Output Cells");
+            //doc.update(UpdateAction.removeOutputCells);
+           // doc.endCompoundEdit();
+        }
+        
+        private void processCellGroup(NotebookDocument doc, CellGroup g)
+        {
+            Set<HGHandle> rem = new HashSet<HGHandle>();
+            for(int i = 0; i < g.getArity(); i++)
+            {
+                CellGroupMember m  = g.getElement(i);
+                if(m instanceof Cell && !CellUtils.isInputCell(m))
+                   rem.add(g.getTargetAt(i));
+                else if(m instanceof CellGroup)
+                    processCellGroup(doc, (CellGroup) m);
+            }
+            if(rem.size() == 0) return;
+            CellGroupChangeEvent e = new CellGroupChangeEvent(
+                    ThisNiche.handleOf(g), -1, new HGHandle[0], 
+                    rem.toArray(new HGHandle[rem.size()]));
+            //g.batchProcess(e);
+            doc.fireCellGroupChanged(e);
         }
     }
 

@@ -158,15 +158,14 @@ public class NotebookTransferHandler extends TransferHandler
 			{
 				InputContext ic = c.getInputContext();
 				if (ic != null)
-				{
 					ic.endComposition();
-				}
+				
 				if (importFlavor.equals(nbFlavor))
 				{
-					Vector<Element> el = (Vector<Element>) t
+					Vector<Element> els = (Vector<Element>) t
 							.getTransferData(importFlavor);
 					boolean succes = c.getDoc().insertElements(
-							c.getCaretPosition(), el);
+							c.getCaretPosition(), els);
 					if (succes) c.setCaretPosition(c.getCaretPosition() + 1);
 					return succes;
 				}

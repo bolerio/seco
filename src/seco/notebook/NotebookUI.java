@@ -126,7 +126,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         {
             if(o instanceof CellGroup)
                 doc = new NotebookDocument(book, evalContext);
-            else if(((Cell)o).getValue() instanceof Scriptlet)
+            else if(CellUtils.isInputCell((CellGroupMember)o))
                doc = new  ScriptletDocument(book);
             else
                doc =  new OutputCellDocument(book);

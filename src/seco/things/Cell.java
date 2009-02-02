@@ -13,7 +13,7 @@ import org.hypergraphdb.atom.HGAtomRef;
 import seco.ThisNiche;
 import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
-import seco.events.EvalResultEventType;
+//import seco.events.EvalResultEventType;
 import seco.events.EventDispatcher;
 import seco.events.EventHandler;
 import seco.notebook.XMLConstants;
@@ -47,7 +47,8 @@ public class Cell extends BaseCellGroupMember implements EventHandler
     
     public void handle(HGHandle eventType, Object event, HGHandle publisher, HGHandle subscriber)
     {
-        if (eventType.equals(EvalResultEventType.HANDLE))
+        if (eventType.equals(EvalCellEvent.HANDLE)
+                && subscriber.equals(ThisNiche.handleOf(this)))
         {
             updateValue((EvalCellEvent) event);
         }
@@ -63,6 +64,7 @@ public class Cell extends BaseCellGroupMember implements EventHandler
             h = CellUtils.addSerializable(val);
         ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         ThisNiche.hg.update(this);
+        EventDispatcher.dispatch(EvalCellEvent.HANDLE, ThisNiche.handleOf(this), e);
     }
 
     @Override

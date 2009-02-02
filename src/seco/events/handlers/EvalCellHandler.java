@@ -8,6 +8,7 @@ import seco.events.EvalCellEvent;
 import seco.events.EventDispatcher;
 import seco.events.EventHandler;
 import seco.notebook.NotebookDocument;
+import seco.things.Cell;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
@@ -39,7 +40,6 @@ public class EvalCellHandler implements EventHandler
             {
                 if (e.getCellHandle().equals(subscriber))
                 {
-                    //CellUtils.setOutputCell(e.getCellHandle(), e.getValue());
                     EventDispatcher.dispatch(EvalCellEvent.HANDLE, e.getCellHandle(), e);
                 }
             } else if (pub instanceof CellGroupMember 

@@ -96,15 +96,14 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
         super.redo();
       
         // Since this event will be reused, switch around added/removed.
-        HGHandle[] tmp = removed;
-        removed = added;
-        added = tmp;
-       System.out.println("CellGroupChangeEventImpl - Redo"); 
+       HGHandle[] tmp = removed;
+       removed = added;
+       added = tmp;
        CellGroup gr = (CellGroup) ThisNiche.hg.get(group);
        for(int i = 0; i < removed.length; i++)
           gr.remove(index);
        for(int i = 0; i < added.length; i++)
-           gr.insert(index, added[i]);
+          gr.insert(index, added[i]);
     }
 
     /**
@@ -116,7 +115,6 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
     public void undo() throws CannotUndoException
     {
         super.undo();
-        System.out.println("CellGroupChangeEventImpl - Undo");  
         CellGroup gr = (CellGroup) ThisNiche.hg.get(group);
         for(int i = 0; i < added.length; i++)
             gr.remove(index);

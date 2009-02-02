@@ -140,7 +140,7 @@ abstract class DocUtil
             createCellGroup(doc, cellH, attr, vec);
         else if(cgm instanceof Cell)
         {
-            if (!(((Cell) cgm).getValue() instanceof Scriptlet))
+            if (!CellUtils.isInputCell(cgm))
                 createOutputCell(doc, cellH, attr, vec);
             else
                 createCell(doc, cellH, attr, vec);
@@ -185,13 +185,21 @@ abstract class DocUtil
     static void createOutputCell(NotebookDocument doc, HGHandle cellH,
             MutableAttributeSet attr, Vector<ElementSpec> vec, boolean genInsP)
     {
+        createOutputCell(doc, cellH, attr, vec, genInsP, null);
+    } 
+    
+    static void createOutputCell(NotebookDocument doc, HGHandle cellH,
+            MutableAttributeSet attr, Vector<ElementSpec> vec, 
+            boolean genInsP, EvalCellEvent e)
+    {
         attr.addAttribute(ATTR_CELL, cellH);
         Cell c = (Cell) ThisNiche.hg.get(cellH);
         startTag(outputCellBox, attr, 0, vec);
         attr.removeAttribute(ATTR_CELL);
-        attr = (CellUtils.isError(c)) ? getDocStyle(doc, StyleType.error)
+        boolean isError = (e != null) ? e.getValue().isError() : CellUtils.isError(c);
+        attr = isError ? getDocStyle(doc, StyleType.error)
                 : getDocStyle(doc, StyleType.outputCell);
-        createOutputCellContents(doc, c, attr, vec);
+        createOutputCellContents(doc, c, attr, vec, e);
         attr.addAttribute(ATTR_CELL, cellH);
         createCellHandle(attr, vec);
         attr.removeAttribute(ATTR_CELL);
@@ -204,22 +212,24 @@ abstract class DocUtil
     static void createOutputCell(NotebookDocument doc, HGHandle cellH,
             MutableAttributeSet attr, Vector<ElementSpec> vec)
     {
-        createOutputCell(doc, cellH, attr, vec, true);
+        createOutputCell(doc, cellH, attr, vec, true, null);
     }
 
     private static void createOutputCellContents(NotebookDocument doc, Cell c,
-            MutableAttributeSet attr, Vector<ElementSpec> vec)
+            MutableAttributeSet attr, Vector<ElementSpec> vec, EvalCellEvent e)
     {
         startTag(commonCell, attr, 0, vec);
-        Object val = c.getValue();
-        String text = "";
+        Object val = (e != null) ? e.getValue().getComponent(): c.getValue();
+        String text = (e != null) ? e.getValue().getText(): "";
         Component comp = null;
         if (val != null)
         {
-            if (!(val instanceof Component)) text = val.toString();
+            if (!(val instanceof Component)) 
+                text = val.toString();
             else
                 comp = (Component) val;
         }
+        
         if (text.length() > 0)
         {
             if (!text.endsWith("\n")) text += "\n";
