@@ -44,10 +44,14 @@ public class CopyEvalCellHandler implements EventHandler
             {
                 CellUtils.removeEventPubSub(EvalCellEvent.HANDLE,
                         subscriber, publisher, getInstance());
+                //CellUtils.removeEventPubSub(EvalCellEvent.HANDLE,
+                //        publisher, subscriber, getInstance());
                 EvalCellEvent n = new EvalCellEvent(subscriber, e.getValue(), e.getOldValue());
                 EventDispatcher.dispatch(EvalCellEvent.HANDLE, e.getCellHandle(), n);
                 CellUtils.addEventPubSub(EvalCellEvent.HANDLE,
                         subscriber, publisher, getInstance());
+                //CellUtils.addEventPubSub(EvalCellEvent.HANDLE,
+                //        publisher, subscriber, getInstance());
             } 
         }
     }

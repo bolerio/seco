@@ -44,7 +44,6 @@ public class PiccoloTransferHandler extends TransferHandler
         {
             try
             {
-                //System.out.println("Piccolo Transfer: " + c);
                 Vector<Element> els = (Vector<Element>) t
                         .getTransferData(elFlavor);
                 PiccoloCanvas canvas = (PiccoloCanvas) c;
