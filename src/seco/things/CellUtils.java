@@ -26,8 +26,7 @@ import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
-import seco.events.EvalResult;
-//import seco.events.EvalResultEventType;
+import seco.events.EvalResult; //import seco.events.EvalResultEventType;
 import seco.events.EventDispatcher;
 import seco.events.EventPubSub;
 import seco.events.handlers.CopyAttributeChangeHandler;
@@ -65,8 +64,8 @@ public class CellUtils
 
     public static Set<NotebookDocument> getNotebookDocs()
     {
-        return findAll(ThisNiche.hg, hg.apply(hg.deref(ThisNiche.hg),
-                hg.type(NotebookDocument.class)));
+        return findAll(ThisNiche.hg, hg.apply(hg.deref(ThisNiche.hg), hg
+                .type(NotebookDocument.class)));
     }
 
     static void updateCellGroupMember(CellGroupMember c)
@@ -162,10 +161,10 @@ public class CellUtils
     {
         c.setAttribute(XMLConstants.ATTR_INIT_CELL, b);
     }
-    
+
     public static boolean isInputCell(CellGroupMember m)
     {
-        if(m instanceof CellGroup) return false;
+        if (m instanceof CellGroup) return false;
         Cell c = (Cell) m;
         return c.getValue() instanceof Scriptlet;
     }
@@ -181,8 +180,7 @@ public class CellUtils
             return;
         }
         HGHandle h = ThisNiche.handleOf(text);
-        if (h == null)
-            h = ThisNiche.hg.add(text);
+        if (h == null) h = ThisNiche.hg.add(text);
         c.ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         // ThisNiche.hg.update(c);
     }
@@ -197,8 +195,7 @@ public class CellUtils
     public static String getText(Cell c)
     {
         Object v = c.getValue();
-        if (v instanceof Scriptlet)
-            return ((Scriptlet) v).getCode();
+        if (v instanceof Scriptlet) return ((Scriptlet) v).getCode();
         return (v != null) ? v.toString() : "null";
     }
 
@@ -234,29 +231,28 @@ public class CellUtils
 
     public static HGHandle getOutCellHandle(CellGroupMember cell)
     {
-        if (cell instanceof CellGroup)
-            return null;
+        if (cell instanceof CellGroup) return null;
         return getOutCellHandle(ThisNiche.handleOf(cell));
     }
 
     public static List<HGHandle> getOutCellHandles(HGHandle cellH)
     {
         List<HGHandle> list = new ArrayList<HGHandle>();
-        if (cellH == null)  return null;
+        if (cellH == null) return null;
         try
         {
             List<EventPubSub> subscriptions = hg.findAll(ThisNiche.hg, hg
                     .apply(hg.deref(ThisNiche.hg), hg.and(hg
                             .type(EventPubSub.class), hg
-                            .incident(EvalCellEvent.HANDLE), hg
-                            .incident(cellH), hg.orderedLink(new HGHandle[] {
+                            .incident(EvalCellEvent.HANDLE),
+                            hg.incident(cellH), hg.orderedLink(new HGHandle[] {
                                     EvalCellEvent.HANDLE, cellH,
-                            HGHandleFactory.anyHandle,
-                            HGHandleFactory.anyHandle }))));
+                                    HGHandleFactory.anyHandle,
+                                    HGHandleFactory.anyHandle }))));
             for (EventPubSub s : subscriptions)
             {
                 Object handler = ThisNiche.hg.get(s.getEventHandler());
-                if (s.getEventHandler().equals(s.getSubscriber()) 
+                if (s.getEventHandler().equals(s.getSubscriber())
                         && handler instanceof Cell)
                     list.add(s.getEventHandler());
             }
@@ -269,11 +265,11 @@ public class CellUtils
         }
         return list;
     }
-    
+
     public static HGHandle getOutCellHandle(HGHandle cellH)
     {
         List<HGHandle> l = getOutCellHandles(cellH);
-        return (l != null && !l.isEmpty()) ? l.get(0) : null ;
+        return (l != null && !l.isEmpty()) ? l.get(0) : null;
     }
 
     public static Cell getOutCell(CellGroupMember cell)
@@ -284,32 +280,29 @@ public class CellUtils
 
     public static HGHandle createOutputCellH(HGHandle par, EvalResult res)
     {
-       return createOutputCellH(par, res.getText(), res.getComponent(), res.isError());
+        return createOutputCellH(par, res.getText(), res.getComponent(), res
+                .isError());
     }
-    
+
     public static HGHandle createOutputCellH(HGHandle par, String text,
             Component comp, boolean error)
     {
         HGHandle h = (comp == null) ? ThisNiche.handleOf(text) : ThisNiche
                 .handleOf(comp);
-        if (h == null)
-            h = addSerializable(comp == null ? text : comp);
+        if (h == null) h = addSerializable(comp == null ? text : comp);
         HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
         HGHandle res = ThisNiche.hg.add(out);
-        if(error) setError(h, error);
-        if (par != null)
-           addEventPubSub(EvalCellEvent.HANDLE, par, res, res);
+        if (error) setError(h, error);
+        if (par != null) addEventPubSub(EvalCellEvent.HANDLE, par, res, res);
         return res;
     }
-    
-   
+
     public static HGHandle createCellHandle(String text)
     {
         Scriptlet s = new Scriptlet(defaultEngineName, text);
         HGHandle h = ThisNiche.handleOf(s);
-        if (h == null)
-            h = ThisNiche.hg.add(s);
+        if (h == null) h = ThisNiche.hg.add(s);
         HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
         return ThisNiche.hg.add(out);
@@ -333,51 +326,48 @@ public class CellUtils
     {
         System.out.println("removeOutputCell: " + cell_handle);
         Set<HGHandle> set = findAll(ThisNiche.hg, hg.and(hg
-                .type(EventPubSub.class), hg
-                .incident(EvalCellEvent.HANDLE),
-                hg.incident(cell_handle), hg.orderedLink(new HGHandle[] {
-                        EvalCellEvent.HANDLE, HGHandleFactory.anyHandle,
-                        cell_handle, HGHandleFactory.anyHandle })));
+                .type(EventPubSub.class), hg.incident(EvalCellEvent.HANDLE), hg
+                .incident(cell_handle), hg.orderedLink(new HGHandle[] {
+                EvalCellEvent.HANDLE, HGHandleFactory.anyHandle, cell_handle,
+                HGHandleFactory.anyHandle })));
         for (HGHandle s : set)
-            if (set != null)
-                ThisNiche.hg.remove(s);
+            if (set != null) ThisNiche.hg.remove(s);
 
     }
 
     public static HGHandle makeCopy(HGHandle in_h)
     {
         CellGroupMember in = (CellGroupMember) ThisNiche.hg.get(in_h);
-        if (in instanceof CellGroup)
-           return  fullCellGroupCopy(in_h);
-        else if (isInputCell(in))
-           return inputCellCopy(in_h);
+        if (in instanceof CellGroup) return fullCellGroupCopy(in_h);
+        else if (isInputCell(in)) return inputCellCopy(in_h);
         else
-           return outputCellCopy(in_h);
+            return outputCellCopy(in_h);
     }
-    
-     
-    //full copy
+
+    // full copy
     static HGHandle fullCellGroupCopy(HGHandle in_h)
     {
         CellGroup in = (CellGroup) ThisNiche.hg.get(in_h);
         Map<HGHandle, HGHandle> cells = new HashMap<HGHandle, HGHandle>();
-        copy_input_cells(in, cells); 
-        return copy_output_cells(in, cells);
+        copy_input_cells(in, cells);
+        return connect_output_cells(in, cells);
     }
-    
-    private static void copy_input_cells(CellGroup in, Map<HGHandle, HGHandle> cells)
+
+    private static void copy_input_cells(CellGroup in,
+            Map<HGHandle, HGHandle> cells)
     {
         for (int i = 0; i < in.getArity(); i++)
         {
             CellGroupMember m = in.getElement(i);
-            if(isInputCell(m))
-               cells.put(in.getTargetAt(i), inputCellCopy(in.getTargetAt(i)));
-            else if(m instanceof CellGroup)
-               copy_input_cells((CellGroup) m, cells); 
+            if (isInputCell(m)) cells.put(in.getTargetAt(i), inputCellCopy(in
+                    .getTargetAt(i)));
+            else if (m instanceof CellGroup)
+                copy_input_cells((CellGroup) m, cells);
         }
     }
-    
-    private static HGHandle copy_output_cells(CellGroup in, Map<HGHandle, HGHandle> cells)
+
+    private static HGHandle connect_output_cells(CellGroup in,
+            Map<HGHandle, HGHandle> cells)
     {
         CellGroup cg = (CellGroup) in;
         CellGroup outG = new CellGroup(cg.getName());
@@ -387,64 +377,63 @@ public class CellUtils
         {
             CellGroupMember m = in.getElement(i);
             HGHandle copyH;
-            if(isInputCell(m))
-                copyH = cells.get(in.getTargetAt(i));
-            else if(m instanceof CellGroup)
-                copyH = copy_output_cells((CellGroup) m, cells); 
+            if (isInputCell(m)) copyH = cells.get(in.getTargetAt(i));
+            else if (m instanceof CellGroup) copyH = connect_output_cells(
+                    (CellGroup) m, cells);
             else
             {
                 copyH = outputCellCopy(in.getTargetAt(i));
-                HGHandle par = getOutCellParent(in.getTargetAt(i)); 
-                if(par != null && cells.containsKey(par))
-                  addEventPubSub(EvalCellEvent.HANDLE, cells.get(par), 
-                          copyH,  copyH);
+                HGHandle par = getOutCellParent(in.getTargetAt(i));
+                if (par != null && cells.containsKey(par))
+                    addEventPubSub(EvalCellEvent.HANDLE, cells.get(par), copyH,
+                            copyH);
             }
             outG.insert(i, copyH);
         }
         return out;
     }
-    
+
     private static HGHandle inputCellCopy(HGHandle h)
     {
         CellGroupMember in = (CellGroupMember) ThisNiche.hg.get(h);
         Scriptlet s = (Scriptlet) ((Cell) in).getValue();
         Scriptlet out_s = new Scriptlet(s.getLanguage(), s.getCode());
-        HGAtomRef ref = new HGAtomRef(ThisNiche.hg.add(out_s), HGAtomRef.Mode.symbolic);
+        HGAtomRef ref = new HGAtomRef(ThisNiche.hg.add(out_s),
+                HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
         out.attributes = in.getAttributes();
         return ThisNiche.hg.add(out);
     }
-    
+
     private static HGHandle outputCellCopy(HGHandle in)
     {
         Cell c = (Cell) ThisNiche.hg.get(in);
         boolean error = isError(c);
         Object value = c.getValue();
-        HGHandle //h = ThisNiche.handleOf(value);
-        //if (h == null) 
-            h = addSerializable(value);
+        HGHandle // h = ThisNiche.handleOf(value);
+        // if (h == null)
+        h = addSerializable(value);
         HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
         HGHandle res = ThisNiche.hg.add(out);
-        if(error) setError(h, error);
+        if (error) setError(h, error);
         return res;
     }
 
     public static HGHandle getOutCellParent(HGHandle h)
     {
-        Set<EventPubSub> subs =  findAll(ThisNiche.hg, hg.apply(hg.deref(ThisNiche.hg), hg
-                .and(hg.type(EventPubSub.class), hg.incident(h),
-                        hg.orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
-                                HGHandleFactory.anyHandle, h, h}))));
+        Set<EventPubSub> subs = findAll(ThisNiche.hg, hg.apply(hg
+                .deref(ThisNiche.hg), hg.and(hg.type(EventPubSub.class), hg
+                .incident(h), hg.orderedLink(new HGHandle[] {
+                EvalCellEvent.HANDLE, HGHandleFactory.anyHandle, h, h }))));
         for (EventPubSub eps : subs)
         {
-          Object pub = ThisNiche.hg.get(eps.getPublisher());
-          if(pub instanceof Cell)
-             return (eps.getPublisher());
+            Object pub = ThisNiche.hg.get(eps.getPublisher());
+            if (pub instanceof Cell) return (eps.getPublisher());
         }
         return null;
     }
-    
+
     public static void removeEventPubSub(HGHandle eventType,
             HGHandle publisher, HGHandle subscriber, HGHandle listener)
     {
@@ -498,7 +487,7 @@ public class CellUtils
                         .incident(publisher), hg.orderedLink(new HGHandle[] {
                         eventType, publisher, subscriber, listener }))));
     }
-    
+
     public static List<HGHandle> getEventPubSubListH(HGHandle eventType,
             HGHandle publisher, HGHandle subscriber, HGHandle listener)
     {
@@ -515,8 +504,9 @@ public class CellUtils
         if (master instanceof CellGroup && copy instanceof CellGroup)
         {
             addCellGroupCopyListeners(masterH, copyH);
-        } else if (master instanceof Cell && copy instanceof Cell)
-            addCellCopyListeners(masterH, copyH);
+        }
+        else if (master instanceof Cell && copy instanceof Cell) addCellCopyListeners(
+                masterH, copyH);
         else
             throw new RuntimeException("Bad Arguments:" + master + "OR" + copy);
     }
@@ -526,42 +516,36 @@ public class CellUtils
     {
         CellGroup master = (CellGroup) ThisNiche.hg.get(masterH);
         CellGroup copy = (CellGroup) ThisNiche.hg.get(copyH);
-        // System.out
-        // .println("addCellGroupCopyListeners: " + master + ":"
-        // + master.getArity() + "////////" + copy + ":"
-        // + copy.getArity());
-        addEventPubSub(AttributeChangeEvent.HANDLE, masterH, copyH,
+        addMutualEventPubSub(AttributeChangeEvent.HANDLE, masterH, copyH,
                 CopyAttributeChangeHandler.getInstance());
-        addMutualEventPubSub(CellGroupChangeEvent.HANDLE, masterH,
-                copyH, CopyCellGroupChangeHandler.getInstance());
+        addMutualEventPubSub(CellGroupChangeEvent.HANDLE, masterH, copyH,
+                CopyCellGroupChangeHandler.getInstance());
 
         for (int i = 0; i < master.getArity(); i++)
-            if (master.getElement(i) instanceof CellGroup) addCellGroupCopyListeners(
-                master.getTargetAt(i), copy.getTargetAt(i));
+            if (master.getElement(i) instanceof CellGroup) 
+                addCellGroupCopyListeners(master.getTargetAt(i), copy.getTargetAt(i));
             else
                 addCellCopyListeners(master.getTargetAt(i), copy.getTargetAt(i));
     }
 
     private static void addCellCopyListeners(HGHandle masterH, HGHandle copyH)
     {
-        if(isInputCell((CellGroupMember) ThisNiche.hg.get(masterH)))
+        if (isInputCell((CellGroupMember) ThisNiche.hg.get(masterH)))
         {
-            addMutualEventPubSub(CellTextChangeEvent.HANDLE, masterH,
-                copyH, CopyCellTextChangeHandler.getInstance());
+            addMutualEventPubSub(CellTextChangeEvent.HANDLE, masterH, copyH,
+                    CopyCellTextChangeHandler.getInstance());
             addMutualEventPubSub(EvalCellEvent.HANDLE, masterH, copyH,
-                CopyEvalCellHandler.getInstance());
+                    CopyEvalCellHandler.getInstance());
         }
-        addEventPubSub(AttributeChangeEvent.HANDLE, masterH, copyH,
+        addMutualEventPubSub(AttributeChangeEvent.HANDLE, masterH, copyH,
                 CopyAttributeChangeHandler.getInstance());
     }
 
     public static void removeHandlers(HGHandle masterH)
     {
-        if (masterH == null)
-            return;
+        if (masterH == null) return;
         Object master = ThisNiche.hg.get(masterH);
-        if (master instanceof CellGroup) 
-            removeCellGroupHandlers(masterH);
+        if (master instanceof CellGroup) removeCellGroupHandlers(masterH);
         else
             remove_event_handlers(masterH);
     }
@@ -572,8 +556,8 @@ public class CellUtils
         remove_event_handlers(masterH);
 
         for (int i = 0; i < master.getArity(); i++)
-            if (master.getElement(i) instanceof CellGroup)
-                removeCellGroupHandlers(master.getTargetAt(i));
+            if (master.getElement(i) instanceof CellGroup) removeCellGroupHandlers(master
+                    .getTargetAt(i));
             else
                 remove_event_handlers(master.getTargetAt(i));
     }
@@ -625,7 +609,8 @@ public class CellUtils
                     // else
                     // h = ThisNiche.hg.add(o);
                 }
-            } else
+            }
+            else
                 h = ThisNiche.hg.add(o);
         }
         catch (Throwable ex)
@@ -643,14 +628,13 @@ public class CellUtils
         Cell c = (Cell) ThisNiche.hg.get(cH);
         Scriptlet s = (Scriptlet) c.getValue();
         String code = s.getCode();
-        // System.out.println("processEvent: " + cH + ":" + e + ":" +
-        // code.length() + ":" + code);
         StringBuffer res = new StringBuffer(code.substring(0, e.getOffset()));
         if (e.getType() == CellTextChangeEvent.EventType.INSERT)
         {
             res.append(e.getText());
             res.append(code.substring(e.getOffset()));
-        } else
+        }
+        else
         {
             res.append(code.substring(e.getOffset() + e.getLength()));
         }
@@ -687,8 +671,7 @@ public class CellUtils
         }
         finally
         {
-            if (rs != null)
-                rs.close();
+            if (rs != null) rs.close();
         }
     }
 }

@@ -20,7 +20,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
 {
     public static final HGPersistentHandle HANDLE = HGHandleFactory.makeHandle("45e6d93f-cddf-11dc-a205-83ce1a342d9c");
     
-    private HGHandle group;
+    private HGHandle groupH;
     private int index;
     private HGHandle[] removed;
     private HGHandle[] added;
@@ -41,7 +41,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
             HGHandle[] added, HGHandle[] removed)
     {
         super();
-        this.group = e;
+        this.groupH = e;
         this.index = index;
         this.removed = removed;
         this.added = added;
@@ -54,7 +54,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
      */
     public HGHandle getCellGroup()
     {
-        return group;
+        return groupH;
     }
 
     /**
@@ -99,11 +99,9 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
        HGHandle[] tmp = removed;
        removed = added;
        added = tmp;
-       CellGroup gr = (CellGroup) ThisNiche.hg.get(group);
-       for(int i = 0; i < removed.length; i++)
-          gr.remove(index);
-       for(int i = 0; i < added.length; i++)
-          gr.insert(index, added[i]);
+       CellGroup gr = (CellGroup) ThisNiche.hg.get(groupH);
+       gr.batchProcess(new CellGroupChangeEvent(groupH, index, added, removed));
+       
     }
 
     /**
@@ -115,12 +113,8 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
     public void undo() throws CannotUndoException
     {
         super.undo();
-        CellGroup gr = (CellGroup) ThisNiche.hg.get(group);
-        for(int i = 0; i < added.length; i++)
-            gr.remove(index);
-         for(int i = 0; i < removed.length; i++)
-             gr.insert(index, removed[i]);
-
+        CellGroup gr = (CellGroup) ThisNiche.hg.get(groupH);
+        gr.batchProcess(new CellGroupChangeEvent(groupH, index, removed, added));
         // Since this event will be reused, switch around added/removed.
         HGHandle[] tmp = removed;
         removed = added;
@@ -141,7 +135,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
     @Override
     public String toString()
     {
-        return "" + group + ":" + added.length + ":" + removed.length + ":" + index;
+        return "" + groupH + ":" + added.length + ":" + removed.length + ":" + index;
     }
 
     @Override
@@ -150,7 +144,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
         final int prime = 31;
         int result = 1;
         result = prime * result + Arrays.hashCode(added);
-        result = prime * result + ((group == null) ? 0 : group.hashCode());
+        result = prime * result + ((groupH == null) ? 0 : groupH.hashCode());
         result = prime * result + index;
         result = prime * result + Arrays.hashCode(removed);
         return result;
@@ -164,10 +158,10 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
         if (getClass() != obj.getClass()) return false;
         final CellGroupChangeEvent other = (CellGroupChangeEvent) obj;
         if (!Arrays.equals(added, other.added)) return false;
-        if (group == null)
+        if (groupH == null)
         {
-            if (other.group != null) return false;
-        } else if (!group.equals(other.group)) return false;
+            if (other.groupH != null) return false;
+        } else if (!groupH.equals(other.groupH)) return false;
         if (index != other.index) return false;
         if (!Arrays.equals(removed, other.removed)) return false;
         return true;

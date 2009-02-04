@@ -89,7 +89,7 @@ public class CellTextChangeEvent extends AbstractUndoableEdit
         Cell cell = (Cell) ThisNiche.hg.get(cellH);
         Scriptlet s = (Scriptlet) cell.getValue();
         String code = s.getCode(); 
-        System.out.println("CellTextChangeEvent - undo:" + getType() + ":" + getText());
+        //System.out.println("CellTextChangeEvent - undo:" + getType() + ":" + getText());
         StringBuffer res = new StringBuffer(code.substring(0, getOffset()));
         if(getType() == CellTextChangeEvent.EventType.REMOVE){
             res.append(getText());

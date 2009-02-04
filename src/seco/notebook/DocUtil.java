@@ -356,7 +356,7 @@ abstract class DocUtil
         endTag(vec);
         createInsertionPoint(attr, vec);
         CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE,
-                cell_groupH, doc.getHandle(), CellGroupChangeHandler
+                cell_groupH, doc.getHandle(), AttributeChangeHandler
                         .getInstance());
         CellUtils.addMutualEventPubSub(CellGroupChangeEvent.HANDLE,
                 cell_groupH, doc.getHandle(), CellGroupChangeHandler
