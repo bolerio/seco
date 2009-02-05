@@ -67,15 +67,14 @@ import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
-
 /**
  * 
  * @author bizi
  */
 public class NotebookEditorKit extends StyledEditorKit
 {
-	private static final long serialVersionUID = -1;
-	
+    private static final long serialVersionUID = -1;
+
     public static final String CONTENT_TYPE = "text/notebook";
     public static final String evalAction = "Eval Cell";
     public static final String removeOutputCellsAction = "Remove Output Cells";
@@ -165,8 +164,7 @@ public class NotebookEditorKit extends StyledEditorKit
     public Document createDefaultDocument()
     {
         NotebookDocument doc = (NotebookDocument) ThisNiche.hg.get(DOC_HANDLE);
-        if (doc != null)
-            return doc;
+        if (doc != null) return doc;
 
         doc = new NotebookDocument(ThisNiche.hg.add(DEFAULT_TOP_GROUP),
                 ThisNiche.getTopContext());
@@ -211,7 +209,7 @@ public class NotebookEditorKit extends StyledEditorKit
                 case cellHandle:
                     return new CellHandleView(elem);
                 case cellGroup:
-                //case wholeCell:
+                    // case wholeCell:
                     return new WholeCellView(elem);
                 case commonCell:
                     return new InputCellView(elem);
@@ -237,6 +235,8 @@ public class NotebookEditorKit extends StyledEditorKit
 
     public static class EvalAction extends BaseAction
     {
+        private static final long serialVersionUID = -1024678440877335429L;
+
         public EvalAction()
         {
             super(evalAction);
@@ -246,14 +246,11 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             final NotebookDocument doc = ui.getDoc();
             Element el = ui.getSelectedCellElement();
-            // System.out.println("EVAL: " + el);
             if (el == null) return;
             int pos = ui.getCaretPosition();
             final ScriptSupport sup = doc.getScriptSupport(pos);
             if (sup == null) return;
-            if (doc.evalCell(el))
-                 sup.unMarkErrors();
-            //ui.setCaretPosition(pos);
+            if (doc.evalCell(el)) sup.unMarkErrors();
             Utilities.adjustScrollBar(ui, pos, Position.Bias.Forward);
         }
 
@@ -265,7 +262,8 @@ public class NotebookEditorKit extends StyledEditorKit
 
     public static class ImportAction extends BaseAction
     {
-        
+        private static final long serialVersionUID = 5146297563994337721L;
+
         public ImportAction()
         {
             super(importAction);
@@ -278,15 +276,13 @@ public class NotebookEditorKit extends StyledEditorKit
             NotebookDocument doc = ui.getDoc();
             int pos = ui.getCaretPosition();
             ScriptSupport sup = doc.getScriptSupport(pos);
-            if (sup == null)
-                return;
+            if (sup == null) return;
             int start = javax.swing.text.Utilities.getWordStart(ui, pos);
             int end = javax.swing.text.Utilities.getWordEnd(ui, pos);
             String cls = doc.getText(start, end - start);
             // System.out.println("IMPORT ACTION - sup: " + cls);
-            Class[] classes = ClassRepository.getInstance().findClass(cls);
-            if (classes.length == 0)
-                return;
+            Class<?>[] classes = ClassRepository.getInstance().findClass(cls);
+            if (classes.length == 0) return;
             String res = null;
             if (classes.length > 1)
             {
@@ -300,7 +296,8 @@ public class NotebookEditorKit extends StyledEditorKit
                 if (DialogDisplayer.getDefault().notify(dd) != NotifyDescriptor.OK_OPTION)
                     return;
                 res = (String) list.getSelectedValue();
-            } else
+            }
+            else
             {
                 res = classes[0].getName();
             }
@@ -313,6 +310,8 @@ public class NotebookEditorKit extends StyledEditorKit
 
     public static class RemoveOutputCellsAction extends BaseAction
     {
+        private static final long serialVersionUID = -6254206194604430783L;
+
         public RemoveOutputCellsAction()
         {
             super(removeOutputCellsAction);
@@ -323,27 +322,24 @@ public class NotebookEditorKit extends StyledEditorKit
             NotebookDocument doc = ui.getDoc();
             CellGroup g = (CellGroup) doc.getBook();
             processCellGroup(doc, g);
-            //doc.beginCompoundEdit("Remove Output Cells");
-            //doc.update(UpdateAction.removeOutputCells);
-           // doc.endCompoundEdit();
         }
-        
+
         private void processCellGroup(NotebookDocument doc, CellGroup g)
         {
             Set<HGHandle> rem = new HashSet<HGHandle>();
-            for(int i = 0; i < g.getArity(); i++)
+            for (int i = 0; i < g.getArity(); i++)
             {
-                CellGroupMember m  = g.getElement(i);
-                if(m instanceof Cell && !CellUtils.isInputCell(m))
-                   rem.add(g.getTargetAt(i));
-                else if(m instanceof CellGroup)
+                CellGroupMember m = g.getElement(i);
+                if (m instanceof Cell && !CellUtils.isInputCell(m)) rem.add(g
+                        .getTargetAt(i));
+                else if (m instanceof CellGroup)
                     processCellGroup(doc, (CellGroup) m);
             }
-            if(rem.size() == 0) return;
-            CellGroupChangeEvent e = new CellGroupChangeEvent(
-                    ThisNiche.handleOf(g), -1, new HGHandle[0], 
-                    rem.toArray(new HGHandle[rem.size()]));
-            //g.batchProcess(e);
+            if (rem.size() == 0) return;
+            CellGroupChangeEvent e = new CellGroupChangeEvent(ThisNiche
+                    .handleOf(g), -1, new HGHandle[0], rem
+                    .toArray(new HGHandle[rem.size()]));
+            // g.batchProcess(e);
             doc.fireCellGroupChanged(e);
         }
     }
@@ -359,8 +355,7 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             NotebookDocument doc = ui.getDoc();
             Element el = doc.getEnclosingCellElement(ui.getCaretPosition());
-            // System.out.println("DeleteCellAction: " + el);
-            if (el == null) return;
+             if (el == null) return;
             CellGroup p = (CellGroup) NotebookDocument
                     .getContainerEl(el, false);
             p.remove(NotebookDocument.getNBElement(el));
@@ -470,7 +465,7 @@ public class NotebookEditorKit extends StyledEditorKit
 
         protected void action(NotebookUI ui) throws Exception
         {
-            if(!ui.getUndoManager().canUndo()) return;
+            if (!ui.getUndoManager().canUndo()) return;
             ui.getUndoManager().undo();
             updateUndoState(ui.getUndoManager());
             redo.updateRedoState(ui.getUndoManager());
@@ -482,7 +477,8 @@ public class NotebookEditorKit extends StyledEditorKit
             {
                 setEnabled(true);
                 putValue(Action.NAME, undo.getUndoPresentationName());
-            } else
+            }
+            else
             {
                 setEnabled(false);
                 putValue(Action.NAME, "Undo");
@@ -501,7 +497,7 @@ public class NotebookEditorKit extends StyledEditorKit
 
         protected void action(NotebookUI ui) throws Exception
         {
-            if(!ui.getUndoManager().canRedo()) return;
+            if (!ui.getUndoManager().canRedo()) return;
             ui.getUndoManager().redo();
             updateRedoState(ui.getUndoManager());
             undo.updateUndoState(ui.getUndoManager());
@@ -513,7 +509,8 @@ public class NotebookEditorKit extends StyledEditorKit
             {
                 setEnabled(true);
                 putValue(Action.NAME, undo.getRedoPresentationName());
-            } else
+            }
+            else
             {
                 setEnabled(false);
                 putValue(Action.NAME, "Redo");
@@ -579,7 +576,8 @@ public class NotebookEditorKit extends StyledEditorKit
             {
                 cc_pos = doc
                         .removeEx(Math.min(dot, mark), Math.abs(dot - mark));
-            } else if (dot > 0)
+            }
+            else if (dot > 0)
             {
                 int delChars = 1;
                 if (dot > 1)
@@ -596,13 +594,12 @@ public class NotebookEditorKit extends StyledEditorKit
                 // check for deleting an empty cell
                 Element cell = doc.getUpperElement(dot, ElementType.commonCell);
                 if (cell != null
-                        && cell.getEndOffset() == cell.getStartOffset() + 1)
-                    doc.removeCellBoxElement(cell);
+                        && cell.getEndOffset() == cell.getStartOffset() + 1) doc
+                        .removeCellBoxElement(cell);
                 else
                     cc_pos = doc.removeEx(dot - delChars, delChars);
             }
-            if (cc_pos > 0)
-                ui.setCaretPosition(cc_pos);
+            if (cc_pos > 0) ui.setCaretPosition(cc_pos);
         }
     }
 
@@ -610,6 +607,7 @@ public class NotebookEditorKit extends StyledEditorKit
      * Deletes the character of content that follows the current caret position.
      * 
      * @see DefaultEditorKit#deleteNextCharAction
+     * 
      * @see DefaultEditorKit#getActions
      */
     static class DeleteNextCharAction extends BaseAction
@@ -634,7 +632,8 @@ public class NotebookEditorKit extends StyledEditorKit
                 {
                     cc_pos = doc.removeEx(Math.min(dot, mark), Math.abs(dot
                             - mark));
-                } else if (dot < doc.getLength())
+                }
+                else if (dot < doc.getLength())
                 {
                     int delChars = 1;
                     if (dot < doc.getLength() - 1)
@@ -650,8 +649,7 @@ public class NotebookEditorKit extends StyledEditorKit
                     }
                     cc_pos = doc.removeEx(dot, delChars);
                 }
-                if (cc_pos > 0)
-                    ui.setCaretPosition(cc_pos);
+                if (cc_pos > 0) ui.setCaretPosition(cc_pos);
             }
             catch (BadLocationException bl)
             {
@@ -672,14 +670,12 @@ public class NotebookEditorKit extends StyledEditorKit
             String tab = Utilities.getTabSubstitute();
             int start = ui.getSelectionStart();
             int end = ui.getSelectionEnd();
-            if (start == end)
-                ui.replaceSelection(tab);
+            if (start == end) ui.replaceSelection(tab);
             else
             {
                 NotebookDocument doc = ui.getDoc();
                 int[] offs = Utilities.getSelectionStartOffsets(ui);
-                if (offs == null)
-                    return;
+                if (offs == null) return;
                 try
                 {
                     doc.beginCompoundEdit("Tab");
@@ -709,8 +705,7 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             int count = Utilities.getTabSpacesCount();
             int[] offs = Utilities.getSelectionStartOffsets(ui, count);
-            if (offs == null)
-                return;
+            if (offs == null) return;
             NotebookDocument doc = ui.getDoc();
             try
             {
@@ -753,7 +748,8 @@ public class NotebookEditorKit extends StyledEditorKit
                     if (el != null)
                         CellUtils.toggleAttribute(NotebookDocument
                                 .getNBElement(el), XMLConstants.ATTR_HTML);
-                } else if (editor instanceof HtmlView.InnerHTMLEditor)
+                }
+                else if (editor instanceof HtmlView.InnerHTMLEditor)
                 {
                     Element el = ((HtmlView.InnerHTMLEditor) editor)
                             .getElement();
@@ -777,8 +773,7 @@ public class NotebookEditorKit extends StyledEditorKit
         public void actionPerformed(ActionEvent e)
         {
             JEditorPane ed = getEditor(e);
-            if (ed == null)
-                return;
+            if (ed == null) return;
             NotebookUI editor = (NotebookUI) ed;
             int pos = editor.getCaretPosition();
             Frame f = GUIUtilities.getFrame(editor);
@@ -822,7 +817,7 @@ public class NotebookEditorKit extends StyledEditorKit
 
         protected void action(NotebookUI ui) throws Exception
         {
-            //ui.getDoc().reNumberCells();
+            // ui.getDoc().reNumberCells();
         }
     }
 
@@ -881,8 +876,7 @@ public class NotebookEditorKit extends StyledEditorKit
         protected void action(NotebookUI ui) throws Exception
         {
             int index = findOrReplace ? 0 : 1;
-            if (findDialog == null)
-                findDialog = new FindDialog(ui, index);
+            if (findDialog == null) findDialog = new FindDialog(ui, index);
             else
                 findDialog.setSelectedIndex(index);
             findDialog.setVisible(true);
@@ -950,17 +944,14 @@ public class NotebookEditorKit extends StyledEditorKit
         public void actionPerformed(ActionEvent e)
         {
             // System.out.println("BaseAction: " + this + ":" + isEnabled());
-            if (!(this.isEnabled()))
-                return;
+            if (!(this.isEnabled())) return;
             JEditorPane pane = getEditor(e);
             // System.out
             // .println("BaseAction1: " + pane + ":" + pane.isEditable());
             if (pane == null || !pane.isEditable()
-                    || !(pane instanceof NotebookUI))
-                return;
+                    || !(pane instanceof NotebookUI)) return;
             NotebookUI editor = (NotebookUI) pane;
-            if (editor == null)
-                return;
+            if (editor == null) return;
             try
             {
                 action(editor);
@@ -975,8 +966,7 @@ public class NotebookEditorKit extends StyledEditorKit
         public boolean isEnabled()
         {
             NotebookUI editor = NotebookUI.getFocusedNotebookUI();
-            if (editor == null)
-                return false;
+            if (editor == null) return false;
             return isEnabled(editor);
         }
 

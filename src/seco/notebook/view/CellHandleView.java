@@ -166,15 +166,10 @@ public class CellHandleView extends HidableComponentView
 	{
 		View v = getEnclosingView();
 		CellUtils.toggleAttribute(NotebookDocument.getNBElement(getElement()), XMLConstants.ATTR_COLLAPSED);
-		//((NotebookDocument) getElement().getDocument()).collapse(getElement());
 		boolean b = CellUtils.isCollapsed(NotebookDocument.getNBElement(getElement()));
 		((CollapsibleView) v).collapse(b);
-		// button.collapse = ((CollapsibleView) v).collapse(!button.collapse);
 		final NotebookUI ui = ((NotebookUI) getContainer());
 		ui.getDoc().updateElement(getParent().getElement());
-//		System.out.println("CellHandleView - collapse: " + ui.getDoc().getBook().getName()+
-//		        ":" + ((NotebookDocument) getElement().getDocument()).getBook().getName() +
-//		        ":" + NotebookUI.getFocusedComponentEx().getDoc().getBook().getName());
 	}
 
 	public static class CustomButton extends JButton implements	SelectionManager.Selection
@@ -205,7 +200,7 @@ public class CellHandleView extends HidableComponentView
 		public CustomButton(CellHandleView view)
 		{
 			this.view = view;
-			this.addKeyListener(keyListener);
+			addKeyListener(keyListener);
 			DragMouseListener m = new DragMouseListener(this);
 			addMouseListener(m);
 			addMouseMotionListener(m);

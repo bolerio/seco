@@ -730,6 +730,12 @@ public class GUIHelper
         group.insert(group.getArity(), out);
         return cellH;
     }
+    
+    public static HGHandle addToTopCellGroup(HyperGraph hg, HGHandle h, HGHandle visualH, Rectangle r)
+    {
+        CellGroup top = hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        return addToTopCellGroup(hg, h,top, visualH, r);
+    }
 
     public static void removeFromTopCellGroup(HGHandle h)
     {

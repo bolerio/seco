@@ -50,8 +50,8 @@ public class CellContainerVisual implements CellVisual
             // what about dimensions, position etc...???
             visual.bind(x, canvas);
             } 
-            else
-                ;
+            else //TODO:??
+                new JComponentVisual().bind(x, canvas);
         }        
     }
 }

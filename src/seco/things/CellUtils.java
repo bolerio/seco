@@ -293,7 +293,7 @@ public class CellUtils
         HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
         HGHandle res = ThisNiche.hg.add(out);
-        if (error) setError(h, error);
+        if (error) setError(res, error);
         if (par != null) addEventPubSub(EvalCellEvent.HANDLE, par, res, res);
         return res;
     }
@@ -473,9 +473,6 @@ public class CellUtils
     {
         List<EventPubSub> subscriptions = getEventPubSubList(eventType,
                 publisher, subscriber, listener);
-        // if (!subscriptions.isEmpty())
-        // System.out.println("containsEventPubSub: " + publisher + ":"
-        // + subscriber + ":" + (!subscriptions.isEmpty()));
         return !subscriptions.isEmpty();
     }
 

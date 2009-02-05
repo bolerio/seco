@@ -8,6 +8,8 @@ import static seco.notebook.ElementType.notebook;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -67,28 +69,15 @@ public class ScriptletDocument extends NotebookDocument
         // System.out.println("NDOC-createCell: " + text);
         DocUtil.addContent(text.toCharArray(), 0, vec, 0);
         DocUtil.endTag(vec);
-        //attr.addAttribute(ATTR_CELL, cellH);
-       // DocUtil.createCellHandle(attr, vec);
-       // attr.removeAttribute(ATTR_CELL);
-
-//        boolean eval = CellUtils.isInitCell(cell);
-//        HGHandle out = CellUtils.getOutCellHandle(cellH);
-//        //System.out.println("createOutputCell: " + ((Cell)ThisNiche.hg.get(out)).getValue());
-//        if (out != null && !eval) createOutputCell(doc, out, attr, vec);
-//        else if (eval)
-//        {
-//            EvalResult res = eval_result(doc, cell);
-//            createOutputCell(doc, CellUtils.createOutputCellH(cellH, res.getText(),
-//                    res.getComponent()), attr, vec);
-//        }
         DocUtil.endTag(vec);
-        //if (gen_insP) createInsertionPoint(attr, vec);
         CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cellH,
                 doc.getHandle(), AttributeChangeHandler.getInstance());
         CellUtils.addMutualEventPubSub(CellTextChangeEvent.HANDLE, cellH,
                 doc.getHandle(), CellTextChangeHandler.getInstance());
-//        CellUtils.addMutualEventPubSub(EvalCellEvent.HANDLE, cellH,
-//                doc.getHandle(), EvalCellHandler.getInstance());
-
+    }
+    
+    boolean evalCell(Element el) throws BadLocationException
+    {
+        return false;
     }
 }

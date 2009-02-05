@@ -95,7 +95,7 @@ import com.microstar.xml.XmlException;
 import com.microstar.xml.XmlParser;
 
 public class NotebookUI extends JTextPane implements DocumentListener,
-        AdjustmentListener
+        AdjustmentListener, NotebookDocument.CaretMoveListener
 {
     public static final String LAST_VISIBLE_OFFSET = "lastVisibleOffset";
     public static final HGPersistentHandle POPUP_HANDLE = HGHandleFactory
@@ -146,6 +146,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             popupListener = new PopupListener();
         }
         addMouseListener(popupListener);
+        doc.addCaretMoveListener(this);
         setNavigationFilter(new CustomNavigationFilter());
         // Start watching for undoable edits
         getDoc().addUndoableEditListener(new MyUndoableEditListener());
@@ -185,6 +186,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         highlighter = new CustomHighlighter();
         highlighter.install(this);
     }
+    
 
     private static boolean antiAliasing;
 
@@ -916,6 +918,11 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             return null;
         }
     }
+    
+    public void caretMoved(int pos)
+    {
+       setCaretPosition(pos);
+    }
 
     @Override
     public void setCaretPosition(int position)
@@ -994,11 +1001,13 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         {
         }
     }
-
+    
     public static UpdatablePopupMenu getPopupMenu()
     {
         if(popupMenu == null)
             createPopup();
         return popupMenu;
     }
+
+    
 }

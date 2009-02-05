@@ -102,14 +102,12 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         for (Object o : getNodeLayer().getAllNodes())
         {
-            if (!(o instanceof PSwing0))  
-                continue;
+            if (!(o instanceof PSwing0))  continue;
             PSwing0 p = (PSwing0) o; 
-            CellGroupMember cm = (CellGroupMember) ThisNiche.hg.get(p
-                    .getHandle());
+            CellGroupMember cm = 
+                (CellGroupMember) ThisNiche.hg.get(p.getHandle());
             if (cm != null)
-                cm.setAttribute(VisualAttribs.rect, p.getFullBounds()
-                        .getBounds());
+                cm.setAttribute(VisualAttribs.rect, p.getFullBounds().getBounds());
         }
     }
 
@@ -117,8 +115,7 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         Object nb = ThisNiche.hg.get(h);
         JComponent comp = null;
-        if (nb instanceof Cell)// && ((Cell) nb).getValue() instanceof
-        // JComponent)
+        if (nb instanceof Cell)
         {
             comp = new NotebookUI(h);
             comp.setPreferredSize(new Dimension(200, 200));
@@ -129,12 +126,14 @@ public class PiccoloCanvas extends PSwingCanvas
                 CellUtils.addCopyListeners(h, masterH);
             }
             //TODO: should we remove the Cell from parent or not? 
-            //CellUtils.setOutputCell(par, null);
             //CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, par,
             //        HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
-            CellUtils.addEventPubSub(EvalCellEvent.HANDLE, par,
+            else
+            {
+                CellUtils.addEventPubSub(EvalCellEvent.HANDLE, par,
                     ((NotebookUI) comp).getDoc().getHandle(),
                     OutputCellDocument.CopyEvalCellHandler.getInstance());
+            }
         } else
         {
             comp = new NotebookUI(h);
@@ -151,9 +150,7 @@ public class PiccoloCanvas extends PSwingCanvas
             adjust_place(ps, true);
             h = CellUtils.addSerializable(comp);
             ps.setHandle(GUIHelper.addToTopCellGroup(ThisNiche.hg, h,
-                    (CellGroup) ThisNiche.hg
-                            .get(ThisNiche.TOP_CELL_GROUP_HANDLE), VisualsManager.defaultVisualForType(h), ps.getFullBounds()
-                            .getBounds()));
+               VisualsManager.defaultVisualForType(h), ps.getFullBounds().getBounds()));
         }
     }
 
