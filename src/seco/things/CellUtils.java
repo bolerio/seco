@@ -49,9 +49,7 @@ public class CellUtils
     static
     {
         for (StyleType t : StyleType.values())
-        {
             styles.put(t, new NBStyle(t));
-        }
         styles.get(StyleType.outputCell).put(StyleAttribs.BORDER_COLOR,
                 Color.white);
         styles.get(StyleType.outputCell).put(StyleAttribs.FG_COLOR,

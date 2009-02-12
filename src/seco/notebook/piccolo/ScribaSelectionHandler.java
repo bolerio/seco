@@ -22,9 +22,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import seco.gui.PiccoloFrame.PSwing0;
+import seco.gui.PSwingNode;
 import seco.notebook.NotebookUI;
-import seco.notebook.piccolo.pswing.PSwing;
+//import seco.notebook.piccolo.pswing.PSwing;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
@@ -587,7 +587,7 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
         {
             for (PNode node : selection.keySet())
             {
-                if (node instanceof PSwing0 && !((PSwing0) node).isDeleteable())
+                if (node instanceof PSwingNode && !((PSwingNode) node).isDeleteable())
                     continue;
                 // Object ui = ((PSwing0) node).getComponent();
                 // if(ui instanceof NotebookUI)

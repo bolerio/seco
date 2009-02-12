@@ -56,12 +56,19 @@ import org.hypergraphdb.atom.HGAtomRef;
 import org.wonderly.swing.tabs.TabCloseEvent;
 import org.wonderly.swing.tabs.TabCloseListener;
 
+import edu.umd.cs.piccolox.pswing.PSwing;
+
 import seco.ThisNiche;
 import seco.gui.CellContainerVisual;
 import seco.gui.TabbedPaneVisual;
 import seco.gui.TopFrame;
 import seco.gui.VisualAttribs;
 import seco.gui.VisualsManager;
+import seco.gui.layout.DefaultLayoutHandler;
+import seco.gui.layout.DRect;
+import seco.gui.layout.DValue;
+import seco.gui.layout.LayoutHandler;
+import seco.gui.layout.RefPoint;
 import seco.notebook.gui.CloseableDnDTabbedPane;
 import seco.notebook.gui.DialogDisplayer;
 import seco.notebook.gui.GUIUtilities;
@@ -76,7 +83,7 @@ import seco.notebook.gui.menu.RCListProvider;
 import seco.notebook.gui.menu.RecentFilesProvider;
 import seco.notebook.gui.menu.VisPropsProvider;
 import seco.notebook.html.HTMLToolBar;
-import seco.notebook.piccolo.pswing.PSwing;
+//import seco.notebook.piccolo.pswing.PSwing;
 import seco.notebook.util.FileUtil;
 import seco.notebook.util.IconManager;
 import seco.rtenv.ContextLink;
@@ -703,22 +710,41 @@ public class GUIHelper
         hg.define(ThisNiche.TOP_CELL_GROUP_HANDLE, group);
         group.setVisual(CellContainerVisual.getHandle());
         getMenuBar();
-        addToTopCellGroup(hg, MENUBAR_HANDLE, group, VisualsManager
+        HGHandle h = addToTopCellGroup(hg, MENUBAR_HANDLE, group, VisualsManager
                 .defaultVisualForAtom(MENUBAR_HANDLE), new Rectangle(0, 0, 200,
                 27));
+        setLayoutHandler(h, new DefaultLayoutHandler(
+                new DRect(new DValue(0), new DValue(0),
+                        new DValue(25, true), new DValue(28)),
+                        RefPoint.TOP_LEFT));
         getMainToolBar();
-        addToTopCellGroup(hg, TOOLBAR_HANDLE, group, VisualsManager
+        h = addToTopCellGroup(hg, TOOLBAR_HANDLE, group, VisualsManager
                 .defaultVisualForAtom(TOOLBAR_HANDLE), new Rectangle(0, 30,
                 260, 28));
+        setLayoutHandler(h, new DefaultLayoutHandler(
+                new DRect(new DValue(0), new DValue(0),
+                        new DValue(40, true), new DValue(28)),
+                        RefPoint.TOP_RIGHT));
         getHTMLToolBar();
-        addToTopCellGroup(hg, HTML_TOOLBAR_HANDLE, group, VisualsManager
-                .defaultVisualForAtom(HTML_TOOLBAR_HANDLE), new Rectangle(0,
-                60, 600, 28));
+        h = addToTopCellGroup(hg, HTML_TOOLBAR_HANDLE, group, VisualsManager
+                .defaultVisualForAtom(HTML_TOOLBAR_HANDLE), 
+                new Rectangle(0, 60, 600, 28));
+       setLayoutHandler(h, new DefaultLayoutHandler(
+                new DRect(new DValue(0), new DValue(0),
+                        new DValue(100, true), new DValue(28)),
+                        RefPoint.BOTTOM_LEFT));
+       
         getJTabbedPane();
         group.insert(group.getArity(), TABBED_PANE_GROUP_HANDLE);
         // hg.update(group);
     }
 
+    static void setLayoutHandler(HGHandle cellH, LayoutHandler lh)
+    {
+        CellGroupMember cell = ThisNiche.hg.get(cellH);
+        cell.setAttribute(VisualAttribs.layoutHandler,lh);
+    }
+    
     public static HGHandle addToTopCellGroup(HyperGraph hg, HGHandle h,
             CellGroup group, HGHandle visualH, Rectangle r)
     {
@@ -734,7 +760,7 @@ public class GUIHelper
     public static HGHandle addToTopCellGroup(HyperGraph hg, HGHandle h, HGHandle visualH, Rectangle r)
     {
         CellGroup top = hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-        return addToTopCellGroup(hg, h,top, visualH, r);
+        return addToTopCellGroup(hg, h, top, visualH, r);
     }
 
     public static void removeFromTopCellGroup(HGHandle h)

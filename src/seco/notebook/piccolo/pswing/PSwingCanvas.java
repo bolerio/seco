@@ -11,7 +11,6 @@
 package seco.notebook.piccolo.pswing;
 
 import edu.umd.cs.piccolo.PCanvas;
-import edu.umd.cs.piccolo.PNode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,11 +49,11 @@ public class PSwingCanvas extends PCanvas {
         init();
     }
     
-    public PSwingCanvas(PNode parent)
-    {
-        super(parent);
-        init();
-    }
+//    public PSwingCanvas(PNode parent)
+//    {
+//        super(parent);
+//        init();
+//    }
     
     JComponent getSwingWrapper() {
         return swingWrapper;

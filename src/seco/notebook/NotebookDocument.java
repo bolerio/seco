@@ -121,9 +121,12 @@ public class NotebookDocument extends DefaultStyledDocument
         this.evalContext = evalContext;
     }
 
+    private boolean inited;
     @SuppressWarnings("unchecked")
     public void init()
     {
+        if(inited) return;
+        
         CellGroup book = (CellGroup) ThisNiche.hg.get(bookH);
         Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) 
                     book.getAttribute(XMLConstants.CELL_STYLE);
@@ -146,6 +149,7 @@ public class NotebookDocument extends DefaultStyledDocument
                 getHandle(), AttributeChangeHandler.getInstance());
         CellUtils.addMutualEventPubSub(CellGroupChangeEvent.HANDLE, bookH,
                 getHandle(), CellGroupChangeHandler.getInstance());
+        inited = true;
     }
 
     protected HGHandle handle = null;
@@ -168,9 +172,9 @@ public class NotebookDocument extends DefaultStyledDocument
     @Override
     protected void create(ElementSpec[] data)
     {
-        super.create(data);
         try
         {
+            super.create(data);
             indexes.put(bookH, TOP_INDEX_POS = createPosition(0));
         }
         catch (Exception ex)
@@ -1015,7 +1019,8 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public String getTitle()
     {
-        return ((CellGroup) ThisNiche.hg.get(bookH)).getName();
+        return ( getBook() instanceof CellGroup) ? 
+                ((CellGroup) getBook()).getName() : "";
     }
 
     public void setTitle(String t)

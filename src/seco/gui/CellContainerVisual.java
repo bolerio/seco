@@ -52,6 +52,8 @@ public class CellContainerVisual implements CellVisual
             } 
             else //TODO:??
                 new JComponentVisual().bind(x, canvas);
-        }        
+        } 
+        
+        if(canvas != null) canvas.relayout();
     }
 }

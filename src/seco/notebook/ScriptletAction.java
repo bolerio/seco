@@ -9,6 +9,7 @@ import javax.swing.AbstractAction;
 
 import seco.ThisNiche;
 import seco.rtenv.EvaluationContext;
+import seco.things.CellUtils;
 import seco.things.Scriptlet;
 
 
@@ -29,7 +30,11 @@ public class ScriptletAction extends AbstractAction
     {
        this.scriptlet = new Scriptlet(language, code);
     }
-
+    public ScriptletAction(String code)
+    {
+        this(CellUtils.defaultEngineName, code);
+    }
+    
     public void actionPerformed(ActionEvent e)
     {
         EvaluationContext evalContext = ThisNiche.getTopContext();

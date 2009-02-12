@@ -767,9 +767,10 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             int height = (int) root.getPreferredSpan(View.Y_AXIS);
             return new Dimension(width, height);
         }
-        return super.getPreferredSize();
+        return isPreferredSizeSet() ? super.getPreferredSize(): dim;
     }
-
+    private static final  Dimension dim = new Dimension(200, 200);
+    
     public void changedUpdate(DocumentEvent e)
     {
         // do nothing

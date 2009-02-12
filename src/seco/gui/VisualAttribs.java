@@ -3,5 +3,6 @@ package seco.gui;
 public enum VisualAttribs
 {
     rect,
-    pinned
+    pinned,
+    layoutHandler
 }

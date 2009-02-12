@@ -2,57 +2,57 @@ package seco.gui;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.swing.JComponent;
-
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 
 import seco.ThisNiche;
 import seco.events.EvalCellEvent;
-import seco.gui.PiccoloFrame.PSwing0;
+import seco.gui.layout.LayoutHandler;
 import seco.notebook.OutputCellDocument;
 import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.piccolo.ScribaSelectionHandler;
-import seco.notebook.piccolo.pswing.PSwing;
-import seco.notebook.piccolo.pswing.PSwingCanvas;
 import seco.things.Cell;
-import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
+import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
+import edu.umd.cs.piccolo.event.PInputEventFilter;
+import edu.umd.cs.piccolo.event.PPanEventHandler;
+import edu.umd.cs.piccolo.event.PZoomEventHandler;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PNodeFilter;
 import edu.umd.cs.piccolo.util.PPaintContext;
+import edu.umd.cs.piccolox.pswing.PSwing;
+import edu.umd.cs.piccolox.pswing.PSwingCanvas;
 
 public class PiccoloCanvas extends PSwingCanvas
 {
-	private static final long serialVersionUID = 8650227944556777541L;
-	
+    private static final long serialVersionUID = 8650227944556777541L;
+
     PLayer nodeLayer;
     ScribaSelectionHandler sel_handler;
 
     private void init()
     {
-        setPanEventHandler(null);
         nodeLayer = new PLayer() {
             public void addChild(int index, PNode child)
             {
                 PNode oldParent = child.getParent();
-                if (oldParent != null)
-                {
-                    oldParent.removeChild(child);
-                }
+                if (oldParent != null) oldParent.removeChild(child);
                 child.setParent(this);
                 getChildrenReference().add(index, child);
                 child.invalidatePaint();
@@ -61,10 +61,27 @@ public class PiccoloCanvas extends PSwingCanvas
                         getChildrenReference());
             }
         };
+        final PCamera camera = getCamera();
+        camera.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS,
+                new PropertyChangeListener() {
+                    public void propertyChange(PropertyChangeEvent evt)
+                    {
+                       relayout();
+                    }
+                });
+        // camera.addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM,
+        // new PropertyChangeListener() {
+        // public void propertyChange(PropertyChangeEvent evt)
+        // {
+        // PAffineTransform t = (PAffineTransform) evt
+        // .getNewValue();
+        // }
+        // });
+
+        getLayer().addChild(nodeLayer);
         setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
         setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
         setDefaultRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
-        getLayer().addChild(nodeLayer);
         sel_handler = new ScribaSelectionHandler(getLayer(), getNodeLayer(),
                 getCamera());
         addInputEventListener(sel_handler);
@@ -80,6 +97,20 @@ public class PiccoloCanvas extends PSwingCanvas
                 }
             }
         });
+        
+        setPanEventHandler(null);
+        setZoomEventHandler(null);
+//        PZoomEventHandler zoomer = getZoomEventHandler();
+//        if(zoomer != null)
+//        {
+//            zoomer.setMinScale(.05);
+//            zoomer.setMaxScale(20);
+//            zoomer.setEventFilter(new PInputEventFilter(InputEvent.BUTTON3_MASK));
+//        }
+        
+        ContextMenuHandler ctxMenuHandler = new ContextMenuHandler();
+        ctxMenuHandler.setEventFilter(new PInputEventFilter(InputEvent.BUTTON3_MASK));
+        addInputEventListener(ctxMenuHandler);
     }
 
     public PiccoloCanvas()
@@ -87,28 +118,53 @@ public class PiccoloCanvas extends PSwingCanvas
         init();
     }
 
-    public PiccoloCanvas(PNode parent)
+    public void relayout()
     {
-        super(parent);
-        init();
+        for (Object o : getCamera().getChildrenReference())
+        {
+            if (!(o instanceof PSwingNode)) continue;
+            PSwingNode ps = (PSwingNode) o;
+            CellGroupMember m = ThisNiche.hg
+                    .get(ps.getHandle());
+            LayoutHandler vh = (LayoutHandler) m
+                    .getAttribute(VisualAttribs.layoutHandler);
+            if (vh != null) vh.layout(PiccoloCanvas.this, ps);
+        }
     }
-
+    
+    public void hardcoded_pin()
+    {
+        for(PNode node : getSelection())
+        {
+            
+        }
+    }
+    
     private void deleteSelection()
     {
         removeComponents(sel_handler.getSelection());
     }
 
+    public Collection<PNode> getSelection()
+    {
+        return sel_handler.getSelection();
+    }
+    
     public void saveDims()
     {
         for (Object o : getNodeLayer().getAllNodes())
-        {
-            if (!(o instanceof PSwing0))  continue;
-            PSwing0 p = (PSwing0) o; 
-            CellGroupMember cm = 
-                (CellGroupMember) ThisNiche.hg.get(p.getHandle());
-            if (cm != null)
-                cm.setAttribute(VisualAttribs.rect, p.getFullBounds().getBounds());
-        }
+            set_size_attrib(o);
+        for (Object o : getCamera().getAllNodes())
+            set_size_attrib(o);
+    }
+
+    private void set_size_attrib(Object o)
+    {
+        if (!(o instanceof PSwingNode)) return;
+        PSwingNode p = (PSwingNode) o;
+        CellGroupMember cm = (CellGroupMember) ThisNiche.hg.get(p.getHandle());
+        if (cm != null)
+            cm.setAttribute(VisualAttribs.rect, p.getFullBounds().getBounds());
     }
 
     public void addComponent(HGHandle h, HGHandle masterH)
@@ -120,21 +176,22 @@ public class PiccoloCanvas extends PSwingCanvas
             comp = new NotebookUI(h);
             comp.setPreferredSize(new Dimension(200, 200));
             HGHandle par = CellUtils.getOutCellParent(masterH);
-            if(par == null) //normal cell
+            if (par == null) // normal cell
             {
                 par = masterH;
                 CellUtils.addCopyListeners(h, masterH);
             }
-            //TODO: should we remove the Cell from parent or not? 
-            //CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, par,
-            //        HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
+            // TODO: should we remove the Cell from parent or not?
+            // CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, par,
+            // HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
             else
             {
                 CellUtils.addEventPubSub(EvalCellEvent.HANDLE, par,
-                    ((NotebookUI) comp).getDoc().getHandle(),
-                    OutputCellDocument.CopyEvalCellHandler.getInstance());
+                        ((NotebookUI) comp).getDoc().getHandle(),
+                        OutputCellDocument.CopyEvalCellHandler.getInstance());
             }
-        } else
+        }
+        else
         {
             comp = new NotebookUI(h);
             comp.setPreferredSize(new Dimension(200, 200));
@@ -143,30 +200,37 @@ public class PiccoloCanvas extends PSwingCanvas
 
         if (comp != null)
         {
-            PSwing0 ps = new PSwing0(this, comp);
+            PSwingNode ps = new PSwingNode(this, comp);
             // ps.addInputEventListener(del_handler);
             ps.deleteable = true;
             getNodeLayer().addChild(ps);
             adjust_place(ps, true);
             h = CellUtils.addSerializable(comp);
             ps.setHandle(GUIHelper.addToTopCellGroup(ThisNiche.hg, h,
-               VisualsManager.defaultVisualForType(h), ps.getFullBounds().getBounds()));
+                    VisualsManager.defaultVisualForType(h), ps.getFullBounds()
+                            .getBounds()));
         }
     }
 
     public PSwing addComponent(JComponent comp, CellGroupMember cell)
     {
-        PSwing0 p = new PSwing0(this, comp, ThisNiche.handleOf(cell));
-        getNodeLayer().addChild(p);
-        if(((Boolean)cell.getAttribute(VisualAttribs.pinned)))
+        PSwingNode p = new PSwingNode(this, comp, ThisNiche.handleOf(cell));
+        LayoutHandler vh = (LayoutHandler) cell
+                .getAttribute(VisualAttribs.layoutHandler);
+        if (vh != null)
         {
-            
+            getCamera().addChild(p);
+            vh.layout(this, p);
         }
-        Rectangle r = (Rectangle) cell.getAttribute(VisualAttribs.rect);
-        if (r != null)
+        else
         {
-            p.setBounds(r);
-            p.translate(r.x, r.y);
+            getNodeLayer().addChild(p);
+            Rectangle r = (Rectangle) cell.getAttribute(VisualAttribs.rect);
+            if (r != null)
+            {
+                p.setBounds(r);
+                p.translate(r.x, r.y);
+            }
         }
         return p;
     }
@@ -177,12 +241,12 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         for (PNode node : selection)
         {
-            if (node instanceof PSwing0 && false)// && !((PSwing0) node).isDeleteable())
+            if (node instanceof PSwingNode && false) // && !((PSwing0)
+                // node).isDeleteable())
                 continue;
-            GUIHelper.removeFromTopCellGroup(((PSwing0) node).getHandle());
-            Object ui = ((PSwing0) node).getComponent();
-            if (ui instanceof NotebookUI)
-                remove_and_clean((NotebookUI) ui);
+            GUIHelper.removeFromTopCellGroup(((PSwingNode) node).getHandle());
+            Object ui = ((PSwingNode) node).getComponent();
+            if (ui instanceof NotebookUI) remove_and_clean((NotebookUI) ui);
             node.removeFromParent();
         }
     }
@@ -191,8 +255,7 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         NotebookDocument doc = ui.getDoc();
         HGHandle h = ThisNiche.handleOf(ui);
-        if (h != null)
-            ThisNiche.hg.remove(h);
+        if (h != null) ThisNiche.hg.remove(h);
         CellUtils.removeHandlers(doc.getBookHandle());
         CellUtils.removeHandlers(doc.getHandle());
         ThisNiche.hg.remove(doc.getHandle());
@@ -233,7 +296,7 @@ public class PiccoloCanvas extends PSwingCanvas
 
         public boolean accept(PNode node)
         {
-            return node instanceof PSwing0;
+            return node instanceof PSwingNode;
         }
 
         public boolean acceptChildrenOf(PNode node)

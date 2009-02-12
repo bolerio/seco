@@ -5,6 +5,7 @@
 package seco.notebook.piccolo.pswing;
 
 import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventListener;
@@ -437,12 +438,28 @@ public class PSwingEventHandler implements PInputEventListener
         {
             e.printStackTrace();
         }
-        inverse.transform(pt, pt);
-        if (node != null)
-        {
+//        inverse.transform(pt, pt);
+//        if (node != null)
+//        {
+//            node.globalToLocal(pt);
+//        }
+
+        /*
+         * Only apply the camera's view transform when this node is a descendant
+         * of PLayer
+         */
+        PNode searchNode = node;
+        do {
+            searchNode = searchNode.getParent();
+            if (searchNode instanceof PLayer) {
+                inverse.transform(pt, pt);
+                break;
+            }
+        } while (searchNode != null);
+
+        if (node != null) {
             node.globalToLocal(pt);
         }
-        return;
     }
 
     /**

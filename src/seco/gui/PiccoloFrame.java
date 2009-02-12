@@ -1,26 +1,31 @@
 package seco.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.RepaintManager;
 
-import org.hypergraphdb.HGHandle;
 
 
 import seco.ThisNiche;
 import seco.notebook.GUIHelper;
 import seco.notebook.piccolo.PiccoloTransferHandler;
-import seco.notebook.piccolo.pswing.PSwing;
-import seco.notebook.piccolo.pswing.PSwingCanvas;
-import seco.things.CellGroup;
+
+import seco.things.CellGroup; 
 
 
 import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolox.pswing.PSwing;
+import edu.umd.cs.piccolox.pswing.PSwingRepaintManager;
 import edu.umd.cs.piccolox.swing.PScrollPane;
 
 public class PiccoloFrame extends TopFrame
@@ -85,58 +90,6 @@ public class PiccoloFrame extends TopFrame
         super.exit();
     }
 
-    public static class PSwing0 extends PSwing
-    {
-		private static final long serialVersionUID = 4732523747800268384L;
-		public boolean deleteable;
-        private HGHandle handle; 
-
-        public PSwing0(PSwingCanvas canvas, JComponent component,
-                HGHandle handle)
-        {
-            super(canvas, component);
-            this.handle = handle;
-        }
-
-        public PSwing0(PSwingCanvas canvas, JComponent component)
-        {
-            super(canvas, component);
-        }
-
-        public boolean isDeleteable()
-        {
-            return deleteable;
-        }
-
-        @Override
-        public void translate(double dx, double dy)
-        {
-            super.translate(dx, dy);
-            //System.out.println("PSwing0 - translate: " + dx + ":" + dy);
-            //getComponent().setBounds(this.getFullBounds().getBounds());
-            //getComponent().y = (int) dy;
-        }
-
-        @Override
-        public boolean setBounds(double x, double y, double width, double height)
-        {
-            boolean b = super.setBounds(x, y, width, height);
-            getComponent().setPreferredSize(
-                    new Dimension((int) width, (int) height));
-            return b;
-        }
-
-        public HGHandle getHandle()
-        {
-            return handle;
-        }
-
-        public void setHandle(HGHandle handle)
-        {
-            this.handle = handle;
-        }
-    }
-
     public PiccoloCanvas getCanvas()
     {
         return container;
@@ -159,12 +112,12 @@ public class PiccoloFrame extends TopFrame
         PScrollPane scroll = new PScrollPane(pc);
         scroll.setSize(500,500);
        // inner.add(scroll);
-        PSwing0 p = new PSwing0(pc, new JButton("Test"));
+        PSwingNode p = new PSwingNode(pc, new JButton("Test"));
         pc.getNodeLayer().addChild(p);
         p.setBounds(new Rectangle(0,0,400,400));
         p.translate(0, 0);
         
-        PSwing0 p1 = new PSwing0(pc, new JCheckBox("Check"));
+        PSwingNode p1 = new PSwingNode(pc, new JCheckBox("Check"));
         pc.getNodeLayer().addChild(p1);
         p1.setBounds(new Rectangle(60,66,400,400));
         p1.translate(60,66);
@@ -185,9 +138,9 @@ public class PiccoloFrame extends TopFrame
    }
     
 
-    private PSwing0 add_comp(JComponent c, Rectangle r)
+    private PSwingNode add_comp(JComponent c, Rectangle r)
     {
-        PSwing0 p = new PSwing0(container, c);
+        PSwingNode p = new PSwingNode(container, c);
         container.getNodeLayer().addChild(p);
         p.setBounds(r);
         p.translate(r.x, r.y);
