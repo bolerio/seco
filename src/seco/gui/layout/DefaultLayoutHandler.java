@@ -28,8 +28,8 @@ public class DefaultLayoutHandler implements LayoutHandler
         // System.out.println("PROPERTY_BOUNDS: "+ cb +
         // ":" + canvas.getCamera().getBounds());
         PBounds b = ps.getFullBounds();
-        System.out.println("PROPERTY_BOUNDS1: " + ps.getFullBounds() + ":"
-                + ps.getGlobalBounds() + ":" + this);
+        //System.out.println("PROPERTY_BOUNDS1: " + ps.getFullBounds() + ":"
+        //        + ps.getGlobalBounds() + ":" + this);
         ps.setTransform(new PAffineTransform());
         if (rect == null) return;
         double w = val(rect.width, cb.width);
