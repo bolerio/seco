@@ -42,6 +42,7 @@ public class CellContainerVisual implements CellVisual
         {
             HGHandle h = group.getTargetAt(i);
             CellGroupMember x = ThisNiche.hg.get(h);
+            System.out.println("CellContainerVisual - bind_els: " + i + ":" + x);
             if(x.getVisual() != null)
             {
             // find visual for member:
@@ -55,5 +56,6 @@ public class CellContainerVisual implements CellVisual
         } 
         
         if(canvas != null) canvas.relayout();
+        System.out.println("CellContainerVisual -end");
     }
 }

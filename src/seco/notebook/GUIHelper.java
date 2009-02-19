@@ -60,6 +60,7 @@ import edu.umd.cs.piccolox.pswing.PSwing;
 
 import seco.ThisNiche;
 import seco.gui.CellContainerVisual;
+import seco.gui.PSwingNode;
 import seco.gui.TabbedPaneVisual;
 import seco.gui.TopFrame;
 import seco.gui.VisualAttribs;
@@ -745,6 +746,12 @@ public class GUIHelper
         cell.setAttribute(VisualAttribs.layoutHandler,lh);
     }
     
+    public static LayoutHandler getLayoutHandler(PSwingNode ps)
+    {
+        CellGroupMember m = ThisNiche.hg.get(ps.getHandle());
+        return (LayoutHandler) m.getAttribute(VisualAttribs.layoutHandler);
+    }
+    
     public static HGHandle addToTopCellGroup(HyperGraph hg, HGHandle h,
             CellGroup group, HGHandle visualH, Rectangle r)
     {
@@ -967,6 +974,7 @@ public class GUIHelper
                 book.requestFocusInWindow();
             }
         });
+        if(scrollPane.isVisible())
         scrollPane.setViewportView(book);
         JTabbedPane tabbedPane = getJTabbedPane();
         tabbedPane.addTab(makeTabTitle(doc.getTitle()), scrollPane);

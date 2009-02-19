@@ -25,10 +25,8 @@ public class DefaultLayoutHandler implements LayoutHandler
     public void layout(PSwingCanvas canvas, PSwingNode ps)
     {
         PBounds cb = canvas.getCamera().getGlobalBounds();
-        // System.out.println("PROPERTY_BOUNDS: "+ cb +
-        // ":" + canvas.getCamera().getBounds());
-        PBounds b = ps.getFullBounds();
-        //System.out.println("PROPERTY_BOUNDS1: " + ps.getFullBounds() + ":"
+       // PBounds b = ps.getFullBounds();
+        //System.out.println("PROPERTY_BOUNDS1: " + cb + ":"
         //        + ps.getGlobalBounds() + ":" + this);
         ps.setTransform(new PAffineTransform());
         if (rect == null) return;
@@ -41,13 +39,13 @@ public class DefaultLayoutHandler implements LayoutHandler
                         val(rect.y, cb.height));
         else if (refPoint == RefPoint.BOTTOM_LEFT)
             ps.translate(val(rect.x, cb.width), 
-                    cb.height - (b.height + val(rect.y, cb.height)));
+                    cb.height - (h + val(rect.y, cb.height)));
         else if (refPoint == RefPoint.TOP_RIGHT)
-            ps.translate(cb.width - (b.width + val(rect.x, cb.width)),
+            ps.translate(cb.width - (w + val(rect.x, cb.width)),
                          val(rect.y, cb.height));
         else if (refPoint == RefPoint.BOTTOM_RIGHT)
-            ps.translate(cb.width - (b.width + val(rect.x, cb.width)), 
-                    cb.height - (b.height + val(rect.y, cb.height)));
+            ps.translate(cb.width - (w + val(rect.x, cb.width)), 
+                    cb.height - (h + val(rect.y, cb.height)));
 
     }
 

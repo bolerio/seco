@@ -8,6 +8,8 @@
 package seco.notebook.view;
 
 import java.awt.Shape;
+
+import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
 
 /**
@@ -74,6 +76,7 @@ public class NotebookView extends BoxView
     } 
     
     
+    
     public int getNextVisualPositionFrom(int pos, Position.Bias b, Shape a,
 			int direction, Position.Bias[] biasRet) throws BadLocationException
 	{
@@ -96,5 +99,6 @@ public class NotebookView extends BoxView
 		}*/
 		return i;
 	}
- 
+
+   
 }

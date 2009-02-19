@@ -31,8 +31,6 @@ import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
-import edu.umd.cs.piccolo.event.PPanEventHandler;
-import edu.umd.cs.piccolo.event.PZoomEventHandler;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PNodeFilter;
 import edu.umd.cs.piccolo.util.PPaintContext;
@@ -123,12 +121,8 @@ public class PiccoloCanvas extends PSwingCanvas
         for (Object o : getCamera().getChildrenReference())
         {
             if (!(o instanceof PSwingNode)) continue;
-            PSwingNode ps = (PSwingNode) o;
-            CellGroupMember m = ThisNiche.hg
-                    .get(ps.getHandle());
-            LayoutHandler vh = (LayoutHandler) m
-                    .getAttribute(VisualAttribs.layoutHandler);
-            if (vh != null) vh.layout(PiccoloCanvas.this, ps);
+            LayoutHandler vh = GUIHelper.getLayoutHandler((PSwingNode) o);
+            if (vh != null) vh.layout(PiccoloCanvas.this,(PSwingNode) o);
         }
     }
     
@@ -214,9 +208,18 @@ public class PiccoloCanvas extends PSwingCanvas
 
     public PSwing addComponent(JComponent comp, CellGroupMember cell)
     {
-        PSwingNode p = new PSwingNode(this, comp, ThisNiche.handleOf(cell));
+        PSwingNode p = null;
+        try{
+         p = new PSwingNode(this, comp, ThisNiche.handleOf(cell));
+        }catch(Exception ex)
+        {
+            ex.printStackTrace();
+            return null;
+        }
+       // System.out.println("PCanvas - addComponent1: " + p);
         LayoutHandler vh = (LayoutHandler) cell
                 .getAttribute(VisualAttribs.layoutHandler);
+        System.out.println("PCanvas - addComponent2: " + vh);
         if (vh != null)
         {
             getCamera().addChild(p);
@@ -228,13 +231,28 @@ public class PiccoloCanvas extends PSwingCanvas
             Rectangle r = (Rectangle) cell.getAttribute(VisualAttribs.rect);
             if (r != null)
             {
+                normalize(r);
                 p.setBounds(r);
                 p.translate(r.x, r.y);
             }
         }
         return p;
     }
-
+    
+    //TODO: temp solution during testing
+    private void normalize( Rectangle r)
+    {
+        System.out.println("normalize1: " + r);
+        if(r.x < 0) r.x = 0;
+        if(r.x > 1000) r.x = 1000;
+        if(r.y < 0) r.y = 0;
+        if(r.y > 1000) r.y = 1000;
+        if(r.width > 1000) r.width = 1000;
+        if(r.width <= 0) r.width =50;
+        if(r.height > 1000) r.height = 1000;
+        if(r.height <= 0) r.height =50;
+        System.out.println("normalize2: " + r);
+    }
     // private static DelEventHandler del_handler = new DelEventHandler();
 
     void removeComponents(Collection<PNode> selection)
@@ -261,7 +279,7 @@ public class PiccoloCanvas extends PSwingCanvas
         ThisNiche.hg.remove(doc.getHandle());
     }
 
-    PLayer getNodeLayer()
+    public PLayer getNodeLayer()
     {
         return nodeLayer;
     }

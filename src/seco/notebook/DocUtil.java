@@ -221,6 +221,7 @@ abstract class DocUtil
         startTag(commonCell, attr, 0, vec);
         Object val = (e != null) ? e.getValue().getComponent(): c.getValue();
         String text = (e != null) ? e.getValue().getText(): "";
+        if(text == null) text = "";
         Component comp = null;
         if (val != null)
         {

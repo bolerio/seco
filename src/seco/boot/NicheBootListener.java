@@ -27,11 +27,6 @@ public class NicheBootListener implements HGListener
         RuntimeContext topRuntime = ThisNiche.getTopContext().getRuntimeContext(); 
         topRuntime.getBindings().put("desktop", TopFrame.getInstance());
         ThisNiche.hg.update(topRuntime);
-//            s.loadComponents();
-//            AppForm.getInstance().openBooks();
-//            ThisNiche.topContext = ThisNiche
-//                    .getEvaluationContext(ThisNiche.TOP_CONTEXT_HANDLE);
-//            s.getCanvas().loadDims();
         CellGroup group = (CellGroup) hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         CellVisual v = (CellVisual) hg.get(group.getVisual());
         v.bind(group, null);

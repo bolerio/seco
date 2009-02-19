@@ -187,7 +187,13 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         highlighter.install(this);
     }
     
-
+    //caused a very difficult to track
+    //infinite loop in certain cases during PSwingNode creation
+    @Override
+    public void invalidate() 
+    {
+       if(!isVisible()) super.invalidate();
+    }
     private static boolean antiAliasing;
 
     public void paintComponent(Graphics g)
@@ -687,6 +693,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                     .getResourceAsStream(fileName);
             // System.out.println("NotebookUI - loadMode: " + is);
             parser.parse(null, null, is, null); // grammar);
+            
+            mode.setTokenMarker(xmh.getTokenMarker());
             mode.setProperties(xmh.getModeProperties());
         }
         catch (Throwable e)

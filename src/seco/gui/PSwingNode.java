@@ -23,13 +23,13 @@ public class PSwingNode extends PSwing
     public PSwingNode(PSwingCanvas canvas, JComponent component,
             HGHandle handle)
     {
-        super(canvas, component);
+        super(component);
         this.handle = handle;
     }
 
     public PSwingNode(PSwingCanvas canvas, JComponent component)
     {
-        super(canvas, component);
+        super(component);
     }
 
     public boolean isDeleteable()

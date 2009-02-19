@@ -423,6 +423,8 @@ public class IOUtils
 
     private static String writeCell(Cell gr, int depth)
     {
+        //TODO: deal wit output cells
+        if(!CellUtils.isInputCell(gr))return "";
         String s = XMLConstants.makeIndent(depth) + "<" + XMLConstants.CELL;
          if (CellUtils.isInitCell(gr))
             s += " " + XMLConstants.ATTR_INIT_CELL + "=\"true\"";
@@ -439,8 +441,9 @@ public class IOUtils
         s += ind + "<" + XMLConstants.CELL_DATA + ">";
         s += XMLConstants.makeCDATA(CellUtils.getText(gr));
         s += ind + "</" + XMLConstants.CELL_DATA + ">\n";
-        Cell outputCell = CellUtils.getOutCell(gr);
-        if (outputCell != null) s += writeOutputCell(outputCell, depth + 1);
+        //TODO:
+        //Cell outputCell = CellUtils.getOutCell(gr);
+        //if (outputCell != null) s += writeOutputCell(outputCell, depth + 1);
         s += XMLConstants.makeIndent(depth) + "</" + XMLConstants.CELL + ">\n";
         return s;
     }

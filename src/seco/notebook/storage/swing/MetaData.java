@@ -184,6 +184,10 @@ public class MetaData
 
         // removeProperty("javax.swing.JFrame", "menuBar");
 
+        registerConstructor("javax.swing.GroupLayout",
+                new String[] { "host" },
+                new Class[] { Container.class });
+        
         registerConstructor("javax.swing.DefaultCellEditor",
                 new String[] { "editorComponent" },
                 new Class[] { JCheckBox.class });
