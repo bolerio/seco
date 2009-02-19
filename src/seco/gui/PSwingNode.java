@@ -67,12 +67,12 @@ public class PSwingNode extends PSwing
     {
         if(getComponent() instanceof JMenuBar)
         {
-            System.out.println("updateBounds1: ");
+           //System.out.println("updateBounds1: ");
            setBounds(0, 0, getWidth(), getHeight());
            translate(0,0);
         }else if(getComponent() instanceof JToolBar)
         {
-            System.out.println("updateBounds2: ");
+            //System.out.println("updateBounds2: ");
             setBounds(0, 0, //this.getParent().getWidth() - getWidth(), 
                     getWidth(), getHeight());
             translate(0,0);

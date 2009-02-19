@@ -192,7 +192,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     @Override
     public void invalidate() 
     {
-       if(!isVisible()) super.invalidate();
+       if(!isVisible()) 
+           super.invalidate();
     }
     private static boolean antiAliasing;
 

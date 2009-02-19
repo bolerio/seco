@@ -42,7 +42,6 @@ public class CellContainerVisual implements CellVisual
         {
             HGHandle h = group.getTargetAt(i);
             CellGroupMember x = ThisNiche.hg.get(h);
-            System.out.println("CellContainerVisual - bind_els: " + i + ":" + x);
             if(x.getVisual() != null)
             {
             // find visual for member:
