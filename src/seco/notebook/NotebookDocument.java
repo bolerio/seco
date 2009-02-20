@@ -125,7 +125,11 @@ public class NotebookDocument extends DefaultStyledDocument
     @SuppressWarnings("unchecked")
     public void init()
     {
-        if(inited) return;
+        if(inited) 
+        {
+            update(UpdateAction.evalInitCells);
+            return;
+        }
         
         CellGroup book = (CellGroup) ThisNiche.hg.get(bookH);
         Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) 
@@ -142,13 +146,13 @@ public class NotebookDocument extends DefaultStyledDocument
             DocUtil.createCellGroupMember(this, book.getTargetAt(i), attr, vec);
         DocUtil.endTag(vec);
         create(vec.toArray(new ElementSpec[vec.size()]));
-        update(UpdateAction.tokenize);
-        update(UpdateAction.evalInitCells);
         setModified(false);
         CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, bookH,
                 getHandle(), AttributeChangeHandler.getInstance());
         CellUtils.addMutualEventPubSub(CellGroupChangeEvent.HANDLE, bookH,
                 getHandle(), CellGroupChangeHandler.getInstance());
+        update(UpdateAction.tokenize);
+        update(UpdateAction.evalInitCells);
         inited = true;
     }
 

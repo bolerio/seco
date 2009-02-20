@@ -3,29 +3,15 @@ package seco.gui;
 import java.awt.Dimension;
 import java.awt.event.InputEvent;
 import java.io.File;
-import java.lang.reflect.Method;
 
 import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
-
-import bsh.Modifiers;
-
 import seco.ThisNiche;
 import seco.gui.layout.LayoutSettingsPanel;
 import seco.notebook.AppConfig;
-import seco.notebook.GUIHelper;
-import seco.notebook.NotebookCellsTree;
 import seco.notebook.NotebookDocument;
 import seco.notebook.ScriptletAction;
-import seco.notebook.gui.DialogDescriptor;
-import seco.notebook.gui.DialogDisplayer;
-import seco.notebook.gui.GUIUtilities;
-import seco.notebook.gui.NotifyDescriptor;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.IOUtils;
@@ -46,17 +32,15 @@ public class ContextMenuHandler extends PBasicInputEventHandler
     {
         if (event.getPickedNode() instanceof PCamera)
         {
-            int m = InputEvent.ALT_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
+            int m = InputEvent.CTRL_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
             if ((event.getModifiersEx() & m) == m)
-            {
-                showGlobMenu(event);
-            }
+               showGlobMenu(event);
             return;
         }
-        if (((PiccoloCanvas) event.getComponent()).getSelection().isEmpty())
+        else if (((PiccoloCanvas) event.getComponent()).getSelection().isEmpty())
             return;
         event.setHandled(true);
-        showMenu(event);
+        showNodeMenu(event);
     }
 
     public void showGlobMenu(PInputEvent event)
@@ -68,6 +52,10 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         mi.setText("Layout");
         menu.add(mi);
         mi = new JMenuItem(new ScriptletAction(
+        "desktop.getCanvas().getCamera().setViewScale(1.0);"));
+        mi.setText("Reset Zoom");
+        menu.add(mi);
+        mi = new JMenuItem(new ScriptletAction(
                 "seco.gui.ContextMenuHandler.backup();"));
         mi.setText("Backup");
         menu.add(mi);
@@ -77,16 +65,12 @@ public class ContextMenuHandler extends PBasicInputEventHandler
     /**
      * Creates the Appropriate JMenu for the particular node type
      */
-    public void showMenu(PInputEvent event)
+    public void showNodeMenu(PInputEvent event)
     {
         PNode node = event.getPickedNode();
         System.out.println("ContextMenuHandler - node: " + node);
         JPopupMenu menu = new JPopupMenu();
-        JMenuItem mi = new JMenuItem(new ScriptletAction(
-                "desktop.getCanvas().getCamera().scaleView(1.0);"));
-        mi.setText("Reset Zoom");
-        // menu.add(mi);
-        mi = new JMenuItem(
+        JMenuItem mi = new JMenuItem(
                 new ScriptletAction(
                         "desktop.getCanvas().getCamera().animateViewToCenterBounds("
                                 + "desktop.getCanvas().getLayer().getFullBounds(), true, 50l );"));
@@ -124,7 +108,7 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         if (!dir.exists()) dir.mkdir();
         System.out.println("Backup in: " + dir.getAbsolutePath());
         CellGroup group = (CellGroup) ThisNiche.hg
-                .get(GUIHelper.TABBED_PANE_GROUP_HANDLE);
+                .get(ThisNiche.TABBED_PANE_GROUP_HANDLE);
         for (int i = 0; i < group.getArity(); i++)
         {
             Cell c = (Cell) group.getElement(i);

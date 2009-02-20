@@ -251,11 +251,12 @@ public class AddOnFactory
             }
             catch (Exception ex)
             {
-                System.err.println("CTR: " + beanClass + ":" + ex.toString());
+                System.err.println("instantiateConstructorLink - CTR: " + beanClass + ":" + ex.toString());
                 for (int i = 0; i < args.length; i++)
                 {
                     System.err.println("args: " + args[i] + ":" + types[i]);
                 }
+                ex.printStackTrace();
                 return null;
             }
         }

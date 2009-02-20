@@ -31,6 +31,7 @@ import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
+import edu.umd.cs.piccolo.event.PZoomEventHandler;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PNodeFilter;
 import edu.umd.cs.piccolo.util.PPaintContext;
@@ -97,14 +98,14 @@ public class PiccoloCanvas extends PSwingCanvas
         });
         
         setPanEventHandler(null);
-        setZoomEventHandler(null);
-//        PZoomEventHandler zoomer = getZoomEventHandler();
-//        if(zoomer != null)
-//        {
-//            zoomer.setMinScale(.05);
-//            zoomer.setMaxScale(20);
-//            zoomer.setEventFilter(new PInputEventFilter(InputEvent.BUTTON3_MASK));
-//        }
+        //setZoomEventHandler(null);
+        PZoomEventHandler zoomer = getZoomEventHandler();
+        if(zoomer != null)
+        {
+            zoomer.setMinScale(.25);
+            zoomer.setMaxScale(4);
+            zoomer.setEventFilter(new PInputEventFilter(InputEvent.BUTTON3_MASK));
+        }
         
         ContextMenuHandler ctxMenuHandler = new ContextMenuHandler();
         ctxMenuHandler.setEventFilter(new PInputEventFilter(InputEvent.BUTTON3_MASK));
@@ -161,7 +162,7 @@ public class PiccoloCanvas extends PSwingCanvas
             cm.setAttribute(VisualAttribs.rect, p.getFullBounds().getBounds());
     }
 
-    public void addComponent(HGHandle h, HGHandle masterH)
+    public void addCopyComponent(HGHandle h, HGHandle masterH)
     {
         Object nb = ThisNiche.hg.get(h);
         JComponent comp = null;
@@ -206,11 +207,26 @@ public class PiccoloCanvas extends PSwingCanvas
         }
     }
 
-    public PSwing addComponent(JComponent comp, CellGroupMember cell)
+    public PSwingNode getPSwingNodeForHandle(HGHandle h)
     {
+        for(Object p: getNodeLayer().getAllNodes())
+            if(p instanceof PSwingNode &&
+                    (h.equals(((PSwingNode)p).getHandle())))
+                return (PSwingNode)p;
+        for(Object p: getCamera().getAllNodes())
+            if(p instanceof PSwingNode &&
+                    (h.equals(((PSwingNode)p).getHandle())))
+                return (PSwingNode)p; 
+        return null;
+    } 
+    
+    public PSwingNode addComponent(JComponent comp, CellGroupMember cell)
+    {
+        HGHandle cellH = ThisNiche.handleOf(cell);
+        //if(getNodeForHandle(cellH) != null) return null;
         PSwingNode p = null;
         try{
-         p = new PSwingNode(this, comp, ThisNiche.handleOf(cell));
+         p = new PSwingNode(this, comp, cellH);
         }catch(Exception ex)
         {
             ex.printStackTrace();

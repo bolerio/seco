@@ -52,7 +52,7 @@ public class PiccoloTransferHandler extends TransferHandler
                 {
                     HGHandle nbH = NotebookDocument.getNBElementH(e);
                     HGHandle copyH = CellUtils.makeCopy(nbH);
-                    canvas.addComponent(copyH, nbH);
+                    canvas.addCopyComponent(copyH, nbH);
                 }
                 //return false;
             }

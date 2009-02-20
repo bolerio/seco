@@ -34,7 +34,7 @@ public class VisPropsProvider implements DynamicMenuProvider, Serializable
 
     public boolean updateEveryTime()
     {
-        return false;
+        return true;
     }
 
     public void update(JMenu menu)
@@ -55,7 +55,7 @@ public class VisPropsProvider implements DynamicMenuProvider, Serializable
         menu.add(item);
     }
 
-    private static final class FormatAction implements ActionListener
+    public static final class FormatAction implements ActionListener
     {
         public void actionPerformed(ActionEvent e)
         {
@@ -70,7 +70,7 @@ public class VisPropsProvider implements DynamicMenuProvider, Serializable
         }
     }
 
-    private static class SyntaxStyleAction implements ActionListener
+    public static class SyntaxStyleAction implements ActionListener
     {
         public void actionPerformed(ActionEvent e)
         {
@@ -93,9 +93,9 @@ public class VisPropsProvider implements DynamicMenuProvider, Serializable
         }
     }
 
-    static class MIActionListener extends AbstractAction
+    public static class MIActionListener extends AbstractAction
     {
-        public StyleType stype;
+        protected StyleType stype;
 
         public MIActionListener()
         {
@@ -120,6 +120,16 @@ public class VisPropsProvider implements DynamicMenuProvider, Serializable
                 ui.revalidate();
                 ui.repaint();
             }
+        }
+
+        public StyleType getStyleType()
+        {
+            return stype;
+        }
+
+        public void setStyleType(StyleType stype)
+        {
+            this.stype = stype;
         }
     }
 
