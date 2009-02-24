@@ -28,6 +28,7 @@ import seco.events.handlers.AttributeChangeHandler;
 import seco.events.handlers.CellGroupChangeHandler;
 import seco.events.handlers.CellTextChangeHandler;
 import seco.events.handlers.EvalCellHandler;
+import seco.rtenv.EvaluationContext;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -258,7 +259,6 @@ abstract class DocUtil
         try
         {
             String name = CellUtils.getEngine(cell);
-
             if (ThisNiche.getHyperGraph() == null) // are we running a niche or
             // some other testing/development mode?
             {
@@ -295,8 +295,8 @@ abstract class DocUtil
                     else if (c.getParent() != null)
                     {
                         // If this component is displayed in some output cell,
-                        // detach it from
-                        // there, otherwise we don't own the component so we
+                        // detach it from there, 
+                        //otherwise we don't own the component so we
                         // don't display it.
                         if (c.getParent() instanceof seco.notebook.view.ResizableComponent)
                         {
@@ -312,7 +312,7 @@ abstract class DocUtil
                         res.setComponent(c);
                 }
                 else
-                    res.setText("" + o);
+                    res.setText(eval_to_string(o, doc.evalContext));
             }
         }
         catch (ScriptException ex)
@@ -324,6 +324,20 @@ abstract class DocUtil
             res.setText(w.toString());
         }
         return res;
+    }
+    
+    private static String eval_to_string(Object o, EvaluationContext ctx)
+    {
+        ClassLoader save = Thread.currentThread().getContextClassLoader();
+        try
+        {
+            Thread.currentThread().setContextClassLoader(ctx.getClassLoader());
+            return "" + o;
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader(save);
+        }
     }
 
     static Component maybe_clone(Component c)
@@ -350,7 +364,7 @@ abstract class DocUtil
             createCellGroupMember(doc, cell_group.getTargetAt(i), attr, vec);
         }
         endTag(vec);
-        // refresh damaged ATTR_CELL attib
+        // refresh damaged ATTR_CELL attribute
         attr.addAttribute(ATTR_CELL, cell_groupH);
         createCellHandle(attr, vec);
         attr.removeAttribute(ATTR_CELL);

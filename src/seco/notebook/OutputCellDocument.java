@@ -15,6 +15,7 @@ import org.hypergraphdb.HGQuery.hg;
 import seco.ThisNiche;
 import seco.events.EvalCellEvent;
 import seco.events.EventHandler;
+import seco.events.handlers.EvalCellHandler;
 import seco.things.Cell;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
@@ -56,6 +57,8 @@ public class OutputCellDocument extends NotebookDocument
         DocUtil.createOutputCell(this, bookH, attr, parseBuffer, false);
         DocUtil.endTag(parseBuffer);
         create(parseBuffer.toArray(new ElementSpec[parseBuffer.size()]));
+        CellUtils.addMutualEventPubSub(EvalCellEvent.HANDLE, bookH, getHandle(),
+                EvalCellHandler.getInstance());
     }
 
     public HGHandle getHandle()
@@ -79,6 +82,18 @@ public class OutputCellDocument extends NotebookDocument
 
     public void setTitle(String t)
     {
+    }
+    
+    @Override
+    public void cellEvaled(EvalCellEvent e)
+    {
+        reinit();
+        //super.cellEvaled(e);
+    }
+    
+    public String toString()
+    {
+        return "OUTCELLDOC: " + getHandle();
     }
 
     public static class CopyEvalCellHandler implements EventHandler
@@ -115,4 +130,6 @@ public class OutputCellDocument extends NotebookDocument
             }
         }
     }
+
+
 }

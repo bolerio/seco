@@ -7,6 +7,7 @@ import java.io.File;
 import javax.swing.JDialog;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+
 import seco.ThisNiche;
 import seco.gui.layout.LayoutSettingsPanel;
 import seco.notebook.AppConfig;
@@ -18,6 +19,7 @@ import seco.things.IOUtils;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
+import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
@@ -33,12 +35,11 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         if (event.getPickedNode() instanceof PCamera)
         {
             int m = InputEvent.CTRL_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
-            if ((event.getModifiersEx() & m) == m)
-               showGlobMenu(event);
+            if ((event.getModifiersEx() & m) == m) showGlobMenu(event);
             return;
         }
-        else if (((PiccoloCanvas) event.getComponent()).getSelection().isEmpty())
-            return;
+        else if (((PiccoloCanvas) event.getComponent()).getSelection()
+                .isEmpty()) return;
         event.setHandled(true);
         showNodeMenu(event);
     }
@@ -52,7 +53,12 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         mi.setText("Layout");
         menu.add(mi);
         mi = new JMenuItem(new ScriptletAction(
-        "desktop.getCanvas().getCamera().setViewScale(1.0);"));
+                "seco.gui.ContextMenuHandler.birdsEyeView();"));
+        mi.setText("BirdsEyeView");
+        menu.add(mi);
+
+        mi = new JMenuItem(new ScriptletAction(
+                "desktop.getCanvas().getCamera().setViewScale(1.0);"));
         mi.setText("Reset Zoom");
         menu.add(mi);
         mi = new JMenuItem(new ScriptletAction(
@@ -100,6 +106,22 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         dialog.setVisible(true);
     }
 
+    public static void birdsEyeView()
+    {
+        PCanvas canvas = TopFrame.getInstance().getCanvas();
+        BirdsEyeView bev = new BirdsEyeView();
+        bev.connect(canvas, new PLayer[] { canvas.getLayer() });
+
+        bev.setMinimumSize(new Dimension(180, 180));
+        bev.setSize(new Dimension(180, 180));
+        bev.updateFromViewed();
+        JDialog dialog = new JDialog(TopFrame.getInstance(), "BirdsEyeView");
+        dialog.add(bev);
+        dialog.setSize(new Dimension(220, 220));
+        dialog.setVisible(true);
+        bev.revalidate();
+    }
+
     private static String bck_dir = "seco_bck";
 
     public static void backup()
@@ -114,8 +136,21 @@ public class ContextMenuHandler extends PBasicInputEventHandler
             Cell c = (Cell) group.getElement(i);
             NotebookDocument doc = (NotebookDocument) c.getValue();
             CellGroup g = (CellGroup) doc.getBook();
-            IOUtils.exportCellGroup(g, 
-                    new File(dir, "BCK" + i).getAbsolutePath() + ".nb");
+            // escape some illegal chars which could be introduced during
+            // previous book import
+            String fn = g.getName().replace('\\', '_').replace('/', '_')
+                    .replace(':', '_');
+            if (!fn.endsWith(".nb")) fn += ".nb";
+            try
+            {
+                IOUtils.exportCellGroup(g, new File(dir, fn).getAbsolutePath());
+            }
+            catch (Exception ex)
+            {
+                IOUtils.exportCellGroup(g, new File(dir, "BCK" + i)
+                        .getAbsolutePath()
+                        + ".nb");
+            }
         }
     }
 }

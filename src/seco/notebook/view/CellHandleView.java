@@ -38,6 +38,7 @@ import seco.gui.StandaloneFrame;
 import seco.notebook.ElementType;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
+import seco.notebook.OutputCellDocument;
 import seco.notebook.SelectionManager;
 import seco.notebook.XMLConstants;
 import seco.things.CellUtils;
@@ -55,6 +56,8 @@ public class CellHandleView extends HidableComponentView
 		super(element);
 		isCellGroup = isCellGroup();
 		isOutputCell = isOutputCell();
+		if(element.getDocument() instanceof OutputCellDocument)
+		    this.setVisible(false);
 	}
 
 	@Override

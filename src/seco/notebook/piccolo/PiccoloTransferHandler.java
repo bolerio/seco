@@ -1,5 +1,6 @@
 package seco.notebook.piccolo;
 
+import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.util.Vector;
@@ -15,74 +16,66 @@ import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookTransferHandler;
 import seco.things.CellUtils;
 
-
-
 public class PiccoloTransferHandler extends TransferHandler
 {
     // The data type exported from NotebookUI.
-    static String mimeType = NotebookTransferHandler.mimeType;
     static DataFlavor elFlavor;
+   // static DataFlavor tabFlavor;
     static
     {
         try
         {
-            elFlavor = new DataFlavor(mimeType);
+            elFlavor = new DataFlavor(NotebookTransferHandler.mimeType);
+            //tabFlavor = new DataFlavor(CloseableDnDTabbedPane.mimeType);
         }
         catch (ClassNotFoundException e)
         {
         }
     }
 
-    /**
-     * Overridden to import a Color if it is available.
-     * getChangesForegroundColor is used to determine whether the foreground or
-     * the background color is changed.
-     */
-    public boolean importData(JComponent c, Transferable t)
+    @Override
+    public boolean importData(TransferSupport support)
     {
-        if (hasFlavor(t.getTransferDataFlavors()))
+        Transferable t = support.getTransferable();
+        if (!hasFlavor(t.getTransferDataFlavors())) return false;
+        Point pt = support.getDropLocation().getDropPoint();
+        try
         {
-            try
+            Vector<Element> els = (Vector<Element>) t.getTransferData(elFlavor);
+            PiccoloCanvas canvas = (PiccoloCanvas) support.getComponent();
+            boolean move = (support.getDropAction() == MOVE);
+            for (Element e : els)
             {
-                Vector<Element> els = (Vector<Element>) t
-                        .getTransferData(elFlavor);
-                PiccoloCanvas canvas = (PiccoloCanvas) c;
-                    //((PiccoloCanvasContainer) c).getCanvas();
-                for (Element e : els)
+                HGHandle nbH = NotebookDocument.getNBElementH(e);
+                if (move)
+                    canvas.addComponent(nbH, pt);
+                else
                 {
-                    HGHandle nbH = NotebookDocument.getNBElementH(e);
                     HGHandle copyH = CellUtils.makeCopy(nbH);
-                    canvas.addCopyComponent(copyH, nbH);
+                    canvas.addCopyComponent(copyH, nbH, pt);
                 }
-                //return false;
             }
-            catch (Exception ex)
-            {
-                ex.printStackTrace();
-            }
+            return true;
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
         }
         return false;
     }
 
-    /**
-     * Does the flavor list have a Color flavor?
-     */
     protected boolean hasFlavor(DataFlavor[] flavors)
     {
-        if (elFlavor == null)
-            return false;
         for (int i = 0; i < flavors.length; i++)
-            if (elFlavor.equals(flavors[i]))
-                return true;
+            if (elFlavor.equals(flavors[i])) //||tabFlavor.equals(flavors[i])) 
+                    return true;
         return false;
     }
 
-    /**
-     * Overridden to include a check for a color flavor.
-     */
     public boolean canImport(JComponent c, DataFlavor[] flavors)
     {
         return hasFlavor(flavors);
     }
+
 
 }

@@ -60,6 +60,8 @@ import seco.events.EventDispatcher;
 import seco.events.CellTextChangeEvent.EventType;
 import seco.events.handlers.AttributeChangeHandler;
 import seco.events.handlers.CellGroupChangeHandler;
+import seco.gui.PiccoloCanvas;
+import seco.gui.TopFrame;
 import seco.notebook.html.HTMLEditor;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.SyntaxStyle;
@@ -400,11 +402,15 @@ public class NotebookDocument extends DefaultStyledDocument
     boolean evalCell(Element el) throws BadLocationException
     {
         Cell outer_cell = (Cell) getNBElement(el);
+        
+       // CellGroupMember par = getContainer(el);
+      //  if(CellUtils.isCollapsed(par))
+      //     CellUtils.toggleAttribute(par, XMLConstants.ATTR_COLLAPSED);
+        
         EvalResult res = DocUtil.eval_result(this, outer_cell);
         EvalCellEvent e = create_eval_event(getNBElementH(el), res);
-        // check if we already have an output cell,
-        // if not, add such a cell
-        create_output_cell(e);
+        // check if we already have an output cell. if not, add one
+        maybe_create_output_cell(e);
         // then fire the eval event
         fireUndoableEditUpdate(new UndoableEditEvent(this, e));
         supressEvents = true;
@@ -413,16 +419,30 @@ public class NotebookDocument extends DefaultStyledDocument
         return res.isError();
     }
 
-    private void create_output_cell(EvalCellEvent e)
+    
+    private void maybe_create_output_cell(EvalCellEvent e)
     {
         int offset = findElementOffset(e.getCellHandle());
         if (offset < 0) return;
         boolean create_new_output_cell = true;
+        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         for (HGHandle o : CellUtils.getOutCellHandles(e.getCellHandle()))
         {
             int off = findElementOffset(o);
-            if (off < 0) continue;
-            create_new_output_cell = false;
+            if (off < 0) 
+            {
+                //visible outCell in canvas
+                if(canvas != null && canvas.getOutCellNodeForHandle(o) != null)
+                {
+                    create_new_output_cell = false;
+                    break;
+                }
+            }
+            else //already have one in the notebook 
+            {
+              create_new_output_cell = false;
+              break;
+            }
         }
         if (!create_new_output_cell) return;
         HGHandle outH = CellUtils.createOutputCellH(e.getCellHandle(), e

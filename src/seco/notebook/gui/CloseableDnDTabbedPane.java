@@ -44,7 +44,9 @@ import org.wonderly.swing.tabs.CloseableTabbedPane;
 public class CloseableDnDTabbedPane extends org.wonderly.swing.tabs.CloseableTabbedPane//JTabbedPane
 {
 	private static final int LINEWIDTH = 3;
-	private static final String NAME = "CloseableDnDTabbedPane";
+	public static final String mimeType = DataFlavor.javaJVMLocalObjectMimeType + 
+	 ";class=seco.notebook.gui.CloseableDnDTabbedPane"; 
+	public static final String NAME = "CloseableDnDTabbedPane";
 	private final GhostGlassPane glassPane = new GhostGlassPane();
 	private final Rectangle2D lineRect = new Rectangle2D.Double();
 	private final DragSource dragSource = new DragSource();

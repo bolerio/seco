@@ -1,6 +1,7 @@
 package seco.gui;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
@@ -162,7 +163,7 @@ public class PiccoloCanvas extends PSwingCanvas
             cm.setAttribute(VisualAttribs.rect, p.getFullBounds().getBounds());
     }
 
-    public void addCopyComponent(HGHandle h, HGHandle masterH)
+    public void addCopyComponent(HGHandle h, HGHandle masterH, Point pt)
     {
         Object nb = ThisNiche.hg.get(h);
         JComponent comp = null;
@@ -197,15 +198,29 @@ public class PiccoloCanvas extends PSwingCanvas
         {
             PSwingNode ps = new PSwingNode(this, comp);
             // ps.addInputEventListener(del_handler);
-            ps.deleteable = true;
             getNodeLayer().addChild(ps);
-            adjust_place(ps, true);
+            adjust_place(ps, pt, true);
             h = CellUtils.addSerializable(comp);
             ps.setHandle(GUIHelper.addToTopCellGroup(ThisNiche.hg, h,
                     VisualsManager.defaultVisualForType(h), ps.getFullBounds()
                             .getBounds()));
         }
     }
+    
+    public PSwingNode addComponent(HGHandle h, Point pt)
+    {
+        JComponent comp = new NotebookUI(h);
+        comp.setPreferredSize(new Dimension(200, 200));
+        PSwingNode ps = new PSwingNode(this, comp);
+        // ps.addInputEventListener(del_handler);
+        getNodeLayer().addChild(ps);
+        adjust_place(ps, pt, true);
+        h = CellUtils.addSerializable(comp);
+        ps.setHandle(GUIHelper.addToTopCellGroup(ThisNiche.hg, h,
+                VisualsManager.defaultVisualForType(h), 
+                ps.getFullBounds().getBounds()));
+        return ps;
+   }
 
     public PSwingNode getPSwingNodeForHandle(HGHandle h)
     {
@@ -219,6 +234,30 @@ public class PiccoloCanvas extends PSwingCanvas
                 return (PSwingNode)p; 
         return null;
     } 
+    
+    public PSwingNode getOutCellNodeForHandle(HGHandle h)
+    {
+        for(Object p: getNodeLayer().getAllNodes())
+            if(p instanceof PSwingNode &&
+                    check_is_output((PSwingNode)p, h))
+                        return (PSwingNode)p;
+        for(Object p: getCamera().getAllNodes())
+            if(p instanceof PSwingNode &&
+                    check_is_output((PSwingNode)p, h))
+                        return (PSwingNode)p;
+        return null;
+    } 
+    
+    private boolean check_is_output(PSwingNode p, HGHandle h)
+    {
+        Object ui = p.getComponent();
+        if(ui instanceof NotebookUI && 
+           ((NotebookUI)ui).getDoc() instanceof OutputCellDocument)
+        {
+            return h.equals(((NotebookUI)ui).getDoc().getBookHandle());
+        }
+        return false;
+    }
     
     public PSwingNode addComponent(JComponent comp, CellGroupMember cell)
     {
@@ -300,29 +339,31 @@ public class PiccoloCanvas extends PSwingCanvas
         return nodeLayer;
     }
 
-    public void adjust_place(PNode node, boolean rigth_or_down)
+    public void adjust_place(PNode node, Point pt, boolean rigth_or_down)
     {
-        PBounds or = node.getGlobalFullBounds();
-        PBounds out = new PBounds(or);
-        ArrayList<Object> results = new ArrayList<Object>();
-        Object[] allnodes = node.getRoot().getAllNodes(new PSwingFilter(),
-                results).toArray();
-        boolean[] visited = new boolean[allnodes.length];
-        for (int i = 0; i < allnodes.length; i++)
-        {
-            PNode n = (PNode) allnodes[i];
-            PBounds b = n.getGlobalFullBounds();
-            if (n.fullIntersects(out) && !visited[i])
-            {
-                if (rigth_or_down) out.x = b.x + b.width + 10;
-                else
-                    out.y = b.y + b.height + 10;
-                visited[i] = true;
-                i = 0;
-            }
-        }
-        // node.setBounds(out);
-        node.translate(out.x, out.y);
+//        PBounds or = node.getGlobalFullBounds();
+//        PBounds out = new PBounds(or);
+//        ArrayList<Object> results = new ArrayList<Object>();
+//        Object[] allnodes = node.getRoot().getAllNodes(new PSwingFilter(),
+//                results).toArray();
+//        boolean[] visited = new boolean[allnodes.length];
+//        for (int i = 0; i < allnodes.length; i++)
+//        {
+//            PNode n = (PNode) allnodes[i];
+//            PBounds b = n.getGlobalFullBounds();
+//            if (n.fullIntersects(out) && !visited[i])
+//            {
+//                if (rigth_or_down) out.x = b.x + b.width + 10;
+//                else
+//                    out.y = b.y + b.height + 10;
+//                visited[i] = true;
+//                i = 0;
+//            }
+//        }
+//        // node.setBounds(out);
+//        node.translate(out.x, out.y);
+        node.translate(pt.x, pt.y);
+        node.setBounds(node.getBounds());
     }
 
     private static class PSwingFilter implements PNodeFilter

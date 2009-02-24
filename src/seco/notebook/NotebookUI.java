@@ -53,6 +53,7 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.plaf.UIResource;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Document;
 import javax.swing.text.EditorKit;
 import javax.swing.text.Element;
 import javax.swing.text.Highlighter;
@@ -99,7 +100,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 {
     public static final String LAST_VISIBLE_OFFSET = "lastVisibleOffset";
     public static final HGPersistentHandle POPUP_HANDLE = HGHandleFactory
-    .makeHandle("97287a6a-0195-11dd-a1bb-d15dfc7a2992");
+            .makeHandle("97287a6a-0195-11dd-a1bb-d15dfc7a2992");
 
     private boolean drawCellNums = false;
     protected UndoManager undo = new UndoManager();
@@ -124,13 +125,14 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         NotebookDocument doc = null;
         if (o instanceof CellGroupMember)
         {
-            if(o instanceof CellGroup)
-                doc = new NotebookDocument(book, evalContext);
-            else if(CellUtils.isInputCell((CellGroupMember)o))
-               doc = new  ScriptletDocument(book);
+            if (o instanceof CellGroup) doc = new NotebookDocument(book,
+                    evalContext);
+            else if (CellUtils.isInputCell((CellGroupMember) o)) doc = new ScriptletDocument(
+                    book);
             else
-               doc =  new OutputCellDocument(book);
-        } else
+                doc = new OutputCellDocument(book);
+        }
+        else
             doc = (NotebookDocument) o;
         if (doc == null) return;
         doc.init();
@@ -186,15 +188,16 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         highlighter = new CustomHighlighter();
         highlighter.install(this);
     }
-    
-    //caused a very difficult to track
-    //infinite loop in certain cases during PSwingNode creation
+
+    // caused a very difficult to track
+    // infinite loop in certain cases during PSwingNode creation
     @Override
-    public void invalidate() 
+    public void invalidate()
     {
-       //if(!isVisible()) 
-          super.invalidate();
+        // if(!isVisible())
+        super.invalidate();
     }
+
     private static boolean antiAliasing;
 
     public void paintComponent(Graphics g)
@@ -247,13 +250,11 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         key = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,
                 InputEvent.CTRL_DOWN_MASK);
         inputMap.put(key, NotebookEditorKit.showInputTypePopup);
-        //NotebookEditorKit kit = new NotebookEditorKit();
-        key = KeyStroke.getKeyStroke(KeyEvent.VK_Z,
-                InputEvent.CTRL_DOWN_MASK);
-        inputMap.put(key,NotebookEditorKit.undo);
-        key = KeyStroke.getKeyStroke(KeyEvent.VK_Y,
-                InputEvent.CTRL_DOWN_MASK);
-        inputMap.put(key,NotebookEditorKit.redo);
+        // NotebookEditorKit kit = new NotebookEditorKit();
+        key = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK);
+        inputMap.put(key, NotebookEditorKit.undo);
+        key = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK);
+        inputMap.put(key, NotebookEditorKit.redo);
     }
 
     void restoreCaret()
@@ -375,7 +376,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 
     public void deleteSelectedElements()
     {
-        if(getDoc() instanceof OutputCellDocument) return;
+        if (getDoc() instanceof OutputCellDocument) return;
         int offset = 0;
         for (Element el : new Vector<Element>(getSelectionManager()
                 .getSelection()))
@@ -411,10 +412,12 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             for (int i = 0; i < elements.size(); i++)
             {
                 Element el = elements.get(i);
-                if (!(NotebookDocument.getNBElement(el) instanceof Cell)) return;
-                if (i != 0) buffer.append(doc.getText(el.getStartOffset(), el
-                        .getEndOffset()
-                        - el.getStartOffset() - 1));
+                if (!(NotebookDocument.getNBElement(el) instanceof Cell))
+                    return;
+                if (i != 0)
+                    buffer.append(doc.getText(el.getStartOffset(), el
+                            .getEndOffset()
+                            - el.getStartOffset() - 1));
             }
         }
         catch (Exception ex)
@@ -465,8 +468,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 
     public SelectionManager getSelectionManager()
     {
-        if (selectionManager == null) selectionManager = new SelectionManager(
-                this);
+        if (selectionManager == null)
+            selectionManager = new SelectionManager(this);
         return selectionManager;
     }
 
@@ -519,7 +522,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 if (popupMenu.isVisible())
                 {
                     popupMenu.setVisible(false);
-                } else
+                }
+                else
                 {
                     if (!dont_change_pos)
                     {
@@ -601,9 +605,11 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                         return;
                     }
                     fb.setDot(dot, realBias);
-                } else
+                }
+                else
                     fb.setDot(dot, bias);
-            } else
+            }
+            else
             {
                 fb.setDot(dot, bias);
             }
@@ -624,7 +630,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 {
                     fb.moveDot(dot, bias);
                     return;
-                } else if (doc.isCellHandle(dot))
+                }
+                else if (doc.isCellHandle(dot))
                 {
                     fb.moveDot(el.getEndOffset() + 1, bias);
                     return;
@@ -670,8 +677,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 else
                 {
                     msg = subst.toString();
-                    if (subst instanceof Throwable) System.out
-                            .println("ERROR: " + subst);
+                    if (subst instanceof Throwable)
+                        System.out.println("ERROR: " + subst);
                 }
                 System.err.println("XMode error: " + msg + " file: " + fileName
                         + " line: " + line + " column: " + column);
@@ -690,11 +697,12 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         try
         {
             InputStream is = NotebookUI.class.getResourceAsStream(fileName);
-            if (is == null) is = Thread.currentThread().getContextClassLoader()
-                    .getResourceAsStream(fileName);
+            if (is == null)
+                is = Thread.currentThread().getContextClassLoader()
+                        .getResourceAsStream(fileName);
             // System.out.println("NotebookUI - loadMode: " + is);
             parser.parse(null, null, is, null); // grammar);
-            
+
             mode.setTokenMarker(xmh.getTokenMarker());
             mode.setProperties(xmh.getModeProperties());
         }
@@ -747,8 +755,9 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 
     public static void registerScriptSupport(ScriptSupport sup)
     {
-        if (sup == null) throw new NullPointerException(
-                "Attempt to register null ScriptSupport");
+        if (sup == null)
+            throw new NullPointerException(
+                    "Attempt to register null ScriptSupport");
         if (supports.containsKey(sup.getScriptEngineName())) return;
         for (Mode m : sup.getModes())
             if (NotebookUI.getMode(m.getName()) == null) NotebookUI.addMode(m);
@@ -776,10 +785,11 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             int height = (int) root.getPreferredSpan(View.Y_AXIS);
             return new Dimension(width, height);
         }
-        return isPreferredSizeSet() ? super.getPreferredSize(): dim;
+        return isPreferredSizeSet() ? super.getPreferredSize() : dim;
     }
-    private static final  Dimension dim = new Dimension(200, 200);
-    
+
+    private static final Dimension dim = new Dimension(200, 200);
+
     public void changedUpdate(DocumentEvent e)
     {
         // do nothing
@@ -812,16 +822,18 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     {
         super.addNotify();
         Object par = this.getParent().getParent();
-        if (par != null && par instanceof JScrollPane) ((JScrollPane) par)
-                .getVerticalScrollBar().addAdjustmentListener(this);
+        if (par != null && par instanceof JScrollPane)
+            ((JScrollPane) par).getVerticalScrollBar().addAdjustmentListener(
+                    this);
     }
 
     public void removeNotify()
     {
         super.removeNotify();
         Object par = this.getParent().getParent();
-        if (par != null && par instanceof JScrollPane) ((JScrollPane) par)
-                .getVerticalScrollBar().removeAdjustmentListener(this);
+        if (par != null && par instanceof JScrollPane)
+            ((JScrollPane) par).getVerticalScrollBar()
+                    .removeAdjustmentListener(this);
         close();
     }
 
@@ -830,7 +842,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         // clear undos
         undo.discardAllEdits();
     }
-    
+
     JTree getParseTree(int offset)
     {
         ScriptSupport sup = getDoc().getScriptSupport(offset);
@@ -898,7 +910,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 // System.out.println("paintLayer1: " + offs0 + ":" + offs1);
                 g.fillRect(alloc.x, alloc.y, alloc.width, alloc.height);
                 return alloc;
-            } else
+            }
+            else
             {
                 // Should only render part of View.
                 try
@@ -928,17 +941,24 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             return null;
         }
     }
-    
+
     public void caretMoved(int pos)
     {
-       setCaretPosition(pos);
+        setCaretPosition(pos);
     }
 
     @Override
     public void setCaretPosition(int position)
     {
-        // lastCaretStart = position;
-        super.setCaretPosition(position);
+        Document doc = getDocument();
+        if (doc != null)
+        {
+            if (position > doc.getLength() || position < 0)
+                return;
+                //throw new IllegalArgumentException("bad position: " + position); 
+            getCaret().setDot(position);
+        }
+        // super.setCaretPosition(position);
         lastCaretStart = getCaretPosition();
         // System.out.println("NBUI - setCaretPosition: " + position + ":" +
         // moved);
@@ -967,13 +987,14 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         Collection<Element> c = getSelectionManager().getSelection();
         if (c.size() == 1) el = c.iterator().next();
 
-        if (el == null) return getDoc().getUpperElement(getCaretPosition(),
-                type);
+        if (el == null)
+            return getDoc().getUpperElement(getCaretPosition(), type);
 
         CellGroupMember nb = NotebookDocument.getNBElement(el);
         // some handle is selected, check if it's of the needed type
         if (type == ElementType.outputCellBox) return el;
-        //if (type == ElementType.wholeCell && nb instanceof CellGroup) return null;
+        // if (type == ElementType.wholeCell && nb instanceof CellGroup) return
+        // null;
         return NotebookDocument.getUpperElement(el, type);
     }
 
@@ -984,7 +1005,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     {
         return (NotebookUI) AppContext.getAppContext().get(FOCUSED_COMPONENT);
     }
-    
+
     public static final void setFocusedNotebookUI(NotebookUI ui)
     {
         AppContext.getAppContext().put(FOCUSED_COMPONENT, (NotebookUI) ui);
@@ -995,7 +1016,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         if (c instanceof NotebookUI)
         {
             setFocusedNotebookUI((NotebookUI) c);
-           // System.out.println("Focused: " +
+            // System.out.println("Focused: " +
             // AppForm.getInstance().currentBook.getDoc().getBook().getName());
         }
     }
@@ -1011,13 +1032,11 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         {
         }
     }
-    
+
     public static UpdatablePopupMenu getPopupMenu()
     {
-        if(popupMenu == null)
-            createPopup();
+        if (popupMenu == null) createPopup();
         return popupMenu;
     }
 
-    
 }

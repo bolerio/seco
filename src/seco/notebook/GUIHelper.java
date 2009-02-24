@@ -100,7 +100,7 @@ public class GUIHelper
 {
     private static final String TAB_INDEX = "tab_index";
     public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
-
+    static final boolean DRAGGABLE_TABS = !TopFrame.PICCOLO;
     private static JTabbedPane tabbedPane;
 
     public static JTabbedPane getJTabbedPane()
@@ -772,8 +772,6 @@ public class GUIHelper
         CellGroup top = ThisNiche.hg.get(ThisNiche.TABBED_PANE_GROUP_HANDLE);
         top.remove((CellGroupMember) ThisNiche.hg.get(h));
     }
-
-    static final boolean DRAGGABLE_TABS = !TopFrame.PICCOLO;
 
     public static void openNotebook(HGHandle h)
     {
