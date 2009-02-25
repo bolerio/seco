@@ -10,8 +10,6 @@ package seco.notebook.view;
 import java.awt.Shape;
 import javax.swing.SwingConstants;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.CompositeView;
-import javax.swing.text.Element;
 import javax.swing.text.Position;
 import javax.swing.text.View;
 
@@ -20,6 +18,17 @@ import seco.notebook.NotebookDocument;
 
 public class ViewUtils
 {
+    public static View getView(int offset, View v)
+    {
+         int index = v.getViewIndex(offset, null);
+         while(index >= 0)
+         {
+             v = v.getView(index);
+             index = v.getViewIndex(offset, null);
+         }
+         return v;
+    }
+    
 	public static View getLowerView(View parent, ElementType type){
 		if (parent == null || type == null)
 			return null;

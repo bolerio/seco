@@ -61,6 +61,7 @@ import seco.notebook.view.InputCellView;
 import seco.notebook.view.InsertionPointView;
 import seco.notebook.view.NotebookView;
 import seco.notebook.view.ResizableComponentView;
+import seco.notebook.view.ViewUtils;
 import seco.notebook.view.WholeCellView;
 import seco.things.Cell;
 import seco.things.CellGroup;
@@ -250,7 +251,18 @@ public class NotebookEditorKit extends StyledEditorKit
             int pos = ui.getCaretPosition();
             final ScriptSupport sup = doc.getScriptSupport(pos);
             if (sup == null) return;
-            if (doc.evalCell(el)) sup.unMarkErrors();
+            //expand the evaluated cell and it's parent 
+            View root = ui.getUI().getRootView(ui);
+            View cellV = ViewUtils.getView(el.getEndOffset() -1, root);
+            Element containerEl = NotebookDocument.getContainerEl(el, false);
+            View containerV = ViewUtils.getView(containerEl.getEndOffset() -1, root);
+            if(cellV != null && cellV instanceof CellHandleView) 
+               ((CellHandleView) cellV).setCollapsed(false);
+            if(containerV != null && containerV instanceof CellHandleView) 
+                ((CellHandleView) containerV).setCollapsed(false);
+            
+            if (doc.evalCell(el))
+                sup.unMarkErrors();
             Utilities.adjustScrollBar(ui, pos, Position.Bias.Forward);
         }
 

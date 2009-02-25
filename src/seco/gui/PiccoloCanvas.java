@@ -8,7 +8,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.swing.JComponent;
@@ -44,7 +43,7 @@ public class PiccoloCanvas extends PSwingCanvas
     private static final long serialVersionUID = 8650227944556777541L;
 
     PLayer nodeLayer;
-    ScribaSelectionHandler sel_handler;
+    ScribaSelectionHandler selectionHandler;
 
     private void init()
     {
@@ -82,18 +81,18 @@ public class PiccoloCanvas extends PSwingCanvas
         setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
         setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
         setDefaultRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
-        sel_handler = new ScribaSelectionHandler(getLayer(), getNodeLayer(),
-                getCamera());
-        addInputEventListener(sel_handler);
+        selectionHandler = new ScribaSelectionHandler(
+                getLayer(), getNodeLayer(), getCamera());
+        selectionHandler.setEventFilter(new PInputEventFilter(
+                InputEvent.BUTTON1_MASK));
+        addInputEventListener(selectionHandler);
         // TODO: this should be handled better, but ...
-        addKeyListener(new KeyAdapter() {
-
+       addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e)
             {
                 if (e.getKeyChar() == KeyEvent.VK_DELETE)
                 {
-                    System.out.println("keyTyped: " + e);
-                    removeComponents(sel_handler.getSelection());
+                    removeComponents(selectionHandler.getSelection());
                 }
             }
         });
@@ -104,9 +103,10 @@ public class PiccoloCanvas extends PSwingCanvas
         if(zoomer != null)
         {
             zoomer.setMinScale(.25);
-            zoomer.setMaxScale(4);
-            zoomer.setEventFilter(new PInputEventFilter(InputEvent.BUTTON3_MASK));
+            zoomer.setMaxScale(3);
+            //zoomer.setEventFilter(new PInputEventFilter(InputEvent.BUTTON3_MASK));
         }
+        setZoomEventHandler(zoomer);
         
         ContextMenuHandler ctxMenuHandler = new ContextMenuHandler();
         ctxMenuHandler.setEventFilter(new PInputEventFilter(InputEvent.BUTTON3_MASK));
@@ -138,12 +138,12 @@ public class PiccoloCanvas extends PSwingCanvas
     
     private void deleteSelection()
     {
-        removeComponents(sel_handler.getSelection());
+        removeComponents(selectionHandler.getSelection());
     }
 
     public Collection<PNode> getSelection()
     {
-        return sel_handler.getSelection();
+        return selectionHandler.getSelection();
     }
     
     public void saveDims()
@@ -262,7 +262,6 @@ public class PiccoloCanvas extends PSwingCanvas
     public PSwingNode addComponent(JComponent comp, CellGroupMember cell)
     {
         HGHandle cellH = ThisNiche.handleOf(cell);
-        //if(getNodeForHandle(cellH) != null) return null;
         PSwingNode p = null;
         try{
          p = new PSwingNode(this, comp, cellH);

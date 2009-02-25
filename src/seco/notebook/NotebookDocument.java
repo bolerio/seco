@@ -163,15 +163,15 @@ public class NotebookDocument extends DefaultStyledDocument
     public HGHandle getHandle()
     {
         if (handle != null) return handle;
+        handle = ThisNiche.handleOf(this);
+        if (handle != null) return handle;
 
-        Set<HGHandle> list = CellUtils.findAll(ThisNiche.hg, hg
-                .type(NotebookDocument.class));
+        Set<HGHandle> list = CellUtils.findAll(ThisNiche.hg, hg.type(getClass()));
         for (HGHandle h : list)
             if (bookH.equals(((NotebookDocument) ThisNiche.hg.get(h)).bookH))
                 return handle = h;
-        // System.out.println("Adding DOC: " + getTitle());
         handle = ThisNiche.hg.add(this);
-
+        System.out.println("Adding DOC: " + this);
         return handle;
     }
 
@@ -402,11 +402,6 @@ public class NotebookDocument extends DefaultStyledDocument
     boolean evalCell(Element el) throws BadLocationException
     {
         Cell outer_cell = (Cell) getNBElement(el);
-        
-       // CellGroupMember par = getContainer(el);
-      //  if(CellUtils.isCollapsed(par))
-      //     CellUtils.toggleAttribute(par, XMLConstants.ATTR_COLLAPSED);
-        
         EvalResult res = DocUtil.eval_result(this, outer_cell);
         EvalCellEvent e = create_eval_event(getNBElementH(el), res);
         // check if we already have an output cell. if not, add one
@@ -1014,7 +1009,7 @@ public class NotebookDocument extends DefaultStyledDocument
         setModified(true);
     }
 
-    void removeCellBoxElement(Element el) throws BadLocationException
+    public void removeCellBoxElement(Element el) throws BadLocationException
     {
         HGHandle nb = getNBElementH(el);
         Element nb_el = getEnclosingCellElement(el);
@@ -1085,8 +1080,7 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public void addStyle(NBStyle style)
     {
-        CellGroupMember book = (CellGroupMember) ThisNiche.hg.get(bookH);
-        CellUtils.addStyle(book, style);
+        CellUtils.addStyle(getBook(), style);
         Style doc_style = DocUtil.getDocStyle(this, style.getStyleType());
         DocUtil.populateDocStyle(doc_style, style);
         if (style.getStyleType() == StyleType.outputCell)

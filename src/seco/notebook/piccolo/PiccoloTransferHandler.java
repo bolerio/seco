@@ -48,14 +48,18 @@ public class PiccoloTransferHandler extends TransferHandler
             {
                 HGHandle nbH = NotebookDocument.getNBElementH(e);
                 if (move)
+                {
+                    NotebookDocument doc = ((NotebookDocument)e.getDocument());
                     canvas.addComponent(nbH, pt);
+                    doc.removeCellBoxElement(e);
+                    CellUtils.removeHandlers(nbH, doc.getHandle());
+                }
                 else
                 {
                     HGHandle copyH = CellUtils.makeCopy(nbH);
                     canvas.addCopyComponent(copyH, nbH, pt);
                 }
             }
-            return true;
         }
         catch (Exception ex)
         {

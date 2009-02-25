@@ -34,7 +34,6 @@ import javax.swing.text.Element;
 import javax.swing.text.View;
 import javax.swing.text.Position.Bias;
 
-import seco.gui.StandaloneFrame;
 import seco.notebook.ElementType;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
@@ -165,7 +164,7 @@ public class CellHandleView extends HidableComponentView
 		return NotebookDocument.getEnclosingCellElement(getElement());
 	}
 
-	private void collapse()
+	private void toggle_expand_or_collapse()
 	{
 		View v = getEnclosingView();
 		CellUtils.toggleAttribute(NotebookDocument.getNBElement(getElement()), XMLConstants.ATTR_COLLAPSED);
@@ -173,6 +172,13 @@ public class CellHandleView extends HidableComponentView
 		((CollapsibleView) v).collapse(b);
 		final NotebookUI ui = ((NotebookUI) getContainer());
 		ui.getDoc().updateElement(getParent().getElement());
+	}
+	
+	public void setCollapsed(boolean coll_or_expand)
+	{
+	    boolean b = CellUtils.isCollapsed(NotebookDocument.getNBElement(getElement()));
+        if(b == coll_or_expand) return;
+        toggle_expand_or_collapse();
 	}
 
 	public static class CustomButton extends JButton implements	SelectionManager.Selection
@@ -380,7 +386,7 @@ public class CellHandleView extends HidableComponentView
 		{
 			if (e.getClickCount() == 2)
 			{
-				button.view.collapse();
+				button.view.toggle_expand_or_collapse();
 				return;
 			}
 			if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e))

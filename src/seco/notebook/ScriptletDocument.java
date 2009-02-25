@@ -21,7 +21,6 @@ import seco.events.AttributeChangeEvent;
 import seco.events.CellTextChangeEvent;
 import seco.events.handlers.AttributeChangeHandler;
 import seco.events.handlers.CellTextChangeHandler;
-import seco.notebook.NotebookDocument.UpdateAction;
 import seco.things.Cell;
 import seco.things.CellUtils;
 
@@ -79,5 +78,10 @@ public class ScriptletDocument extends NotebookDocument
     boolean evalCell(Element el) throws BadLocationException
     {
         return false;
+    }
+    
+    public String toString()
+    {
+        return "SCRIPTLET_DOC: " + getHandle();
     }
 }

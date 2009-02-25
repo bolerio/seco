@@ -538,33 +538,38 @@ public class CellUtils
 
     public static void removeHandlers(HGHandle masterH)
     {
+        removeHandlers(masterH, HGHandleFactory.anyHandle);
+    }
+    
+    public static void removeHandlers(HGHandle masterH, HGHandle anotherH)
+    {
         if (masterH == null) return;
         Object master = ThisNiche.hg.get(masterH);
-        if (master instanceof CellGroup) removeCellGroupHandlers(masterH);
+        if (master instanceof CellGroup) removeCellGroupHandlers(masterH, anotherH);
         else
-            remove_event_handlers(masterH);
+            remove_event_handlers(masterH, anotherH);
     }
 
-    private static void removeCellGroupHandlers(HGHandle masterH)
+    private static void removeCellGroupHandlers(HGHandle masterH, HGHandle anotherH)
     {
         CellGroup master = (CellGroup) ThisNiche.hg.get(masterH);
-        remove_event_handlers(masterH);
+        remove_event_handlers(masterH, anotherH);
 
         for (int i = 0; i < master.getArity(); i++)
-            if (master.getElement(i) instanceof CellGroup) removeCellGroupHandlers(master
-                    .getTargetAt(i));
+            if (master.getElement(i) instanceof CellGroup) 
+                removeCellGroupHandlers(master.getTargetAt(i), anotherH);
             else
-                remove_event_handlers(master.getTargetAt(i));
+                remove_event_handlers(master.getTargetAt(i), anotherH);
     }
 
-    private static void remove_event_handlers(HGHandle masterH)
+    private static void remove_event_handlers(HGHandle masterH, HGHandle anotherH)
     {
         List<HGHandle> subs = getListForPubOrSub(HGHandleFactory.anyHandle,
-                masterH, HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
+                masterH, anotherH, HGHandleFactory.anyHandle);
         for (HGHandle s : subs)
             ThisNiche.hg.remove(s);
         subs = getListForPubOrSub(HGHandleFactory.anyHandle,
-                HGHandleFactory.anyHandle, masterH, HGHandleFactory.anyHandle);
+                anotherH, masterH, HGHandleFactory.anyHandle);
         for (HGHandle s : subs)
             ThisNiche.hg.remove(s);
     }

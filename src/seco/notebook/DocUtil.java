@@ -137,16 +137,16 @@ abstract class DocUtil
             MutableAttributeSet attr, Vector<ElementSpec> vec)
     {
         CellGroupMember cgm = (CellGroupMember) ThisNiche.hg.get(cellH);
-        if(cgm instanceof CellGroup)
-            createCellGroup(doc, cellH, attr, vec);
-        else if(cgm instanceof Cell)
+        if (cgm instanceof CellGroup) createCellGroup(doc, cellH, attr, vec);
+        else if (cgm instanceof Cell)
         {
-            if (!CellUtils.isInputCell(cgm))
-                createOutputCell(doc, cellH, attr, vec);
+            if (!CellUtils.isInputCell(cgm)) createOutputCell(doc, cellH, attr,
+                    vec);
             else
                 createCell(doc, cellH, attr, vec);
         }
     }
+
     static void createCell(NotebookDocument doc, HGHandle cellH,
             MutableAttributeSet attr, Vector<ElementSpec> vec)
     {
@@ -179,7 +179,7 @@ abstract class DocUtil
         {
             EvalResult res = eval_result(doc, cell);
             createOutputCell(doc, CellUtils.createOutputCellH(cellH, res
-                    .getText(), res.getComponent(),false), attr, vec);
+                    .getText(), res.getComponent(), false), attr, vec);
         }
     }
 
@@ -187,29 +187,30 @@ abstract class DocUtil
             MutableAttributeSet attr, Vector<ElementSpec> vec, boolean genInsP)
     {
         createOutputCell(doc, cellH, attr, vec, genInsP, null);
-    } 
-    
+    }
+
     static void createOutputCell(NotebookDocument doc, HGHandle cellH,
-            MutableAttributeSet attr, Vector<ElementSpec> vec, 
-            boolean genInsP, EvalCellEvent e)
+            MutableAttributeSet attr, Vector<ElementSpec> vec, boolean genInsP,
+            EvalCellEvent e)
     {
         attr.addAttribute(ATTR_CELL, cellH);
         Cell c = (Cell) ThisNiche.hg.get(cellH);
         startTag(outputCellBox, attr, 0, vec);
         attr.removeAttribute(ATTR_CELL);
-        boolean isError = (e != null) ? e.getValue().isError() : CellUtils.isError(c);
-        attr = isError ? getDocStyle(doc, StyleType.error)
-                : getDocStyle(doc, StyleType.outputCell);
+        boolean isError = (e != null) ? e.getValue().isError() : CellUtils
+                .isError(c);
+        attr = isError ? getDocStyle(doc, StyleType.error) : getDocStyle(doc,
+                StyleType.outputCell);
         createOutputCellContents(doc, c, attr, vec, e);
         attr.addAttribute(ATTR_CELL, cellH);
         createCellHandle(attr, vec);
         attr.removeAttribute(ATTR_CELL);
         endTag(vec);
-        if(genInsP)   createInsertionPoint(attr, vec);
+        if (genInsP) createInsertionPoint(attr, vec);
         CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, cellH, doc
-                .getHandle(), AttributeChangeHandler.getInstance()); 
+                .getHandle(), AttributeChangeHandler.getInstance());
     }
-    
+
     static void createOutputCell(NotebookDocument doc, HGHandle cellH,
             MutableAttributeSet attr, Vector<ElementSpec> vec)
     {
@@ -220,18 +221,17 @@ abstract class DocUtil
             MutableAttributeSet attr, Vector<ElementSpec> vec, EvalCellEvent e)
     {
         startTag(commonCell, attr, 0, vec);
-        Object val = (e != null) ? e.getValue().getComponent(): c.getValue();
-        String text = (e != null) ? e.getValue().getText(): "";
-        if(text == null) text = "";
+        Object val = (e != null) ? e.getValue().getComponent() : c.getValue();
+        String text = (e != null) ? e.getValue().getText() : "";
+        if (text == null) text = "";
         Component comp = null;
         if (val != null)
         {
-            if (!(val instanceof Component)) 
-                text = val.toString();
+            if (!(val instanceof Component)) text = val.toString();
             else
                 comp = (Component) val;
         }
-        
+
         if (text.length() > 0)
         {
             if (!text.endsWith("\n")) text += "\n";
@@ -245,11 +245,10 @@ abstract class DocUtil
     static javax.swing.text.Style getDocStyle(NotebookDocument doc,
             StyleType type)
     {
-        if (doc.getStyle(type.toString()) != null)
-            return doc.getStyle(type.toString());
-        javax.swing.text.Style doc_style = doc.addStyle(type.toString(), null);
-        CellGroupMember book = (CellGroupMember) ThisNiche.hg.get(doc.bookH);
-        populateDocStyle(doc_style, CellUtils.getStyle(book, type));
+        javax.swing.text.Style doc_style = doc.getStyle(type.toString());
+        if (doc_style != null) return doc_style;
+        doc_style = doc.addStyle(type.toString(), null);
+        populateDocStyle(doc_style, CellUtils.getStyle(doc.getBook(), type));
         return doc_style;
     }
 
@@ -295,8 +294,8 @@ abstract class DocUtil
                     else if (c.getParent() != null)
                     {
                         // If this component is displayed in some output cell,
-                        // detach it from there, 
-                        //otherwise we don't own the component so we
+                        // detach it from there,
+                        // otherwise we don't own the component so we
                         // don't display it.
                         if (c.getParent() instanceof seco.notebook.view.ResizableComponent)
                         {
@@ -325,7 +324,7 @@ abstract class DocUtil
         }
         return res;
     }
-    
+
     private static String eval_to_string(Object o, EvaluationContext ctx)
     {
         ClassLoader save = Thread.currentThread().getContextClassLoader();

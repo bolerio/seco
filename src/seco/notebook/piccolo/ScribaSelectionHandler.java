@@ -36,6 +36,7 @@ import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PDimension;
 import edu.umd.cs.piccolo.util.PNodeFilter;
+import edu.umd.cs.piccolox.event.PNotificationCenter;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
 /**
@@ -116,26 +117,12 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
     }
 
     // /////////////////////////////////////////////////////
-    // Public static methods for manipulating the selection
+    // Public methods for manipulating the selection
     // /////////////////////////////////////////////////////
-    public void select(Collection items)
+    public void select(Collection<PNode> items)
     {
-        Iterator itemIt = items.iterator();
-        while (itemIt.hasNext())
-        {
-            PNode node = (PNode) itemIt.next();
+        for(PNode node: items)
             select(node);
-        }
-    }
-
-    public void select(Map items)
-    {
-        Iterator itemIt = items.keySet().iterator();
-        while (itemIt.hasNext())
-        {
-            PNode node = (PNode) itemIt.next();
-            select(node);
-        }
     }
 
     public void select(PNode node)
@@ -145,8 +132,6 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
             return;
         selection.put(node, Boolean.TRUE);
         decorateSelectedNode(node);
-        // PNotificationCenter.defaultCenter().postNotification("SELECTION_ADDED_NOTIFICATION",
-        // node);
     }
 
     public void decorateSelectedNode(PNode node)
@@ -154,14 +139,10 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
         PSmallBoundsHandle.addBoundsHandlesTo(node);
     }
 
-    public void unselect(Collection items)
+    public void unselect(Collection<PNode> items)
     {
-        Iterator itemIt = items.iterator();
-        while (itemIt.hasNext())
-        {
-            PNode node = (PNode) itemIt.next();
+        for(PNode node: items)
             unselect(node);
-        }
     }
 
     public void unselect(PNode node)
@@ -169,8 +150,6 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
         if (!isSelected(node)) { return; }
         undecorateSelectedNode(node);
         selection.remove(node);
-        // PNotificationCenter.defaultCenter().postNotification("SELECTION_REMOVED_NOTIFICATION",
-        // node);
     }
 
     public void undecorateSelectedNode(PNode node)
@@ -180,8 +159,6 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
 
     public void unselectAll()
     {
-        // PNotificationCenter.defaultCenter().postNotification("SELECTION_CLEARED_NOTIFICATION"
-        // , null);
         for (PNode node : selection.keySet())
             unselect(node);
         selection.clear();
@@ -189,13 +166,7 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
 
     public boolean isSelected(PNode node)
     {
-        if ((node != null) && (selection.containsKey(node)))
-        {
-            return true;
-        } else
-        {
-            return false;
-        }
+        return selection.containsKey(node);
     }
 
     public Collection<PNode> getSelection()
@@ -213,10 +184,8 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
     protected boolean isSelectable(PNode node)
     {
         boolean selectable = false;
-        Iterator parentsIt = selectableParents.iterator();
-        while (parentsIt.hasNext())
+        for (PNode parent : selectableParents)
         {
-            PNode parent = (PNode) parentsIt.next();
             if (parent.getChildrenReference().contains(node))
             {
                 selectable = true;
@@ -486,7 +455,7 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
                 allItems.remove(node);
             }
         }
-        select(allItems);
+        select(allItems.keySet());
     }
 
     protected void computeOptionMarqueeSelection(PInputEvent pie)
@@ -511,7 +480,7 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
                 allItems.remove(node);
             }
         }
-        select(allItems);
+        select(allItems.keySet());
     }
 
     protected PNodeFilter createNodeFilter(PBounds bounds)
@@ -551,28 +520,12 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
         pressNode = null;
     }
 
-    // /**
-    // * This gets called continuously during the drag, and is used to animate
-    // the marquee
-    // */
-    // protected void dragActivityStep(PInputEvent aEvent) {
-    // if (marquee != null) {
-    // float origStrokeNum = strokeNum;
-    // strokeNum = (strokeNum + 0.5f) % NUM_STROKES; // Increment by partial
-    // steps to slow down animation
-    // if ((int)strokeNum != (int)origStrokeNum) {
-    // marquee.setStroke(strokes[(int)strokeNum]);
-    // }
-    // }
-    // }
-
     /**
      * Delete selection when delete key is pressed (if enabled)
      */
     public void keyPressed(PInputEvent e)
     {
-        System.out.println("ScribaSelectionHandler - keyPressed: " + e);
-
+        //System.out.println("ScribaSelectionHandler - keyPressed: " + e);
         switch (e.getKeyCode())
         {
         case KeyEvent.VK_DELETE:
@@ -589,10 +542,6 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
             {
                 if (node instanceof PSwingNode && !((PSwingNode) node).isDeleteable())
                     continue;
-                // Object ui = ((PSwing0) node).getComponent();
-                // if(ui instanceof NotebookUI)
-                // PiccoloSync.getInstance().removeAuxDoc(
-                // ((NotebookUI) ui).getDoc());
                 node.removeFromParent();
             }
             selection.clear();
@@ -649,14 +598,10 @@ public class ScribaSelectionHandler extends PDragSequenceEventHandler
         {
             if (node instanceof PLayer)
             {
-                for (Iterator i = selectableParents.iterator(); i.hasNext();)
-                {
-                    PNode parent = (PNode) i.next();
+                for (PNode parent: selectableParents)
                     if (parent instanceof PCamera)
-                    {
-                        if (((PCamera) parent).indexOfLayer((PLayer) node) != -1) { return true; }
-                    }
-                }
+                        if (((PCamera) parent).indexOfLayer((PLayer) node) != -1) 
+                           return true; 
             }
             return false;
         }

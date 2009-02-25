@@ -7,8 +7,7 @@
  */
 package seco.notebook;
 
-import static seco.notebook.ElementType.commonCell;
-import static seco.notebook.ElementType.inputCellBox;
+import static seco.notebook.ElementType.*;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -33,6 +32,7 @@ import java.io.InputStream;
 import java.util.*;
 import javax.swing.Action;
 import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
@@ -89,15 +89,17 @@ import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
-import seco.things.Scriptlet;
 import sun.awt.AppContext;
 import bsh.BshScriptSupport;
 import com.microstar.xml.XmlException;
 import com.microstar.xml.XmlParser;
 
+import edu.umd.cs.piccolox.pswing.PSwing;
+
 public class NotebookUI extends JTextPane implements DocumentListener,
         AdjustmentListener, NotebookDocument.CaretMoveListener
 {
+    private static final long serialVersionUID = 7136295508874367948L;
     public static final String LAST_VISIBLE_OFFSET = "lastVisibleOffset";
     public static final HGPersistentHandle POPUP_HANDLE = HGHandleFactory
             .makeHandle("97287a6a-0195-11dd-a1bb-d15dfc7a2992");
@@ -127,8 +129,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         {
             if (o instanceof CellGroup) doc = new NotebookDocument(book,
                     evalContext);
-            else if (CellUtils.isInputCell((CellGroupMember) o)) doc = new ScriptletDocument(
-                    book);
+            else if (CellUtils.isInputCell((CellGroupMember) o)) 
+                doc = new ScriptletDocument(book);
             else
                 doc = new OutputCellDocument(book);
         }
@@ -532,11 +534,27 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                     }
                     popupMenu.update();
                     Frame f = GUIUtilities.getFrame(e.getComponent());
-                    Point pt = SwingUtilities.convertPoint(e.getComponent(), e
-                            .getX(), e.getY(), f);
-                    popupMenu.show(f, pt.x, pt.y);// e.getX(), e.getY());
+                    Point pt = getPoint(e, f);
+                    popupMenu.show(f, pt.x, pt.y);
                 }
             }
+        }
+        
+        protected Point getPoint(MouseEvent e, Frame f)
+        {
+            Point pt = SwingUtilities.convertPoint(e.getComponent(), e
+                    .getX(), e.getY(), f);
+            if (e.getComponent() instanceof JComponent)
+            {
+                PSwing p = (PSwing) ((JComponent) e.getComponent())
+                        .getClientProperty(PSwing.PSWING_PROPERTY);
+                if (p != null)
+                {
+                    Rectangle r = p.getFullBounds().getBounds();
+                    return new Point(pt.x + r.x, pt.y + r.y);
+                }
+            }
+            return pt;
         }
     }
 
@@ -574,7 +592,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             if (doc.isInputCell(dot))
             {
                 Element el = doc.getUpperElement(dot, inputCellBox);
-                Cell cell = (Cell) doc.getNBElement(el);
+                Cell cell = (Cell) NotebookDocument.getNBElement(el);
                 if (CellUtils.isHTML(cell))
                 {
                     View v = getUI().getRootView(NotebookUI.this);
@@ -724,8 +742,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     /**
      * Returns the edit mode with the specified name.
      * 
-     * @param name
-     *            The edit mode
+     * @param name     The edit mode
      */
     public static Mode getMode(String name)
     {
@@ -739,7 +756,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 
     public static void addMode(Mode mode)
     {
-        // System.out.println("Adding edit mode " + mode.getName());
         modes.addElement(mode);
     }
 
@@ -764,7 +780,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         supports.put(sup.getScriptEngineName(), sup.getClass());
     }
 
-    static Map<String, Class> supports = new HashMap<String, Class>();
+    static Map<String, Class<?>> supports = new HashMap<String, Class<?>>();
     private static Vector<Mode> modes = new Vector<Mode>();
     static
     {
@@ -953,32 +969,27 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         Document doc = getDocument();
         if (doc != null)
         {
-            if (position > doc.getLength() || position < 0)
-                return;
-                //throw new IllegalArgumentException("bad position: " + position); 
+            if (position > doc.getLength() || position < 0) return;
+            // throw new IllegalArgumentException("bad position: " + position);
             getCaret().setDot(position);
         }
         // super.setCaretPosition(position);
         lastCaretStart = getCaretPosition();
-        // System.out.println("NBUI - setCaretPosition: " + position + ":" +
-        // moved);
-        // if(moved != lastCaretStart)
-        // lastCaretStart = moved;
     }
 
     public Element getSelectedGroupElement()
     {
-        return getSelectedNBElement(ElementType.cellGroupBox);
+        return getSelectedNBElement(cellGroupBox);
     }
 
     public Element getSelectedOutputCellElement()
     {
-        return getSelectedNBElement(ElementType.outputCellBox);
+        return getSelectedNBElement(outputCellBox);
     }
 
     public Element getSelectedCellElement()
     {
-        return getSelectedNBElement(ElementType.inputCellBox);
+        return getSelectedNBElement(inputCellBox);
     }
 
     private Element getSelectedNBElement(ElementType type)
@@ -990,11 +1001,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         if (el == null)
             return getDoc().getUpperElement(getCaretPosition(), type);
 
-        CellGroupMember nb = NotebookDocument.getNBElement(el);
         // some handle is selected, check if it's of the needed type
-        if (type == ElementType.outputCellBox) return el;
-        // if (type == ElementType.wholeCell && nb instanceof CellGroup) return
-        // null;
+        if (type == outputCellBox) return el;
         return NotebookDocument.getUpperElement(el, type);
     }
 

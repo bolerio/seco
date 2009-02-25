@@ -136,7 +136,7 @@ public class NotebookCellsTree extends JTree
 
     class EventPubSubsPanel extends JPanel
     {
-        // private JButton Add;
+        private JButton Add;
         private JButton Remove;
         private JScrollPane jScrollPane1;
         private JList list;
@@ -174,7 +174,7 @@ public class NotebookCellsTree extends JTree
 
             jScrollPane1 = new JScrollPane();
             list = new JList();
-            // Add = new JButton();
+            Add = new JButton();
             Remove = new JButton();
 
             setLayout(new GridBagLayout());
@@ -193,20 +193,28 @@ public class NotebookCellsTree extends JTree
             gridBagConstraints.weighty = 1.0;
             add(jScrollPane1, gridBagConstraints);
 
-            // Add.setText("Open");
-            // Add.addActionListener(new java.awt.event.ActionListener()
-            // {
-            // public void actionPerformed(java.awt.event.ActionEvent evt)
-            // {
-            // open(evt);
-            // }
-            // });
+             Add.setText("Inspect");
+             Add.addActionListener(new java.awt.event.ActionListener()
+             {
+             public void actionPerformed(java.awt.event.ActionEvent evt)
+             {
+                 Object[] removed = list.getSelectedValues();
+                 for (int i = 0; i < removed.length; i++)
+                 {
+                     EventPubSub eps = (EventPubSub) removed[i];
+                     System.out.println(eps);
+                     System.out.println("Pub: " + ThisNiche.hg.get(eps.getPublisher()));
+                     System.out.println("Sub: " + ThisNiche.hg.get(eps.getSubscriber()));
+                     System.out.println("Handler: " + ThisNiche.hg.get(eps.getEventHandler()));
+                 }
+             }
+             });
 
-            // gridBagConstraints = new java.awt.GridBagConstraints();
-            // gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-            // gridBagConstraints.anchor =
-            // java.awt.GridBagConstraints.SOUTHEAST;
-            // add(Add, gridBagConstraints);
+             gridBagConstraints = new java.awt.GridBagConstraints();
+             gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+             gridBagConstraints.anchor =
+             java.awt.GridBagConstraints.SOUTHEAST;
+             add(Add, gridBagConstraints);
 
             Remove.setText("Remove");
             Remove.addActionListener(new java.awt.event.ActionListener() {
