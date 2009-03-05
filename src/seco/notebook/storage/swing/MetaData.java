@@ -116,6 +116,7 @@ public class MetaData
         removeProperty("javax.swing.JMenu", "UI");
         removeProperty("javax.swing.JMenuBar", "UI");
         removeProperty("javax.swing.JMenuBar", "layout");
+       
         removeProperty("javax.swing.JMenuItem", "UI");
         removeProperty("javax.swing.JMenuItem", "layout");
         removeProperty("javax.swing.JPopupMenu", "UI");
@@ -601,7 +602,7 @@ class java_awt_Container_PersistenceDelegate extends DefaultConverter
     static
     {
         addOnFields.add(new DefaultConverter.Add(AddOnFactory.ADD_COMP,
-                new String[] { "component" }, new Class[] { Component.class }));
+               new String[] { "component" }, new Class[] { Component.class }));
     }
 
     public Set<AddOnType> getAddOnFields()

@@ -150,7 +150,11 @@ public class ClassGenerator
 		for (Field f : inspector.getPubFieldsMap().values())
 			genMakePubField(mv, f);
 		for (Field f : inspector.getPrivFieldsMap().values())
-			genMakePrivField(mv, f);
+		{
+		    //don't generate make for private fields used in addons 
+		    if(!inspector.addons.containsKey(f.getName()))
+			   genMakePrivField(mv, f);
+		}
 		for (EventSetDescriptor e : inspector.getEventSetDescriptorsMap().values())
 			if (e != null) genMakeListeners(mv, e);
 		

@@ -108,7 +108,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     protected UndoManager undo = new UndoManager();
     protected SelectionManager selectionManager;
     protected static UpdatablePopupMenu popupMenu;
-    protected static PopupListener popupListener;
+    protected static PopupListener popupListener = new PopupListener();;
     protected int lastCaretStart = -1;
     protected int lastCaretEnd = -1;
 
@@ -129,8 +129,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         {
             if (o instanceof CellGroup) doc = new NotebookDocument(book,
                     evalContext);
-            else if (CellUtils.isInputCell((CellGroupMember) o)) 
-                doc = new ScriptletDocument(book);
+            else if (CellUtils.isInputCell((CellGroupMember) o)) doc = new ScriptletDocument(
+                    book);
             else
                 doc = new OutputCellDocument(book);
         }
@@ -144,11 +144,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         setDragEnabled(true);
         setDoubleBuffered(!TopFrame.PICCOLO);
         setTransferHandler(new NotebookTransferHandler());
-        if (popupMenu == null)
-        {
-            createPopup();
-            popupListener = new PopupListener();
-        }
+        createPopup();
         addMouseListener(popupListener);
         doc.addCaretMoveListener(this);
         setNavigationFilter(new CustomNavigationFilter());
@@ -436,9 +432,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             // delete last /n, because we have already one from first cell
             buffer.deleteCharAt(buffer.length() - 1);
             doc.insertString(end - 2, buffer.toString(), null);
-            // doc.updateGroup(doc.getUpperElement(start,
-            // ElementType.cellGroup),
-            // UpdateAction.syncronize);
         }
         catch (BadLocationException e)
         {
@@ -492,17 +485,11 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         }
         return super.getToolTipText(e);
     }
-
-    // This one listens for edits that can be undone.
-    protected class MyUndoableEditListener implements UndoableEditListener
+    
+    public static UpdatablePopupMenu getPopupMenu()
     {
-        public void undoableEditHappened(UndoableEditEvent e)
-        {
-            // Remember the edit and update the menus.
-            undo.addEdit(e.getEdit());
-            NotebookEditorKit.undo.updateUndoState(undo);
-            NotebookEditorKit.redo.updateRedoState(undo);
-        }
+        if (popupMenu == null) createPopup();
+        return popupMenu;
     }
 
     public void showPopup(MouseEvent e)
@@ -539,11 +526,11 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 }
             }
         }
-        
+
         protected Point getPoint(MouseEvent e, Frame f)
         {
-            Point pt = SwingUtilities.convertPoint(e.getComponent(), e
-                    .getX(), e.getY(), f);
+            Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getX(),
+                    e.getY(), f);
             if (e.getComponent() instanceof JComponent)
             {
                 PSwing p = (PSwing) ((JComponent) e.getComponent())
@@ -555,6 +542,18 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 }
             }
             return pt;
+        }
+    }
+
+    // This one listens for edits that can be undone.
+    protected class MyUndoableEditListener implements UndoableEditListener
+    {
+        public void undoableEditHappened(UndoableEditEvent e)
+        {
+            // Remember the edit and update the menus.
+            undo.addEdit(e.getEdit());
+            NotebookEditorKit.undo.updateUndoState(undo);
+            NotebookEditorKit.redo.updateRedoState(undo);
         }
     }
 
@@ -636,42 +635,20 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         public void moveDot(NavigationFilter.FilterBypass fb, int dot,
                 Position.Bias bias)
         {
+            // allow selection in a single cell only
             int mark = getCaret().getMark();
-            NotebookDocument doc = getDoc();
-            Element el = doc.getUpperElement(dot, commonCell);
-            // System.out.println("NavigationFilter-moveDot: " + dot + ":" +
-            // mark + ":" + el);
-            // allow selection only in one element at a time
-            if (el != null)
-            {
-                if (mark >= el.getStartOffset() && mark <= el.getEndOffset())
-                {
-                    fb.moveDot(dot, bias);
-                    return;
-                }
-                else if (doc.isCellHandle(dot))
-                {
-                    fb.moveDot(el.getEndOffset() + 1, bias);
-                    return;
-                }
-                return;
-            }
+            Element el = getDoc().getUpperElement(dot, commonCell);
+            if (el == null) return;
+            if (mark >= el.getStartOffset() && mark <= el.getEndOffset()) fb
+                    .moveDot(dot, bias);
+            else if (getDoc().isCellHandle(dot))
+                fb.moveDot(el.getEndOffset() + 1, bias);
         }
 
         public int getNextVisualPositionFrom(JTextComponent text, int pos,
                 Position.Bias bias, int direction, Position.Bias[] biasRet)
                 throws BadLocationException
         {
-            // realBias = (direction == SwingConstants.NORTH || direction ==
-            // SwingConstants.WEST) ? Position.Bias.Backward
-            // : Position.Bias.Forward;
-            // System.out.println("NavigationFilter-getNextVisualPositionFrom: "
-            // + pos + ":" + bias
-            // + ":" + bias + ":" +
-            // realBias + ":" + biasRet[0]);
-            // return super.getNextVisualPositionFrom(text, pos, bias,
-            // direction,
-            // biasRet);
             realBias = (direction == SwingConstants.NORTH || direction == SwingConstants.WEST) ? Position.Bias.Backward
                     : Position.Bias.Forward;
             // biasRet[0] = realBias;
@@ -742,7 +719,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     /**
      * Returns the edit mode with the specified name.
      * 
-     * @param name     The edit mode
+     * @param name
+     *            The edit mode
      */
     public static Mode getMode(String name)
     {
@@ -776,7 +754,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                     "Attempt to register null ScriptSupport");
         if (supports.containsKey(sup.getScriptEngineName())) return;
         for (Mode m : sup.getModes())
-            if (NotebookUI.getMode(m.getName()) == null) NotebookUI.addMode(m);
+            if (getMode(m.getName()) == null) addMode(m);
         supports.put(sup.getScriptEngineName(), sup.getClass());
     }
 
@@ -1022,11 +1000,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     private static void focused(Component c)
     {
         if (c instanceof NotebookUI)
-        {
-            setFocusedNotebookUI((NotebookUI) c);
-            // System.out.println("Focused: " +
-            // AppForm.getInstance().currentBook.getDoc().getBook().getName());
-        }
+             setFocusedNotebookUI((NotebookUI) c);
     }
 
     private static class NBFocusListener implements FocusListener
@@ -1040,11 +1014,4 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         {
         }
     }
-
-    public static UpdatablePopupMenu getPopupMenu()
-    {
-        if (popupMenu == null) createPopup();
-        return popupMenu;
-    }
-
 }

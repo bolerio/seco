@@ -140,18 +140,17 @@ public class AddOnFactory
     static void addChildren(HyperGraph hg, HGRelType link, Record record,
             Object instance)
     {
+        Method m = null; Object value = null;
         try
         {
             if (instance == null) return;
-            Object value = getLinkValue(hg, link, record);
-            // System.out.println("AddonF - addChildren1:" + instance.getClass()
-            // + ":" + link.getName() + ":" + value);
+            value = getLinkValue(hg, link, record);
+            //System.out.println("AddonF - addChildren1:" + instance.getClass()
+           //  + ":" + link.getName() + ":" + value);
 
             if (value == null) return;
-            Class[] args = getLinkTypes(link); // (Class[])
-            // hg.get(link.getTargetAt(1));
-
-            Method m = instance.getClass().getMethod("add", args);
+            Class[] args = getLinkTypes(link); 
+            m = instance.getClass().getMethod("add", args);
             if (value.getClass().isArray())
             {
                 Object[] array = (Object[]) value;
@@ -159,21 +158,26 @@ public class AddOnFactory
                 {
                     if (array[i] != null) m.invoke(instance, array[i]);
                 }
-            } else if (value.getClass().isAssignableFrom(Collection.class))
+            } else if (Collection.class.isAssignableFrom(value.getClass()))
             {
 
-                Collection c = (Collection) instance;
-                for (Object o : c)
-                    m.invoke(instance, o);
+                Collection c = (Collection) value;
+                Object[] array = c.toArray(new Object[c.size()]);
+                for (int i = 0; i < array.length; i++)
+                    if (array[i] != null) m.invoke(instance, array[i]);
+                
+               //java.util.ConcurrentModificationException
+                // for (Object o : c)
+                 //   m.invoke(instance, o);
             } else
             {
-                // System.out.println("AddonF - addChildren:" + instance + ":"
-                // + value);
                 m.invoke(instance, value);
             }
         }
         catch (Exception ex)
         {
+            System.err.println("AddonF - addChildren:" + instance.getClass() + ":"
+                    + m.getName() + ":" + value + ":" + value.getClass());
             ex.printStackTrace();
         }
     }

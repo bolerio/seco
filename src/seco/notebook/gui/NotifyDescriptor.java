@@ -713,7 +713,6 @@ public class NotifyDescriptor extends Object {
     /**
     * Provides a description of an exception that occurred during
     * execution of the IDE.
-    * @deprecated Better to use {@link ErrorManager#notify}.
     */
     public static final class Exception extends Confirmation
     {

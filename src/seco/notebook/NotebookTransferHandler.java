@@ -126,6 +126,7 @@ public class NotebookTransferHandler extends TransferHandler
 
     public boolean importData(JComponent comp, Transferable t)
     {
+        if(!(comp instanceof NotebookUI)) return false;
         NotebookUI c = (NotebookUI) comp;
         // Don't drop on myself.
         if ((c == exportComp && c.getCaretPosition() >= p0 && c

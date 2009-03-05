@@ -289,14 +289,32 @@ public class DefaultConverter // implements Converter
         if (t != null)
         {
             Set<AddOnType> s = MetaData.getConverter(t).getAllAddOnFields();
-            if (s != null) for (AddOnType a : s)
-                addons.add(a);
+            if (s != null) 
+                for (AddOnType a : s)
+                {
+                    remove_upper(addons, a.getName());
+                     addons.add(a);
+                }
         }
         Set<AddOnType> s = getAddOnFields();
-        if (s != null) for (AddOnType a : s)
-            addons.add(a);
+        if (s != null) 
+           for (AddOnType a : s)
+           {
+               remove_upper(addons, a.getName());
+               addons.add(a);
+           }
         return addons;
     }
+    
+    private void remove_upper(Set<AddOnType> s, String name)
+    {
+        for (AddOnType a : s)
+            if(name.equals(a.getName()))
+            {      
+                System.out.println("Remove UPPER: " + name);
+                s.remove(a);
+            }
+   }
 
     public Class<?>[] getCtrTypes()
     {

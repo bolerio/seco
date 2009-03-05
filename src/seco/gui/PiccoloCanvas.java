@@ -81,8 +81,8 @@ public class PiccoloCanvas extends PSwingCanvas
         setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
         setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
         setDefaultRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
-        selectionHandler = new ScribaSelectionHandler(
-                getLayer(), getNodeLayer(), getCamera());
+        selectionHandler = new ScribaSelectionHandler();
+                //getLayer(), getNodeLayer(), getCamera());
         selectionHandler.setEventFilter(new PInputEventFilter(
                 InputEvent.BUTTON1_MASK));
         addInputEventListener(selectionHandler);
@@ -128,14 +128,6 @@ public class PiccoloCanvas extends PSwingCanvas
         }
     }
     
-    public void hardcoded_pin()
-    {
-        for(PNode node : getSelection())
-        {
-            
-        }
-    }
-    
     private void deleteSelection()
     {
         removeComponents(selectionHandler.getSelection());
@@ -144,6 +136,11 @@ public class PiccoloCanvas extends PSwingCanvas
     public Collection<PNode> getSelection()
     {
         return selectionHandler.getSelection();
+    }
+    
+    public PSwingNode getSelectedPSwingNode()
+    {
+        return selectionHandler.getSelectedPSwingNode();
     }
     
     public void saveDims()
@@ -210,7 +207,7 @@ public class PiccoloCanvas extends PSwingCanvas
     public PSwingNode addComponent(HGHandle h, Point pt)
     {
         JComponent comp = new NotebookUI(h);
-        comp.setPreferredSize(new Dimension(200, 200));
+        //comp.setPreferredSize(new Dimension(200, 200));
         PSwingNode ps = new PSwingNode(this, comp);
         // ps.addInputEventListener(del_handler);
         getNodeLayer().addChild(ps);
