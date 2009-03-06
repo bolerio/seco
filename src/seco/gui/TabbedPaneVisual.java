@@ -20,9 +20,7 @@ public class TabbedPaneVisual implements CellVisual
             HGHandle h = group.getTargetAt(i);
             Cell cell = (Cell) ThisNiche.hg.get(h);
             NotebookUI ui = new NotebookUI(cell.getAtomHandle());
-            //System.out.println("TabbedPaneVisual - bind_els: " + i + ":" + ui);
             GUIHelper.addNotebookTab(ui);
-            //System.out.println("TabbedPaneVisual - addTab");
         }
         PiccoloCanvas canvas = (PiccoloCanvas) parentVisual;
         if(canvas != null)

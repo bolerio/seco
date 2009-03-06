@@ -129,13 +129,13 @@ public class GUIHelper
                     .addTabCloseListener(new TabbedPaneCloseListener());
         }
         else
-            tabbedPane = new SecoTabbedPane();//JTabbedPane();
+            tabbedPane = new SecoTabbedPane();// JTabbedPane();
         tabbedPane.setDoubleBuffered(!TopFrame.PICCOLO);
         tabbedPane.putClientProperty(
                 com.jgoodies.looks.Options.NO_CONTENT_BORDER_KEY, Boolean.TRUE);
         // tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         tabbedPane.addMouseListener(new TabbedPaneMouseListener());
-        getJTabbedPane().addChangeListener(new TabbedPaneChangeListener());
+        tabbedPane.addChangeListener(new TabbedPaneChangeListener());
         return tabbedPane;
     }
 
@@ -333,7 +333,7 @@ public class GUIHelper
         public void actionPerformed(java.awt.event.ActionEvent evt)
         {
             NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-            if(ui == null) return;
+            if (ui == null) return;
             File f = FileUtil.getFile(GUIUtilities.getFrame(ui),
                     "Export Notebook As ...", FileUtil.SAVE, null);
             if (f != null)
@@ -778,8 +778,8 @@ public class GUIHelper
         CellGroup top = ThisNiche.hg.get(ThisNiche.TABBED_PANE_GROUP_HANDLE);
         top.remove(i);
         tabbedPane.removeTabAt(i);
-        if (tabbedPane.getTabCount() == 0) TopFrame.getInstance().setTitle(
-                "Seco");
+        if (tabbedPane.getTabCount() == 0) 
+            TopFrame.getInstance().setTitle("Seco");
         else
             updateTitle(true);
     }
@@ -900,18 +900,6 @@ public class GUIHelper
         }
     }
 
-    static void focusOnNotebook(NotebookUI currentBook, boolean restore_caret)
-    {
-        // check_tabbed_pane_present();
-        updateTitle(true);
-        HGHandle h = currentBook.getDoc().bookH;
-        if (h == null)
-            throw new NullPointerException("Null CellGroup Handle for Doc: "
-                    + currentBook.getDoc());
-        TopFrame.setCurrentEvaluationContext(ThisNiche.getContextHandleFor(h));
-        if (restore_caret) currentBook.restoreCaret();
-    }
-
     private static final String UNTITLED = "Untitled";
 
     static String makeTabTitle(String title)
@@ -950,7 +938,8 @@ public class GUIHelper
         JTabbedPane tabbedPane = getJTabbedPane();
         tabbedPane.addTab(makeTabTitle(doc.getTitle()), scrollPane);
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
-        focusOnNotebook(book, false);
+        TopFrame.setCurrentEvaluationContext(ThisNiche
+                .getContextHandleFor(doc.bookH));
     }
 
     // Create the edit menu.

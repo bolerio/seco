@@ -55,6 +55,5 @@ public class CellContainerVisual implements CellVisual
         } 
         
         if(canvas != null) canvas.relayout();
-        System.out.println("CellContainerVisual -end");
-    }
+   }
 }

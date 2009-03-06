@@ -38,8 +38,8 @@ public class ContextMenuHandler extends PBasicInputEventHandler
             if ((event.getModifiersEx() & m) == m) showGlobMenu(event);
             return;
         }
-        else if (((PiccoloCanvas) event.getComponent()).getSelection()
-                .isEmpty()) return;
+        else if (((PiccoloCanvas) event.getComponent()).getSelectedPSwingNode() == null)
+            return;
         event.setHandled(true);
         showNodeMenu(event);
     }
