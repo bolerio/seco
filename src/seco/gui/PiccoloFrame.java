@@ -18,7 +18,6 @@ import javax.swing.RepaintManager;
 
 import seco.ThisNiche;
 import seco.notebook.GUIHelper;
-import seco.notebook.piccolo.PiccoloTransferHandler;
 
 import seco.things.CellGroup; 
 

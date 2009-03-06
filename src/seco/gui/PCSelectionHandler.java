@@ -17,7 +17,7 @@ import java.util.Map;
 
 import javax.swing.TransferHandler;
 
-import seco.notebook.piccolo.PSmallBoundsHandle;
+import seco.gui.piccolo.PSmallBoundsHandle;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.PRoot;
