@@ -87,8 +87,9 @@ public class PiccoloTransferHandler extends TransferHandler
            PSwingNode node = (PSwingNode) o;
            if(node.getFullBounds().contains(pt))
            {
-               System.out.println("handleSecoTransfer - inner" +
-                       node.getComponent() + ":" + node.getComponent().getTransferHandler());
+               //System.out.println("handleSecoTransfer - inner" +
+               //        node.getComponent() + ":" + node.getComponent().getTransferHandler());
+               
                if(node.getComponent().getTransferHandler().importData(support))
                {
                    System.out.println("handleSecoTransfer - inner done");

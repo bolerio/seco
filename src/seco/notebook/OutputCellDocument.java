@@ -3,7 +3,6 @@ package seco.notebook;
 import static seco.notebook.ElementType.notebook;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.text.SimpleAttributeSet;
@@ -61,19 +60,19 @@ public class OutputCellDocument extends NotebookDocument
                 EvalCellHandler.getInstance());
     }
 
-    public HGHandle getHandle()
-    {
-        if (handle != null) return handle;
-
-        Set<HGHandle> list = CellUtils.findAll(ThisNiche.hg, hg
-                .type(OutputCellDocument.class));
-        for (HGHandle h : list)
-            if (bookH.equals(((OutputCellDocument) ThisNiche.hg.get(h)).bookH)) return handle = h;
-        // System.out.println("Adding DOC: " + getTitle());
-        handle = ThisNiche.hg.add(this);
-
-        return handle;
-    }
+//    public HGHandle getHandle()
+//    {
+//        if (handle != null) return handle;
+//
+//        Set<HGHandle> list = CellUtils.findAll(ThisNiche.hg, hg
+//                .type(OutputCellDocument.class));
+//        for (HGHandle h : list)
+//            if (bookH.equals(((OutputCellDocument) ThisNiche.hg.get(h)).bookH)) return handle = h;
+//        // System.out.println("Adding DOC: " + getTitle());
+//        handle = ThisNiche.hg.add(this);
+//
+//        return handle;
+//    }
     
     public String getTitle()
     {

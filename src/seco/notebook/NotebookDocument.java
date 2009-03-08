@@ -164,16 +164,19 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         if (handle != null) return handle;
         handle = ThisNiche.handleOf(this);
-        if (handle != null) return handle;
+        //if (handle != null) 
+            return handle;
 
-        Set<HGHandle> list = CellUtils.findAll(ThisNiche.hg, hg.type(getClass()));
-        for (HGHandle h : list)
-            if (bookH.equals(((NotebookDocument) ThisNiche.hg.get(h)).bookH))
-                return handle = h;
-        handle = ThisNiche.hg.add(this);
-        System.out.println("Adding DOC: " + this);
-        return handle;
+//        Set<HGHandle> list = CellUtils.findAll(ThisNiche.hg, hg.type(getClass()));
+//        for (HGHandle h : list)
+//            if (bookH.equals(((NotebookDocument) ThisNiche.hg.get(h)).bookH))
+//                return handle = h;
+//        handle = ThisNiche.hg.add(this);
+//        System.out.println("Adding DOC: " + this);
+//        return handle;
     }
+    
+    
 
     @Override
     protected void create(ElementSpec[] data)
@@ -276,7 +279,7 @@ public class NotebookDocument extends DefaultStyledDocument
 
     void update(UpdateAction action)
     {
-        Element root = getRootElements()[0];
+        Element root = getDefaultRootElement();//getRootElements()[0];
         for (int i = 0; i < root.getElementCount(); i++)
         {
             Element el = root.getElement(i);
@@ -794,12 +797,12 @@ public class NotebookDocument extends DefaultStyledDocument
         }
     }
 
-    public boolean equals(Object o)
-    {
-        if (!(o instanceof NotebookDocument)) return false;
-        NotebookDocument el = (NotebookDocument) o;
-        return bookH.equals(el.bookH);
-    }
+//    public boolean equals(Object o)
+//    {
+//        if (!(o instanceof NotebookDocument)) return false;
+//        NotebookDocument el = (NotebookDocument) o;
+//        return bookH.equals(el.bookH);
+//    }
 
     protected Element createLeafElement(Element par, AttributeSet a, int p0,
             int p1)

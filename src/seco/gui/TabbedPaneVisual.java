@@ -1,5 +1,6 @@
 package seco.gui;
 
+import javax.swing.JTabbedPane;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
@@ -14,17 +15,21 @@ public class TabbedPaneVisual implements CellVisual
 {
     public void bind(CellGroupMember element, Object parentVisual)
     {
-        CellGroup group = (CellGroup)element;
-        for (int i = 0; i < group.getArity(); i++)                
+        final CellGroup group = (CellGroup) element;
+        HGHandle groupH = ThisNiche.handleOf(element);
+        final JTabbedPane tp = (ThisNiche.TABBED_PANE_GROUP_HANDLE
+                .equals(groupH)) ? GUIHelper.getJTabbedPane() : TabbedPaneU
+                .createTabbedPane();
+        for (int i = 0; i < group.getArity(); i++)
         {
             HGHandle h = group.getTargetAt(i);
             Cell cell = (Cell) ThisNiche.hg.get(h);
             NotebookUI ui = new NotebookUI(cell.getAtomHandle());
-            GUIHelper.addNotebookTab(ui);
+            TabbedPaneU.addNotebookTab(tp, ui, false);
         }
+
         PiccoloCanvas canvas = (PiccoloCanvas) parentVisual;
-        if(canvas != null)
-           canvas.addComponent(GUIHelper.getJTabbedPane(), group);
+        if (canvas != null) canvas.addComponent(tp, group);
     }
 
 }

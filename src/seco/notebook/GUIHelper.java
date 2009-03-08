@@ -10,18 +10,13 @@ import static seco.notebook.Actions.PASTE;
 import static seco.notebook.Actions.SELECT_ALL;
 
 import java.awt.Component;
-import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 
 import javax.swing.AbstractAction;
@@ -32,17 +27,12 @@ import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.DefaultEditorKit;
@@ -53,39 +43,32 @@ import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.atom.HGAtomRef;
-import org.wonderly.swing.tabs.TabCloseEvent;
-import org.wonderly.swing.tabs.TabCloseListener;
-
-import edu.umd.cs.piccolox.pswing.PSwing;
 
 import seco.ThisNiche;
 import seco.gui.CellContainerVisual;
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
-import seco.gui.SecoTabbedPane;
+import seco.gui.TabbedPaneU;
 import seco.gui.TabbedPaneVisual;
 import seco.gui.TopFrame;
 import seco.gui.VisualAttribs;
 import seco.gui.VisualsManager;
-import seco.gui.layout.DefaultLayoutHandler;
 import seco.gui.layout.DRect;
 import seco.gui.layout.DValue;
+import seco.gui.layout.DefaultLayoutHandler;
 import seco.gui.layout.LayoutHandler;
 import seco.gui.layout.RefPoint;
-import seco.notebook.gui.CloseableDnDTabbedPane;
 import seco.notebook.gui.DialogDisplayer;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.NotifyDescriptor;
 import seco.notebook.gui.OpenBookPanel;
-import seco.notebook.gui.ScriptEngineProvider;
 import seco.notebook.gui.ToolbarButton;
 import seco.notebook.gui.menu.CellGroupPropsProvider;
 import seco.notebook.gui.menu.CellPropsProvider;
 import seco.notebook.gui.menu.EnhancedMenu;
-import seco.notebook.gui.menu.RCListProvider;
 import seco.notebook.gui.menu.RecentFilesProvider;
 import seco.notebook.gui.menu.VisPropsProvider;
-import seco.notebook.html.HTMLToolBar; //import seco.notebook.piccolo.pswing.PSwing;
+import seco.notebook.html.HTMLToolBar;
 import seco.notebook.util.FileUtil;
 import seco.notebook.util.IconManager;
 import seco.rtenv.ContextLink;
@@ -95,6 +78,7 @@ import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.IOUtils;
+import edu.umd.cs.piccolox.pswing.PSwing;
 
 public class GUIHelper
 {
@@ -104,9 +88,8 @@ public class GUIHelper
             .makeHandle("1d3b7df9-f109-11dc-9512-073dfab2b15a");
     public static final HGPersistentHandle HTML_TOOLBAR_HANDLE = HGHandleFactory
             .makeHandle("56371f73-025d-11dd-b650-ef87b987c94a");
-    private static final String TAB_INDEX = "tab_index";
     public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
-    static final boolean DRAGGABLE_TABS = !TopFrame.PICCOLO;
+    
     private static JTabbedPane tabbedPane;
 
     public static JTabbedPane getJTabbedPane()
@@ -117,26 +100,11 @@ public class GUIHelper
             CellGroup group = new CellGroup("TabbedPaneCellGroup");
             ThisNiche.hg.define(ThisNiche.TABBED_PANE_GROUP_HANDLE, group);
             group.setVisual(ThisNiche.hg.add(new TabbedPaneVisual()));
-            group.setAttribute(VisualAttribs.rect, new Rectangle(0, 90, 600,
-                    600));
+            group.setAttribute(
+                    VisualAttribs.rect, new Rectangle(0, 90, 600, 600));
             ThisNiche.hg.update(group);
         }
-        if (DRAGGABLE_TABS)
-        {
-            tabbedPane = new CloseableDnDTabbedPane();
-            ((CloseableDnDTabbedPane) tabbedPane).setPaintGhost(true);
-            ((CloseableDnDTabbedPane) tabbedPane)
-                    .addTabCloseListener(new TabbedPaneCloseListener());
-        }
-        else
-            tabbedPane = new SecoTabbedPane();// JTabbedPane();
-        tabbedPane.setDoubleBuffered(!TopFrame.PICCOLO);
-        tabbedPane.putClientProperty(
-                com.jgoodies.looks.Options.NO_CONTENT_BORDER_KEY, Boolean.TRUE);
-        // tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-        tabbedPane.addMouseListener(new TabbedPaneMouseListener());
-        tabbedPane.addChangeListener(new TabbedPaneChangeListener());
-        return tabbedPane;
+        return tabbedPane = TabbedPaneU.createTabbedPane();
     }
 
     public static JToolBar getMainToolBar()
@@ -422,27 +390,6 @@ public class GUIHelper
         }
     }
 
-    public static final class TabbedPaneCloseListener implements // CloseableTabbedPane.
-            TabCloseListener
-    {
-        public void tabClosed(TabCloseEvent evt)
-        {
-            int res = promptAndSaveDoc();
-            if (res == JOptionPane.CANCEL_OPTION
-                    || res == JOptionPane.CLOSED_OPTION) return;
-            closeAt(evt.getClosedTab());
-        }
-
-        public boolean closeTab(int tabIndexToClose)
-        {
-            int res = promptAndSaveDoc();
-            if (res == JOptionPane.CANCEL_OPTION
-                    || res == JOptionPane.CLOSED_OPTION) return false;
-            closeAt(tabIndexToClose);
-            return true;
-        }
-    }
-
     public static class CellNumItemListener implements ItemListener
     {
         public void itemStateChanged(ItemEvent e)
@@ -501,128 +448,6 @@ public class GUIHelper
         return menu;
     }
 
-    private static JPopupMenu getTabPopupMenu()
-    {
-        if (tabPopupMenu != null) return tabPopupMenu;
-        tabPopupMenu = new JPopupMenu();
-        Action act = new AbstractAction("Close") {
-            public void actionPerformed(ActionEvent e)
-            {
-                // System.out.println("AppForm - Close:");
-                int res = promptAndSaveDoc();
-                if (res == JOptionPane.CANCEL_OPTION
-                        || res == JOptionPane.CLOSED_OPTION) return;
-                int i = ((Integer) tabPopupMenu.getClientProperty(TAB_INDEX));
-                closeAt(i);
-            }
-        };
-        // TODO: the shortcut doesn't work this way
-        // KeyStroke key = KeyStroke
-        // .getKeyStroke(KeyEvent.VK_F4, ActionEvent.CTRL_MASK);
-        // act = ActionManager.getInstance().putAction(act, key);
-        // tabbedPane.getInputMap().put(key, act);
-        tabPopupMenu.add(new JMenuItem(act));
-        act = new AbstractAction("Close All") {
-            public void actionPerformed(ActionEvent e)
-            {
-                JTabbedPane tp = getJTabbedPane();
-                tp.setSelectedIndex(tp.getTabCount() - 1);
-                for (int i = tp.getTabCount() - 1; i >= 0; i--)
-                {
-                    int res = promptAndSaveDoc();
-                    if (res == JOptionPane.CANCEL_OPTION
-                            || res == JOptionPane.CLOSED_OPTION) continue;
-                    closeAt(i);
-                }
-            }
-        };
-        tabPopupMenu.add(new JMenuItem(act));
-        act = new AbstractAction("Close All But Active") {
-            public void actionPerformed(ActionEvent e)
-            {
-                JTabbedPane tp = getJTabbedPane();
-                tp.setSelectedIndex(tp.getTabCount() - 1);
-                int index = ((Integer) tabPopupMenu
-                        .getClientProperty(TAB_INDEX));
-                for (int i = tp.getTabCount() - 1; i >= 0; i--)
-                {
-                    int res = promptAndSaveDoc();
-                    if (res == JOptionPane.CANCEL_OPTION
-                            || res == JOptionPane.CLOSED_OPTION || i == index)
-                        continue;
-                    closeAt(i);
-                }
-            }
-        };
-        tabPopupMenu.add(new JMenuItem(act));
-        tabPopupMenu.add(new EnhancedMenu("Set Default Language",
-                new ScriptEngineProvider()));
-        tabPopupMenu.add(new EnhancedMenu("Set Runtime Context",
-                new RCListProvider()));
-        act = new AbstractAction("Rename") {
-            public void actionPerformed(ActionEvent e)
-            {
-                NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-                if (ui == null) return;
-                String name = ui.getDoc().getTitle();
-                NotifyDescriptor.InputLine nd = new NotifyDescriptor.InputLine(
-                        GUIUtilities.getFrame(ui), "Name: ", "Rename CellGroup");
-                nd.setInputText(name);
-                if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION)
-                {
-                    ui.getDoc().setTitle(nd.getInputText());
-                    updateTitle();
-                }
-            }
-        };
-        tabPopupMenu.add(new JMenuItem(act));
-        return tabPopupMenu;
-    }
-
-    static JPopupMenu tabPopupMenu;
-
-    public static final class TabbedPaneMouseListener extends MouseAdapter
-    {
-        public void mouseClicked(MouseEvent e)
-        {
-            if (SwingUtilities.isRightMouseButton(e))
-            {
-                Point pt = e.getPoint();
-                JTabbedPane tabbedPane = getJTabbedPane();
-                for (int i = 0; i < tabbedPane.getTabCount(); i++)
-                {
-                    final Rectangle r = tabbedPane.getBoundsAt(i);
-                    if (r == null || !r.contains(pt)) continue;
-                    getTabPopupMenu().putClientProperty(TAB_INDEX, i);
-                    if (TopFrame.PICCOLO)
-                    {
-                        Frame f = GUIUtilities.getFrame(e.getComponent());
-                        pt = SwingUtilities.convertPoint(e.getComponent(), e
-                                .getX(), e.getY(), f);
-                    }
-                    getTabPopupMenu().show(tabbedPane, pt.x, pt.y);
-                    break;
-                }
-            }
-            TopFrame.getInstance().repaint();
-        }
-    }
-
-    public static final class TabbedPaneChangeListener implements
-            ChangeListener
-    {
-        public void stateChanged(ChangeEvent e)
-        {
-            if (getJTabbedPane().getSelectedIndex() == -1) return;
-            JScrollPane comp = (JScrollPane) getJTabbedPane().getComponentAt(
-                    getJTabbedPane().getSelectedIndex());
-            NotebookUI.setFocusedNotebookUI((NotebookUI) comp.getViewport()
-                    .getView());
-            updateTitle(true);
-            // System.out.println("TabbedPaneChangeListener: " + e);
-        }
-    }
-
     public static final NotebookEditorKit kit = new NotebookEditorKit();
 
     public static void openElementTree(ActionEvent evt)
@@ -664,16 +489,6 @@ public class GUIHelper
         JScrollPane pane = new JScrollPane(tree);
         dialog.add(pane);
         dialog.setVisible(true);
-    }
-
-    static int promptAndSaveDoc()
-    {
-        NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-        if (ui == null) return -1;
-        // NotebookDocument doc = getCurrentNotebook().getDoc();
-        ui.close();
-        // doc.save();
-        return JOptionPane.OK_OPTION;
     }
 
     public static void makeTopCellGroup(HyperGraph hg)
@@ -750,11 +565,10 @@ public class GUIHelper
     {
         if (allready_opened(h, true)) return;
         NotebookUI ui = new NotebookUI(h);
-        addNotebookTab(ui);
-        addTabToTabbedPaneGroup(ui.getDoc().getHandle());
+        TabbedPaneU.addNotebookTab(getJTabbedPane(), ui, true);
     }
 
-    static boolean allready_opened(HGHandle h, boolean focus)
+    private static boolean allready_opened(HGHandle h, boolean focus)
     {
         JTabbedPane tabbedPane = getJTabbedPane();
         for (int i = 0; i < tabbedPane.getTabCount(); i++)
@@ -770,45 +584,21 @@ public class GUIHelper
         return false;
     }
 
-    static void closeAt(int i)
-    {
-        JTabbedPane tabbedPane = getJTabbedPane();
-        HGHandle h = ThisNiche.handleOf(getNotebookAt(i));
-        ThisNiche.hg.unfreeze(h);
-        CellGroup top = ThisNiche.hg.get(ThisNiche.TABBED_PANE_GROUP_HANDLE);
-        top.remove(i);
-        tabbedPane.removeTabAt(i);
-        if (tabbedPane.getTabCount() == 0) 
-            TopFrame.getInstance().setTitle("Seco");
-        else
-            updateTitle(true);
-    }
-
-    static CellGroupMember getNotebookAt(int i)
-    {
-        JTabbedPane tabbedPane = getJTabbedPane();
-        JScrollPane comp = (JScrollPane) tabbedPane.getComponentAt(i);
-        NotebookUI ui = (NotebookUI) comp.getViewport().getView();
-        return ui.getDoc().getBook();
-    }
-
     public static void newNotebook()
     {
         check_tabbed_pane_present();
-        NotebookUI ui = null;
         EvaluationContext ctx = ThisNiche.getEvaluationContext(TopFrame
                 .getCurrentEvaluationContext());
         CellGroup nb = new CellGroup("CG");
         HGHandle nbHandle = ThisNiche.hg.add(nb);
         ThisNiche.hg.freeze(nbHandle);
-        ui = new NotebookUI(nbHandle, ctx);
+        NotebookUI ui = new NotebookUI(nbHandle, ctx);
         ThisNiche.hg.add(new ContextLink(nbHandle, TopFrame
                 .getCurrentEvaluationContext()));
         ui.setCaretPosition(0);
         ui.getDoc().setModified(true);
-        addNotebookTab(ui);
-        addTabToTabbedPaneGroup(ui.getDoc().getHandle());
-    }
+        TabbedPaneU.addNotebookTab(getJTabbedPane(), ui, true);
+     }
 
     public static void openNotebook()
     {
@@ -827,9 +617,8 @@ public class GUIHelper
             ThisNiche.hg.add(new ContextLink(knownHandle, TopFrame
                     .getCurrentEvaluationContext()));
             NotebookUI ui = new NotebookUI(knownHandle);
-            addNotebookTab(ui);
+            TabbedPaneU.addNotebookTab(getJTabbedPane(), ui, true);
             AppConfig.getInstance().getMRUF().add(ui.getDoc().getHandle());
-            addTabToTabbedPaneGroup(ui.getDoc().getHandle());
             AppConfig.getInstance().setMRUD(file.getParent());
         }
         catch (Throwable t)
@@ -839,30 +628,13 @@ public class GUIHelper
                     TopFrame.getInstance(), t, "Could not open: "
                             + file.getAbsolutePath());
             DialogDisplayer.getDefault().notify(ex);
-            // TODO: strange requirement to open new Notebook, if file doesnt
+            // TODO: strange requirement to open new Notebook, if file doesn't
             // exist
             newNotebook();
         }
     }
 
-    private static void addTabToTabbedPaneGroup(HGHandle h, boolean update)
-    {
-        CellGroup group = (CellGroup) ThisNiche.hg
-                .get(ThisNiche.TABBED_PANE_GROUP_HANDLE);
-        HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
-        Cell out = new Cell(ref);
-        HGHandle outH = ThisNiche.handleOf(out);
-        if (outH == null) outH = ThisNiche.hg.add(out);
-        group.insert(group.getArity(), outH);
-        if (update) ThisNiche.hg.update(group);
-    }
-
-    public static void addTabToTabbedPaneGroup(HGHandle h)
-    {
-        addTabToTabbedPaneGroup(h, true);
-    }
-
-    static void updateTitle()
+    public static void updateTitle()
     {
         updateTitle(false);
     }
@@ -877,14 +649,13 @@ public class GUIHelper
         RuntimeContext rcInstance = (RuntimeContext) ThisNiche.hg.get(TopFrame
                 .getCurrentEvaluationContext());
         String title = rcInstance.getName() + " " + name;
-        JTabbedPane tabbedPane = getJTabbedPane();
-        tabbedPane
-                .setTitleAt(tabbedPane.getSelectedIndex(), makeTabTitle(name));
+        //JTabbedPane tabbedPane = getJTabbedPane();
+        //tabbedPane
+        //        .setTitleAt(tabbedPane.getSelectedIndex(), makeTabTitle(name));
         TopFrame.getInstance().setTitle(title);
     }
 
-    // ensure that tabbedPane is always present in Canvas
-    // even if it was accidently deleted
+    // ensure that tabbedPane is presented in Canvas
     private static void check_tabbed_pane_present()
     {
         if (!TopFrame.PICCOLO) return;
@@ -898,48 +669,6 @@ public class GUIHelper
             if (gr.indexOf(ThisNiche.TABBED_PANE_GROUP_HANDLE) < 0)
                 gr.insert(gr.getArity(), ThisNiche.TABBED_PANE_GROUP_HANDLE);
         }
-    }
-
-    private static final String UNTITLED = "Untitled";
-
-    static String makeTabTitle(String title)
-    {
-        if (title == null || title.length() == 0) title = UNTITLED;
-        else
-        {
-            int ind = title.lastIndexOf('/');
-            ind = Math.max(ind, title.lastIndexOf('\\'));
-            if (ind > 0) title = title.substring(ind + 1);
-        }
-        // System.out.println("makeTabTitle: " + title);
-        return title;
-    }
-
-    // TODO:
-    public static void addNotebookTab(final NotebookUI book)
-    {
-        final NotebookDocument doc = book.getDoc();
-        if (TopFrame.getInstance().getCaretListener() != null)
-            book.addCaretListener(TopFrame.getInstance().getCaretListener());
-        if (TopFrame.getInstance().getDocListener() != null)
-            doc
-                    .addModificationListener(TopFrame.getInstance()
-                            .getDocListener());
-        final JScrollPane scrollPane = new JScrollPane(book);
-        scrollPane.setDoubleBuffered(!TopFrame.PICCOLO);
-        scrollPane.addComponentListener(new ComponentAdapter() {
-            public void componentShown(ComponentEvent ce)
-            {
-                book.requestFocusInWindow();
-            }
-        });
-        // if(scrollPane.isVisible())
-        scrollPane.setViewportView(book);
-        JTabbedPane tabbedPane = getJTabbedPane();
-        tabbedPane.addTab(makeTabTitle(doc.getTitle()), scrollPane);
-        tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
-        TopFrame.setCurrentEvaluationContext(ThisNiche
-                .getContextHandleFor(doc.bookH));
     }
 
     // Create the edit menu.
@@ -1066,5 +795,11 @@ public class GUIHelper
         menu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
         menu.add(new EnhancedMenu("CellGroup", new CellGroupPropsProvider()));
         return menu;
+    }
+    
+    public static HGHandle getTopCellGroupHandle(JComponent comp)
+    {
+        PSwingNode ps = (PSwingNode) comp.getClientProperty(PSwingNode.PSWING_PROPERTY);
+        return ps.getHandle();
     }
 }

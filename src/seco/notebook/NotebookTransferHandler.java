@@ -155,17 +155,9 @@ public class NotebookTransferHandler extends TransferHandler
             handleStringImport((String) t.getTransferData(importFlavor), c);
             imported = true;
         }
-        catch (UnsupportedFlavorException ufe)
+        catch (Exception ioe)
         {
-            System.err.println("importData: unsupported data flavor");
-        }
-        catch (BadLocationException ble)
-        {
-            System.err.println("importData: BadLocationException");
-        }
-        catch (IOException ioe)
-        {
-            System.err.println("importData: I/O exception");
+            ioe.printStackTrace();
         }
         return imported;
     }

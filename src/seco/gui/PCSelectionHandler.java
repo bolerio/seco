@@ -225,12 +225,11 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     @Override
     public void keyPressed(PInputEvent e)
     {
-        System.out.println("ScribaSelectionHandler - keyPressed: " + e);
+       // System.out.println("ScribaSelectionHandler - keyPressed: " + e);
         switch (e.getKeyCode())
         {
            case KeyEvent.VK_DELETE:
                TopFrame.getInstance().getCanvas().deleteSelection();
-            //deleteSelection(e);
         }
     }
 

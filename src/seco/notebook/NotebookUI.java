@@ -66,6 +66,7 @@ import javax.swing.undo.UndoManager;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
 import seco.gui.TopFrame;
@@ -119,20 +120,41 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         this(book, ThisNiche.getContextFor(book));
     }
 
+    static NotebookDocument getDocForHandle(Class<?> cl, HGHandle bookH)
+    {
+ 
+      Set<HGHandle> list = CellUtils.findAll(ThisNiche.hg, hg.type(cl));
+      for (HGHandle h : list)
+          if (bookH.equals(((NotebookDocument) ThisNiche.hg.get(h)).bookH))
+              return ThisNiche.hg.get(h);
+      return null;
+    }
     public NotebookUI(HGHandle book, EvaluationContext evalContext)
     {
         super();
-        Object o = ThisNiche.hg.get(book);
+        CellGroupMember o = ThisNiche.hg.get(book);
         // System.out.println("NotebookUI: " + book + ":" + o);
         NotebookDocument doc = null;
         if (o instanceof CellGroupMember)
         {
-            if (o instanceof CellGroup) doc = new NotebookDocument(book,
-                    evalContext);
-            else if (CellUtils.isInputCell((CellGroupMember) o)) doc = new ScriptletDocument(
-                    book);
+            if (o instanceof CellGroup)
+            {
+                doc = getDocForHandle(NotebookDocument.class, book);
+                if(doc == null)
+                   ThisNiche.hg.add(
+                           doc = new NotebookDocument(book, evalContext));
+            }else if (CellUtils.isInputCell((CellGroupMember) o)) 
+            {
+                doc = getDocForHandle(ScriptletDocument.class, book);
+                if(doc == null)
+                    ThisNiche.hg.add(doc = new ScriptletDocument(book));
+            }
             else
-                doc = new OutputCellDocument(book);
+            {
+                doc = getDocForHandle(OutputCellDocument.class, book);
+                if(doc == null)
+                    ThisNiche.hg.add(doc = new OutputCellDocument(book));
+            }
         }
         else
             doc = (NotebookDocument) o;

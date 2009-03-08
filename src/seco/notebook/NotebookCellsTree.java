@@ -104,7 +104,7 @@ public class NotebookCellsTree extends JTree
                 }
             }
         });
-        menuItem.setEnabled(node instanceof Cell);
+        //menuItem.setEnabled(node instanceof Cell);
         popup.add(menuItem);
         menuItem = new JMenuItem("Attributes"); // NOI18N
         menuItem.addActionListener(new ActionListener() {

@@ -115,7 +115,7 @@ public class OpenBookPanel extends JPanel
         for(int i=0; i < removed.length; i++)
         {
             NotebookDocument gr = (NotebookDocument) removed[i];
-           GUIHelper.openNotebook(ThisNiche.handleOf(gr));
+            GUIHelper.openNotebook(ThisNiche.handleOf(gr));
         }
     }    
 }
