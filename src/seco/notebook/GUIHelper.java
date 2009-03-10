@@ -33,6 +33,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.DefaultEditorKit;
@@ -43,6 +44,10 @@ import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.atom.HGAtomRef;
+
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
+import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
+import com.jgoodies.looks.plastic.theme.DesertBluer;
 
 import seco.ThisNiche;
 import seco.gui.CellContainerVisual;
@@ -89,6 +94,19 @@ public class GUIHelper
     public static final HGPersistentHandle HTML_TOOLBAR_HANDLE = HGHandleFactory
             .makeHandle("56371f73-025d-11dd-b650-ef87b987c94a");
     public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
+
+    static
+    {
+        PlasticLookAndFeel.setPlasticTheme(new DesertBluer());
+        try
+        {
+            UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
+        }
+        catch (Exception e)
+        {
+        }
+    }
+    
     
     private static JTabbedPane tabbedPane;
 
@@ -415,6 +433,7 @@ public class GUIHelper
             menuBar.add(createFormatMenu());
             menuBar.add(createToolsMenu());
             menuBar.add(createRuntimeMenu());
+            
             ThisNiche.hg.define(GUIHelper.MENUBAR_HANDLE, menuBar);
             // force the creation of the NotebookUI static popup
             NotebookUI.getPopupMenu();
@@ -454,7 +473,8 @@ public class GUIHelper
     {
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
         if (ui == null) return;
-        JDialog dialog = new JDialog(GUIUtilities.getFrame(ui));
+        String title = "Elements Hierarchy";
+        JDialog dialog = new JDialog(GUIUtilities.getFrame(ui), title);
         dialog.setSize(500, 800);
         JTree tree = new JTree((TreeNode) ui.getDocument()
                 .getDefaultRootElement());
@@ -467,7 +487,8 @@ public class GUIHelper
     {
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
         if (ui == null) return;
-        JDialog dialog = new JDialog(GUIUtilities.getFrame(ui));
+        String title = "Parsing Hierarchy";
+        JDialog dialog = new JDialog(GUIUtilities.getFrame(ui), title);
         dialog.setSize(500, 800);
         JTree tree = ui.getParseTree(ui.getCaretPosition());
         if (tree == null) return;
@@ -481,7 +502,8 @@ public class GUIHelper
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
         if (ui == null) return;
         CellGroupMember book = ui.getDoc().getBook();
-        String title = (book instanceof CellGroup) ? ((CellGroup) book)
+        String title = "Cells Hierarchy: ";
+        title +=(book instanceof CellGroup) ? ((CellGroup) book)
                 .getName() : "Cell";
         JDialog dialog = new JDialog(TopFrame.getInstance(), title);
         dialog.setSize(500, 800);

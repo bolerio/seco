@@ -57,7 +57,7 @@ public class SecoTabbedPane extends JTabbedPane
         private void initDrag(MouseEvent e)
         {
             int index = tp.getTargetTabIndex(e.getPoint());
-            System.out.println("SecoTP - initDrag: " + index);
+            //System.out.println("SecoTP - initDrag: " + index);
             if (index < 0) return;
             tp.dragTabIndex = index;
             TransferHandler handler = tp.getTransferHandler();

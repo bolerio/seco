@@ -175,12 +175,13 @@ abstract class DocUtil
         CellUtils.addMutualEventPubSub(EvalCellEvent.HANDLE, cellH, doc
                 .getHandle(), EvalCellHandler.getInstance());
 
-        if (CellUtils.isInitCell(cell))
-        {
-            EvalResult res = eval_result(doc, cell);
-            createOutputCell(doc, CellUtils.createOutputCellH(cellH, res
-                    .getText(), res.getComponent(), false), attr, vec);
-        }
+// now done in a special action        
+//        if (CellUtils.isInitCell(cell))
+//        {
+//            EvalResult res = eval_result(doc, cell);
+//            createOutputCell(doc, CellUtils.createOutputCellH(cellH, res
+//                    .getText(), res.getComponent(), false), attr, vec);
+//        }
     }
 
     static void createOutputCell(NotebookDocument doc, HGHandle cellH,

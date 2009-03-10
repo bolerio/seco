@@ -9,17 +9,15 @@ package seco.notebook.gui.menu;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.text.Element;
 
-import seco.gui.StandaloneFrame;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.XMLConstants;
-import seco.notebook.gui.GUIUtilities;
 import seco.things.Cell;
-import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
@@ -100,9 +98,7 @@ public class CellPropsProvider implements DynamicMenuProvider
 
 	public void update(final JMenu menu)
 	{
-		//AppForm app = (AppForm) GUIUtilities.getFrame(menu);
-		//if (app == null) return;
-		NotebookUI nbui = NotebookUI.getFocusedNotebookUI();//app.getCurrentNotebook();
+		NotebookUI nbui = NotebookUI.getFocusedNotebookUI();
 		if (nbui == null) return;
 		int offset = nbui.getCaretPosition();
 		_update(menu, nbui, offset);

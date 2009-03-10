@@ -40,16 +40,6 @@ public abstract class TopFrame extends JFrame
     
     public TopFrame() throws HeadlessException
     {
-        // XXX
-        PlasticLookAndFeel.setPlasticTheme(new DesertBluer());
-        try
-        {
-            UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
-        }
-        catch (Exception e)
-        {
-        }
-        
         setIconImage(Toolkit.getDefaultToolkit().getImage(
                 getClass().getResource(GUIHelper.LOGO_IMAGE_RESOURCE)));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

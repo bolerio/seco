@@ -7,10 +7,15 @@
  */
 package seco.notebook;
 
+import java.util.List;
+
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import org.hypergraphdb.HGHandle;
+
+import seco.ThisNiche;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -21,7 +26,8 @@ class NotebookTreeModel implements TreeModel
 {
 	protected CellGroupMember book;
 	
-	public  NotebookTreeModel(CellGroupMember nb){
+	public  NotebookTreeModel(CellGroupMember nb)
+	{
 		book = nb;
 	}
 	
@@ -29,8 +35,12 @@ class NotebookTreeModel implements TreeModel
 	{
 		if(parent instanceof CellGroup)
 			return ((CellGroup)parent).getElement(index);
-		else if(parent instanceof Cell && index == 0)
-			return CellUtils.getOutCell(((Cell) parent));
+		else if(parent instanceof Cell)
+		{
+			List<Cell> list = 
+			    CellUtils.getOutCells(ThisNiche.handleOf(parent));
+			return list.get(index);
+		}
 		return null;
 	}
 
@@ -38,16 +48,22 @@ class NotebookTreeModel implements TreeModel
 	{
 	    if(parent instanceof CellGroup)
             return ((CellGroup)parent).getArity();
-	    else if(parent instanceof Cell && CellUtils.getOutCell((Cell) parent) != null)
-            return 1;
+	    else if(parent instanceof Cell)
+            return CellUtils.getOutCells(ThisNiche.handleOf(parent)).size();
         else return 0;
 	}
 
 	public int getIndexOfChild(Object parent, Object child)
 	{
 	    if(!(parent instanceof CellGroup))
+	    {
+	        List<Cell> list = 
+                CellUtils.getOutCells(ThisNiche.handleOf(parent));
+	        for(int i = 0; i < list.size(); i++)
+	            if(child.equals(list.get(i))) return i;
 	        return -1;
-		return ((CellGroup) parent).indexOf((CellGroupMember)child);
+	    }
+	    return ((CellGroup) parent).indexOf((CellGroupMember)child);
 	}
 
 	public Object getRoot()
@@ -62,19 +78,14 @@ class NotebookTreeModel implements TreeModel
 
 	public void addTreeModelListener(TreeModelListener l)
 	{
-		// TODO Auto-generated method stub
 	}
 	
 	public void removeTreeModelListener(TreeModelListener l)
 	{
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void valueForPathChanged(TreePath path, Object newValue)
 	{
-		// TODO Auto-generated method stub
-		
 	}
 
 }

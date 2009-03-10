@@ -132,8 +132,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     public NotebookUI(HGHandle book, EvaluationContext evalContext)
     {
         super();
-        CellGroupMember o = ThisNiche.hg.get(book);
-        // System.out.println("NotebookUI: " + book + ":" + o);
+        Object o = ThisNiche.hg.get(book);
         NotebookDocument doc = null;
         if (o instanceof CellGroupMember)
         {

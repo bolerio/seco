@@ -81,7 +81,7 @@ public class MetaData
         // The color and font properties in Component need special treatment,
         // see above.
         removeProperty("java.awt.Component", "foreground");
-        removeProperty("java.awt.Component", "background");
+        //removeProperty("java.awt.Component", "background");
         removeProperty("java.awt.Component", "font");
         // The visible property of Component needs special treatment because of
         // Windows.

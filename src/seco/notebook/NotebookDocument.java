@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventListener;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -247,7 +248,8 @@ public class NotebookDocument extends DefaultStyledDocument
             Cell cell = (Cell) getNBElement(inner);
             if (CellUtils.isInitCell(cell)) evalCell(inner);
         }
-        else if (UpdateAction.reEvaluateOutputCells == action && !out) evalCell(inner);
+        else if (UpdateAction.reEvaluateOutputCells == action && !out) 
+            evalCell(inner);
         else if ((UpdateAction.syncronize == action
                 || UpdateAction.tokenize == action || UpdateAction.resetTokenMarker == action)
                 && !out)
@@ -255,8 +257,8 @@ public class NotebookDocument extends DefaultStyledDocument
             Cell cell = (Cell) getNBElement(inner);
             if (UpdateAction.tokenize == action) createScriptSupport(
                     getLowerElement(inner, inputCellBox), false);
-            else if (UpdateAction.resetTokenMarker == action) resetScriptSupport(getLowerElement(
-                    inner, inputCellBox));
+            else if (UpdateAction.resetTokenMarker == action) 
+                resetScriptSupport(getLowerElement(inner, inputCellBox));
             else
             {
                 Element e = getLowerElement(inner, commonCell);
@@ -269,9 +271,10 @@ public class NotebookDocument extends DefaultStyledDocument
                 }
                 else if (e != null)
                 {
-                    ThisNiche.hg.update(cell);
-                    Cell outC = CellUtils.getOutCell(cell);
-                    if (outC != null) ThisNiche.hg.update(outC);
+                    ;
+                    //ThisNiche.hg.update(cell);
+                    //Cell outC = CellUtils.getOutCell(cell);
+                    //if (outC != null) ThisNiche.hg.update(outC);
                 }
             }
         }
@@ -424,7 +427,8 @@ public class NotebookDocument extends DefaultStyledDocument
         if (offset < 0) return;
         boolean create_new_output_cell = true;
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
-        for (HGHandle o : CellUtils.getOutCellHandles(e.getCellHandle()))
+        List<HGHandle> list = CellUtils.getOutCellHandles(e.getCellHandle());
+        for (HGHandle o : list)
         {
             int off = findElementOffset(o);
             if (off < 0) 
@@ -463,7 +467,8 @@ public class NotebookDocument extends DefaultStyledDocument
         {
             //beginCompoundEdit("cell eval");
             supressEvents = true;
-            for (HGHandle o : CellUtils.getOutCellHandles(cellH))
+            List<HGHandle> list = CellUtils.getOutCellHandles(cellH);
+            for (HGHandle o : list)
             {
                 int off = findElementOffset(o);
                 if (off < 0) continue;
@@ -1184,8 +1189,7 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public String getDefaultEngineName()
     {
-        CellGroup book = (CellGroup) ThisNiche.hg.get(bookH);
-        return CellUtils.getEngine(book);
+       return CellUtils.getEngine(getBook());
     }
 
     public void setDefaultEngineName(String name)

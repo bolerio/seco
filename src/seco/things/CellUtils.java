@@ -264,6 +264,26 @@ public class CellUtils
         return list;
     }
 
+    public static List<Cell> getOutCells(HGHandle cellH)
+    {
+        List<Cell> list = new ArrayList<Cell>();
+        if (cellH == null) return null;
+        List<EventPubSub> subscriptions = hg.findAll(ThisNiche.hg, hg.apply(hg
+                .deref(ThisNiche.hg), hg
+                .and(hg.type(EventPubSub.class), hg
+                        .incident(EvalCellEvent.HANDLE), hg.incident(cellH), hg
+                        .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
+                                cellH, HGHandleFactory.anyHandle,
+                                HGHandleFactory.anyHandle }))));
+        for (EventPubSub s : subscriptions)
+        {
+            Object handler = ThisNiche.hg.get(s.getEventHandler());
+            if (s.getEventHandler().equals(s.getSubscriber())
+                    && handler instanceof Cell) list.add((Cell) handler);
+        }
+        return list;
+    }
+
     public static HGHandle getOutCellHandle(HGHandle cellH)
     {
         List<HGHandle> l = getOutCellHandles(cellH);
@@ -517,8 +537,8 @@ public class CellUtils
                 CopyCellGroupChangeHandler.getInstance());
 
         for (int i = 0; i < master.getArity(); i++)
-            if (master.getElement(i) instanceof CellGroup) 
-                addCellGroupCopyListeners(master.getTargetAt(i), copy.getTargetAt(i));
+            if (master.getElement(i) instanceof CellGroup) addCellGroupCopyListeners(
+                    master.getTargetAt(i), copy.getTargetAt(i));
             else
                 addCellCopyListeners(master.getTargetAt(i), copy.getTargetAt(i));
     }
@@ -540,36 +560,39 @@ public class CellUtils
     {
         removeHandlers(masterH, HGHandleFactory.anyHandle);
     }
-    
+
     public static void removeHandlers(HGHandle masterH, HGHandle anotherH)
     {
         if (masterH == null) return;
         Object master = ThisNiche.hg.get(masterH);
-        if (master instanceof CellGroup) removeCellGroupHandlers(masterH, anotherH);
+        if (master instanceof CellGroup) removeCellGroupHandlers(masterH,
+                anotherH);
         else
             remove_event_handlers(masterH, anotherH);
     }
 
-    private static void removeCellGroupHandlers(HGHandle masterH, HGHandle anotherH)
+    private static void removeCellGroupHandlers(HGHandle masterH,
+            HGHandle anotherH)
     {
         CellGroup master = (CellGroup) ThisNiche.hg.get(masterH);
         remove_event_handlers(masterH, anotherH);
 
         for (int i = 0; i < master.getArity(); i++)
-            if (master.getElement(i) instanceof CellGroup) 
-                removeCellGroupHandlers(master.getTargetAt(i), anotherH);
+            if (master.getElement(i) instanceof CellGroup) removeCellGroupHandlers(
+                    master.getTargetAt(i), anotherH);
             else
                 remove_event_handlers(master.getTargetAt(i), anotherH);
     }
 
-    private static void remove_event_handlers(HGHandle masterH, HGHandle anotherH)
+    private static void remove_event_handlers(HGHandle masterH,
+            HGHandle anotherH)
     {
         List<HGHandle> subs = getListForPubOrSub(HGHandleFactory.anyHandle,
                 masterH, anotherH, HGHandleFactory.anyHandle);
         for (HGHandle s : subs)
             ThisNiche.hg.remove(s);
-        subs = getListForPubOrSub(HGHandleFactory.anyHandle,
-                anotherH, masterH, HGHandleFactory.anyHandle);
+        subs = getListForPubOrSub(HGHandleFactory.anyHandle, anotherH, masterH,
+                HGHandleFactory.anyHandle);
         for (HGHandle s : subs)
             ThisNiche.hg.remove(s);
     }

@@ -27,7 +27,7 @@ public class NotebookUIType extends HGAtomTypeBase
     {       
         HGPersistentHandle [] layout = new HGPersistentHandle[1];
         NotebookUI ui = (NotebookUI)instance;
-        layout[0] = graph.getPersistentHandle(ui.getDoc().getHandle());
+        layout[0] = graph.getPersistentHandle(ui.getDoc().getBookHandle());
         return graph.getStore().store(layout);
     }
     

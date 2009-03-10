@@ -7,8 +7,10 @@
  */
 package seco.notebook;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -18,6 +20,7 @@ import javax.swing.text.Position;
 
 import org.hypergraphdb.HGHandle;
 
+import seco.ThisNiche;
 import seco.notebook.view.CellHandleView;
 import seco.things.Cell;
 import seco.things.CellGroup;
@@ -332,10 +335,10 @@ public class SelectionManager extends
                 return;
             }
             // par_el = NotebookDocument.getContainerEl(from, false);
-            addRange(from,
-                    getElement(parent.getElement(parent.getArity() - 1)), true,
-                    true);
-            addRange(getElement(next_nb(getElement(parent))), to, false, false);
+           // addRange(from,
+           //         getElement(parent.getElement(parent.getArity() - 1)), true,
+          //          true);
+          //  addRange(getElement(next_nb(getElement(parent))), to, false, false);
         }
     }
 
@@ -399,6 +402,20 @@ public class SelectionManager extends
         return null;
     }
     
+    private Element getOutElement(CellGroupMember nb)
+    {
+        List<HGHandle> list = 
+            CellUtils.getOutCellHandles(ThisNiche.handleOf(nb));
+        List<CellGroupMember> mems = new ArrayList(list.size());
+        for(HGHandle h: list)
+          mems.add((CellGroupMember) ThisNiche.hg.get(h));
+        for (Element el : keySet())
+            if (get(el) instanceof CellHandleView.CustomButton &&
+                mems.contains(NotebookDocument.getNBElement(el)))
+                    return el;
+        return null;
+    }
+    
     private Element getElementH(HGHandle nb)
     {
         for (Element el : keySet())
@@ -412,7 +429,7 @@ public class SelectionManager extends
         Element el = getElement(nb);
         if (el == null) return;
         // System.out.println("Select: " + nb + ":" + selection.contains(el));
-        Cell out = CellUtils.getOutCell(nb);
+        //Element outEl = getOutElement(nb);
         if (!selection.contains(el))
         {
             check_remove_nested(el);
@@ -422,12 +439,12 @@ public class SelectionManager extends
             {
                 get(el).requestFocus();
             }
-            if (out != null) select(out);
+            //if (outEl != null) select(NotebookDocument.getNBElement(outEl));
             return;
         } else
         {
             removeCellSelection(el);
-            if (out != null) removeCellSelection(getElement(out));
+            //if (outEl != null) removeCellSelection(outEl);
         }
     }
 

@@ -166,7 +166,7 @@ public class IOUtils
         boolean collapsed = false;
         String engine = null;
         String text = null;
-        Element outputCellEl = null;
+        //Element outputCellEl = null;
         String str_ind = el.getAttribute(XMLConstants.ATTR_INIT_CELL);
         if (str_ind != null && str_ind.length() > 0)
             initCell = Boolean.parseBoolean(str_ind);
@@ -191,10 +191,11 @@ public class IOUtils
             if (!(n instanceof Element))
                 continue;
             Element inner = (Element) n;
-            if (inner.getTagName().equals(XMLConstants.OUTPUT_CELL))
-            {
-                outputCellEl = inner;
-            } else if (inner.getTagName().equals(XMLConstants.CELL_DATA))
+//            if (inner.getTagName().equals(XMLConstants.OUTPUT_CELL))
+//            {
+//                outputCellEl = inner;
+//            } else 
+            if (inner.getTagName().equals(XMLConstants.CELL_DATA))
             {
                 text = normalizeText(XMLConstants.concatContents(inner));
             } else
@@ -212,8 +213,8 @@ public class IOUtils
             CellUtils.setReadonly(cell, readonly);
         if (collapsed)
             CellUtils.setCollapsed(cell, collapsed);
-        if (outputCellEl != null)
-            loadOutputCell(outputCellEl, cellH);
+        //if (outputCellEl != null)
+        //    loadOutputCell(outputCellEl, cellH);
         return cellH;
     }
 
