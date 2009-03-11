@@ -52,6 +52,7 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.plaf.UIResource;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 import javax.swing.text.EditorKit;
@@ -160,6 +161,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         if (doc == null) return;
         doc.init();
         setDocument(doc);
+        this.setCaret(new FixedCaret());
         setCaretPosition(0);
         initKeyBindings();
         setDragEnabled(true);
@@ -1034,5 +1036,16 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         public void focusLost(FocusEvent e)
         {
         }
+    }
+    
+    public static class FixedCaret extends DefaultCaret
+    {
+        public void setDot(int dot, Position.Bias dotBias) {
+            if (dotBias == null) {
+               // throw new IllegalArgumentException("null bias");
+                dotBias = Position.Bias.Forward;
+            }
+            super.setDot(dot, dotBias);
+         }
     }
 }
