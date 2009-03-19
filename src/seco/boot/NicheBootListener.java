@@ -29,7 +29,7 @@ public class NicheBootListener implements HGListener
         ThisNiche.hg.update(topRuntime);
         CellGroup group = (CellGroup) hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         CellVisual v = (CellVisual) hg.get(group.getVisual());
-        v.bind(group, null);
+        v.bind(group);
         s.setVisible(true);
         return Result.ok;
     }

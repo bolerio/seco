@@ -120,6 +120,7 @@ public class MetaData
         removeProperty("javax.swing.JMenuItem", "UI");
         removeProperty("javax.swing.JMenuItem", "layout");
         removeProperty("javax.swing.JPopupMenu", "UI");
+        removeProperty("javax.swing.JSeparator", "UI");
         removeProperty("javax.swing.JPopupMenu", "layout");
         removeProperty("javax.swing.JButton", "UI");
         removeProperty("javax.swing.JToolBar", "UI");

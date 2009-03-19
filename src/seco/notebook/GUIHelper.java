@@ -50,6 +50,7 @@ import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 import com.jgoodies.looks.plastic.theme.DesertBluer;
 
 import seco.ThisNiche;
+import seco.events.CellGroupChangeEvent;
 import seco.gui.CellContainerVisual;
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
@@ -82,6 +83,7 @@ import seco.rtenv.RuntimeContext;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
+import seco.things.CellUtils;
 import seco.things.IOUtils;
 import edu.umd.cs.piccolox.pswing.PSwing;
 
@@ -106,23 +108,23 @@ public class GUIHelper
         {
         }
     }
-    
-    
+
     private static JTabbedPane tabbedPane;
 
     public static JTabbedPane getJTabbedPane()
     {
         if (tabbedPane != null) return tabbedPane;
-        if (ThisNiche.hg.get(ThisNiche.TABBED_PANE_GROUP_HANDLE) == null)
+        CellGroup group = ThisNiche.hg.get(ThisNiche.TABBED_PANE_GROUP_HANDLE);
+        if (group == null)
         {
-            CellGroup group = new CellGroup("TabbedPaneCellGroup");
+            group = new CellGroup("TabbedPaneCellGroup");
             ThisNiche.hg.define(ThisNiche.TABBED_PANE_GROUP_HANDLE, group);
             group.setVisual(ThisNiche.hg.add(new TabbedPaneVisual()));
-            group.setAttribute(
-                    VisualAttribs.rect, new Rectangle(0, 90, 600, 600));
+            group.setAttribute(VisualAttribs.rect, new Rectangle(0, 50, 600,
+                    600));
             ThisNiche.hg.update(group);
         }
-        return tabbedPane = TabbedPaneU.createTabbedPane();
+        return tabbedPane = TabbedPaneU.createTabbedPane(group);
     }
 
     public static JToolBar getMainToolBar()
@@ -433,7 +435,7 @@ public class GUIHelper
             menuBar.add(createFormatMenu());
             menuBar.add(createToolsMenu());
             menuBar.add(createRuntimeMenu());
-            
+
             ThisNiche.hg.define(GUIHelper.MENUBAR_HANDLE, menuBar);
             // force the creation of the NotebookUI static popup
             NotebookUI.getPopupMenu();
@@ -503,8 +505,8 @@ public class GUIHelper
         if (ui == null) return;
         CellGroupMember book = ui.getDoc().getBook();
         String title = "Cells Hierarchy: ";
-        title +=(book instanceof CellGroup) ? ((CellGroup) book)
-                .getName() : "Cell";
+        title += (book instanceof CellGroup) ? ((CellGroup) book).getName()
+                : "Cell";
         JDialog dialog = new JDialog(TopFrame.getInstance(), title);
         dialog.setSize(500, 800);
         JTree tree = new NotebookCellsTree(new NotebookTreeModel(book));
@@ -519,27 +521,24 @@ public class GUIHelper
         hg.define(ThisNiche.TOP_CELL_GROUP_HANDLE, group);
         group.setVisual(CellContainerVisual.getHandle());
         getMenuBar();
-        HGHandle h = addToTopCellGroup(hg, GUIHelper.MENUBAR_HANDLE, group,
+        HGHandle h = addToTopCellGroup(GUIHelper.MENUBAR_HANDLE, group,
                 VisualsManager.defaultVisualForAtom(GUIHelper.MENUBAR_HANDLE),
-                new Rectangle(0, 0, 200, 27));
-        setLayoutHandler(h, new DefaultLayoutHandler(new DRect(new DValue(0),
-                new DValue(0), new DValue(25, true), new DValue(28)),
-                RefPoint.TOP_LEFT));
+                new DefaultLayoutHandler(new DRect(new DValue(0),
+                        new DValue(0), new DValue(25, true), new DValue(28)),
+                        RefPoint.TOP_LEFT));
         getMainToolBar();
-        h = addToTopCellGroup(hg, GUIHelper.TOOLBAR_HANDLE, group,
-                VisualsManager.defaultVisualForAtom(GUIHelper.TOOLBAR_HANDLE),
-                new Rectangle(0, 30, 260, 28));
-        setLayoutHandler(h, new DefaultLayoutHandler(new DRect(new DValue(0),
-                new DValue(0), new DValue(40, true), new DValue(28)),
-                RefPoint.TOP_RIGHT));
+        h = addToTopCellGroup(GUIHelper.TOOLBAR_HANDLE, group, VisualsManager
+                .defaultVisualForAtom(GUIHelper.TOOLBAR_HANDLE),
+                new DefaultLayoutHandler(new DRect(new DValue(0),
+                        new DValue(0), new DValue(40, true), new DValue(28)),
+                        RefPoint.TOP_RIGHT));
         getHTMLToolBar();
-        h = addToTopCellGroup(hg, GUIHelper.HTML_TOOLBAR_HANDLE, group,
+        h = addToTopCellGroup(GUIHelper.HTML_TOOLBAR_HANDLE, group,
                 VisualsManager
                         .defaultVisualForAtom(GUIHelper.HTML_TOOLBAR_HANDLE),
-                new Rectangle(0, 60, 600, 28));
-        setLayoutHandler(h, new DefaultLayoutHandler(new DRect(new DValue(0),
-                new DValue(0), new DValue(100, true), new DValue(28)),
-                RefPoint.BOTTOM_LEFT));
+                new DefaultLayoutHandler(new DRect(new DValue(0),
+                        new DValue(0), new DValue(100, true), new DValue(28)),
+                        RefPoint.BOTTOM_LEFT));
 
         getJTabbedPane();
         group.insert(group.getArity(), ThisNiche.TABBED_PANE_GROUP_HANDLE);
@@ -550,6 +549,7 @@ public class GUIHelper
     {
         CellGroupMember cell = ThisNiche.hg.get(cellH);
         cell.setAttribute(VisualAttribs.layoutHandler, lh);
+        ThisNiche.hg.update(cell);
     }
 
     public static LayoutHandler getLayoutHandler(PSwingNode ps)
@@ -558,23 +558,40 @@ public class GUIHelper
         return (LayoutHandler) m.getAttribute(VisualAttribs.layoutHandler);
     }
 
-    public static HGHandle addToTopCellGroup(HyperGraph hg, HGHandle h,
-            CellGroup group, HGHandle visualH, Rectangle r)
+    public static HGHandle addToTopCellGroup(HGHandle h, CellGroup group,
+            HGHandle visualH, Rectangle r)
     {
         HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
-        HGHandle cellH = hg.add(out);
-        out.setAttribute(VisualAttribs.rect, r);
-        out.setVisual(visualH);
+        HGHandle cellH = ThisNiche.hg.add(out);
+        if (r != null) out.setAttribute(VisualAttribs.rect, r);
+        if (visualH != null) out.setVisual(visualH);
         group.insert(group.getArity(), out);
         return cellH;
     }
 
-    public static HGHandle addToTopCellGroup(HyperGraph hg, HGHandle h,
-            HGHandle visualH, Rectangle r)
+    public static HGHandle addToTopCellGroup(HGHandle h, CellGroup group,
+            HGHandle visualH, LayoutHandler lh)
     {
-        CellGroup top = hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-        return addToTopCellGroup(hg, h, top, visualH, r);
+        HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
+        Cell out = new Cell(ref);
+        HGHandle cellH = ThisNiche.hg.add(out);
+        if (lh != null) out.setAttribute(VisualAttribs.layoutHandler, lh);
+        if (visualH != null) out.setVisual(visualH);
+        group.insert(group.getArity(), out);
+        return cellH;
+    }
+
+    public static HGHandle addToTopCellGroup(HGHandle h)
+    {
+        return addToTopCellGroup(h, null, null);
+    }
+
+    public static HGHandle addToTopCellGroup(HGHandle h, HGHandle visualH,
+            Rectangle r)
+    {
+        CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        return addToTopCellGroup(h, top, visualH, r);
     }
 
     public static void removeFromTopCellGroup(HGHandle h)
@@ -586,8 +603,9 @@ public class GUIHelper
     public static void openNotebook(HGHandle h)
     {
         if (allready_opened(h, true)) return;
-        NotebookUI ui = new NotebookUI(h);
-        TabbedPaneU.addNotebookTab(getJTabbedPane(), ui, true);
+        //NotebookUI ui = new NotebookUI(h);
+        //TabbedPaneU.addNotebookTab(getJTabbedPane(), ui, true);
+        TabbedPaneU.addTabToTabbedPaneGroup(ThisNiche.TABBED_PANE_GROUP_HANDLE,  h);
     }
 
     private static boolean allready_opened(HGHandle h, boolean focus)
@@ -595,9 +613,11 @@ public class GUIHelper
         JTabbedPane tabbedPane = getJTabbedPane();
         for (int i = 0; i < tabbedPane.getTabCount(); i++)
         {
-            JScrollPane comp = (JScrollPane) tabbedPane.getComponentAt(i);
-            NotebookUI ui = (NotebookUI) comp.getViewport().getView();
-            if (ui.getDoc().getHandle().equals(h))
+            Component c = tabbedPane.getComponentAt(i);
+            if (!(c instanceof JComponent)) continue;
+            HGHandle inH = (HGHandle) ((JComponent) c)
+                    .getClientProperty(TabbedPaneVisual.CHILD_HANDLE_KEY);
+            if (h.equals(inH))
             {
                 if (focus) tabbedPane.setSelectedIndex(i);
                 return true;
@@ -609,18 +629,20 @@ public class GUIHelper
     public static void newNotebook()
     {
         check_tabbed_pane_present();
-        EvaluationContext ctx = ThisNiche.getEvaluationContext(TopFrame
-                .getCurrentEvaluationContext());
+        //EvaluationContext ctx = ThisNiche.getEvaluationContext(TopFrame
+        //        .getCurrentEvaluationContext());
         CellGroup nb = new CellGroup("CG");
         HGHandle nbHandle = ThisNiche.hg.add(nb);
-        ThisNiche.hg.freeze(nbHandle);
-        NotebookUI ui = new NotebookUI(nbHandle, ctx);
-        ThisNiche.hg.add(new ContextLink(nbHandle, TopFrame
-                .getCurrentEvaluationContext()));
-        ui.setCaretPosition(0);
-        ui.getDoc().setModified(true);
-        TabbedPaneU.addNotebookTab(getJTabbedPane(), ui, true);
-     }
+        // ThisNiche.hg.freeze(nbHandle);
+        // NotebookUI ui = new NotebookUI(nbHandle, ctx);
+        // ThisNiche.hg.add(new ContextLink(nbHandle, TopFrame
+        // .getCurrentEvaluationContext()));
+        // ui.setCaretPosition(0);
+        // ui.getDoc().setModified(true);
+        // TabbedPaneU.addNotebookTab(getJTabbedPane(), ui, true);
+        TabbedPaneU.addTabToTabbedPaneGroup(ThisNiche.TABBED_PANE_GROUP_HANDLE,
+                nbHandle);
+    }
 
     public static void openNotebook()
     {
@@ -636,11 +658,13 @@ public class GUIHelper
         {
             String fn = file.getAbsolutePath();
             HGHandle knownHandle = IOUtils.importCellGroup(fn);
-            ThisNiche.hg.add(new ContextLink(knownHandle, TopFrame
-                    .getCurrentEvaluationContext()));
-            NotebookUI ui = new NotebookUI(knownHandle);
-            TabbedPaneU.addNotebookTab(getJTabbedPane(), ui, true);
-            AppConfig.getInstance().getMRUF().add(ui.getDoc().getHandle());
+            // ThisNiche.hg.add(new ContextLink(knownHandle, TopFrame
+            // .getCurrentEvaluationContext()));
+            // NotebookUI ui = new NotebookUI(knownHandle);
+            // TabbedPaneU.addNotebookTab(getJTabbedPane(), ui, true);
+            TabbedPaneU.addTabToTabbedPaneGroup(
+                    ThisNiche.TABBED_PANE_GROUP_HANDLE, knownHandle);
+            AppConfig.getInstance().getMRUF().add(knownHandle);
             AppConfig.getInstance().setMRUD(file.getParent());
         }
         catch (Throwable t)
@@ -671,9 +695,9 @@ public class GUIHelper
         RuntimeContext rcInstance = (RuntimeContext) ThisNiche.hg.get(TopFrame
                 .getCurrentEvaluationContext());
         String title = rcInstance.getName() + " " + name;
-        //JTabbedPane tabbedPane = getJTabbedPane();
-        //tabbedPane
-        //        .setTitleAt(tabbedPane.getSelectedIndex(), makeTabTitle(name));
+        // JTabbedPane tabbedPane = getJTabbedPane();
+        // tabbedPane
+        // .setTitleAt(tabbedPane.getSelectedIndex(), makeTabTitle(name));
         TopFrame.getInstance().setTitle(title);
     }
 
@@ -818,10 +842,11 @@ public class GUIHelper
         menu.add(new EnhancedMenu("CellGroup", new CellGroupPropsProvider()));
         return menu;
     }
-    
+
     public static HGHandle getTopCellGroupHandle(JComponent comp)
     {
-        PSwingNode ps = (PSwingNode) comp.getClientProperty(PSwingNode.PSWING_PROPERTY);
+        PSwingNode ps = (PSwingNode) comp
+                .getClientProperty(PSwingNode.PSWING_PROPERTY);
         return ps.getHandle();
     }
 }

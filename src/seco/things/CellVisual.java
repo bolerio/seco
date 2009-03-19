@@ -1,5 +1,7 @@
 package seco.things;
 
+import javax.swing.JComponent;
+
 /**
  * 
  * <p>
@@ -25,5 +27,5 @@ package seco.things;
  */
 public interface CellVisual
 {
-    void bind(CellGroupMember element, Object parentVisual);
+    JComponent bind(CellGroupMember element);
 }

@@ -4,11 +4,14 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
+import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
+
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
@@ -21,6 +24,7 @@ import seco.notebook.NotebookUI;
 import seco.things.Cell;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import seco.things.CellVisual;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
@@ -187,7 +191,7 @@ public class PiccoloCanvas extends PSwingCanvas
             getNodeLayer().addChild(ps);
             ps.translate(pt.x, pt.y);
             h = CellUtils.addSerializable(comp);
-            ps.setHandle(GUIHelper.addToTopCellGroup(ThisNiche.hg, h,
+            ps.setHandle(GUIHelper.addToTopCellGroup(h,
                     VisualsManager.defaultVisualForType(h), ps.getFullBounds()
                             .getBounds()));
         }
@@ -195,16 +199,14 @@ public class PiccoloCanvas extends PSwingCanvas
     
     public PSwingNode addComponent(HGHandle h, Point pt)
     {
-        JComponent comp = new NotebookUI(h);
-        //comp.setPreferredSize(new Dimension(200, 200));
+        HGHandle topH = GUIHelper.addToTopCellGroup(h);
+        Cell top = ThisNiche.hg.get(topH);
+        CellVisual vis = CellUtils.getVisual(top);
+        JComponent comp = vis.bind(top);
         PSwingNode ps = new PSwingNode(this, comp);
-        // ps.addInputEventListener(del_handler);
+        ps.setHandle(topH);
         getNodeLayer().addChild(ps);
         ps.translate(pt.x, pt.y);
-        h = CellUtils.addSerializable(comp);
-        ps.setHandle(GUIHelper.addToTopCellGroup(ThisNiche.hg, h,
-                VisualsManager.defaultVisualForType(h), 
-                ps.getFullBounds().getBounds()));
         return ps;
    }
 
@@ -236,7 +238,10 @@ public class PiccoloCanvas extends PSwingCanvas
     
     private boolean check_is_output(PSwingNode p, HGHandle h)
     {
+        //if(h.equals(p.getHandle())) return true;
         Object ui = p.getComponent();
+        if(ui instanceof JScrollPane)
+            ui = ((JScrollPane)ui).getViewport().getView();
         if(ui instanceof NotebookUI && 
            ((NotebookUI)ui).getDoc() instanceof OutputCellDocument)
         {
@@ -250,8 +255,8 @@ public class PiccoloCanvas extends PSwingCanvas
         HGHandle cellH = ThisNiche.handleOf(cell);
         PSwingNode p = null;
         p = new PSwingNode(this, comp, cellH);
-        LayoutHandler vh = (LayoutHandler) cell
-                .getAttribute(VisualAttribs.layoutHandler);
+        LayoutHandler vh = (LayoutHandler) 
+           cell.getAttribute(VisualAttribs.layoutHandler);
         if (vh != null)
         {
             getCamera().addChild(p);
@@ -266,7 +271,8 @@ public class PiccoloCanvas extends PSwingCanvas
                 normalize(r);
                 p.setBounds(r);
                 p.translate(r.x, r.y);
-            }
+            }else
+                p.setBounds(new Rectangle(0, 0 , comp.getWidth(), comp.getHeight()));
         }
         return p;
     }

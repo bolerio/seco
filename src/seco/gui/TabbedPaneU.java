@@ -61,7 +61,7 @@ public class TabbedPaneU
         ThisNiche.hg.unfreeze(h);
         CellGroup top = ThisNiche.hg.get(GUIHelper.getTopCellGroupHandle(tp));
         top.remove(i);
-        tp.removeTabAt(i);
+        //tp.removeTabAt(i);
         if (tp.getTabCount() == 0) TopFrame.getInstance().setTitle("Seco");
         else
             GUIHelper.updateTitle(true);
@@ -270,7 +270,7 @@ public class TabbedPaneU
 
     public static void addTabToTabbedPaneGroup(HGHandle groupH, HGHandle h)
     {
-        CellGroup group = (CellGroup) ThisNiche.hg.get(groupH);//ThisNiche.TABBED_PANE_GROUP_HANDLE
+        CellGroup group = (CellGroup) ThisNiche.hg.get(groupH);
         HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
         HGHandle outH = ThisNiche.handleOf(out);
@@ -279,7 +279,7 @@ public class TabbedPaneU
         ThisNiche.hg.update(group);
     }
 
-    public static JTabbedPane createTabbedPane()
+    public static JTabbedPane createTabbedPane(CellGroup group)
     {
         JTabbedPane tabbedPane = null;
         if (DRAGGABLE_TABS)
@@ -290,7 +290,7 @@ public class TabbedPaneU
                     .addTabCloseListener(new TabbedPaneCloseListener());
         }
         else
-            tabbedPane = new SecoTabbedPane();// JTabbedPane();
+            tabbedPane = new SecoTabbedPane(ThisNiche.handleOf(group));
         tabbedPane.setDoubleBuffered(!TopFrame.PICCOLO);
         tabbedPane.putClientProperty(
                 com.jgoodies.looks.Options.NO_CONTENT_BORDER_KEY, Boolean.TRUE);

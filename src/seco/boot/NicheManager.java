@@ -23,6 +23,8 @@ import seco.ThisNiche;
 import seco.U;
 import seco.gui.CellContainerVisual;
 import seco.gui.JComponentVisual;
+import seco.gui.NBUIVisual;
+import seco.gui.TabbedPaneVisual;
 import seco.notebook.OutputCellDocument;
 import seco.notebook.OutputCellDocumentType;
 import seco.notebook.GUIHelper;
@@ -39,6 +41,7 @@ import seco.rtenv.RuntimeContext;
 import seco.things.AvailableVisual;
 import seco.things.Cell;
 import seco.things.CellGroup;
+import seco.things.CellGroupMember;
 import seco.things.CellGroupType;
 import seco.things.CellType;
 import seco.things.DefaultVisual;
@@ -209,10 +212,22 @@ public class NicheManager
     {
     	graph.define(JComponentVisual.getHandle(), new JComponentVisual());
     	graph.define(CellContainerVisual.getHandle(), new CellContainerVisual());
+    	graph.define(TabbedPaneVisual.getHandle(), new TabbedPaneVisual());
+    	graph.define(NBUIVisual.getHandle(), new NBUIVisual());
     	HGHandle typeHandle = graph.getTypeSystem().getTypeHandle(JComponent.class);
     	HGHandle visualHandle = JComponentVisual.getHandle();
     	graph.add(new DefaultVisual(typeHandle, visualHandle));
     	graph.add(new AvailableVisual(typeHandle, visualHandle));
+    	
+    	typeHandle = CellType.HGHANDLE;// 	    graph.getTypeSystem().getTypeHandle(CellGroupMember.class);
+        visualHandle = NBUIVisual.getHandle();
+        graph.add(new DefaultVisual(typeHandle, visualHandle));
+        graph.add(new AvailableVisual(typeHandle, visualHandle));
+        
+        typeHandle = CellGroupType.HGHANDLE;
+        visualHandle = NBUIVisual.getHandle();
+        graph.add(new DefaultVisual(typeHandle, visualHandle));
+        graph.add(new AvailableVisual(typeHandle, visualHandle));
     }
     
     static void populateDefaultSecoUI(HyperGraph hg)

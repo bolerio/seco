@@ -1,37 +1,43 @@
 package seco.gui;
 
-import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.io.IOException;
 
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
-import javax.swing.TransferHandler.TransferSupport;
-import javax.swing.text.JTextComponent;
+
+import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
-import seco.notebook.GUIHelper;
-import seco.notebook.NotebookUI;
 import seco.things.CellGroup;
+import seco.things.CellGroupMember;
+import seco.things.CellUtils;
+import seco.things.CellVisual;
 
 public class SecoTabbedPane extends JTabbedPane
 {
     private int dragTabIndex = -1;
-
-    public SecoTabbedPane()
+    protected HGHandle groupH;  
+    
+    public SecoTabbedPane(HGHandle groupH)
     {
         super();
+        this.groupH = groupH;
         DragMouseListener ml = new DragMouseListener(this);
         addMouseMotionListener(ml);
         setTransferHandler(new TPTransferHandler(this));
+    }
+    
+    public CellGroup getCellGroup()
+    {
+        return (CellGroup) ThisNiche.hg.get(groupH);
     }
 
     private int getTargetTabIndex(Point pt)
@@ -93,7 +99,6 @@ public class SecoTabbedPane extends JTabbedPane
 
     public static class TPTransferHandler extends TransferHandler
     {
-        private boolean shouldRemove;
         private SecoTabbedPane tp;
 
         public TPTransferHandler(SecoTabbedPane tp)
@@ -110,7 +115,7 @@ public class SecoTabbedPane extends JTabbedPane
         protected DataFlavor getImportFlavor(DataFlavor[] flavors, JComponent c)
         {
             for (int i = 0; i < flavors.length; i++)
-                if (flavors[i].equals(SecoTransferable.nbFlavor))
+                if (flavors[i].equals(SecoTransferable.FLAVOR))
                     return flavors[i];
             return null;
         }
@@ -122,22 +127,19 @@ public class SecoTabbedPane extends JTabbedPane
 
         protected Transferable createTransferable(JComponent comp)
         {
-           // tp = (SecoTabbedPane) comp;
-            shouldRemove = true;
             JScrollPane p = (JScrollPane) tp.getComponentAt(tp.dragTabIndex);
-            return new SecoTransferable(p.getViewport().getView());
+            return new SecoTransferable(p, tp.getCellGroup().getTargetAt(tp.dragTabIndex));
         }
 
         protected void exportDone(JComponent source, Transferable data,
                 int action)
         {
-            if (shouldRemove && action == MOVE)
+            if (action == MOVE)
             {
+                //not needed, if we directly take the component
                 tp.removeTabAt(tp.dragTabIndex);
-                CellGroup top = ThisNiche.hg.get(GUIHelper.getTopCellGroupHandle(tp)); 
-                top.remove(tp.dragTabIndex);
+                tp.getCellGroup().remove(tp.dragTabIndex);
             }
-            //tp = null;
         }
 
         public boolean importData(TransferSupport support)
@@ -148,7 +150,6 @@ public class SecoTabbedPane extends JTabbedPane
          // Don't drop on myself.
             if (comp == tp)
             {
-                shouldRemove = false;
                 System.out.println("TPTransferHandler - Return");
                 return true;
             }
@@ -158,20 +159,19 @@ public class SecoTabbedPane extends JTabbedPane
             boolean imported = false;
             try
             {
-                if (importFlavor.equals(SecoTransferable.nbFlavor))
+                if (importFlavor.equals(SecoTransferable.FLAVOR))
                 {
-                    Component in = (Component) t.getTransferData(importFlavor);
-                    if (in instanceof NotebookUI)
-                    {
-                        NotebookUI ui = (NotebookUI) in;
-                        TabbedPaneU.addNotebookTab(tp, ui, true);
-                        return true;
-                    }
-                    
-                   // String title = (in.getName() != null && in.getName()
-                   //         .length() > 0) ? in.getName() : "Some Component";
-                   // tp.addTab(title, in);
-                }
+                    SecoTransferable.Data data = (SecoTransferable.Data ) t.getTransferData(importFlavor);
+                    //JComponent c = data.getComponent();
+                    //CellGroupMember cgm = ThisNiche.hg.get(data.getHandle());
+                    //CellVisual v = CellUtils.getVisual(cgm);
+                    //JComponent c = v.bind(cgm);
+                    if(tp.getCellGroup().indexOf(data.getHandle()) >= 0) return false;
+                    tp.getCellGroup().insert(tp.getCellGroup().getArity(), data.getHandle());
+                    //tp.addTab(c.getName(), c);
+                    //tp.setSelectedIndex(tp.getComponentCount() -1);
+                    return true;
+               }
             }
             catch (Exception ioe)
             {

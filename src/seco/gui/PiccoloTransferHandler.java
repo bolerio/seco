@@ -1,6 +1,7 @@
 package seco.gui;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -18,7 +19,10 @@ import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookTransferHandler;
 import seco.notebook.NotebookUI;
+import seco.things.CellGroup;
+import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import seco.things.CellVisual;
 
 public class PiccoloTransferHandler extends TransferHandler
 {
@@ -57,7 +61,9 @@ public class PiccoloTransferHandler extends TransferHandler
                 HGHandle nbH = NotebookDocument.getNBElementH(e);
                 if (move)
                 {
-                    canvas.addComponent(nbH, pt);
+                    //canvas.addComponent(nbH, pt);
+                    GUIHelper.addToTopCellGroup(nbH, null, new Rectangle(pt.x, pt.y, 200, 200)); 
+                   
                     NotebookDocument doc = ((NotebookDocument) e.getDocument());
                     doc.removeCellBoxElement(e);
                     CellUtils.removeHandlers(nbH, doc.getHandle());
@@ -87,8 +93,8 @@ public class PiccoloTransferHandler extends TransferHandler
            PSwingNode node = (PSwingNode) o;
            if(node.getFullBounds().contains(pt))
            {
-               //System.out.println("handleSecoTransfer - inner" +
-               //        node.getComponent() + ":" + node.getComponent().getTransferHandler());
+               System.out.println("handleSecoTransfer - inner" +
+                       node.getComponent() + ":" + node.getComponent().getTransferHandler());
                
                if(node.getComponent().getTransferHandler().importData(support))
                {
@@ -96,20 +102,24 @@ public class PiccoloTransferHandler extends TransferHandler
                    PSwingNode old = canvas.getSelectedPSwingNode();
                    if(old == null) return true;
                    GUIHelper.removeFromTopCellGroup(old.getHandle());
-                   old.removeFromParent();
+                   //old.removeFromParent();
                    return true;
                }
            }
         }
-        JComponent comp = (JComponent) support.getTransferable()
-                .getTransferData(tabFlavor);
+        SecoTransferable.Data data = 
+            (SecoTransferable.Data) support.getTransferable().getTransferData(tabFlavor);
         boolean move = (support.getDropAction() == MOVE);
         if (move)
         {
-             HGHandle h = (comp instanceof NotebookUI) ?
-               ((NotebookUI) comp).getDoc().getBookHandle() 
-                    : ThisNiche.handleOf(comp);
-             canvas.addComponent(h, pt);
+            CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+            CellGroupMember cgm = ThisNiche.hg.get(data.getHandle());
+            cgm.setAttribute(VisualAttribs.rect, new Rectangle(pt.x, pt.y, 200, 200));
+            top.insert(top.getArity(), data.getHandle());
+  //            CellVisual v = CellUtils.getVisual(cgm);
+//            JComponent c = v.bind(cgm);
+//            PSwingNode ps = canvas.addComponent(c, cgm);
+//            ps.translate(pt.x, pt.y);
         }
         return true;
     }
@@ -133,11 +143,12 @@ public class PiccoloTransferHandler extends TransferHandler
           actions = COPY_OR_MOVE;
         return actions;
     }
+    
     protected Transferable createTransferable(JComponent comp)
     {
        PiccoloCanvas canvas = (PiccoloCanvas) comp;
        PSwingNode node = canvas.getSelectedPSwingNode(); 
-       return new SecoTransferable(node.getComponent());
+       return new SecoTransferable(node.getComponent(), node.getHandle());
     }
 
 }

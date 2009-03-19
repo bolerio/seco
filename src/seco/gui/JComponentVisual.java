@@ -20,15 +20,13 @@ public class JComponentVisual implements CellVisual
 		return handle;
 	}
 	
-    public void bind(CellGroupMember element, Object parentVisual)
+    public JComponent bind(CellGroupMember element)
     {
         Cell cell = (Cell)element;
         //if(!(ThisNiche.hg.get(cell.getAtomHandle()) instanceof JComponent))
         //    return;
         JComponent comp = ThisNiche.hg.get(cell.getAtomHandle());
-        PiccoloCanvas canvas = (PiccoloCanvas)parentVisual;
-        if(canvas != null)  
-            canvas.addComponent(comp, element);
+        return comp;
     }
  
 }

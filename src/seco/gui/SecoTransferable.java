@@ -6,17 +6,21 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
+import javax.swing.JComponent;
+
+import org.hypergraphdb.HGHandle;
+
 public class SecoTransferable implements Transferable
 {
     public static final String mimeType = DataFlavor.javaJVMLocalObjectMimeType
             + ";class=" + SecoTabbedPane.class.getName();
-    public static DataFlavor nbFlavor = null;
+    public static DataFlavor FLAVOR = null;
 
     static
     {
         try
         {
-            nbFlavor = new DataFlavor(mimeType);
+            FLAVOR = new DataFlavor(mimeType);
         }
         catch (ClassNotFoundException e)
         {
@@ -24,26 +28,51 @@ public class SecoTransferable implements Transferable
         }
     };
 
-    protected Component c;
-    public SecoTransferable(Component c)
+    protected Data data;
+    
+    public SecoTransferable(JComponent comp, HGHandle h)
     {
-        this.c = c;
+        data = new Data(comp, h);
     }
 
     public DataFlavor[] getTransferDataFlavors()
     {
-        return new DataFlavor[] { nbFlavor };
+        return new DataFlavor[] { FLAVOR };
     }
 
     public boolean isDataFlavorSupported(DataFlavor flavor)
     {
-        return nbFlavor.equals(flavor);
+        return FLAVOR.equals(flavor);
     }
 
     public Object getTransferData(DataFlavor flavor)
             throws UnsupportedFlavorException, IOException
     {
-        if (isDataFlavorSupported(flavor)) return c;
+        if (isDataFlavorSupported(flavor)) return data;
         return null;
+    }
+    
+    public static class Data
+    {
+        protected JComponent component;
+        protected HGHandle top_cell_handle;
+        
+        public Data(JComponent c, HGHandle top_cell_handle)
+        {
+            super();
+            this.component = c;
+            this.top_cell_handle = top_cell_handle;
+        }
+
+        public JComponent getComponent()
+        {
+            return component;
+        }
+
+        public HGHandle getHandle()
+        {
+            return top_cell_handle;
+        }
+       
     }
 }

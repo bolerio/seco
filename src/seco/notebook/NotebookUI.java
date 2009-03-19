@@ -1040,11 +1040,10 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     
     public static class FixedCaret extends DefaultCaret
     {
+        //preventing IllegalArgumentException which randomly occurs
+        //in unclear situations(pending SUN bug issue) 
         public void setDot(int dot, Position.Bias dotBias) {
-            if (dotBias == null) {
-               // throw new IllegalArgumentException("null bias");
-                dotBias = Position.Bias.Forward;
-            }
+            if (dotBias == null)   dotBias = Position.Bias.Forward;
             super.setDot(dot, dotBias);
          }
     }

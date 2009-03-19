@@ -33,6 +33,8 @@ import seco.events.handlers.CopyAttributeChangeHandler;
 import seco.events.handlers.CopyCellGroupChangeHandler;
 import seco.events.handlers.CopyCellTextChangeHandler;
 import seco.events.handlers.CopyEvalCellHandler;
+import seco.gui.JComponentVisual;
+import seco.gui.VisualsManager;
 import seco.notebook.NBStyle;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
@@ -76,6 +78,16 @@ public class CellUtils
             // HGAtomRef.Mode.hard);
         }
         ThisNiche.hg.update(c);
+    }
+
+    public static CellVisual getVisual(CellGroupMember c)
+    {
+        HGHandle visH = (c.getVisual() != null) ? c.getVisual()
+                : VisualsManager.defaultVisualForAtom(ThisNiche.handleOf(c));
+        CellVisual visual = (visH == null || visH.equals(HGHandleFactory
+                .nullHandle())) ? new JComponentVisual()
+                : (CellVisual) ThisNiche.hg.get(visH);
+        return visual;
     }
 
     public static CellGroup getParentGroup(CellGroupMember cg)
