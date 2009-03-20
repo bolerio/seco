@@ -9,6 +9,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import seco.ThisNiche;
+import seco.boot.NicheManager;
 import seco.gui.layout.LayoutSettingsPanel;
 import seco.notebook.AppConfig;
 import seco.notebook.NotebookDocument;
@@ -126,7 +127,8 @@ public class ContextMenuHandler extends PBasicInputEventHandler
 
     public static void backup()
     {
-        File dir = new File(AppConfig.getConfigDirectory(), bck_dir);
+        File dir = new File(AppConfig.getConfigDirectory(), 
+                bck_dir + File.separator + NicheManager.getNicheName(ThisNiche.hg));
         if (!dir.exists()) dir.mkdir();
         System.out.println("Backup in: " + dir.getAbsolutePath());
         CellGroup group = (CellGroup) ThisNiche.hg

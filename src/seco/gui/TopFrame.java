@@ -5,18 +5,11 @@ import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
-import javax.swing.UIManager;
 import javax.swing.event.CaretListener;
 
 import org.hypergraphdb.HGHandle;
-
-import com.jgoodies.looks.plastic.PlasticLookAndFeel;
-import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
-import com.jgoodies.looks.plastic.theme.DesertBluer;
-
 import seco.ThisNiche;
 import seco.notebook.GUIHelper;
-import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.util.Log;
 import seco.rtenv.RuntimeContext;
@@ -25,8 +18,7 @@ import seco.things.CellGroup;
 public abstract class TopFrame extends JFrame
 {
     public static boolean PICCOLO = true;
-   
-    protected NotebookDocument.ModificationListener docListener;
+    public static boolean AUTO_BACKUP = true;
     //current RuntimeContext
     public static HGHandle currentRC = ThisNiche.TOP_CONTEXT_HANDLE; 
 
@@ -43,12 +35,6 @@ public abstract class TopFrame extends JFrame
         setIconImage(Toolkit.getDefaultToolkit().getImage(
                 getClass().getResource(GUIHelper.LOGO_IMAGE_RESOURCE)));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        docListener = new NotebookDocument.ModificationListener() {
-            public void documentModified(Object o)
-            {
-                GUIHelper.updateTitle(false);
-            }
-        };
         initFrame();
         Log.start();
     }
@@ -91,14 +77,10 @@ public abstract class TopFrame extends JFrame
         CellGroup group = (CellGroup) ThisNiche.hg.get(
                 ThisNiche.TOP_CELL_GROUP_HANDLE);
         group.setAttribute(VisualAttribs.rect, getBounds());
+        if(AUTO_BACKUP)
+            ContextMenuHandler.backup();
         System.exit(0);
     }
-
-    public NotebookDocument.ModificationListener getDocListener()
-    {
-        return docListener;
-    }
-    
 
     public static HGHandle getCurrentEvaluationContext()
     {

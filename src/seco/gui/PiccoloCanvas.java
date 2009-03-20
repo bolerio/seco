@@ -4,13 +4,11 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
-import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
 import javax.swing.JComponent;
-import javax.swing.JScrollPane;
 
 import org.hypergraphdb.HGHandle;
 
@@ -238,15 +236,9 @@ public class PiccoloCanvas extends PSwingCanvas
     
     private boolean check_is_output(PSwingNode p, HGHandle h)
     {
-        //if(h.equals(p.getHandle())) return true;
-        Object ui = p.getComponent();
-        if(ui instanceof JScrollPane)
-            ui = ((JScrollPane)ui).getViewport().getView();
-        if(ui instanceof NotebookUI && 
-           ((NotebookUI)ui).getDoc() instanceof OutputCellDocument)
-        {
-            return h.equals(((NotebookUI)ui).getDoc().getBookHandle());
-        }
+        CellGroupMember cgm = ThisNiche.hg.get(p.getHandle());
+        if(cgm instanceof Cell && ((Cell) cgm).getAtomHandle().equals(h))
+               return true;
         return false;
     }
     

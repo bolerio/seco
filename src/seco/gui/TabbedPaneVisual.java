@@ -19,8 +19,6 @@ import seco.things.CellVisual;
 
 public class TabbedPaneVisual implements CellVisual, EventHandler
 {
-    public static final String CHILD_HANDLE_KEY = "CHILD_HANDLE";
-
     private static final HGPersistentHandle handle = HGHandleFactory
             .makeHandle("55ddbdf0-149d-11de-8c30-0800200c9a66");
 
@@ -39,8 +37,8 @@ public class TabbedPaneVisual implements CellVisual, EventHandler
         for (int i = 0; i < group.getArity(); i++)
             addChild(tp, group.getTargetAt(i));
         group.setVisualInstance(tp);
-        
-        CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE, groupH, 
+
+        CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE, groupH,
                 getHandle(), getHandle());
         return tp;
     }
@@ -61,7 +59,7 @@ public class TabbedPaneVisual implements CellVisual, EventHandler
         CellGroupMember cell = ThisNiche.hg.get(childH);
         CellVisual visual = CellUtils.getVisual(cell);
         JComponent comp = visual.bind(cell);
-        comp.putClientProperty(CHILD_HANDLE_KEY, childH);
+        comp.putClientProperty(TabbedPaneU.CHILD_HANDLE_KEY, childH);
         tp.addTab(comp.getName(), comp);
     }
 
@@ -86,14 +84,10 @@ public class TabbedPaneVisual implements CellVisual, EventHandler
     {
         for (int i = 0; i < tp.getTabCount(); i++)
         {
-            Component c =  tp.getComponentAt(i);
-            if(!(c instanceof JComponent)) continue;
-            HGHandle inH = (HGHandle) ((JComponent) c).getClientProperty(CHILD_HANDLE_KEY);
-            if (h.equals(inH))
-            {
-                tp.remove(i);
-                return;
-            }
+            HGHandle inH = TabbedPaneU.getHandleAt(tp, i);
+            if (!h.equals(inH)) continue;
+            tp.remove(i);
+            return;
         }
     }
 

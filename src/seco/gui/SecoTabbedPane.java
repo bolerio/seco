@@ -8,7 +8,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.JComponent;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
@@ -17,15 +16,12 @@ import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
 import seco.things.CellGroup;
-import seco.things.CellGroupMember;
-import seco.things.CellUtils;
-import seco.things.CellVisual;
 
 public class SecoTabbedPane extends JTabbedPane
 {
     private int dragTabIndex = -1;
-    protected HGHandle groupH;  
-    
+    protected HGHandle groupH;
+
     public SecoTabbedPane(HGHandle groupH)
     {
         super();
@@ -34,7 +30,7 @@ public class SecoTabbedPane extends JTabbedPane
         addMouseMotionListener(ml);
         setTransferHandler(new TPTransferHandler(this));
     }
-    
+
     public CellGroup getCellGroup()
     {
         return (CellGroup) ThisNiche.hg.get(groupH);
@@ -47,7 +43,6 @@ public class SecoTabbedPane extends JTabbedPane
             Rectangle r = getBoundsAt(i);
             if (r != null && r.contains(pt)) return i;
         }
-
         return -1;
     }
 
@@ -63,7 +58,7 @@ public class SecoTabbedPane extends JTabbedPane
         private void initDrag(MouseEvent e)
         {
             int index = tp.getTargetTabIndex(e.getPoint());
-            //System.out.println("SecoTP - initDrag: " + index);
+            // System.out.println("SecoTP - initDrag: " + index);
             if (index < 0) return;
             tp.dragTabIndex = index;
             TransferHandler handler = tp.getTransferHandler();
@@ -88,7 +83,6 @@ public class SecoTabbedPane extends JTabbedPane
         public void mouseDragged(MouseEvent e)
         {
             initDrag(e);
-            // e.consume();
         }
 
         public void mouseMoved(MouseEvent e)
@@ -103,13 +97,7 @@ public class SecoTabbedPane extends JTabbedPane
 
         public TPTransferHandler(SecoTabbedPane tp)
         {
-            super();
             this.tp = tp;
-        }
-
-        public TPTransferHandler()
-        {
-            super();
         }
 
         protected DataFlavor getImportFlavor(DataFlavor[] flavors, JComponent c)
@@ -127,19 +115,15 @@ public class SecoTabbedPane extends JTabbedPane
 
         protected Transferable createTransferable(JComponent comp)
         {
-            JScrollPane p = (JScrollPane) tp.getComponentAt(tp.dragTabIndex);
-            return new SecoTransferable(p, tp.getCellGroup().getTargetAt(tp.dragTabIndex));
+            JComponent c = (JComponent) tp.getComponentAt(tp.dragTabIndex);
+            return new SecoTransferable(c, TabbedPaneU.getHandleAt(tp,
+                    tp.dragTabIndex));
         }
 
         protected void exportDone(JComponent source, Transferable data,
                 int action)
         {
-            if (action == MOVE)
-            {
-                //not needed, if we directly take the component
-                tp.removeTabAt(tp.dragTabIndex);
-                tp.getCellGroup().remove(tp.dragTabIndex);
-            }
+            if (action == MOVE) TabbedPaneU.closeAt(tp, tp.dragTabIndex);
         }
 
         public boolean importData(TransferSupport support)
@@ -147,37 +131,28 @@ public class SecoTabbedPane extends JTabbedPane
             JComponent comp = (JComponent) support.getComponent();
             Transferable t = support.getTransferable();
             System.out.println("TPTransferHandler: " + comp + ":" + tp);
-         // Don't drop on myself.
-            if (comp == tp)
-            {
-                System.out.println("TPTransferHandler - Return");
-                return true;
-            }
-            DataFlavor importFlavor = getImportFlavor(t
-                    .getTransferDataFlavors(), comp);
-            if (importFlavor == null) return false;
-            boolean imported = false;
+            // Don't drop on myself.
+            if (comp == tp)  return true;
+            DataFlavor fl = getImportFlavor(t.getTransferDataFlavors(), comp);
+            if (fl == null) return false;
             try
             {
-                if (importFlavor.equals(SecoTransferable.FLAVOR))
+                if (fl.equals(SecoTransferable.FLAVOR))
                 {
-                    SecoTransferable.Data data = (SecoTransferable.Data ) t.getTransferData(importFlavor);
-                    //JComponent c = data.getComponent();
-                    //CellGroupMember cgm = ThisNiche.hg.get(data.getHandle());
-                    //CellVisual v = CellUtils.getVisual(cgm);
-                    //JComponent c = v.bind(cgm);
-                    if(tp.getCellGroup().indexOf(data.getHandle()) >= 0) return false;
-                    tp.getCellGroup().insert(tp.getCellGroup().getArity(), data.getHandle());
-                    //tp.addTab(c.getName(), c);
-                    //tp.setSelectedIndex(tp.getComponentCount() -1);
+                    SecoTransferable.Data data = (SecoTransferable.Data) t
+                            .getTransferData(fl);
+                    if (tp.getCellGroup().indexOf(data.getHandle()) >= 0)
+                        return false;
+                    tp.getCellGroup().insert(tp.getCellGroup().getArity(),
+                            data.getHandle());
                     return true;
-               }
+                }
             }
             catch (Exception ioe)
             {
-               ioe.printStackTrace();
+                ioe.printStackTrace();
             }
-            return imported;
+            return false;
         }
 
         public boolean canImport(JComponent comp, DataFlavor[] flavors)

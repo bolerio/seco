@@ -26,8 +26,7 @@ import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
-import seco.events.EvalResult; //import seco.events.EvalResultEventType;
-import seco.events.EventDispatcher;
+import seco.events.EvalResult; 
 import seco.events.EventPubSub;
 import seco.events.handlers.CopyAttributeChangeHandler;
 import seco.events.handlers.CopyCellGroupChangeHandler;
@@ -80,6 +79,15 @@ public class CellUtils
         ThisNiche.hg.update(c);
     }
 
+    public static HGHandle getCellHForRefH(HGHandle h)
+    {
+        HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
+        Cell out = new Cell(ref);
+        HGHandle outH = ThisNiche.handleOf(out);
+        if (outH == null) outH = ThisNiche.hg.add(out);
+        return outH;
+    } 
+    
     public static CellVisual getVisual(CellGroupMember c)
     {
         HGHandle visH = (c.getVisual() != null) ? c.getVisual()
@@ -90,23 +98,28 @@ public class CellUtils
         return visual;
     }
 
-    public static CellGroup getParentGroup(CellGroupMember cg)
+    public static CellGroup getParentGroup(HGHandle cgmH)
     {
-        HGHandle thisHandle = ThisNiche.hg.getHandle(cg);
-        CellGroup c = (CellGroup) hg.getOne(ThisNiche.hg, hg.and(hg
-                .type(CellGroup.class), hg.incident(thisHandle), hg
-                .orderedLink(new HGHandle[] { thisHandle,
-                        HGHandleFactory.anyHandle })));
-        return c;
+//       TODO: doesn't always work  
+//        CellGroup c = (CellGroup) hg.getOne(ThisNiche.hg, hg.and(hg
+//                .type(CellGroup.class), hg.incident(cgmH), hg
+//                .orderedLink(new HGHandle[] { cgmH,
+//                        HGHandleFactory.anyHandle })));
+//        return c;
+        for(HGHandle h: ThisNiche.hg.getIncidenceSet(cgmH))
+        {
+            Object o = ThisNiche.hg.get(h);
+            if(o instanceof CellGroup)
+                return (CellGroup) o;
+        }
+        return null;
     }
 
     public static HGHandle makeCellH(String text, String lang)
     {
         Scriptlet s = new Scriptlet(lang, text);
         HGHandle h = ThisNiche.hg.add(s);
-        HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
-        Cell c = new Cell(ref);
-        return ThisNiche.hg.add(c);
+        return CellUtils.getCellHForRefH(h);
     }
 
     public static boolean isHTML(Cell c)
@@ -320,9 +333,7 @@ public class CellUtils
         HGHandle h = (comp == null) ? ThisNiche.handleOf(text) : ThisNiche
                 .handleOf(comp);
         if (h == null) h = addSerializable(comp == null ? text : comp);
-        HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
-        Cell out = new Cell(ref);
-        HGHandle res = ThisNiche.hg.add(out);
+        HGHandle res = CellUtils.getCellHForRefH(h);
         if (error) setError(res, error);
         if (par != null) addEventPubSub(EvalCellEvent.HANDLE, par, res, res);
         return res;
@@ -333,9 +344,7 @@ public class CellUtils
         Scriptlet s = new Scriptlet(defaultEngineName, text);
         HGHandle h = ThisNiche.handleOf(s);
         if (h == null) h = ThisNiche.hg.add(s);
-        HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
-        Cell out = new Cell(ref);
-        return ThisNiche.hg.add(out);
+        return CellUtils.getCellHForRefH(h);
     }
 
     static int count = 0;
@@ -440,12 +449,8 @@ public class CellUtils
         Cell c = (Cell) ThisNiche.hg.get(in);
         boolean error = isError(c);
         Object value = c.getValue();
-        HGHandle // h = ThisNiche.handleOf(value);
-        // if (h == null)
-        h = addSerializable(value);
-        HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
-        Cell out = new Cell(ref);
-        HGHandle res = ThisNiche.hg.add(out);
+        HGHandle h = addSerializable(value);
+        HGHandle res = CellUtils.getCellHForRefH(h);
         if (error) setError(h, error);
         return res;
     }
@@ -635,14 +640,7 @@ public class CellUtils
                 catch (Throwable ex)
                 {
                     HGHandle t = ts.getTypeHandle(Serializable.class);
-                    // hasType will return true after first add, so check to see
-                    // if the
-                    // already used type is Serializable
-                    // if(!ts.hasType(o.getClass()) ||
-                    // t.equals(ts.getTypeHandle(o.getClass())))
                     h = ThisNiche.hg.add(o, t);
-                    // else
-                    // h = ThisNiche.hg.add(o);
                 }
             }
             else

@@ -11,7 +11,6 @@ import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 
 import seco.ThisNiche;
-import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.rtenv.ContextLink;
@@ -37,9 +36,6 @@ public class NBUIVisual implements CellVisual
         final NotebookDocument doc = ui.getDoc();
         if (TopFrame.getInstance().getCaretListener() != null)
             ui.addCaretListener(TopFrame.getInstance().getCaretListener());
-        if (TopFrame.getInstance().getDocListener() != null)
-            doc.addModificationListener(TopFrame.getInstance()
-                            .getDocListener());
         final JScrollPane scrollPane = new JScrollPane(ui);
         scrollPane.setDoubleBuffered(!TopFrame.PICCOLO);
         scrollPane.addComponentListener(new ComponentAdapter() {

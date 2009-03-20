@@ -561,9 +561,8 @@ public class GUIHelper
     public static HGHandle addToTopCellGroup(HGHandle h, CellGroup group,
             HGHandle visualH, Rectangle r)
     {
-        HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
-        Cell out = new Cell(ref);
-        HGHandle cellH = ThisNiche.hg.add(out);
+        HGHandle cellH = CellUtils.getCellHForRefH(h);
+        Cell out = ThisNiche.hg.get(cellH);
         if (r != null) out.setAttribute(VisualAttribs.rect, r);
         if (visualH != null) out.setVisual(visualH);
         group.insert(group.getArity(), out);
@@ -573,9 +572,8 @@ public class GUIHelper
     public static HGHandle addToTopCellGroup(HGHandle h, CellGroup group,
             HGHandle visualH, LayoutHandler lh)
     {
-        HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
-        Cell out = new Cell(ref);
-        HGHandle cellH = ThisNiche.hg.add(out);
+        HGHandle cellH = CellUtils.getCellHForRefH(h);
+        Cell out = ThisNiche.hg.get(cellH);
         if (lh != null) out.setAttribute(VisualAttribs.layoutHandler, lh);
         if (visualH != null) out.setVisual(visualH);
         group.insert(group.getArity(), out);
@@ -603,9 +601,10 @@ public class GUIHelper
     public static void openNotebook(HGHandle h)
     {
         if (allready_opened(h, true)) return;
-        //NotebookUI ui = new NotebookUI(h);
-        //TabbedPaneU.addNotebookTab(getJTabbedPane(), ui, true);
-        TabbedPaneU.addTabToTabbedPaneGroup(ThisNiche.TABBED_PANE_GROUP_HANDLE,  h);
+        // NotebookUI ui = new NotebookUI(h);
+        // TabbedPaneU.addNotebookTab(getJTabbedPane(), ui, true);
+        TabbedPaneU.addTabToTabbedPaneGroup(ThisNiche.TABBED_PANE_GROUP_HANDLE,
+                h);
     }
 
     private static boolean allready_opened(HGHandle h, boolean focus)
@@ -613,10 +612,7 @@ public class GUIHelper
         JTabbedPane tabbedPane = getJTabbedPane();
         for (int i = 0; i < tabbedPane.getTabCount(); i++)
         {
-            Component c = tabbedPane.getComponentAt(i);
-            if (!(c instanceof JComponent)) continue;
-            HGHandle inH = (HGHandle) ((JComponent) c)
-                    .getClientProperty(TabbedPaneVisual.CHILD_HANDLE_KEY);
+            HGHandle inH = TabbedPaneU.getHandleAt(tabbedPane, i);
             if (h.equals(inH))
             {
                 if (focus) tabbedPane.setSelectedIndex(i);
@@ -629,17 +625,8 @@ public class GUIHelper
     public static void newNotebook()
     {
         check_tabbed_pane_present();
-        //EvaluationContext ctx = ThisNiche.getEvaluationContext(TopFrame
-        //        .getCurrentEvaluationContext());
         CellGroup nb = new CellGroup("CG");
         HGHandle nbHandle = ThisNiche.hg.add(nb);
-        // ThisNiche.hg.freeze(nbHandle);
-        // NotebookUI ui = new NotebookUI(nbHandle, ctx);
-        // ThisNiche.hg.add(new ContextLink(nbHandle, TopFrame
-        // .getCurrentEvaluationContext()));
-        // ui.setCaretPosition(0);
-        // ui.getDoc().setModified(true);
-        // TabbedPaneU.addNotebookTab(getJTabbedPane(), ui, true);
         TabbedPaneU.addTabToTabbedPaneGroup(ThisNiche.TABBED_PANE_GROUP_HANDLE,
                 nbHandle);
     }
@@ -658,10 +645,6 @@ public class GUIHelper
         {
             String fn = file.getAbsolutePath();
             HGHandle knownHandle = IOUtils.importCellGroup(fn);
-            // ThisNiche.hg.add(new ContextLink(knownHandle, TopFrame
-            // .getCurrentEvaluationContext()));
-            // NotebookUI ui = new NotebookUI(knownHandle);
-            // TabbedPaneU.addNotebookTab(getJTabbedPane(), ui, true);
             TabbedPaneU.addTabToTabbedPaneGroup(
                     ThisNiche.TABBED_PANE_GROUP_HANDLE, knownHandle);
             AppConfig.getInstance().getMRUF().add(knownHandle);
@@ -674,18 +657,12 @@ public class GUIHelper
                     TopFrame.getInstance(), t, "Could not open: "
                             + file.getAbsolutePath());
             DialogDisplayer.getDefault().notify(ex);
-            // TODO: strange requirement to open new Notebook, if file doesn't
-            // exist
+            // strange requirement to open new Notebook, if file doesn't exist
             newNotebook();
         }
     }
 
-    public static void updateTitle()
-    {
-        updateTitle(false);
-    }
-
-    public static void updateTitle(boolean forced)
+    public static void updateFrameTitle()
     {
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
         if (ui == null) return;
@@ -695,9 +672,6 @@ public class GUIHelper
         RuntimeContext rcInstance = (RuntimeContext) ThisNiche.hg.get(TopFrame
                 .getCurrentEvaluationContext());
         String title = rcInstance.getName() + " " + name;
-        // JTabbedPane tabbedPane = getJTabbedPane();
-        // tabbedPane
-        // .setTitleAt(tabbedPane.getSelectedIndex(), makeTabTitle(name));
         TopFrame.getInstance().setTitle(title);
     }
 
@@ -841,12 +815,5 @@ public class GUIHelper
         menu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
         menu.add(new EnhancedMenu("CellGroup", new CellGroupPropsProvider()));
         return menu;
-    }
-
-    public static HGHandle getTopCellGroupHandle(JComponent comp)
-    {
-        PSwingNode ps = (PSwingNode) comp
-                .getClientProperty(PSwingNode.PSWING_PROPERTY);
-        return ps.getHandle();
     }
 }

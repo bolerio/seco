@@ -31,13 +31,6 @@ public class PiccoloFrame extends TopFrame
 {
 	private static final long serialVersionUID = 6929648456637555149L;
 	private PiccoloCanvas container;
-//    private static PiccoloFrame instance;
-//
-//    public static PiccoloFrame getInstance()
-//    {
-//        if (instance == null) instance = new PiccoloFrame();
-//        return instance;
-//    }
 
     PiccoloFrame() throws HeadlessException
     {
@@ -68,16 +61,6 @@ public class PiccoloFrame extends TopFrame
     void saveDims()
     {
         container.saveDims();
-    }
-
-   
-
-     // TODO: very, very hacky
-    void repaintTabbedPane()
-    {
-        //PBounds b = pTabbedPane.getBounds();
-       // b.width = b.width + 1;
-       // pTabbedPane.setBounds(b);
     }
 
     public void exit()
