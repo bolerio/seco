@@ -28,7 +28,6 @@ public class NBUIVisual implements CellVisual
         return handle;
     }
     
-    @Override
     public JComponent bind(CellGroupMember element)
     {
         Cell cell = (Cell) element;

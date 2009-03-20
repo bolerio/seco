@@ -53,7 +53,6 @@ public class CellContainerVisual implements CellVisual, EventHandler
         return canvas;
     }
 
-    @Override
     public void handle(HGHandle eventType, Object event, HGHandle publisher,
             HGHandle subscriber)
     {

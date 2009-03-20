@@ -43,7 +43,6 @@ public class TabbedPaneVisual implements CellVisual, EventHandler
         return tp;
     }
 
-    @Override
     public void handle(HGHandle eventType, Object event, HGHandle publisher,
             HGHandle subscriber)
     {
