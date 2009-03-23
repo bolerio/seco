@@ -91,9 +91,10 @@ public class CopyCellGroupChangeHandler implements EventHandler
     //we search for a corresponding CopyAttributeChangeHandler
     private static HGHandle findAppropriateCopy(HGHandle h, CellGroup copy)
     {
+        //TODO:1
         Set<EventPubSub> subs = CellUtils.findAll(ThisNiche.hg, hg.apply(hg
                 .deref(ThisNiche.hg), hg.and(hg.type(EventPubSub.class), hg
-                .incident(h), hg.orderedLink(new HGHandle[] {
+                .incident(h), hg.link(new HGHandle[] {
                 AttributeChangeEvent.HANDLE, HGHandleFactory.anyHandle, HGHandleFactory.anyHandle, HGHandleFactory.anyHandle }))));
         for (EventPubSub eps : subs)
         {

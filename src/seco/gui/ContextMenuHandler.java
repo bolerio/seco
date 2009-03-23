@@ -136,8 +136,9 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         for (int i = 0; i < group.getArity(); i++)
         {
             Cell c = (Cell) group.getElement(i);
-            NotebookDocument doc = (NotebookDocument) c.getValue();
-            CellGroup g = (CellGroup) doc.getBook();
+            //NotebookDocument doc = (NotebookDocument) c.getValue();
+            //CellGroup g = (CellGroup) doc.getBook();
+            CellGroup g = (CellGroup) c.getValue();
             // escape some illegal chars which could be introduced during
             // previous book import
             String fn = g.getName().replace('\\', '_').replace('/', '_')

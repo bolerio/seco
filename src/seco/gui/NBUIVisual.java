@@ -4,6 +4,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.hypergraphdb.HGHandle;
@@ -35,6 +36,7 @@ public class NBUIVisual implements CellVisual
         final NotebookDocument doc = ui.getDoc();
         if (TopFrame.getInstance().getCaretListener() != null)
             ui.addCaretListener(TopFrame.getInstance().getCaretListener());
+        
         final JScrollPane scrollPane = new JScrollPane(ui);
         scrollPane.setDoubleBuffered(!TopFrame.PICCOLO);
         scrollPane.addComponentListener(new ComponentAdapter() {
@@ -54,6 +56,10 @@ public class NBUIVisual implements CellVisual
         }
         TopFrame.setCurrentEvaluationContext(ctxH);
         scrollPane.setName(TabbedPaneU.makeTabTitle(doc.getTitle()));
+        //JPanel outer = new JPanel();
+        //outer.setName(scrollPane.getName());
+        //outer.setLayout(new java.awt.BorderLayout());
+       // outer.add(scrollPane, java.awt.BorderLayout.CENTER);
         return scrollPane;
     }
 

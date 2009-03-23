@@ -11,6 +11,9 @@ import javax.swing.JToolBar;
 
 import org.hypergraphdb.HGHandle;
 
+import seco.ThisNiche;
+import seco.things.CellGroupMember;
+
 import edu.umd.cs.piccolox.pswing.PSwing;
 import edu.umd.cs.piccolox.pswing.PSwingCanvas;
 
@@ -46,6 +49,15 @@ public class PSwingNode extends PSwing
                 new Dimension((int) width, (int) height));
         return b;
     }
+    
+    public void endResizeBounds() 
+    {
+       // System.out.println("PSwingNode: endResizeBounds");
+        getComponent().revalidate();
+        CellGroupMember cm = (CellGroupMember) ThisNiche.hg.get(getHandle());
+        if (cm != null)
+            cm.setAttribute(VisualAttribs.rect, getFullBounds().getBounds());
+    }
 
     public HGHandle getHandle()
     {
@@ -61,22 +73,6 @@ public class PSwingNode extends PSwing
     public String toString()
     {
         return "PSwing0: " + getComponent();
-    }
-    
-    void updateBounds()
-    {
-        if(getComponent() instanceof JMenuBar)
-        {
-           //System.out.println("updateBounds1: ");
-           setBounds(0, 0, getWidth(), getHeight());
-           translate(0,0);
-        }else if(getComponent() instanceof JToolBar)
-        {
-            //System.out.println("updateBounds2: ");
-            setBounds(0, 0, //this.getParent().getWidth() - getWidth(), 
-                    getWidth(), getHeight());
-            translate(0,0);
-        }
     }
 
 }

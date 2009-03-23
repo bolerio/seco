@@ -36,8 +36,9 @@ public class VisualsManager
 		HGBreadthFirstTraversal traversal = new HGBreadthFirstTraversal(atomType, alGenerator);		
 		for (HGHandle current = atomType; current != null; current = traversal.hasNext() ? traversal.next().getSecond():null)
 		{
+		    //TODO:1
 			DefaultVisual v = hg.getOne(ThisNiche.hg, 
-						hg.and(hg.type(DefaultVisual.class), hg.orderedLink(current, hg.anyHandle())));
+						hg.and(hg.type(DefaultVisual.class), hg.link(current, hg.anyHandle())));
 			if (v != null)
 				return v.getVisual();
 		}
@@ -61,8 +62,9 @@ public class VisualsManager
 		HGBreadthFirstTraversal traversal = new HGBreadthFirstTraversal(atomType, alGenerator);		
 		for (HGHandle current = atomType; current != null; current = traversal.hasNext() ? traversal.next().getSecond():null)
 		{
+		    //TODO:1
 			List<AvailableVisual> L = hg.getAll(ThisNiche.hg, 
-					hg.and(hg.type(AvailableVisual.class), hg.orderedLink(current, hg.anyHandle())));
+					hg.and(hg.type(AvailableVisual.class), hg.link(current, hg.anyHandle())));
 			for (AvailableVisual v : L)
 				A.add(v.getVisual());
 		}

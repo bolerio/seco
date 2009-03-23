@@ -162,9 +162,10 @@ public class NotebookCellsTree extends JTree
         {
             HGHandle pub_or_sub = HGHandleFactory.anyHandle.equals(publisher) ? subscriber
                     : publisher;
+            //TODO:1
             return CellUtils.findAll(ThisNiche.hg, hg.apply(hg.deref(ThisNiche.hg), hg
                     .and(hg.type(EventPubSub.class), hg.incident(pub_or_sub),
-                            hg.orderedLink(new HGHandle[] { eventType,
+                            hg.link(new HGHandle[] { eventType,
                                     publisher, subscriber, listener }))));
         }
 

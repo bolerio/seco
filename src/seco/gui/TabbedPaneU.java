@@ -1,6 +1,7 @@
 package seco.gui;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -226,8 +227,10 @@ public class TabbedPaneU
         public void stateChanged(ChangeEvent e)
         {
             if (tabbedPane.getSelectedIndex() == -1) return;
-            JScrollPane comp = (JScrollPane) tabbedPane
-                    .getComponentAt(tabbedPane.getSelectedIndex());
+            Component c = tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+            
+            JScrollPane comp = c instanceof JScrollPane ? (JScrollPane) c: 
+                (JScrollPane)((Container) c).getComponent(0); 
             NotebookUI.setFocusedNotebookUI((NotebookUI) comp.getViewport().getView());
             GUIHelper.updateFrameTitle();
         }
