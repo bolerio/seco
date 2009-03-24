@@ -22,7 +22,7 @@ import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
 
-class NotebookTreeModel implements TreeModel
+public class NotebookTreeModel implements TreeModel
 {
 	protected CellGroupMember book;
 	

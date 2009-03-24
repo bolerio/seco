@@ -1,5 +1,6 @@
 package seco.events.handlers;
 
+import java.util.List;
 import java.util.Set;
 
 import org.hypergraphdb.HGHandle;
@@ -91,11 +92,11 @@ public class CopyCellGroupChangeHandler implements EventHandler
     //we search for a corresponding CopyAttributeChangeHandler
     private static HGHandle findAppropriateCopy(HGHandle h, CellGroup copy)
     {
-        //TODO:1
-        Set<EventPubSub> subs = CellUtils.findAll(ThisNiche.hg, hg.apply(hg
-                .deref(ThisNiche.hg), hg.and(hg.type(EventPubSub.class), hg
-                .incident(h), hg.link(new HGHandle[] {
-                AttributeChangeEvent.HANDLE, HGHandleFactory.anyHandle, HGHandleFactory.anyHandle, HGHandleFactory.anyHandle }))));
+         List<EventPubSub> subs = hg.getAll(ThisNiche.hg, 
+                hg.and(hg.type(EventPubSub.class), hg
+                .incident(h), hg.orderedLink(new HGHandle[] {
+                AttributeChangeEvent.HANDLE, HGHandleFactory.anyHandle, 
+                HGHandleFactory.anyHandle, HGHandleFactory.anyHandle })));
         for (EventPubSub eps : subs)
         {
             EventHandler eh = (EventHandler) ThisNiche.hg.get(eps.getEventHandler());

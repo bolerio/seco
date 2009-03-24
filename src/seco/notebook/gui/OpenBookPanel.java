@@ -3,17 +3,17 @@ package seco.notebook.gui;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.hypergraphdb.HGQuery.hg;
+
 import seco.ThisNiche;
 import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
-import seco.things.CellUtils;
 
 
 
@@ -23,12 +23,12 @@ public class OpenBookPanel extends JPanel
     private JButton Remove;
     private JScrollPane jScrollPane1;
     private JList list;
-    private Set<NotebookDocument> docs = null;
+    private List<NotebookDocument> docs = null;
    
     /** Creates new form AddRemoveListPanel */
     public OpenBookPanel()
     {
-        docs = CellUtils.getNotebookDocs();
+        docs = hg.getAll(ThisNiche.hg, hg.type(NotebookDocument.class));
         initComponents();
         list.setListData(docs.toArray());
     }
@@ -115,7 +115,7 @@ public class OpenBookPanel extends JPanel
         for(int i=0; i < removed.length; i++)
         {
             NotebookDocument gr = (NotebookDocument) removed[i];
-            GUIHelper.openNotebook(ThisNiche.handleOf(gr));
+            GUIHelper.openNotebook(gr.getBookHandle());
         }
     }    
 }

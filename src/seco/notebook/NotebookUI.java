@@ -123,13 +123,13 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 
     static NotebookDocument getDocForHandle(Class<?> cl, HGHandle bookH)
     {
- 
-      Set<HGHandle> list = CellUtils.findAll(ThisNiche.hg, hg.type(cl));
-      for (HGHandle h : list)
-          if (bookH.equals(((NotebookDocument) ThisNiche.hg.get(h)).bookH))
-              return ThisNiche.hg.get(h);
-      return null;
+        List<HGHandle> list = hg.findAll(ThisNiche.hg, hg.type(cl));
+        for (HGHandle h : list)
+            if (bookH.equals(((NotebookDocument) ThisNiche.hg.get(h)).bookH))
+                return ThisNiche.hg.get(h);
+        return null;
     }
+
     public NotebookUI(HGHandle book, EvaluationContext evalContext)
     {
         super();
@@ -140,19 +140,20 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             if (o instanceof CellGroup)
             {
                 doc = getDocForHandle(NotebookDocument.class, book);
-                if(doc == null)
-                   ThisNiche.hg.add(
-                           doc = new NotebookDocument(book, evalContext));
-            }else if (CellUtils.isInputCell((CellGroupMember) o)) 
+                if (doc == null)
+                    ThisNiche.hg.add(doc = new NotebookDocument(book,
+                            evalContext));
+            }
+            else if (CellUtils.isInputCell((CellGroupMember) o))
             {
                 doc = getDocForHandle(ScriptletDocument.class, book);
-                if(doc == null)
+                if (doc == null)
                     ThisNiche.hg.add(doc = new ScriptletDocument(book));
             }
             else
             {
                 doc = getDocForHandle(OutputCellDocument.class, book);
-                if(doc == null)
+                if (doc == null)
                     ThisNiche.hg.add(doc = new OutputCellDocument(book));
             }
         }
@@ -508,7 +509,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         }
         return super.getToolTipText(e);
     }
-    
+
     public static UpdatablePopupMenu getPopupMenu()
     {
         if (popupMenu == null) createPopup();
@@ -1022,8 +1023,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 
     private static void focused(Component c)
     {
-        if (c instanceof NotebookUI)
-             setFocusedNotebookUI((NotebookUI) c);
+        if (c instanceof NotebookUI) setFocusedNotebookUI((NotebookUI) c);
     }
 
     private static class NBFocusListener implements FocusListener
@@ -1037,14 +1037,15 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         {
         }
     }
-    
+
     public static class FixedCaret extends DefaultCaret
     {
-        //preventing IllegalArgumentException which randomly occurs
-        //in unclear situations(pending SUN bug issue) 
-        public void setDot(int dot, Position.Bias dotBias) {
-            if (dotBias == null)   dotBias = Position.Bias.Forward;
+        // preventing IllegalArgumentException which randomly occurs
+        // in unclear situations(pending SUN bug issue)
+        public void setDot(int dot, Position.Bias dotBias)
+        {
+            if (dotBias == null) dotBias = Position.Bias.Forward;
             super.setDot(dot, dotBias);
-         }
+        }
     }
 }

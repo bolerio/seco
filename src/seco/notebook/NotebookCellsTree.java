@@ -140,7 +140,7 @@ public class NotebookCellsTree extends JTree
         private JButton Remove;
         private JScrollPane jScrollPane1;
         private JList list;
-        private Set<EventPubSub> docs = null;
+        private List<EventPubSub> docs = null;
 
         public EventPubSubsPanel(HGHandle h, boolean pub_or_sub)
         {
@@ -157,16 +157,15 @@ public class NotebookCellsTree extends JTree
             list.setListData(docs.toArray());
         }
 
-        Set<EventPubSub> getEventPubSubList(HGHandle eventType,
+        List<EventPubSub> getEventPubSubList(HGHandle eventType,
                 HGHandle publisher, HGHandle subscriber, HGHandle listener)
         {
             HGHandle pub_or_sub = HGHandleFactory.anyHandle.equals(publisher) ? subscriber
                     : publisher;
-            //TODO:1
-            return CellUtils.findAll(ThisNiche.hg, hg.apply(hg.deref(ThisNiche.hg), hg
+            return hg.getAll(ThisNiche.hg, hg
                     .and(hg.type(EventPubSub.class), hg.incident(pub_or_sub),
-                            hg.link(new HGHandle[] { eventType,
-                                    publisher, subscriber, listener }))));
+                            hg.orderedLink(new HGHandle[] { eventType,
+                                    publisher, subscriber, listener })));
         }
 
         private void initComponents()

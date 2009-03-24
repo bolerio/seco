@@ -26,7 +26,7 @@ import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
-import seco.events.EvalResult; 
+import seco.events.EvalResult;
 import seco.events.EventHandler;
 import seco.events.EventPubSub;
 import seco.events.handlers.CopyAttributeChangeHandler;
@@ -62,12 +62,6 @@ public class CellUtils
     {
     }
 
-    public static Set<NotebookDocument> getNotebookDocs()
-    {
-        return findAll(ThisNiche.hg, hg.apply(hg.deref(ThisNiche.hg), hg
-                .type(NotebookDocument.class)));
-    }
-
     static void updateCellGroupMember(CellGroupMember c)
     {
         if (c instanceof Cell)
@@ -87,8 +81,8 @@ public class CellUtils
         HGHandle outH = ThisNiche.handleOf(out);
         if (outH == null) outH = ThisNiche.hg.add(out);
         return outH;
-    } 
-    
+    }
+
     public static CellVisual getVisual(CellGroupMember c)
     {
         HGHandle visH = (c.getVisual() != null) ? c.getVisual()
@@ -101,17 +95,16 @@ public class CellUtils
 
     public static CellGroup getParentGroup(HGHandle cgmH)
     {
-//       TODO: doesn't always work  
-//        CellGroup c = (CellGroup) hg.getOne(ThisNiche.hg, hg.and(hg
-//                .type(CellGroup.class), hg.incident(cgmH), hg
-//                .orderedLink(new HGHandle[] { cgmH,
-//                        HGHandleFactory.anyHandle })));
-//        return c;
-        for(HGHandle h: ThisNiche.hg.getIncidenceSet(cgmH))
+        // TODO: doesn't always work
+        // CellGroup c = (CellGroup) hg.getOne(ThisNiche.hg, hg.and(hg
+        // .type(CellGroup.class), hg.incident(cgmH), hg
+        // .orderedLink(new HGHandle[] { cgmH,
+        // HGHandleFactory.anyHandle })));
+        // return c;
+        for (HGHandle h : ThisNiche.hg.getIncidenceSet(cgmH))
         {
             Object o = ThisNiche.hg.get(h);
-            if(o instanceof CellGroup)
-                return (CellGroup) o;
+            if (o instanceof CellGroup) return (CellGroup) o;
         }
         return null;
     }
@@ -265,40 +258,20 @@ public class CellUtils
         if (cellH == null) return null;
         try
         {
-          //TODO:1 
-//            List<EventPubSub> subscriptions = hg.findAll(ThisNiche.hg, hg
-//                    .apply(hg.deref(ThisNiche.hg), hg.and(hg
-//                            .type(EventPubSub.class), hg
-//                            .incident(EvalCellEvent.HANDLE),
-//                            hg.incident(cellH), hg.orderedLink(new HGHandle[] {
-//                                    EvalCellEvent.HANDLE, cellH,
-//                                    HGHandleFactory.anyHandle,
-//                                    HGHandleFactory.anyHandle }))));
-//            for (EventPubSub s : subscriptions)
-//            {
-//                Object handler = ThisNiche.hg.get(s.getEventHandler());
-//                if (s.getEventHandler().equals(s.getSubscriber())
-//                        && handler instanceof Cell)
-//                    list.add(s.getEventHandler());
-//            }
-            Set<EventPubSub> subscriptions = 
-                findAll(ThisNiche.hg, hg.apply(hg.deref(ThisNiche.hg), hg.and(hg
-                      .type(EventPubSub.class), hg
-                      .incident(EvalCellEvent.HANDLE),
-                      hg.incident(cellH))));
+            List<EventPubSub> subscriptions = hg.getAll(ThisNiche.hg, hg.and(hg
+                    .type(EventPubSub.class),
+                    hg.incident(EvalCellEvent.HANDLE), hg.incident(cellH), hg
+                            .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
+                                    cellH, HGHandleFactory.anyHandle,
+                                    HGHandleFactory.anyHandle })));
             for (EventPubSub s : subscriptions)
             {
-                if(s.getEventType().equals(EvalCellEvent.HANDLE) &&
-                        s.getPublisher().equals(cellH) &&
-                        s.getEventHandler().equals(s.getSubscriber())
-                        ) 
-                {
-                    Object handler = ThisNiche.hg.get(s.getEventHandler());
-                    if (handler instanceof Cell)
-                       list.add(s.getEventHandler());
-                }
+                Object handler = ThisNiche.hg.get(s.getEventHandler());
+                if (s.getEventHandler().equals(s.getSubscriber())
+                        && handler instanceof Cell)
+                    list.add(s.getEventHandler());
             }
-            
+
         }
         catch (Exception ex)
         {
@@ -313,28 +286,13 @@ public class CellUtils
     {
         List<Cell> list = new ArrayList<Cell>();
         if (cellH == null) return null;
-        //TODO:1
-//        List<EventPubSub> subscriptions = hg.findAll(ThisNiche.hg, hg.apply(hg
-//                .deref(ThisNiche.hg), hg
-//                .and(hg.type(EventPubSub.class), hg
-//                        .incident(EvalCellEvent.HANDLE), hg.incident(cellH), hg
-//                        .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
-//                                cellH, HGHandleFactory.anyHandle,
-//                                HGHandleFactory.anyHandle }))));
-//        for (EventPubSub s : subscriptions)
-//        {
-//            Object handler = ThisNiche.hg.get(s.getEventHandler());
-//            if (s.getEventHandler().equals(s.getSubscriber())
-//                    && handler instanceof Cell) list.add((Cell) handler);
-//        }
-        
-        Set<EventPubSub> subscriptions = 
-            findAll(ThisNiche.hg, hg.apply(hg.deref(ThisNiche.hg), hg
-                .type(EventPubSub.class)));
+        List<EventPubSub> subscriptions = hg.getAll(ThisNiche.hg, hg.and(hg
+                .type(EventPubSub.class), hg.incident(EvalCellEvent.HANDLE), hg
+                .incident(cellH), hg.orderedLink(new HGHandle[] {
+                EvalCellEvent.HANDLE, cellH, HGHandleFactory.anyHandle,
+                HGHandleFactory.anyHandle })));
         for (EventPubSub s : subscriptions)
         {
-            if(!(s.getEventType().equals(EvalCellEvent.HANDLE) &&
-                    s.getPublisher().equals(cellH))) continue;
             Object handler = ThisNiche.hg.get(s.getEventHandler());
             if (s.getEventHandler().equals(s.getSubscriber())
                     && handler instanceof Cell) list.add((Cell) handler);
@@ -396,11 +354,9 @@ public class CellUtils
 
     public static void removeOutputCellSubscription(HGHandle cell_handle)
     {
-        //TODO:1
-        System.out.println("removeOutputCell: " + cell_handle);
-        Set<HGHandle> set = findAll(ThisNiche.hg, hg.and(hg
+       List<HGHandle> set = hg.findAll(ThisNiche.hg, hg.and(hg
                 .type(EventPubSub.class), hg.incident(EvalCellEvent.HANDLE), hg
-                .incident(cell_handle), hg.link(new HGHandle[] {
+                .incident(cell_handle), hg.orderedLink(new HGHandle[] {
                 EvalCellEvent.HANDLE, HGHandleFactory.anyHandle, cell_handle,
                 HGHandleFactory.anyHandle })));
         for (HGHandle s : set)
@@ -491,26 +447,14 @@ public class CellUtils
 
     public static HGHandle getOutCellParent(HGHandle h)
     {
-        //TODO:1
-//        Set<EventPubSub> subs = findAll(ThisNiche.hg, hg.apply(hg
-//                .deref(ThisNiche.hg), hg.and(hg.type(EventPubSub.class), hg
-//                .incident(h), hg.link(new HGHandle[] {
-//                EvalCellEvent.HANDLE, HGHandleFactory.anyHandle, h, h }))));
-//        for (EventPubSub eps : subs)
-//        {
-//            Object pub = ThisNiche.hg.get(eps.getPublisher());
-//            if (pub instanceof Cell) return (eps.getPublisher());
-//        }
-        Set<EventPubSub> subscriptions = 
-            findAll(ThisNiche.hg, hg.apply(hg.deref(ThisNiche.hg), hg
-                .type(EventPubSub.class)));
-        for (EventPubSub s : subscriptions)
+       List<EventPubSub> subs = hg.getAll(ThisNiche.hg, hg.and(hg
+                .type(EventPubSub.class), hg.incident(h), hg
+                .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
+                        HGHandleFactory.anyHandle, h, h })));
+        for (EventPubSub eps : subs)
         {
-            if(s.getEventType().equals(EvalCellEvent.HANDLE) &&
-                    s.getSubscriber().equals(h) &&
-                    s.getEventHandler().equals(h)
-                    ) 
-           return s.getPublisher();
+            Object pub = ThisNiche.hg.get(eps.getPublisher());
+            if (pub instanceof Cell) return (eps.getPublisher());
         }
         return null;
     }
@@ -560,49 +504,19 @@ public class CellUtils
     public static List<EventPubSub> getEventPubSubList(HGHandle eventType,
             HGHandle publisher, HGHandle subscriber, HGHandle listener)
     {
-        //TODO:1
-//        return hg.findAll(ThisNiche.hg, hg.apply(hg.deref(ThisNiche.hg), hg
-//                .and(hg.type(EventPubSub.class), hg.incident(eventType), hg
-//                        .incident(publisher), hg.link(new HGHandle[] {
-//                        eventType, publisher, subscriber, listener }))));
-        List<EventPubSub> list = new ArrayList<EventPubSub>();
-        Set<EventPubSub> subscriptions = 
-            findAll(ThisNiche.hg, hg.apply(hg.deref(ThisNiche.hg), hg
-                .type(EventPubSub.class)));
-        for (EventPubSub s : subscriptions)
-        {
-            if(s.getEventType().equals(eventType) &&
-                    s.getPublisher().equals(publisher) &&
-                    s.getSubscriber().equals(subscriber) &&
-                    s.getEventHandler().equals(listener)
-                    ) 
-           list.add(s);
-        }
-        return list;
+        return hg.getAll(ThisNiche.hg, hg.and(hg.type(EventPubSub.class), hg
+                .incident(eventType), hg.incident(publisher), hg
+                .orderedLink(new HGHandle[] { eventType, publisher, subscriber,
+                        listener })));
     }
 
     public static List<HGHandle> getEventPubSubListH(HGHandle eventType,
             HGHandle publisher, HGHandle subscriber, HGHandle listener)
     {
-        //TODO:1        
- //       return hg.findAll(ThisNiche.hg, hg.and(hg.type(EventPubSub.class), hg
- //               .incident(eventType), hg.incident(publisher), hg
- //               .link(new HGHandle[] { eventType, publisher, subscriber,
- //                       listener })));
-        List<HGHandle> list = new ArrayList<HGHandle>();
-        Set<EventPubSub> subscriptions = 
-            findAll(ThisNiche.hg, hg.apply(hg.deref(ThisNiche.hg), hg
-                .type(EventPubSub.class)));
-        for (EventPubSub s : subscriptions)
-        {
-            if(s.getEventType().equals(eventType) &&
-                    s.getPublisher().equals(publisher) &&
-                    s.getSubscriber().equals(subscriber) &&
-                    s.getEventHandler().equals(listener)
-                    ) 
-           list.add(ThisNiche.handleOf(s));
-        }
-        return list;
+        return hg.findAll(ThisNiche.hg, hg.and(hg.type(EventPubSub.class), hg
+                .incident(eventType), hg.incident(publisher), hg
+                .orderedLink(new HGHandle[] { eventType, publisher, subscriber,
+                        listener })));
     }
 
     public static void addCopyListeners(HGHandle masterH, HGHandle copyH)
@@ -693,12 +607,11 @@ public class CellUtils
     static List<HGHandle> getListForPubOrSub(HGHandle eventType,
             HGHandle publisher, HGHandle subscriber, HGHandle listener)
     {
-        //TODO:1
-        HGHandle pub_or_sub = HGHandleFactory.anyHandle.equals(publisher) ? subscriber
+        HGHandle pub_or_sub = hg.anyHandle().equals(publisher) ? subscriber
                 : publisher;
         return hg.findAll(ThisNiche.hg, hg.and(hg.type(EventPubSub.class), hg
-                .incident(pub_or_sub), hg.link(new HGHandle[] {
-                eventType, publisher, subscriber, listener })));
+                .incident(pub_or_sub), hg.orderedLink(new HGHandle[] { eventType,
+                publisher, subscriber, listener })));
     }
 
     public static HGHandle addSerializable(Object o)
@@ -758,30 +671,11 @@ public class CellUtils
     public static <T> Set<T> findAll(HyperGraph graph,
             HGQueryCondition condition)
     {
-        Set<T> result = new HashSet<T>();
-        Map<T, Boolean> map = new IdentityHashMap<T, Boolean>();
-        HGSearchResult<T> rs = null;
-        try
-        {
-            rs = graph.find(condition);
-            while (rs.hasNext())
-            {
-                T o = rs.next();
-                if (map.containsKey(o)) // if(result.contains(o))
-                {
-                    System.err.println("Duplicate entry in findAll: " + o);
-                    System.err.println("Duplicate entry in findAll: "
-                            + condition);
-                    Thread.dumpStack();
-                }
-                result.add(o);
-                map.put(o, true);
-            }
-            return result;
-        }
-        finally
-        {
-            if (rs != null) rs.close();
-        }
+        List<T> HL = hg.findAll(graph, condition);
+        Set<T> S = new HashSet<T>();
+        S.addAll(HL);
+        assert (HL.size() == S.size()) : new RuntimeException(
+                "Duplicate results while looking for: " + condition);
+        return S;
     }
 }

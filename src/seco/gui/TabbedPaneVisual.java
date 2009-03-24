@@ -12,6 +12,7 @@ import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EventHandler;
 import seco.notebook.GUIHelper;
+import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
@@ -29,7 +30,13 @@ public class TabbedPaneVisual implements CellVisual, EventHandler
 
     public JComponent bind(CellGroupMember element)
     {
-        final CellGroup group = (CellGroup) element;
+        if(!(element instanceof CellGroup)) 
+        {
+            System.err.println("TabbedPaneVisual - Unable to create visual for: " + element);
+            return null;
+        }
+        final CellGroup group = //element instanceof CellGroup ? 
+                (CellGroup) element; // : (CellGroup) ((Cell) element).getValue();
         HGHandle groupH = ThisNiche.handleOf(element);
         final JTabbedPane tp = (ThisNiche.TABBED_PANE_GROUP_HANDLE
                 .equals(groupH)) ? GUIHelper.getJTabbedPane() : TabbedPaneU
@@ -58,6 +65,7 @@ public class TabbedPaneVisual implements CellVisual, EventHandler
         CellGroupMember cell = ThisNiche.hg.get(childH);
         CellVisual visual = CellUtils.getVisual(cell);
         JComponent comp = visual.bind(cell);
+        if(comp == null) return;
         comp.putClientProperty(TabbedPaneU.CHILD_HANDLE_KEY, childH);
         tp.addTab(comp.getName(), comp);
     }

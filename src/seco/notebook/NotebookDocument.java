@@ -1338,7 +1338,10 @@ public class NotebookDocument extends DefaultStyledDocument
             styles = new SyntaxStyle[main.size()];
             Font f = getInputCellFont();
             for (int i = 0; i < main.size() - 1; i++)
-                styles[i] = main.get(i).makeSyntaxStyle(f);
+            {
+                SyntaxStyle s = main.get(i).makeSyntaxStyle(f);
+                styles[i] = s;
+            }
             syntaxStyleMap.put(support.getScriptEngineName(), styles);
         }
         return styles;

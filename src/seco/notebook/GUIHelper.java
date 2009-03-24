@@ -350,7 +350,10 @@ public class GUIHelper
     {
         public void actionPerformed(ActionEvent evt)
         {
-            openCellTree(evt);
+            NotebookUI ui = NotebookUI.getFocusedNotebookUI();
+            if (ui == null) return;
+            CellGroupMember book = ui.getDoc().getBook();
+            openCellTree(book);
         }
     }
 
@@ -398,7 +401,7 @@ public class GUIHelper
     {
         public void actionPerformed(ActionEvent evt)
         {
-            openElementTree(evt);
+            openElementTree();
         }
     }
 
@@ -406,7 +409,7 @@ public class GUIHelper
     {
         public void actionPerformed(ActionEvent evt)
         {
-            openParseTree(evt);
+            openParseTree();
         }
     }
 
@@ -471,7 +474,7 @@ public class GUIHelper
 
     public static final NotebookEditorKit kit = new NotebookEditorKit();
 
-    public static void openElementTree(ActionEvent evt)
+    public static void openElementTree()
     {
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
         if (ui == null) return;
@@ -485,7 +488,7 @@ public class GUIHelper
         dialog.setVisible(true);
     }
 
-    public static void openParseTree(ActionEvent evt)
+    public static void openParseTree()
     {
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
         if (ui == null) return;
@@ -499,17 +502,14 @@ public class GUIHelper
         dialog.setVisible(true);
     }
 
-    public static void openCellTree(ActionEvent evt)
+    public static void openCellTree(CellGroupMember cell)
     {
-        NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-        if (ui == null) return;
-        CellGroupMember book = ui.getDoc().getBook();
         String title = "Cells Hierarchy: ";
-        title += (book instanceof CellGroup) ? ((CellGroup) book).getName()
+        title += (cell instanceof CellGroup) ? ((CellGroup) cell).getName()
                 : "Cell";
         JDialog dialog = new JDialog(TopFrame.getInstance(), title);
         dialog.setSize(500, 800);
-        JTree tree = new NotebookCellsTree(new NotebookTreeModel(book));
+        JTree tree = new NotebookCellsTree(new NotebookTreeModel(cell));
         JScrollPane pane = new JScrollPane(tree);
         dialog.add(pane);
         dialog.setVisible(true);
@@ -521,19 +521,19 @@ public class GUIHelper
         hg.define(ThisNiche.TOP_CELL_GROUP_HANDLE, group);
         group.setVisual(CellContainerVisual.getHandle());
         getMenuBar();
-        HGHandle h = addToTopCellGroup(GUIHelper.MENUBAR_HANDLE, group,
+        addToTopCellGroup(GUIHelper.MENUBAR_HANDLE, group,
                 VisualsManager.defaultVisualForAtom(GUIHelper.MENUBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(0),
                         new DValue(0), new DValue(25, true), new DValue(28)),
                         RefPoint.TOP_LEFT));
         getMainToolBar();
-        h = addToTopCellGroup(GUIHelper.TOOLBAR_HANDLE, group, VisualsManager
+        addToTopCellGroup(GUIHelper.TOOLBAR_HANDLE, group, VisualsManager
                 .defaultVisualForAtom(GUIHelper.TOOLBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(0),
                         new DValue(0), new DValue(40, true), new DValue(28)),
                         RefPoint.TOP_RIGHT));
         getHTMLToolBar();
-        h = addToTopCellGroup(GUIHelper.HTML_TOOLBAR_HANDLE, group,
+        addToTopCellGroup(GUIHelper.HTML_TOOLBAR_HANDLE, group,
                 VisualsManager
                         .defaultVisualForAtom(GUIHelper.HTML_TOOLBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(0),
@@ -542,7 +542,6 @@ public class GUIHelper
 
         getJTabbedPane();
         group.insert(group.getArity(), ThisNiche.TABBED_PANE_GROUP_HANDLE);
-        // hg.update(group);
     }
 
     static void setLayoutHandler(HGHandle cellH, LayoutHandler lh)
@@ -598,13 +597,11 @@ public class GUIHelper
         top.remove((CellGroupMember) ThisNiche.hg.get(h));
     }
 
-    public static void openNotebook(HGHandle h)
+    public static void openNotebook(HGHandle bookH)
     {
-        if (allready_opened(h, true)) return;
-        // NotebookUI ui = new NotebookUI(h);
-        // TabbedPaneU.addNotebookTab(getJTabbedPane(), ui, true);
-        TabbedPaneU.addTabToTabbedPaneGroup(ThisNiche.TABBED_PANE_GROUP_HANDLE,
-                h);
+        if (allready_opened(bookH, true)) return;
+        TabbedPaneU.addTabToTabbedPaneGroup(
+                ThisNiche.TABBED_PANE_GROUP_HANDLE, bookH);
     }
 
     private static boolean allready_opened(HGHandle h, boolean focus)
