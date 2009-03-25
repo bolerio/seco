@@ -56,7 +56,11 @@ public class OutputCellDocument extends NotebookDocument
         DocUtil.createOutputCell(this, bookH, attr, parseBuffer, false);
         DocUtil.endTag(parseBuffer);
         create(parseBuffer.toArray(new ElementSpec[parseBuffer.size()]));
-        CellUtils.addMutualEventPubSub(EvalCellEvent.HANDLE, bookH, getHandle(),
+        if(NotebookDocument.DIRECT_EVENTING)
+           CellUtils.addEventPubSub(EvalCellEvent.HANDLE, bookH, getHandle(),
+                    EvalCellHandler.getInstance()); 
+        else
+           CellUtils.addMutualEventPubSub(EvalCellEvent.HANDLE, bookH, getHandle(),
                 EvalCellHandler.getInstance());
     }
 

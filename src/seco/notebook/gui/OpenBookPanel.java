@@ -2,6 +2,7 @@ package seco.notebook.gui;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -9,11 +10,16 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
 import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
+import seco.notebook.NotebookEditorKit;
+import seco.things.Cell;
+import seco.things.CellGroup;
+import seco.things.CellGroupMember;
 
 
 
@@ -29,8 +35,31 @@ public class OpenBookPanel extends JPanel
     public OpenBookPanel()
     {
         docs = hg.getAll(ThisNiche.hg, hg.type(NotebookDocument.class));
+        filterDocs();
         initComponents();
         list.setListData(docs.toArray());
+    }
+    
+    private void filterDocs()
+    {
+        docs.remove(NotebookEditorKit.getDefaultDocument());
+        //filter at least those doc that are opened in TabbedPane 
+        CellGroup tp = ThisNiche.hg.get(ThisNiche.TABBED_PANE_GROUP_HANDLE);
+        for(int i = 0; i < tp.getArity(); i++)
+        {
+            CellGroupMember cgm = tp.getElement(i);
+            if(cgm instanceof Cell)
+            {
+                Object o = ((Cell) cgm).getValue();
+                if(o instanceof CellGroupMember)
+                {
+                    HGHandle bookH = ThisNiche.handleOf(o);
+                    for(NotebookDocument doc: new ArrayList<NotebookDocument>(docs))
+                        if(doc.getBookHandle().equals(bookH))
+                            docs.remove(doc);
+                }
+            }
+        }
     }
     
     private void initComponents()                          

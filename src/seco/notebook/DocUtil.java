@@ -170,11 +170,20 @@ abstract class DocUtil
         createInsertionPoint(attr, vec);
         CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cellH, doc
                 .getHandle(), AttributeChangeHandler.getInstance());
+        if(NotebookDocument.DIRECT_EVENTING)
+        {
+            CellUtils.addEventPubSub(CellTextChangeEvent.HANDLE, cellH, doc
+                    .getHandle(), CellTextChangeHandler.getInstance());
+            CellUtils.addEventPubSub(EvalCellEvent.HANDLE, cellH, doc
+                    .getHandle(), EvalCellHandler.getInstance());
+            
+        }else
+        {
         CellUtils.addMutualEventPubSub(CellTextChangeEvent.HANDLE, cellH, doc
                 .getHandle(), CellTextChangeHandler.getInstance());
         CellUtils.addMutualEventPubSub(EvalCellEvent.HANDLE, cellH, doc
                 .getHandle(), EvalCellHandler.getInstance());
-
+        }
 // now done in a special action        
 //        if (CellUtils.isInitCell(cell))
 //        {
@@ -208,7 +217,11 @@ abstract class DocUtil
         attr.removeAttribute(ATTR_CELL);
         endTag(vec);
         if (genInsP) createInsertionPoint(attr, vec);
-        CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, cellH, doc
+        if(NotebookDocument.DIRECT_EVENTING)
+            CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cellH, doc
+                    .getHandle(), AttributeChangeHandler.getInstance());
+        else
+           CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, cellH, doc
                 .getHandle(), AttributeChangeHandler.getInstance());
     }
 
@@ -370,11 +383,22 @@ abstract class DocUtil
         attr.removeAttribute(ATTR_CELL);
         endTag(vec);
         createInsertionPoint(attr, vec);
-        CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE,
+        if(NotebookDocument.DIRECT_EVENTING)
+        {
+        CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE,
                 cell_groupH, doc.getHandle(), AttributeChangeHandler
                         .getInstance());
-        CellUtils.addMutualEventPubSub(CellGroupChangeEvent.HANDLE,
+        CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE,
                 cell_groupH, doc.getHandle(), CellGroupChangeHandler
                         .getInstance());
+        }else
+        {
+            CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE,
+                    cell_groupH, doc.getHandle(), AttributeChangeHandler
+                            .getInstance());
+            CellUtils.addMutualEventPubSub(CellGroupChangeEvent.HANDLE,
+                    cell_groupH, doc.getHandle(), CellGroupChangeHandler
+                            .getInstance());
+        }
     }
 }

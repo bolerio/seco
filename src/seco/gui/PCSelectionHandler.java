@@ -141,7 +141,8 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     {
         super.endDrag(e);
         endStandardSelection(e);
-        //System.out.println("End drag");
+        //System.out.println("End drag: " + e.getPickedNode());
+        e.getPickedNode().endResizeBounds();
         dragging_copy = false;
     }
 

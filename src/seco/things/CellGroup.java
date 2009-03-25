@@ -241,11 +241,6 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
     void fireCellGroupChanged(CellGroupChangeEvent e)
     {
         HGHandle h = ThisNiche.handleOf(this);
-        if(h == null) {
-            System.err.println(("ThisNiche.handleOf() is NULL for: " + this));
-            Thread.currentThread().dumpStack();
-            return;
-        }
         EventDispatcher.dispatch(CellGroupChangeEvent.HANDLE, h, e);
     }
 }

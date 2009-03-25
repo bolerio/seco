@@ -123,6 +123,7 @@ public class SecoTabbedPane extends JTabbedPane
         protected void exportDone(JComponent source, Transferable data,
                 int action)
         {
+            super.exportDone(source, data, action);
             if (action == MOVE) TabbedPaneU.closeAt(tp, tp.dragTabIndex);
         }
 

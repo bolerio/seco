@@ -806,7 +806,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         return isPreferredSizeSet() ? super.getPreferredSize() : dim;
     }
 
-    private static final Dimension dim = new Dimension(200, 200);
+    private static final Dimension dim = new Dimension(300, 200);
 
     public void changedUpdate(DocumentEvent e)
     {

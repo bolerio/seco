@@ -151,49 +151,37 @@ public class PiccoloCanvas extends PSwingCanvas
             cm.setAttribute(VisualAttribs.rect, p.getFullBounds().getBounds());
     }
 
-    public void addCopyComponent(HGHandle h, HGHandle masterH, Point pt)
-    {
-        Object nb = ThisNiche.hg.get(h);
-        JComponent comp = null;
-        if (nb instanceof Cell)
-        {
-            comp = new NotebookUI(h);
-            comp.setPreferredSize(new Dimension(200, 200));
-            HGHandle par = CellUtils.getOutCellParent(masterH);
-            if (par == null) // normal cell
-            {
-                par = masterH;
-                CellUtils.addCopyListeners(h, masterH);
-            }
-            // TODO: should we remove the Cell from parent or not?
-            // CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, par,
-            // HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
-            else
-            {
-                CellUtils.addEventPubSub(EvalCellEvent.HANDLE, par,
-                        ((NotebookUI) comp).getDoc().getHandle(),
-                        OutputCellDocument.CopyEvalCellHandler.getInstance());
-            }
-        }
-        else
-        {
-            comp = new NotebookUI(h);
-            comp.setPreferredSize(new Dimension(200, 200));
-            CellUtils.addCopyListeners(h, masterH);
-        }
-
-        if (comp != null)
-        {
-            PSwingNode ps = new PSwingNode(this, comp);
-            // ps.addInputEventListener(del_handler);
-            getNodeLayer().addChild(ps);
-            ps.translate(pt.x, pt.y);
-            h = CellUtils.addSerializable(comp);
-            ps.setHandle(GUIHelper.addToTopCellGroup(h,
-                    VisualsManager.defaultVisualForType(h), ps.getFullBounds()
-                            .getBounds()));
-        }
-    }
+//    public void addCopyComponent(HGHandle h, HGHandle masterH, Point pt)
+//    {
+//        Object nb = ThisNiche.hg.get(h);
+//        if (nb instanceof Cell)
+//        {
+//            HGHandle par = CellUtils.getOutCellParent(masterH);
+//            if (par == null) // normal cell
+//            {
+//                par = masterH;
+//                CellUtils.addCopyListeners(h, masterH);
+//            }
+//            // TODO: should we remove the Cell from parent or not?
+//            // CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, par,
+//            // HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
+//            else
+//            {
+//                CellUtils.addEventPubSub(EvalCellEvent.HANDLE, par,
+//                        ((NotebookUI) comp).getDoc().getHandle(),
+//                        OutputCellDocument.CopyEvalCellHandler.getInstance());
+//            }
+//        }
+//        else
+//        {
+//            CellUtils.addCopyListeners(h, masterH);
+//        }
+//
+//        GUIHelper.addToTopCellGroup(h,
+//                    VisualsManager.defaultVisualForType(h), ps.getFullBounds()
+//                            .getBounds()));
+//        
+//    }
     
     public PSwingNode addComponent(HGHandle h, Point pt)
     {

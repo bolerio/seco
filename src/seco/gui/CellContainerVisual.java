@@ -68,7 +68,8 @@ public class CellContainerVisual implements CellVisual, EventHandler
         CellGroupMember x = ThisNiche.hg.get(childH);
         CellVisual visual = CellUtils.getVisual(x);
         JComponent comp = visual.bind(x);
-        canvas.addComponent(comp, x);
+        if(comp != null)
+           canvas.addComponent(comp, x);
     }
 
     private void handleEvent(CellGroupChangeEvent e)

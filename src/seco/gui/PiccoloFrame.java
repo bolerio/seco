@@ -30,7 +30,7 @@ import edu.umd.cs.piccolox.swing.PScrollPane;
 public class PiccoloFrame extends TopFrame
 {
 	private static final long serialVersionUID = 6929648456637555149L;
-	private PiccoloCanvas container;
+	private PiccoloCanvas canvas;
 
     PiccoloFrame() throws HeadlessException
     {
@@ -39,14 +39,14 @@ public class PiccoloFrame extends TopFrame
 
     protected void initFrame()
     {
-        container = new PiccoloCanvas();
-        container.setTransferHandler(new PiccoloTransferHandler());
+        canvas = new PiccoloCanvas();
+        canvas.setTransferHandler(new PiccoloTransferHandler());
         // Set up basic frame
         setBounds(50, 50, 750, 750);
         setResizable(true);
         setBackground(null);
 
-        PScrollPane scroll = new PScrollPane(container);
+        PScrollPane scroll = new PScrollPane(canvas);
         getContentPane().add(scroll, BorderLayout.CENTER);
         //getContentPane().add(container, BorderLayout.CENTER);
          validate(); 
@@ -60,7 +60,7 @@ public class PiccoloFrame extends TopFrame
     
     void saveDims()
     {
-        container.saveDims();
+        //canvas.saveDims();
     }
 
     public void exit()
@@ -74,7 +74,7 @@ public class PiccoloFrame extends TopFrame
 
     public PiccoloCanvas getCanvas()
     {
-        return container;
+        return canvas;
     }
     
     
@@ -122,8 +122,8 @@ public class PiccoloFrame extends TopFrame
 
     private PSwingNode add_comp(JComponent c, Rectangle r)
     {
-        PSwingNode p = new PSwingNode(container, c);
-        container.getNodeLayer().addChild(p);
+        PSwingNode p = new PSwingNode(canvas, c);
+        canvas.getNodeLayer().addChild(p);
         p.setBounds(r);
         p.translate(r.x, r.y);
         return p;

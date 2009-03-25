@@ -84,7 +84,7 @@ public class Cell extends BaseCellGroupMember implements EventHandler
     @Override
     public String toString()
     {
-        return "Cell: " + ThisNiche.handleOf(this); //ThisNiche.hg.getPersistentHandle(ref.getReferent());
+        return "Cell: " + ThisNiche.handleOf(this);
 
     }
 

@@ -61,9 +61,7 @@ public class PiccoloTransferHandler extends TransferHandler
                 HGHandle nbH = NotebookDocument.getNBElementH(e);
                 if (move)
                 {
-                    //canvas.addComponent(nbH, pt);
-                    GUIHelper.addToTopCellGroup(nbH, null, new Rectangle(pt.x, pt.y, 200, 200)); 
-                   
+                    GUIHelper.addToTopCellGroup(nbH, null, new Rectangle(pt.x, pt.y, 300, 200)); 
                     NotebookDocument doc = ((NotebookDocument) e.getDocument());
                     doc.removeCellBoxElement(e);
                     CellUtils.removeHandlers(nbH, doc.getHandle());
@@ -71,7 +69,10 @@ public class PiccoloTransferHandler extends TransferHandler
                 else
                 {
                     HGHandle copyH = CellUtils.makeCopy(nbH);
-                    canvas.addCopyComponent(copyH, nbH, pt);
+                    //add_to_top_group(copyH, pt);
+                    GUIHelper.addToTopCellGroup(copyH, null, new Rectangle(pt.x, pt.y, 300, 200)); 
+                    
+                    //canvas.addCopyComponent(copyH, nbH, pt);
                 }
             }
         }
@@ -95,14 +96,15 @@ public class PiccoloTransferHandler extends TransferHandler
            {
                System.out.println("handleSecoTransfer - inner" +
                        node.getComponent() + ":" + node.getComponent().getTransferHandler());
-               
-               if(node.getComponent().getTransferHandler().importData(support))
+               TransferHandler handler = node.getComponent().getTransferHandler();
+               if(handler != null && handler.importData(support))
                {
-                   System.out.println("handleSecoTransfer - inner done");
+                   System.out.println("handleSecoTransfer - inner done: " +
+                           node.getComponent() + ":" +
+                           node.getComponent().getUIClassID());
                    PSwingNode old = canvas.getSelectedPSwingNode();
                    if(old == null) return true;
                    GUIHelper.removeFromTopCellGroup(old.getHandle());
-                   //old.removeFromParent();
                    return true;
                }
            }
@@ -112,16 +114,24 @@ public class PiccoloTransferHandler extends TransferHandler
         boolean move = (support.getDropAction() == MOVE);
         if (move)
         {
-            CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-            CellGroupMember cgm = ThisNiche.hg.get(data.getHandle());
-            cgm.setAttribute(VisualAttribs.rect, new Rectangle(pt.x, pt.y, 200, 200));
-            top.insert(top.getArity(), data.getHandle());
-  //            CellVisual v = CellUtils.getVisual(cgm);
-//            JComponent c = v.bind(cgm);
-//            PSwingNode ps = canvas.addComponent(c, cgm);
-//            ps.translate(pt.x, pt.y);
+            add_to_top_group(data.getHandle(), pt);
         }
         return true;
+    }
+    
+    private void add_to_top_group(HGHandle h, Point pt)
+    {
+        CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        CellGroupMember cgm = ThisNiche.hg.get(h);
+        Rectangle r = (Rectangle) cgm.getAttribute(VisualAttribs.rect);
+        if(r == null) 
+            r = new Rectangle(pt.x, pt.y, 300, 200);
+        else
+        {
+            r.x = pt.x; r.y = pt.y; 
+        }
+        cgm.setAttribute(VisualAttribs.rect, r);
+        top.insert(top.getArity(), h);
     }
 
     protected boolean hasFlavor(DataFlavor[] flavors)

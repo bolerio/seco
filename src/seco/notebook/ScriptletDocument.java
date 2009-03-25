@@ -49,7 +49,11 @@ public class ScriptletDocument extends NotebookDocument
         update(UpdateAction.tokenize);
         update(UpdateAction.evalInitCells);
         setModified(false);
-        CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, bookH,
+        if(NotebookDocument.DIRECT_EVENTING)
+           CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, bookH,
+                    getHandle(), AttributeChangeHandler.getInstance());
+        else
+           CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, bookH,
                 getHandle(), AttributeChangeHandler.getInstance());
     }
     
@@ -71,7 +75,11 @@ public class ScriptletDocument extends NotebookDocument
         DocUtil.endTag(vec);
         CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cellH,
                 doc.getHandle(), AttributeChangeHandler.getInstance());
-        CellUtils.addMutualEventPubSub(CellTextChangeEvent.HANDLE, cellH,
+        if(NotebookDocument.DIRECT_EVENTING)
+           CellUtils.addEventPubSub(CellTextChangeEvent.HANDLE, cellH,
+                    doc.getHandle(), CellTextChangeHandler.getInstance());
+        else
+           CellUtils.addMutualEventPubSub(CellTextChangeEvent.HANDLE, cellH,
                 doc.getHandle(), CellTextChangeHandler.getInstance());
     }
     

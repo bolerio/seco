@@ -81,6 +81,7 @@ import seco.things.CellUtils;
  */
 public class NotebookDocument extends DefaultStyledDocument
 {
+    static final boolean DIRECT_EVENTING = true;
     private static final long serialVersionUID = -428517122037400179L;
     static final String ATTR_CELL = "CELL";
     public static final String ATTR_SCRIPT_SUPPORT = "scriptSupport";
@@ -150,10 +151,20 @@ public class NotebookDocument extends DefaultStyledDocument
         DocUtil.endTag(vec);
         create(vec.toArray(new ElementSpec[vec.size()]));
         setModified(false);
+        if(NotebookDocument.DIRECT_EVENTING)
+        {
+            CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, bookH,
+                    getHandle(), AttributeChangeHandler.getInstance());
+            CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE, bookH,
+                    getHandle(), CellGroupChangeHandler.getInstance());
+        }
+        else    
+        {
         CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, bookH,
                 getHandle(), AttributeChangeHandler.getInstance());
         CellUtils.addMutualEventPubSub(CellGroupChangeEvent.HANDLE, bookH,
                 getHandle(), CellGroupChangeHandler.getInstance());
+        }
         update(UpdateAction.tokenize);
         update(UpdateAction.evalInitCells);
         inited = true;
@@ -415,7 +426,10 @@ public class NotebookDocument extends DefaultStyledDocument
         // then fire the eval event
         fireUndoableEditUpdate(new UndoableEditEvent(this, e));
         supressEvents = true;
-        EventDispatcher.dispatch(EvalCellEvent.HANDLE, getHandle(), e);
+        if(DIRECT_EVENTING)
+           EventDispatcher.dispatch(EvalCellEvent.HANDLE, e.getCellHandle(), e);
+        else
+           EventDispatcher.dispatch(EvalCellEvent.HANDLE, getHandle(), e);
         supressEvents = false;
         return res.isError();
     }
@@ -1351,7 +1365,10 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         fireUndoableEditUpdate(new UndoableEditEvent(this, e));
         supressEvents = true;
-        EventDispatcher.dispatch(CellTextChangeEvent.HANDLE, getHandle(), e);
+        if(DIRECT_EVENTING)
+           CellUtils.processCelTextChangeEvent(e.getCell(), e);
+        else
+          EventDispatcher.dispatch(CellTextChangeEvent.HANDLE, getHandle(), e);
         supressEvents = false;
     }
 
@@ -1359,7 +1376,13 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         fireUndoableEditUpdate(new UndoableEditEvent(this, e));
         supressEvents = true;
-        EventDispatcher.dispatch(CellGroupChangeEvent.HANDLE, getHandle(), e);
+        if(DIRECT_EVENTING)
+        { 
+          CellGroup g = ThisNiche.hg.get(e.getCellGroup());
+          g.batchProcess(e);
+        }
+        else
+          EventDispatcher.dispatch(CellGroupChangeEvent.HANDLE, getHandle(), e);
         supressEvents = false;
     }
 

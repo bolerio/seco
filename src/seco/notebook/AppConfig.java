@@ -57,7 +57,7 @@ public class AppConfig
 		if (instance == null)
 		{
             graph = ThisNiche.getHyperGraph();
-            instance = (AppConfig)hg.getOne(graph, hg.type(AppConfig.class));
+            instance = hg.getOne(graph, hg.type(AppConfig.class));
             if (instance == null)
             {
             	instance = new AppConfig();

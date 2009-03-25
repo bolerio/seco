@@ -120,7 +120,7 @@ public class NotebookEditorKit extends StyledEditorKit
             new ResetCellNumAction(), new JavaDocManagerAction(),
             new CtxInspectorAction(), new FindReplaceAction(true),
             new FindReplaceAction(false), new RemoveTabAction(),
-            new MergeCellsAction(), new SelectWordAction() };
+            new MergeCellsAction(), new SelectWordAction(), new SelectAllAction()};
     private static HashMap<String, Action> actions;
 
     /** Creates a new instance of NotebookEditorKit */
@@ -163,6 +163,11 @@ public class NotebookEditorKit extends StyledEditorKit
             .makeHandle("50593b0e-d0c2-11dc-99fb-e94ae2f056ca");
 
     public Document createDefaultDocument()
+    {
+        return getDefaultDocument();
+    }
+    
+    public static NotebookDocument getDefaultDocument()
     {
         NotebookDocument doc = (NotebookDocument) ThisNiche.hg.get(DOC_HANDLE);
         if (doc != null) return doc;
@@ -944,6 +949,22 @@ public class NotebookEditorKit extends StyledEditorKit
             // System.out.println("SelectWordAction: " + s + ":" + e);
             ui.select(s, e);
         }
+    }
+    
+    public static class SelectAllAction extends BaseAction
+    {
+        public SelectAllAction() {
+            super(selectAllAction);
+        }
+
+        protected void action(final NotebookUI ui) throws Exception
+        {
+            Element el = ui.getSelectedCellElement();
+            if (el == null) return;
+            ui.setCaretPosition(el.getStartOffset());
+            ui.moveCaretPosition(el.getEndOffset());
+        }
+
     }
 
     public static abstract class BaseAction extends StyledTextAction
