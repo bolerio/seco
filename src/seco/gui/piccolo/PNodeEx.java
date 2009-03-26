@@ -8,9 +8,7 @@ import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 
-import phoebe.util.PLabel;
 import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.activities.PTransformActivity;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PPaintContext;
