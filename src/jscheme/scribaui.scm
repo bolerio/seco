@@ -140,6 +140,6 @@
 )
 
 (define (center-component C)
-(GUIUtilities.centerOnScreen C))
+	(GUIUtilities.centerOnScreen C))
 
  
