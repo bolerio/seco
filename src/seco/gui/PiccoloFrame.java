@@ -1,30 +1,17 @@
 package seco.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.RepaintManager;
-
-
-
 import seco.ThisNiche;
 import seco.notebook.GUIHelper;
-
 import seco.things.CellGroup; 
-
-
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolox.pswing.PSwing;
-import edu.umd.cs.piccolox.pswing.PSwingRepaintManager;
 import edu.umd.cs.piccolox.swing.PScrollPane;
 
 public class PiccoloFrame extends TopFrame
@@ -127,5 +114,4 @@ public class PiccoloFrame extends TopFrame
         p.translate(r.x, r.y);
         return p;
     }
-
 }

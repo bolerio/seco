@@ -65,5 +65,11 @@ public class GUIUtilities
         return (p instanceof Frame) ? (Frame) p : null;
     } 
  
+    public static void centerOnScreen(Component c)
+    {
+    	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
+    	int x = (screenSize.width - c.getWidth()) / 2;
+    	int y = (screenSize.height - c.getHeight()) / 2;
+    	c.setLocation(x, y);    	
+    }
 }
-
