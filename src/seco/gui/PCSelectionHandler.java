@@ -169,21 +169,23 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
             int onmask = InputEvent.ALT_DOWN_MASK
                     | InputEvent.BUTTON1_DOWN_MASK;
             int ctrlmask = InputEvent.CTRL_DOWN_MASK;
-            if((pie.getModifiersEx() &ctrlmask) == ctrlmask)
-            {
-               //System.out.println("ScribaSelectionHandler - ctrl - copy" +
-               //         pie.getComponent());
-               dragging_copy = true;
-               this.selection.put(pressNode, true);
-               PiccoloCanvas canvas = (PiccoloCanvas) pie.getComponent();
-               canvas.getTransferHandler().exportAsDrag(
-                       canvas, 
-                       pie.getSourceSwingEvent(), TransferHandler.MOVE);
-               return;
-            }
-            if (!((pie.getModifiersEx() & (onmask | ctrlmask)) == onmask))
+            if((pie.getModifiersEx() & ctrlmask) == ctrlmask)
+                startCopyDrag(pie);
+            else if (!((pie.getModifiersEx() & (onmask | ctrlmask)) == onmask))
                 pressNode = null;
         }
+    }
+    
+    private void startCopyDrag(PInputEvent pie)
+    {
+      //System.out.println("PCSelectionHandler - ctrl - copy" +
+        //         pie.getComponent());
+//        dragging_copy = true;
+//        this.selection.put(pressNode, true);
+//        PiccoloCanvas canvas = (PiccoloCanvas) pie.getComponent();
+//        canvas.getTransferHandler().exportAsDrag(
+//                canvas, 
+//                pie.getSourceSwingEvent(), TransferHandler.MOVE);
     }
 
     protected void startStandardSelection(PInputEvent pie)

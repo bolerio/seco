@@ -18,11 +18,9 @@ import seco.ThisNiche;
 import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookTransferHandler;
-import seco.notebook.NotebookUI;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
-import seco.things.CellVisual;
 
 public class PiccoloTransferHandler extends TransferHandler
 {

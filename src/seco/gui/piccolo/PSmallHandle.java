@@ -36,7 +36,7 @@ import edu.umd.cs.piccolox.util.PNodeLocator;
  * @version 1.0
  * @author Jesse Grosjean
  */
-public class PSmallHandle extends PNode {
+public class PSmallHandle extends PNodeEx {
 
 	public static float DEFAULT_HANDLE_SIZE = 4;
 	//public static Paint DEFAULT_PAINT = new GradientPaint( 0, 0, Color.white, 2, 2, Color.black, true );

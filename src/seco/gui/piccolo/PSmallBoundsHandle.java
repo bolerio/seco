@@ -9,12 +9,14 @@ package seco.gui.piccolo;
  * The Piccolo website is www.cs.umd.edu/hcil/piccolo 
  */
 import java.awt.Cursor;
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.SwingConstants;
 
+import seco.gui.TopFrame;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
@@ -59,6 +61,9 @@ public class PSmallBoundsHandle extends PSmallHandle
                 .createSouthEastLocator(aNode)));
         aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
                 .createSouthWestLocator(aNode)));
+
+        aNode.addChild(new CopyHandle(aNode, SwingConstants.NORTH_EAST,
+                new Point(-10, 0)));
     }
 
     public static void addBoundsHandlesTo(PNode aNode, boolean only_quadrants)
@@ -73,7 +78,8 @@ public class PSmallBoundsHandle extends PSmallHandle
                     .createSouthEastLocator(aNode)));
             aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
                     .createSouthWestLocator(aNode)));
-        } else
+        }
+        else
         {
             addBoundsHandlesTo(aNode);
         }
@@ -101,8 +107,7 @@ public class PSmallBoundsHandle extends PSmallHandle
 
     public static void removeBoundsHandlesFrom(PNode aNode)
     {
-        ArrayList handles = new ArrayList();
-
+        ArrayList<PNode> handles = new ArrayList<PNode>();
         Iterator i = aNode.getChildrenIterator();
         while (i.hasNext())
         {
@@ -197,7 +202,7 @@ public class PSmallBoundsHandle extends PSmallHandle
         double dx = aLocalDimension.getWidth();
         double dy = aLocalDimension.getHeight();
 
-       // System.out.println("dragHandle:" + dx + ":" + dy + ":" + b);
+        // System.out.println("dragHandle:" + dx + ":" + dy + ":" + b);
         switch (l.getSide())
         {
         case SwingConstants.NORTH:
@@ -235,7 +240,7 @@ public class PSmallBoundsHandle extends PSmallHandle
 
         boolean flipX = false;
         boolean flipY = false;
-       
+
         if (b.width < 0)
         {
             flipX = true;
@@ -255,15 +260,14 @@ public class PSmallBoundsHandle extends PSmallHandle
             flipSiblingBoundsHandles(flipX, flipY);
         }
 
-       // System.out.println("dragHandle - end:" + b);
         n.setBounds(b);
-        if(l.getSide() == SwingConstants.NORTH 
-                ||l.getSide() == SwingConstants.WEST 
-                ||l.getSide() == SwingConstants.NORTH_WEST)
+        if (l.getSide() == SwingConstants.NORTH
+                || l.getSide() == SwingConstants.WEST
+                || l.getSide() == SwingConstants.NORTH_WEST)
             n.translate(dx, dy);
-        //n.setOffset(b.getX(), b.getY());
-        //n.setWidth(b.getWidth());
-        //n.setHeight(b.getHeight());
+        // n.setOffset(b.getX(), b.getY());
+        // n.setWidth(b.getWidth());
+        // n.setHeight(b.getHeight());
 
     }
 
@@ -335,10 +339,12 @@ public class PSmallBoundsHandle extends PSmallHandle
                 if (flipX && flipY)
                 {
                     l.setSide(SwingConstants.SOUTH_EAST);
-                } else if (flipX)
+                }
+                else if (flipX)
                 {
                     l.setSide(SwingConstants.NORTH_EAST);
-                } else if (flipY)
+                }
+                else if (flipY)
                 {
                     l.setSide(SwingConstants.SOUTH_WEST);
                 }
@@ -351,10 +357,12 @@ public class PSmallBoundsHandle extends PSmallHandle
                 if (flipX && flipY)
                 {
                     l.setSide(SwingConstants.NORTH_EAST);
-                } else if (flipX)
+                }
+                else if (flipX)
                 {
                     l.setSide(SwingConstants.SOUTH_EAST);
-                } else if (flipY)
+                }
+                else if (flipY)
                 {
                     l.setSide(SwingConstants.NORTH_WEST);
                 }
@@ -366,10 +374,12 @@ public class PSmallBoundsHandle extends PSmallHandle
                 if (flipX && flipY)
                 {
                     l.setSide(SwingConstants.SOUTH_WEST);
-                } else if (flipX)
+                }
+                else if (flipX)
                 {
                     l.setSide(SwingConstants.NORTH_WEST);
-                } else if (flipY)
+                }
+                else if (flipY)
                 {
                     l.setSide(SwingConstants.SOUTH_EAST);
                 }
@@ -381,10 +391,12 @@ public class PSmallBoundsHandle extends PSmallHandle
                 if (flipX && flipY)
                 {
                     l.setSide(SwingConstants.NORTH_WEST);
-                } else if (flipX)
+                }
+                else if (flipX)
                 {
                     l.setSide(SwingConstants.SOUTH_WEST);
-                } else if (flipY)
+                }
+                else if (flipY)
                 {
                     l.setSide(SwingConstants.NORTH_EAST);
                 }

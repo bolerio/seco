@@ -15,6 +15,7 @@ import org.hypergraphdb.HGHandle;
 import seco.ThisNiche;
 import seco.events.EvalCellEvent;
 import seco.gui.layout.LayoutHandler;
+import seco.gui.piccolo.PToolTipHandler;
 import seco.notebook.OutputCellDocument;
 import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
@@ -95,6 +96,7 @@ public class PiccoloCanvas extends PSwingCanvas
         ContextMenuHandler ctxMenuHandler = new ContextMenuHandler();
         ctxMenuHandler.setEventFilter(new PInputEventFilter(InputEvent.BUTTON3_MASK));
         addInputEventListener(ctxMenuHandler);
+        getCamera().addInputEventListener(new PToolTipHandler(getCamera()));
     }
 
     public PiccoloCanvas()

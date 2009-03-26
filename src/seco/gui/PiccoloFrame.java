@@ -48,8 +48,7 @@ public class PiccoloFrame extends TopFrame
 
         PScrollPane scroll = new PScrollPane(canvas);
         getContentPane().add(scroll, BorderLayout.CENTER);
-        //getContentPane().add(container, BorderLayout.CENTER);
-         validate(); 
+        validate(); 
     }
  
     public void showHTMLToolBar(boolean show_or_hide)
