@@ -137,8 +137,14 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         {
             Cell c = (Cell) group.getElement(i);
             Object o = c.getValue();
-            CellGroup g = o instanceof NotebookDocument ? 
-                (CellGroup)((NotebookDocument)o).getBook() : (CellGroup) o;
+            CellGroup g = null;
+            
+            if (o instanceof NotebookDocument) 
+                g = (CellGroup)((NotebookDocument)o).getBook();
+            else if (o instanceof CellGroup)
+            	g = (CellGroup) o;
+            else
+            	continue;
             // escape some illegal chars which could be introduced during
             // previous book import
             String fn = g.getName().replace('\\', '_').replace('/', '_')
