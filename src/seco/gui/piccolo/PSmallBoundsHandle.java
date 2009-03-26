@@ -16,6 +16,8 @@ import java.util.Iterator;
 
 import javax.swing.SwingConstants;
 
+import seco.ThisNiche;
+import seco.gui.PSwingNode;
 import seco.gui.TopFrame;
 
 import edu.umd.cs.piccolo.PCamera;
@@ -62,7 +64,9 @@ public class PSmallBoundsHandle extends PSmallHandle
         aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
                 .createSouthWestLocator(aNode)));
 
-        aNode.addChild(new CopyHandle(aNode, SwingConstants.NORTH_EAST,
+        //TODO: temp check
+        if(!(((PSwingNode)aNode).getHandle().equals(ThisNiche.TABBED_PANE_GROUP_HANDLE)))
+          aNode.addChild(new CopyHandle(aNode, SwingConstants.NORTH_EAST,
                 new Point(-10, 0)));
     }
 
