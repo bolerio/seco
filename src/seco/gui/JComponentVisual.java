@@ -1,5 +1,7 @@
 package seco.gui;
 
+import java.awt.Color;
+
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
 
@@ -24,16 +26,19 @@ public class JComponentVisual implements CellVisual
     public JComponent bind(CellGroupMember element)
     {
         Cell cell = (Cell)element;
-        if(!(ThisNiche.hg.get(cell.getAtomHandle()) instanceof JComponent))
-            return null;
+        //if(!(ThisNiche.hg.get(cell.getAtomHandle()) instanceof JComponent))
+        //    return null;
         Object o = ThisNiche.hg.get(cell.getAtomHandle());
         JComponent comp = null;
         if(o instanceof JComponent) 
             comp = (JComponent) o;
         else
         {
-           comp = new JTextArea("" + o);
-           ((JTextArea)comp).setEditable(false);
+           JTextArea area = new JTextArea("" + o);
+           area.setEditable(false);
+           //area.setWsetWrapStyleWord(true);
+           area.setBackground(Color.white);
+           comp = area;
         }
         return comp;
     }
