@@ -218,7 +218,7 @@ abstract class DocUtil
         endTag(vec);
         if (genInsP) createInsertionPoint(attr, vec);
         if(NotebookDocument.DIRECT_EVENTING)
-            CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cellH, doc
+           CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cellH, doc
                     .getHandle(), AttributeChangeHandler.getInstance());
         else
            CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, cellH, doc

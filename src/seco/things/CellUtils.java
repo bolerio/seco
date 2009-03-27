@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JTabbedPane;
+
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGSearchResult;
@@ -34,6 +36,8 @@ import seco.events.handlers.CopyCellGroupChangeHandler;
 import seco.events.handlers.CopyCellTextChangeHandler;
 import seco.events.handlers.CopyEvalCellHandler;
 import seco.gui.JComponentVisual;
+import seco.gui.NBUIVisual;
+import seco.gui.TabbedPaneVisual;
 import seco.gui.VisualsManager;
 import seco.notebook.NBStyle;
 import seco.notebook.NotebookDocument;
@@ -83,13 +87,28 @@ public class CellUtils
         return outH;
     }
 
+    //TODO: fix this uglyness
     public static CellVisual getVisual(CellGroupMember c)
     {
-        HGHandle visH = (c.getVisual() != null) ? c.getVisual()
-                : VisualsManager.defaultVisualForAtom(ThisNiche.handleOf(c));
-        CellVisual visual = (visH == null || visH.equals(HGHandleFactory
-                .nullHandle())) ? new JComponentVisual()
-                : (CellVisual) ThisNiche.hg.get(visH);
+        HGHandle visH = (c.getVisual() != null) ? c.getVisual() :
+                VisualsManager.defaultVisualForAtom(ThisNiche.handleOf(c));
+        if(visH != null)// && TabbedPaneVisual.getHandle() != visH)
+            return (CellVisual) ThisNiche.hg.get(visH);
+        CellVisual visual = null;
+        if(visH == null || visH.equals(HGHandleFactory
+                 .nullHandle()))
+        {
+             if(c instanceof CellGroup || CellUtils.isInputCell(c))
+                 visual = new NBUIVisual();
+             else
+             {
+                 Object val = ((Cell) c).getValue();
+                 if(val instanceof JTabbedPane)
+                     visual = new TabbedPaneVisual();
+                 visual = new JComponentVisual();
+             }
+        }
+            
         return visual;
     }
 
@@ -431,7 +450,9 @@ public class CellUtils
                 HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
         out.attributes = in.getAttributes();
-        return ThisNiche.hg.add(out);
+        HGHandle outH = ThisNiche.hg.add(out);
+        //System.out.println("inputCellCopy: " + out.getValue().getClass());
+        return outH;
     }
 
     private static HGHandle outputCellCopy(HGHandle in)

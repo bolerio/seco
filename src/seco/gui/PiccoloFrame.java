@@ -27,7 +27,7 @@ public class PiccoloFrame extends TopFrame
     protected void initFrame()
     {
         canvas = new PiccoloCanvas();
-        canvas.setTransferHandler(new PiccoloTransferHandler());
+        canvas.setTransferHandler(new PiccoloTransferHandler(canvas));
         // Set up basic frame
         setBounds(50, 50, 750, 750);
         setResizable(true);
@@ -46,7 +46,7 @@ public class PiccoloFrame extends TopFrame
     
     void saveDims()
     {
-        //canvas.saveDims();
+        canvas.saveDims();
     }
 
     public void exit()

@@ -28,6 +28,7 @@ import seco.ThisNiche;
 import seco.events.EventPubSub;
 import seco.notebook.gui.GUIUtilities;
 import seco.things.Cell;
+import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.Scriptlet;
@@ -59,6 +60,9 @@ public class NotebookCellsTree extends JTree
     private JPopupMenu makePopupMenu()
     {
         final CellGroupMember node = (CellGroupMember) getLastSelectedPathComponent();
+        TreePath selPath = getSelectionModel().getSelectionPath();
+        final CellGroup group = (selPath != null) ?
+            (CellGroup) selPath.getParentPath().getLastPathComponent() : null;
         JPopupMenu popup = new JPopupMenu();
         JMenuItem menuItem = new JMenuItem("Publisher");
         menuItem.addActionListener(new ActionListener() {
@@ -126,10 +130,25 @@ public class NotebookCellsTree extends JTree
                 if(val instanceof Scriptlet)
                     val = ((Scriptlet) val).getCode();
                 System.out.println("Value: " + val +
-                        ":" + ThisNiche.handleOf(node));
+                        ":" + ThisNiche.handleOf(node) + ":" +
+                        val.getClass());
             }
         });
         menuItem.setEnabled(node instanceof Cell);
+        popup.add(menuItem);
+        menuItem = new JMenuItem("Remove"); // NOI18N
+        menuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e)
+            {
+                HGHandle h = ThisNiche.handleOf(node);
+                Cell c = (Cell) ThisNiche.hg.get(h);
+                group.remove(c);
+                //NotebookCellsTree.this.ru
+                //System.out.println("Value: " + val +
+                //        ":" + ThisNiche.handleOf(node));
+            }
+        });
+        menuItem.setEnabled((node instanceof Cell) && group!=null);
         popup.add(menuItem);
         return popup;
     }

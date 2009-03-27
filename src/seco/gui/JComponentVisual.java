@@ -1,6 +1,7 @@
 package seco.gui;
 
 import javax.swing.JComponent;
+import javax.swing.JTextArea;
 
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
@@ -23,9 +24,17 @@ public class JComponentVisual implements CellVisual
     public JComponent bind(CellGroupMember element)
     {
         Cell cell = (Cell)element;
-        //if(!(ThisNiche.hg.get(cell.getAtomHandle()) instanceof JComponent))
-        //    return;
-        JComponent comp = ThisNiche.hg.get(cell.getAtomHandle());
+        if(!(ThisNiche.hg.get(cell.getAtomHandle()) instanceof JComponent))
+            return null;
+        Object o = ThisNiche.hg.get(cell.getAtomHandle());
+        JComponent comp = null;
+        if(o instanceof JComponent) 
+            comp = (JComponent) o;
+        else
+        {
+           comp = new JTextArea("" + o);
+           ((JTextArea)comp).setEditable(false);
+        }
         return comp;
     }
  

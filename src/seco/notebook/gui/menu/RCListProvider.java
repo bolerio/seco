@@ -39,6 +39,7 @@ public class RCListProvider implements DynamicMenuProvider
 {
 	public void update(JMenu m) 
 	{
+	    if(NotebookUI.getFocusedNotebookUI() == null) return;
 		ButtonGroup group = new ButtonGroup();
 		HGSearchResult<HGHandle> rs = hfind(hg.type(RuntimeContext.class));
 		try

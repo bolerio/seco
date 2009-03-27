@@ -185,18 +185,18 @@ public class PiccoloCanvas extends PSwingCanvas
 //        
 //    }
     
-    public PSwingNode addComponent(HGHandle h, Point pt)
-    {
-        HGHandle topH = GUIHelper.addToTopCellGroup(h);
-        Cell top = ThisNiche.hg.get(topH);
-        CellVisual vis = CellUtils.getVisual(top);
-        JComponent comp = vis.bind(top);
-        PSwingNode ps = new PSwingNode(this, comp);
-        ps.setHandle(topH);
-        getNodeLayer().addChild(ps);
-        ps.translate(pt.x, pt.y);
-        return ps;
-   }
+//    public PSwingNode addComponent(HGHandle h, Point pt)
+//    {
+//        HGHandle topH = GUIHelper.addToTopCellGroup(h);
+//        Cell top = ThisNiche.hg.get(topH);
+//        CellVisual vis = CellUtils.getVisual(top);
+//        JComponent comp = vis.bind(top);
+//        PSwingNode ps = new PSwingNode(this, comp);
+//        ps.setHandle(topH);
+//        getNodeLayer().addChild(ps);
+//        ps.translate(pt.x, pt.y);
+//        return ps;
+//   }
 
     public PSwingNode getPSwingNodeForHandle(HGHandle h)
     {
@@ -226,6 +226,7 @@ public class PiccoloCanvas extends PSwingCanvas
     
     private boolean check_is_output(PSwingNode p, HGHandle h)
     {
+        if(h.equals(p.getHandle())) return true;
         CellGroupMember cgm = ThisNiche.hg.get(p.getHandle());
         if(cgm instanceof Cell && ((Cell) cgm).getAtomHandle().equals(h))
                return true;
@@ -248,13 +249,22 @@ public class PiccoloCanvas extends PSwingCanvas
         {
             getNodeLayer().addChild(p);
             Rectangle r = (Rectangle) cell.getAttribute(VisualAttribs.rect);
+            Dimension dim = comp.getPreferredSize();
             if (r != null)
             {
                 normalize(r);
+//                if(r.height == 0 || r.width==0);
+//                {
+//                    
+//                    r.width = Math.max(20, dim.width); 
+//                    r.width = Math.min(r.width, 500); 
+//                    r.height = Math.max(20, dim.height);
+//                    r.height = Math.min(r.height, 400);
+//                }
                 p.setBounds(r);
                 p.translate(r.x, r.y);
             }else
-                p.setBounds(new Rectangle(0, 0 , comp.getWidth(), comp.getHeight()));
+                p.setBounds(new Rectangle(0, 0 , dim.width, dim.height));
         }
         return p;
     }
@@ -262,7 +272,7 @@ public class PiccoloCanvas extends PSwingCanvas
     //TODO: temp solution during testing
     private void normalize( Rectangle r)
     {
-        System.out.println("normalize1: " + r);
+        //System.out.println("normalize1: " + r);
         if(r.x < 0) r.x = 0;
         if(r.x > 1000) r.x = 1000;
         if(r.y < 0) r.y = 0;
@@ -271,7 +281,7 @@ public class PiccoloCanvas extends PSwingCanvas
         if(r.width <= 0) r.width =50;
         if(r.height > 1000) r.height = 1000;
         if(r.height <= 0) r.height =50;
-        System.out.println("normalize2: " + r);
+        //System.out.println("normalize2: " + r);
     }
   
     private void remove_and_clean(NotebookUI ui)

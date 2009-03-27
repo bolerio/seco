@@ -356,6 +356,15 @@ public class GUIHelper
             openCellTree(book);
         }
     }
+    
+    public static class TopCellTreeAction implements ActionListener
+    {
+        public void actionPerformed(ActionEvent evt)
+        {
+            CellGroupMember book = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+            openCellTree(book);
+        }
+    }
 
     public static class OpenAction extends AbstractAction
     {
@@ -525,20 +534,20 @@ public class GUIHelper
                 VisualsManager.defaultVisualForAtom(GUIHelper.MENUBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(0),
                         new DValue(0), new DValue(25, true), new DValue(28)),
-                        RefPoint.TOP_LEFT));
+                        RefPoint.TOP_LEFT), null);
         getMainToolBar();
         addToTopCellGroup(GUIHelper.TOOLBAR_HANDLE, group, VisualsManager
                 .defaultVisualForAtom(GUIHelper.TOOLBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(0),
                         new DValue(0), new DValue(40, true), new DValue(28)),
-                        RefPoint.TOP_RIGHT));
+                        RefPoint.TOP_RIGHT), null);
         getHTMLToolBar();
         addToTopCellGroup(GUIHelper.HTML_TOOLBAR_HANDLE, group,
                 VisualsManager
                         .defaultVisualForAtom(GUIHelper.HTML_TOOLBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(0),
                         new DValue(0), new DValue(100, true), new DValue(28)),
-                        RefPoint.BOTTOM_LEFT));
+                        RefPoint.BOTTOM_LEFT), null);
 
         getJTabbedPane();
         group.insert(group.getArity(), ThisNiche.TABBED_PANE_GROUP_HANDLE);
@@ -558,37 +567,28 @@ public class GUIHelper
     }
 
     public static HGHandle addToTopCellGroup(HGHandle h, CellGroup group,
-            HGHandle visualH, Rectangle r)
+            HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell)
     {
-        HGHandle cellH = CellUtils.getCellHForRefH(h);
-        Cell out = ThisNiche.hg.get(cellH);
+        HGHandle cellH = (create_cell) ? CellUtils.getCellHForRefH(h) : h;
+        CellGroupMember out = ThisNiche.hg.get(cellH);
         if (r != null) out.setAttribute(VisualAttribs.rect, r);
         if (visualH != null) out.setVisual(visualH);
+        if (lh != null) out.setAttribute(VisualAttribs.layoutHandler, lh);
         group.insert(group.getArity(), out);
         return cellH;
     }
 
     public static HGHandle addToTopCellGroup(HGHandle h, CellGroup group,
-            HGHandle visualH, LayoutHandler lh)
+            HGHandle visualH, LayoutHandler lh, Rectangle r)
     {
-        HGHandle cellH = CellUtils.getCellHForRefH(h);
-        Cell out = ThisNiche.hg.get(cellH);
-        if (lh != null) out.setAttribute(VisualAttribs.layoutHandler, lh);
-        if (visualH != null) out.setVisual(visualH);
-        group.insert(group.getArity(), out);
-        return cellH;
+       return addToTopCellGroup(h, group, visualH, lh, r, true);
     }
-
-    public static HGHandle addToTopCellGroup(HGHandle h)
-    {
-        return addToTopCellGroup(h, null, null);
-    }
-
-    public static HGHandle addToTopCellGroup(HGHandle h, HGHandle visualH,
-            Rectangle r)
+    
+    public static HGHandle moveToTopCell(HGHandle h, 
+            HGHandle visualH, LayoutHandler lh, Rectangle r)
     {
         CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-        return addToTopCellGroup(h, top, visualH, r);
+        return addToTopCellGroup(h, top, visualH, lh, r, false);
     }
 
     public static void removeFromTopCellGroup(HGHandle h)
@@ -761,6 +761,9 @@ public class GUIHelper
         menu.add(mi);
         mi = new JMenuItem("View Parse Tree");
         mi.addActionListener(new ParseTreeAction());
+        menu.add(mi);
+        mi = new JMenuItem("Top Tree");
+        mi.addActionListener(new CellTreeAction());
         menu.add(mi);
         return menu;
     }

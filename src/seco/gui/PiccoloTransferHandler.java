@@ -24,6 +24,14 @@ import seco.things.CellUtils;
 
 public class PiccoloTransferHandler extends TransferHandler
 {
+    private PiccoloCanvas canvas;
+    
+    public PiccoloTransferHandler(PiccoloCanvas canvas)
+    {
+        super();
+        this.canvas = canvas;
+    }
+
     // The data type exported from NotebookUI.
     static DataFlavor elFlavor;
     static DataFlavor tabFlavor;
@@ -38,6 +46,8 @@ public class PiccoloTransferHandler extends TransferHandler
         {
         }
     }
+    
+    
 
     @Override
     public boolean importData(TransferSupport support)
@@ -45,7 +55,8 @@ public class PiccoloTransferHandler extends TransferHandler
         Transferable t = support.getTransferable();
         if (!hasFlavor(t.getTransferDataFlavors())) return false;
         Point pt = support.getDropLocation().getDropPoint();
-        System.out.println("PicTrH-importData: " + support + ":" + pt);
+        System.out.println("PicTrH-importData: " + support + ":" + pt +
+                ":" + support.getComponent());
         try
         {
             if (support.isDataFlavorSupported(tabFlavor))
@@ -57,18 +68,22 @@ public class PiccoloTransferHandler extends TransferHandler
             for (Element e : els)
             {
                 HGHandle nbH = NotebookDocument.getNBElementH(e);
+                boolean outputC = NotebookDocument.isOutputCell(e);
+                HGHandle vis = (outputC) ? JComponentVisual.getHandle() : NBUIVisual.getHandle();
                 if (move)
                 {
-                    GUIHelper.addToTopCellGroup(nbH, null, new Rectangle(pt.x, pt.y, 300, 200)); 
+                    GUIHelper.moveToTopCell(nbH, vis, null, new Rectangle(pt.x, pt.y, 200, 200)); 
                     NotebookDocument doc = ((NotebookDocument) e.getDocument());
                     doc.removeCellBoxElement(e);
                     CellUtils.removeHandlers(nbH, doc.getHandle());
                 }
                 else
                 {
+                    
                     HGHandle copyH = CellUtils.makeCopy(nbH);
+                    System.out.println("PicTrH-importCopyData: " + copyH);
                     //add_to_top_group(copyH, pt);
-                    GUIHelper.addToTopCellGroup(copyH, null, new Rectangle(pt.x, pt.y, 300, 200)); 
+                    GUIHelper.moveToTopCell(copyH, vis, null, new Rectangle(pt.x, pt.y, 200, 200)); 
                     
                     //canvas.addCopyComponent(copyH, nbH, pt);
                 }
@@ -85,7 +100,6 @@ public class PiccoloTransferHandler extends TransferHandler
             throws UnsupportedFlavorException, IOException
     {
         Point pt = support.getDropLocation().getDropPoint();
-        PiccoloCanvas canvas = (PiccoloCanvas) support.getComponent();
         for(Object o: canvas.getNodeLayer().getAllNodes())
         {
            if(!(o instanceof PSwingNode)) continue;
@@ -107,6 +121,8 @@ public class PiccoloTransferHandler extends TransferHandler
                }
            }
         }
+        if(support.getComponent() == canvas)
+            return false;
         SecoTransferable.Data data = 
             (SecoTransferable.Data) support.getTransferable().getTransferData(tabFlavor);
         boolean move = (support.getDropAction() == MOVE);

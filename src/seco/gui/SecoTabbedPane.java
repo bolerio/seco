@@ -142,6 +142,7 @@ public class SecoTabbedPane extends JTabbedPane
                 {
                     SecoTransferable.Data data = (SecoTransferable.Data) t
                             .getTransferData(fl);
+                    System.out.println("TPTransferHandler1: " + tp.groupH + ":" + data.getHandle());
                     if (tp.getCellGroup().indexOf(data.getHandle()) >= 0)
                         return false;
                     tp.getCellGroup().insert(tp.getCellGroup().getArity(),

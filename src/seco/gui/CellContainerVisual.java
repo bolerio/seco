@@ -10,6 +10,7 @@ import org.hypergraphdb.HGPersistentHandle;
 
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
+import seco.events.EvalCellEvent;
 import seco.events.EventHandler;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -60,6 +61,10 @@ public class CellContainerVisual implements CellVisual, EventHandler
                 && subscriber.equals(ThisNiche.handleOf(this)))
         {
             handleEvent((CellGroupChangeEvent) event);
+        }else if (eventType.equals(EvalCellEvent.HANDLE)
+                && subscriber.equals(ThisNiche.handleOf(this)))
+        {
+            rebind((EvalCellEvent) event, publisher);
         }
     }
 
@@ -70,8 +75,23 @@ public class CellContainerVisual implements CellVisual, EventHandler
         JComponent comp = visual.bind(x);
         if(comp != null)
            canvas.addComponent(comp, x);
+        CellUtils.addEventPubSub(
+                EvalCellEvent.HANDLE, childH, getHandle(), getHandle());
     }
 
+    private void rebind(EvalCellEvent event, HGHandle publisher)
+    {
+        HGHandle h = publisher;//event.getCellHandle();
+        CellGroup group = CellUtils.getParentGroup(h);
+        System.out.println("rebind: " + h + ":" + group);
+        //PiccoloCanvas canvas = (PiccoloCanvas) group.getVisualInstance();
+        //TODO: this is not correct in general
+        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
+        PSwingNode ps = canvas.getPSwingNodeForHandle(h);
+        if(ps != null)  ps.removeFromParent();
+        addChild(canvas, h);
+    }
+    
     private void handleEvent(CellGroupChangeEvent e)
     {
         CellGroup group = (CellGroup) ThisNiche.hg.get(e.getCellGroup());
@@ -83,7 +103,10 @@ public class CellContainerVisual implements CellVisual, EventHandler
             for (int i = 0; i < removed.length; i++)
             {
                 PSwingNode ps = canvas.getPSwingNodeForHandle(removed[i]);
-                ps.removeFromParent();
+                if(ps != null) 
+                   ps.removeFromParent();
+                CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, 
+                        removed[i], getHandle(), getHandle());
             }
         if (added != null && added.length > 0)
             for (int i = 0; i < added.length; i++)

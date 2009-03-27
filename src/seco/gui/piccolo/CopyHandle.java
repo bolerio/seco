@@ -46,7 +46,7 @@ public class CopyHandle extends PSmallBoundsHandle
     public void dragHandle(PDimension aLocalDimension, PInputEvent e)
     {
         offset(aLocalDimension.getWidth(), aLocalDimension.getHeight());
-        System.out.println("CopyHandle -drag: ");// + gDist + ":" + dx + "," + dy + ":" + aLocalDimension);
+        //System.out.println("CopyHandle -drag: ");// + gDist + ":" + dx + "," + dy + ":" + aLocalDimension);
     }
     
     public void endHandleDrag(Point2D aLocalPoint, PInputEvent aEvent)
@@ -87,7 +87,6 @@ public class CopyHandle extends PSmallBoundsHandle
         @Override
         public double locateX()
         {
-            System.out.println("CopyHandle -locateX: ");
             return super.locateX() + offsetP.x;
         }
 

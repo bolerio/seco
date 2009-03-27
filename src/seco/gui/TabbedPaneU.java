@@ -228,11 +228,13 @@ public class TabbedPaneU
         {
             if (tabbedPane.getSelectedIndex() == -1) return;
             Component c = tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
-            
-            JScrollPane comp = c instanceof JScrollPane ? (JScrollPane) c: 
-                (JScrollPane)((Container) c).getComponent(0); 
-            NotebookUI.setFocusedNotebookUI((NotebookUI) comp.getViewport().getView());
-            GUIHelper.updateFrameTitle();
+            if(c instanceof JScrollPane)
+            {
+               JScrollPane comp =  (JScrollPane) c; 
+               NotebookUI.setFocusedNotebookUI((NotebookUI) comp.getViewport().getView());
+               GUIHelper.updateFrameTitle();
+            }else
+                NotebookUI.setFocusedNotebookUI(null);
         }
     }
 

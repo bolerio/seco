@@ -474,6 +474,7 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public void cellEvaled(EvalCellEvent e)
     {
+        //System.out.println("CellEvaled: " + e);
         HGHandle cellH = e.getCellHandle();
         int offset = findElementOffset(cellH);
         if (offset < 0) return;

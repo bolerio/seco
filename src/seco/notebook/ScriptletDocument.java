@@ -88,6 +88,11 @@ public class ScriptletDocument extends NotebookDocument
         return false;
     }
     
+    public void removeCellBoxElement(Element el) throws BadLocationException
+    {
+        //DO NOTHING
+    }
+    
     public String toString()
     {
         return "SCRIPTLET_DOC: " + getHandle();

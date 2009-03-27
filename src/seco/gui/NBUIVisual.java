@@ -30,10 +30,16 @@ public class NBUIVisual implements CellVisual
     
     public JComponent bind(CellGroupMember element)
     {
-        Cell cell = (Cell) element;
-        HGHandle h = cell.getAtomHandle();
-        if(!(cell.getValue() instanceof CellGroupMember))
-            return null;
+        HGHandle h = null;
+        if(element instanceof Cell) 
+        {
+           Cell cell = (Cell) element;
+           if(cell.getValue() instanceof CellGroupMember)
+               h = cell.getAtomHandle();
+           else
+               h = ThisNiche.handleOf(element);
+        }else
+           h = ThisNiche.handleOf(element); 
         final NotebookUI ui = new NotebookUI(h);
         final NotebookDocument doc = ui.getDoc();
         if (TopFrame.getInstance().getCaretListener() != null)

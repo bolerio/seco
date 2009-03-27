@@ -1,6 +1,7 @@
 package seco.notebook.storage.swing.types;
 
 import java.awt.event.ActionListener;
+import java.awt.event.ContainerListener;
 import java.beans.EventSetDescriptor;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Field;
@@ -282,18 +283,22 @@ public class SwingBinding extends HGAtomTypeBase
         {
             if (e instanceof PropertyChangeListener
                     || e instanceof AncestorListener
-                    || e instanceof ListDataListener )
+                    || e instanceof ListDataListener 
+                    || e instanceof ContainerListener)
             {
                 continue;
             }
             
-           // if (e.getClass().getName().startsWith("javax.swing.plaf."))
-           // {
-                // System.err.println("Filtering " + e);
-           //     continue;
-           // }
             if (e.getClass().isMemberClass()
                     && !Modifier.isStatic(e.getClass().getModifiers()))
+            {
+                // System.err.println("Filtering " + e);
+                continue;
+            }
+           
+            //anonymous inner listeners that wasn't filter by the above
+            //(probably faster) check...
+            if (e.getClass().getName().indexOf("$") > -1)
             {
                 // System.err.println("Filtering " + e);
                 continue;
@@ -304,13 +309,7 @@ public class SwingBinding extends HGAtomTypeBase
                 // System.err.println("Filtering " + e);
                 continue;
             }
-            if (e.getClass().getEnclosingClass() == JMenuItem.class
-                    && e.getClass().getName().startsWith(
-                            "javax.swing.JMenuItem$"))
-            {
-                // System.err.println("Filtering " + e);
-                continue;
-            }
+           
             // the action is added as event listener too, so filter it
             if (e instanceof ActionListener
                     && instance instanceof AbstractButton

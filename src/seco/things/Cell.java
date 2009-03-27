@@ -56,6 +56,7 @@ public class Cell extends BaseCellGroupMember implements EventHandler
     
     public void updateValue(EvalCellEvent e)
     {
+        //System.out.println("Cell - updateValue: " + e);
         Object val = (e.getValue().getComponent() != null) ?
                 e.getValue().getComponent() : e.getValue().getText();
         attributes.put(XMLConstants.ATTR_ERROR, e.getValue().isError());        
