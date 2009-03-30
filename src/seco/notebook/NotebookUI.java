@@ -1008,7 +1008,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         return NotebookDocument.getUpperElement(el, type);
     }
 
-    private static final Object FOCUSED_COMPONENT = new StringBuilder(
+    public static final Object FOCUSED_COMPONENT = new StringBuilder(
             "JTextComponent_FocusedComponent");
 
     public static final NotebookUI getFocusedNotebookUI()

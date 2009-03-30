@@ -82,12 +82,13 @@ public abstract class TopFrame extends JFrame
         System.exit(0);
     }
 
-    public static HGHandle getCurrentEvaluationContext()
+    //TODO: legacy - called in .scm scripts
+    public HGHandle getCurrentRuntimeContext()
     {
         return currentRC;
     }
     
-    public static void setCurrentEvaluationContext(HGHandle ch)
+    public static void setCurrentRuntimeContext(HGHandle ch)
     {
         if (ch == null) return;
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();

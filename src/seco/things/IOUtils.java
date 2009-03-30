@@ -96,8 +96,8 @@ public class IOUtils
                 top_group.insert(top_group.getArity(), group);
                 continue;
             }
-            throw new RuntimeException("Unrecognized tag inside notebook: "
-                    + el.getTagName());
+           // throw new RuntimeException("Unrecognized tag inside notebook: "
+           //         + el.getTagName());
         }
     }
 
@@ -146,10 +146,10 @@ public class IOUtils
             } else if (inner.getTagName().equals(XMLConstants.CELL_GROUP))
             {
                  top_group.insert(top_group.getArity(),loadGroup(inner));
-            } else
-                throw new RuntimeException(
-                        "Unrecognized tag inside inside cellGroup-group: "
-                                + inner.getTagName());
+            } //else
+              //  throw new RuntimeException(
+               //         "Unrecognized tag inside inside cellGroup-group: "
+               //                 + inner.getTagName());
         }
         return top_groupH;
     }
@@ -198,10 +198,11 @@ public class IOUtils
             if (inner.getTagName().equals(XMLConstants.CELL_DATA))
             {
                 text = normalizeText(XMLConstants.concatContents(inner));
-            } else
-                throw new RuntimeException(
-                        "Unrecognized tag inside inside cellGroup-group: "
-                                + inner.getTagName());
+            } 
+            //else
+            //    throw new RuntimeException(
+            //           "Unrecognized tag inside inside cellGroup-group: "
+            //                    + inner.getTagName());
         }
         HGHandle cellH = CellUtils.makeCellH(text, engine);
         Cell cell = (Cell) ThisNiche.hg.get(cellH);

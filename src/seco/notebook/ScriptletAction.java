@@ -62,4 +62,12 @@ public class ScriptletAction extends AbstractAction
         this.scriptlet = scriptlet;
     }
 
+    @Override
+    public String toString()
+    {
+        return "ScriptletAction: " + scriptlet.getCode();
+    }
+    
+    
+
 }

@@ -1307,6 +1307,7 @@ public class NotebookDocument extends DefaultStyledDocument
         int ind = par.indexOf(cell);
         try
         {
+            updateCell(el, UpdateAction.syncronize);
             remove_cell_group_member(el);
             insert(cell, parH, ind);
         }

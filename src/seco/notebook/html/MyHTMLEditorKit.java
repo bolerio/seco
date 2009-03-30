@@ -400,9 +400,6 @@ public class MyHTMLEditorKit extends HTMLEditorKit
 
         protected void action(HTMLEditor editor) throws Exception
         {
-            // int start = editor.getSelectionStart();
-            // int end = editor.getSelectionEnd();
-            // if (start == end) return;
             AttributeSet attr = editor.getMaxAttributes(null);
             FontEx f = FontEx.fromCSSAttribs(attr);
             FontDialog dlg = new FontDialog(GUIUtilities.getFrame(editor), f,
@@ -1083,7 +1080,27 @@ public class MyHTMLEditorKit extends HTMLEditorKit
             }
         }
     }
-
+    
+    public static class WrapperAction extends StyledEditorKit.StyledTextAction
+    {
+        public WrapperAction(String actionName)
+        {
+            super(actionName);
+        }
+        
+        public void actionPerformed(ActionEvent e)
+        {
+            if (!(this.isEnabled()))  return;
+            JEditorPane pane = getEditor(e);
+            if (pane == null || !pane.isEditable()
+                    || !(pane instanceof HTMLEditor))
+                return;
+            HTMLEditor editor = (HTMLEditor) pane;
+            if (editor == null)
+                return;
+        }
+    }
+    
     public static abstract class BaseAction extends
             StyledEditorKit.StyledTextAction
     {
@@ -1094,8 +1111,7 @@ public class MyHTMLEditorKit extends HTMLEditorKit
 
         public void actionPerformed(ActionEvent e)
         {
-            if (!(this.isEnabled()))
-                return;
+            if (!(this.isEnabled()))  return;
             JEditorPane pane = getEditor(e);
             if (pane == null || !pane.isEditable()
                     || !(pane instanceof HTMLEditor))

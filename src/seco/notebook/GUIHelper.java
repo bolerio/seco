@@ -666,8 +666,8 @@ public class GUIHelper
         CellGroupMember book = ui.getDoc().getBook();
         String name = (book instanceof CellGroup) ? ((CellGroup) book)
                 .getName() : "Cell";
-        RuntimeContext rcInstance = (RuntimeContext) ThisNiche.hg.get(TopFrame
-                .getCurrentEvaluationContext());
+        RuntimeContext rcInstance = (RuntimeContext) ThisNiche.hg.get(
+                TopFrame.getInstance().getCurrentRuntimeContext());
         String title = rcInstance.getName() + " " + name;
         TopFrame.getInstance().setTitle(title);
     }

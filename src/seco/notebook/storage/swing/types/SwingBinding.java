@@ -289,33 +289,33 @@ public class SwingBinding extends HGAtomTypeBase
                 continue;
             }
             
+            if (e.getClass().isAnonymousClass())
+            {
+                // System.err.println("Filtering0 " + e);
+                continue;
+             }
+            
             if (e.getClass().isMemberClass()
                     && !Modifier.isStatic(e.getClass().getModifiers()))
             {
-                // System.err.println("Filtering " + e);
+               // System.err.println("Filtering1 " + e);
                 continue;
             }
            
-            //anonymous inner listeners that wasn't filter by the above
-            //(probably faster) check...
-            if (e.getClass().getName().indexOf("$") > -1)
-            {
-                // System.err.println("Filtering " + e);
-                continue;
-            }
+            
             // normally those listeners will be added during construction
             if (e.getClass().equals(hgType.getJavaClass()))
             {
-                // System.err.println("Filtering " + e);
+                //System.err.println("Filtering3 " + e);
                 continue;
             }
            
             // the action is added as event listener too, so filter it
             if (e instanceof ActionListener
-                    && instance instanceof AbstractButton
-                    && ((AbstractButton) instance).getAction() != null)
+                && instance instanceof AbstractButton
+                && ((AbstractButton) instance).getAction() != null)
             {
-                System.err.println("Filtering " + e);
+               // System.err.println("Filtering4 " + e);
                 continue;
             }
            

@@ -59,10 +59,10 @@ public class NBUIVisual implements CellVisual
         if(ThisNiche.TOP_CONTEXT_HANDLE.equals(ctxH))
         {
            ThisNiche.hg.add(new ContextLink(doc.getBookHandle(), 
-                   TopFrame.getCurrentEvaluationContext()));
+                   TopFrame.getInstance().getCurrentRuntimeContext()));
            ctxH = ThisNiche.getContextHandleFor(doc.getBookHandle());
         }
-        TopFrame.setCurrentEvaluationContext(ctxH);
+        TopFrame.setCurrentRuntimeContext(ctxH);
         scrollPane.setName(TabbedPaneU.makeTabTitle(doc.getTitle()));
         //JPanel outer = new JPanel();
         //outer.setName(scrollPane.getName());

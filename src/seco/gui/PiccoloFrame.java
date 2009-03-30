@@ -9,7 +9,10 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import seco.ThisNiche;
 import seco.notebook.GUIHelper;
+import seco.notebook.NotebookUI;
+import seco.notebook.html.HTMLEditor;
 import seco.things.CellGroup; 
+import sun.awt.AppContext;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolox.pswing.PSwing;
 import edu.umd.cs.piccolox.swing.PScrollPane;
@@ -40,7 +43,7 @@ public class PiccoloFrame extends TopFrame
  
     public void showHTMLToolBar(boolean show_or_hide)
     {
-       GUIHelper.getHTMLToolBar().setEnabled(show_or_hide);
+       GUIHelper.getHTMLToolBar().setEnabled(true);//show_or_hide);
     }
     
     
