@@ -252,7 +252,7 @@ public class TabbedPaneU
     public static void addTabToTabbedPaneGroup(HGHandle groupH, HGHandle h)
     {
         CellGroup group = (CellGroup) ThisNiche.hg.get(groupH);
-        group.insert(group.getArity(), CellUtils.getCellHForRefH(h));
+        group.insert(group.getArity(), h); //CellUtils.getCellHForRefH(h));
     }
 
     public static JTabbedPane createTabbedPane(CellGroup group)

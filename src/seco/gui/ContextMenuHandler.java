@@ -16,6 +16,7 @@ import seco.notebook.NotebookDocument;
 import seco.notebook.ScriptletAction;
 import seco.things.Cell;
 import seco.things.CellGroup;
+import seco.things.CellGroupMember;
 import seco.things.IOUtils;
 
 import edu.umd.cs.piccolo.PCamera;
@@ -135,16 +136,11 @@ public class ContextMenuHandler extends PBasicInputEventHandler
                 .get(ThisNiche.TABBED_PANE_GROUP_HANDLE);
         for (int i = 0; i < group.getArity(); i++)
         {
-            Cell c = (Cell) group.getElement(i);
-            Object o = c.getValue();
-            CellGroup g = null;
+            CellGroupMember c = group.getElement(i);
             
-            if (o instanceof NotebookDocument) 
-                g = (CellGroup)((NotebookDocument)o).getBook();
-            else if (o instanceof CellGroup)
-            	g = (CellGroup) o;
-            else
-            	continue;
+            if(!(c instanceof CellGroup)) continue;
+           
+            CellGroup g = (CellGroup) c;
             // escape some illegal chars which could be introduced during
             // previous book import
             String fn = g.getName().replace('\\', '_').replace('/', '_')

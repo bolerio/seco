@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.HierarchyListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -37,6 +38,8 @@ import javax.swing.SizeRequirements;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.MouseInputAdapter;
@@ -151,21 +154,16 @@ public class HtmlView extends HidableComponentView
 
                 public void focusLost(FocusEvent e)
                 {
+                    System.out.println("InnerHTMLEditor -focusLost: " + e.getComponent());
                     TopFrame.getInstance().showHTMLToolBar(false);
                 }
             });
 
-            addCaretListener(new CaretListener() {
-                public void caretUpdate(CaretEvent e)
-                {
-                    GUIHelper.getHTMLToolBar().showAttributes(
-                            InnerHTMLEditor.this, getCaretPosition());
-                }
-            });
-
+            
             setNavigationFilter(new CustomNavigationFilter());
         }
 
+        
         protected PopupListener getPopupListener()
         {
             if (popupListener == null) popupListener = new MyPopupListener();

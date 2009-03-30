@@ -217,6 +217,7 @@ public class EvaluationContext
         // Save some "out of context", global bindings 
         Object nb = this.runtimeContext.getBindings().get("notebook");
         Object desktop = this.runtimeContext.getBindings().get("desktop");
+        Object canvas = this.runtimeContext.getBindings().get("canvas");
         
         this.runtimeContext.getBindings().clear();
         this.initReflectiveBindings();
@@ -225,6 +226,7 @@ public class EvaluationContext
         // by the old class loader? hmm, rebooting won't be so straighforward.
         this.runtimeContext.getBindings().put("notebook", nb);
         this.runtimeContext.getBindings().put("desktop", desktop);
+        this.runtimeContext.getBindings().put("canvas", canvas);
         
         // If the reboot is triggered through scripting, then we need to make sure
         // not to use the current classloader as the parent of the newly created one.

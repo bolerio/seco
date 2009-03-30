@@ -121,13 +121,17 @@ public class PiccoloTransferHandler extends TransferHandler
                }
            }
         }
-        if(support.getComponent() == canvas)
-            return false;
         SecoTransferable.Data data = 
             (SecoTransferable.Data) support.getTransferable().getTransferData(tabFlavor);
         boolean move = (support.getDropAction() == MOVE);
         if (move)
         {
+            if(support.getComponent() == canvas)
+            {
+                CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+                if(top.indexOf(data.getHandle()) > -1) 
+                   return false;
+            }
             add_to_top_group(data.getHandle(), pt);
         }
         return true;

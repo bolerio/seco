@@ -763,7 +763,7 @@ public class GUIHelper
         mi.addActionListener(new ParseTreeAction());
         menu.add(mi);
         mi = new JMenuItem("Top Tree");
-        mi.addActionListener(new CellTreeAction());
+        mi.addActionListener(new TopCellTreeAction());
         menu.add(mi);
         return menu;
     }

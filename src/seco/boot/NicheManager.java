@@ -219,11 +219,6 @@ public class NicheManager
     	graph.add(new DefaultVisual(typeHandle, visualHandle));
     	graph.add(new AvailableVisual(typeHandle, visualHandle));
     	
-    	typeHandle = CellType.HGHANDLE;// 	    graph.getTypeSystem().getTypeHandle(CellGroupMember.class);
-        visualHandle = NBUIVisual.getHandle();
-        graph.add(new DefaultVisual(typeHandle, visualHandle));
-        graph.add(new AvailableVisual(typeHandle, visualHandle));
-        
         typeHandle = CellGroupType.HGHANDLE;
         visualHandle = NBUIVisual.getHandle();
         graph.add(new DefaultVisual(typeHandle, visualHandle));
