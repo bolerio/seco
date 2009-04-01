@@ -488,7 +488,7 @@ public class NotebookEditorKit extends StyledEditorKit
             redo.updateRedoState(ui.getUndoManager());
         }
 
-        void updateUndoState(UndoManager undo)
+       public void updateUndoState(UndoManager undo)
         {
             if (undo.canUndo())
             {
@@ -520,7 +520,7 @@ public class NotebookEditorKit extends StyledEditorKit
             undo.updateUndoState(ui.getUndoManager());
         }
 
-        void updateRedoState(UndoManager undo)
+        public void updateRedoState(UndoManager undo)
         {
             if (undo.canRedo())
             {

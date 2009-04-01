@@ -7,12 +7,12 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+
 import seco.ThisNiche;
-import seco.notebook.GUIHelper;
 import seco.notebook.NotebookUI;
-import seco.notebook.html.HTMLEditor;
 import seco.things.CellGroup; 
-import sun.awt.AppContext;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolox.pswing.PSwing;
 import edu.umd.cs.piccolox.swing.PScrollPane;
@@ -21,10 +21,12 @@ public class PiccoloFrame extends TopFrame
 {
 	private static final long serialVersionUID = 6929648456637555149L;
 	private PiccoloCanvas canvas;
-
+    private CaretListener caretL; 
+    
     PiccoloFrame() throws HeadlessException
     {
         super();
+        caretL = new CListener();
     }
 
     protected void initFrame()
@@ -43,7 +45,7 @@ public class PiccoloFrame extends TopFrame
  
     public void showHTMLToolBar(boolean show_or_hide)
     {
-       GUIHelper.getHTMLToolBar().setEnabled(true);//show_or_hide);
+       GUIHelper.getHTMLToolBar().setEnabled(show_or_hide);
     }
     
     
@@ -67,6 +69,19 @@ public class PiccoloFrame extends TopFrame
     }
     
     
+    public CaretListener getCaretListener()
+    {
+        return caretL;
+    }
+    
+    private static class CListener implements CaretListener
+    {
+        public void caretUpdate(CaretEvent e)
+        {
+            NotebookUI.setFocusedHTMLEditor(null);
+            TopFrame.getInstance().showHTMLToolBar(false);
+        }
+    }
     /**
      * @param args
      */

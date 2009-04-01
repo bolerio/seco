@@ -166,7 +166,8 @@ public class RubyCompletionProvider implements CompletionProvider
 				for (Object key : t.getMethods().keySet())
 				{
 					DynamicMethod m = (DynamicMethod) t.getMethods().get(key);
-					if (!m.getVisibility().isPublic()) continue;
+					if (m.getVisibility().isPrivate() || 
+					        m.getVisibility().isProtected()) continue;
 					JavaResultItem item = new RubyMethodResultItem(
 							(String) key, "void");
 					item.setSubstituteOffset(queryCaretOffset);

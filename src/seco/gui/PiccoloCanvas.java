@@ -17,7 +17,6 @@ import seco.events.EvalCellEvent;
 import seco.gui.layout.LayoutHandler;
 import seco.gui.piccolo.PToolTipHandler;
 import seco.notebook.OutputCellDocument;
-import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.things.Cell;

@@ -16,10 +16,10 @@ import javax.swing.*;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
 import seco.gui.StandaloneFrame;
 import seco.gui.TopFrame;
 import seco.notebook.AppConfig;
-import seco.notebook.GUIHelper;
 import seco.things.CellGroup;
 
 

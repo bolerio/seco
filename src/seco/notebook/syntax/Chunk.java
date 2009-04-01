@@ -121,7 +121,7 @@ public class Chunk extends Token implements TabExpander
 						//if (part0 < 0) part0 = 0;
 						//gfx.drawString(chunks.str.substring(part0, part),
 						//		(int) (x + _x), (int) y);
-					} else if(chunks.offset < start)
+					} else if(chunks.offset > -1 && chunks.offset < start)
 					{
 						int part = start - chunks.offset; 
 						String rem = chunks.str.substring(part);

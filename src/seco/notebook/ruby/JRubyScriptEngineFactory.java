@@ -29,147 +29,125 @@ package seco.notebook.ruby;
 import javax.script.*;
 import java.util.*;
 
-public class JRubyScriptEngineFactory implements ScriptEngineFactory
-{
-	public String getEngineName()
-	{
-		return "jruby";
-	}
+import javax.script.*;
+import java.util.*;
 
-	public String getEngineVersion()
-	{
-		return "1.0";
-	}
+public class JRubyScriptEngineFactory implements ScriptEngineFactory {
+    public String getEngineName() { 
+        return "JRuby Engine";
+    }
 
-	public List<String> getExtensions()
-	{
-		return extensions;
-	}
+    public String getEngineVersion() {
+        return "1.1.6";
+    }
 
-	public String getLanguageName()
-	{
-		return "ruby";
-	}
+    public List<String> getExtensions() {
+        return extensions;
+    }
 
-	public String getLanguageVersion()
-	{
-		return "1.8.4";
-	}
+    public String getLanguageName() {
+        return "ruby";
+    }
 
-	public String getMethodCallSyntax(String obj, String m, String... args)
-	{
-		StringBuilder buf = new StringBuilder();
-		buf.append('$');
-		buf.append(obj);
-		buf.append('.');
-		buf.append(m);
-		buf.append('(');
-		if (args.length != 0)
-		{
-			int i = 0;
-			for (; i < args.length - 1; i++)
-			{
-				buf.append('$');
-				buf.append(args[i] + ", ");
-			}
-			buf.append('$');
-			buf.append(args[i]);
-		}
-		buf.append(')');
-		return buf.toString();
-	}
+    public String getLanguageVersion() {
+        return "1.8.6";
+    }
 
-	public List<String> getMimeTypes()
-	{
-		return mimeTypes;
-	}
+    public String getMethodCallSyntax(String obj, String m, String... args) {
+        StringBuilder buf = new StringBuilder();
+        buf.append('$');
+        buf.append(obj);
+        buf.append('.');
+        buf.append(m);
+        buf.append('(');
+        if (args.length != 0) {
+            int i = 0;
+            for (; i < args.length - 1; i++) {
+                buf.append('$');
+                buf.append(args[i] + ", ");
+            }
+            buf.append('$');
+            buf.append(args[i]);
+        }
+        buf.append(')');
+        return buf.toString();
+    }
 
-	public List<String> getNames()
-	{
-		return names;
-	}
+    public List<String> getMimeTypes() {
+        return mimeTypes;
+    }
 
-	public String getOutputStatement(String toDisplay)
-	{
-		StringBuilder buf = new StringBuilder();
-		buf.append("print('");
-		int len = toDisplay.length();
-		for (int i = 0; i < len; i++)
-		{
-			char ch = toDisplay.charAt(i);
-			switch (ch)
-			{
-			case '\'':
-				buf.append("\\\'");
-				break;
-			case '\\':
-				buf.append("\\\\");
-				break;
-			default:
-				buf.append(ch);
-				break;
-			}
-		}
-		buf.append("')");
-		return buf.toString();
-	}
+    public List<String> getNames() {
+        return names;
+    }
 
-	public String getParameter(String key)
-	{
-		if (key.equals(ScriptEngine.ENGINE))
-		{
-			return getEngineName();
-		} else if (key.equals(ScriptEngine.ENGINE_VERSION))
-		{
-			return getEngineVersion();
-		} else if (key.equals(ScriptEngine.NAME))
-		{
-			return getEngineName();
-		} else if (key.equals(ScriptEngine.LANGUAGE))
-		{
-			return getLanguageName();
-		} else if (key.equals(ScriptEngine.LANGUAGE_VERSION))
-		{
-			return getLanguageVersion();
-		} else if (key.equals("THREADING"))
-		{
-			return "MULTITHREADED";
-		} else
-		{
-			return null;
-		}
-	}
+    public String getOutputStatement(String toDisplay) {
+        StringBuilder buf = new StringBuilder();
+        buf.append("print('");
+        int len = toDisplay.length();
+        for (int i = 0; i < len; i++) {
+            char ch = toDisplay.charAt(i);
+            switch (ch) {
+            case '\'':
+                buf.append("\\\'");
+                break;
+            case '\\':
+                buf.append("\\\\");
+                break;
+            default:
+                buf.append(ch);
+                break;
+            }
+        }
+        buf.append("')");
+        return buf.toString();
+    }
 
-	public String getProgram(String... statements)
-	{
-		StringBuilder buf = new StringBuilder();
-		for (int i = 0; i < statements.length; i++)
-		{
-			buf.append(statements[i]);
-			buf.append(";\n");
-		}
-		return buf.toString();
-	}
+    public String getParameter(String key) {
+        if (key.equals(ScriptEngine.ENGINE)) {
+            return getEngineName();
+        } else if (key.equals(ScriptEngine.ENGINE_VERSION)) {
+            return getEngineVersion();
+        } else if (key.equals(ScriptEngine.NAME)) {
+            return getEngineName();
+        } else if (key.equals(ScriptEngine.LANGUAGE)) {
+            return getLanguageName();
+        } else if (key.equals(ScriptEngine.LANGUAGE_VERSION)) {
+            return getLanguageVersion();
+        } else if (key.equals("THREADING")) {
+            return "MULTITHREADED";
+        } else {
+            return null;
+        }
+    } 
 
-	public ScriptEngine getScriptEngine()
-	{
-		JRubyScriptEngine engine = new JRubyScriptEngine();
-		engine.setFactory(this);
-		return engine;
-	}
-	private static List<String> names;
-	private static List<String> extensions;
-	private static List<String> mimeTypes;
-	static
-	{
-		names = new ArrayList<String>(2);
-		names.add("jruby");
-		names.add("ruby");
-		names = Collections.unmodifiableList(names);
-		extensions = new ArrayList<String>(1);
-		extensions.add("rb");
-		extensions = Collections.unmodifiableList(extensions);
-		mimeTypes = new ArrayList<String>(0);
-		mimeTypes = Collections.unmodifiableList(mimeTypes);
-	}
+    public String getProgram(String... statements) {
+        StringBuilder buf = new StringBuilder();
+        for (int i = 0; i < statements.length; i++) {
+            buf.append(statements[i]);
+            buf.append(";\n");
+        }
+        return buf.toString();
+    }
+
+    public ScriptEngine getScriptEngine() {
+        JRubyScriptEngine engine = new JRubyScriptEngine();
+      engine.setFactory(this);
+        return engine;
+    }
+
+    private static List<String> names;
+    private static List<String> extensions;
+    private static List<String> mimeTypes;
+    static {
+        names = new ArrayList<String>(2);
+        names.add("jruby");
+        names.add("ruby");
+        names = Collections.unmodifiableList(names);
+        extensions = new ArrayList<String>(1);
+        extensions.add("rb");
+        extensions = Collections.unmodifiableList(extensions);
+        mimeTypes = new ArrayList<String>(0);
+        mimeTypes = Collections.unmodifiableList(mimeTypes);
+    }
 }

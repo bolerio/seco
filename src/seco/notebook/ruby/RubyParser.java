@@ -15,11 +15,12 @@ import org.jruby.Ruby;
 import org.jruby.ast.ConstNode;
 import org.jruby.ast.Node;
 import org.jruby.ast.RootNode;
-import org.jruby.lexer.yacc.SourcePosition;
+import org.jruby.lexer.yacc.IDESourcePosition;
 import org.jruby.parser.Parser;
 import org.jruby.parser.StaticScope;
 import org.jruby.runtime.DynamicScope;
 import org.jruby.runtime.ThreadContext;
+import org.jruby.runtime.scope.ManyVarsDynamicScope;
 
 import seco.notebook.storage.ClassRepository;
 import seco.notebook.syntax.ScriptSupport;
@@ -97,12 +98,12 @@ public class RubyParser extends NBParser
 		System.out.println("evalType: " + name + ":" + astRoot);
 		if(astRoot == null) return null;
 		StaticScope scope = astRoot.getStaticScope();
-		DynamicScope dyn = astRoot.getScope();
+		DynamicScope dyn = astRoot.getScope(); 
 		if(dyn == null)
-			dyn = new DynamicScope(scope, null);
-		Node node = new ConstNode(new SourcePosition(), name);
+			dyn = new ManyVarsDynamicScope(scope, null);
+		Node node = new ConstNode(new IDESourcePosition(), name);
 		ThreadContext ctx = runtime.getCurrentContext();
-		ctx.preRootNode(dyn);
+		ctx.preEvalScriptlet(dyn);
 		try{
 		   return engine.evalNode(node, new SimpleScriptContext());
 		 }catch(ScriptException ex){
@@ -147,7 +148,8 @@ public class RubyParser extends NBParser
 					// long start = System.currentTimeMillis();
 					nodes.clear();
 					astRoot = (RootNode)
-					      runtime.parse(r, "<unknown>", null, 0);
+					     // runtime.parse(r, "<unknown>", null, 0);
+					   runtime.parseEval(seg.toString(), "<unknown>", null, 0);
 					if (implicitExecutionOn)
 					{
 						ScriptContext scriptContext = engine.getContext();

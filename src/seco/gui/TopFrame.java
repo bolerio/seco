@@ -9,7 +9,6 @@ import javax.swing.event.CaretListener;
 
 import org.hypergraphdb.HGHandle;
 import seco.ThisNiche;
-import seco.notebook.GUIHelper;
 import seco.notebook.NotebookUI;
 import seco.notebook.util.Log;
 import seco.rtenv.RuntimeContext;

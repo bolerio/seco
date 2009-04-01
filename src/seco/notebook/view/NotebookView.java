@@ -100,5 +100,9 @@ public class NotebookView extends BoxView
 		return i;
 	}
 
-   
+    public Shape getChildAllocation(int index, Shape a) 
+    {
+        if(index < 0) return null;
+        return super.getChildAllocation(index, a);
+    }
 }

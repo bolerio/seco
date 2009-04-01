@@ -11,7 +11,6 @@ import org.hypergraphdb.HGPersistentHandle;
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EventHandler;
-import seco.notebook.GUIHelper;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;

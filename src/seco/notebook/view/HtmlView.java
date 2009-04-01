@@ -7,71 +7,34 @@
  */
 package seco.notebook.view;
 
-import static seco.notebook.ElementType.inputCellBox;
-
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.HierarchyListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.Action;
-import javax.swing.InputMap;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import javax.swing.SizeRequirements;
+
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.LineBorder;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
-import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.NavigationFilter;
 import javax.swing.text.Position;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.View;
 import javax.swing.text.Position.Bias;
-import javax.swing.text.html.CSS;
 
-import seco.gui.StandaloneFrame;
+import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
-import seco.notebook.ElementType;
-import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
-import seco.notebook.NotebookEditorKit;
 import seco.notebook.NotebookUI;
+import seco.notebook.NotebookDocument.UpdateAction;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.html.HTMLEditor;
-import seco.notebook.html.HTMLToolBar;
-import seco.notebook.html.HTMLUtils;
-import seco.notebook.html.MyHTMLEditorKit;
-import seco.notebook.html.Util;
-import seco.notebook.html.MyHTMLEditorKit.BaseAction;
-import seco.notebook.syntax.completion.HTMLDocView;
 import seco.things.Cell;
 import seco.things.CellUtils;
 
@@ -147,20 +110,36 @@ public class HtmlView extends HidableComponentView
                     NotebookUI ui = getNotebookUI();
                     if (ui == null) return;
                     ui.getSelectionManager().clearSelections();
-                    // .setCaretPosition(getElement().getStartOffset());
-                    TopFrame.getInstance().showHTMLToolBar(true);
+                    NotebookUI.setFocusedHTMLEditor(editor);
                     editor = InnerHTMLEditor.this;
+                    TopFrame.getInstance().showHTMLToolBar(true);
+                    // System.out.println("InnerHTMLEditor -focusGained: " + ui.getCaretPosition());
                 }
 
                 public void focusLost(FocusEvent e)
                 {
-                    System.out.println("InnerHTMLEditor -focusLost: " + e.getComponent());
-                    TopFrame.getInstance().showHTMLToolBar(false);
+                    NotebookDocument doc = (NotebookDocument) getElement().getDocument();
+                    try{
+                     doc.updateCell(getElement(), UpdateAction.syncronize);
+                    }catch(Exception ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                     //System.out.println("InnerHTMLEditor -focusLost: " + e.getOppositeComponent());
+                    //TopFrame.getInstance().showHTMLToolBar(false);
                 }
             });
-
             
-            setNavigationFilter(new CustomNavigationFilter());
+           addCaretListener(new CaretListener(){
+
+                public void caretUpdate(CaretEvent e)
+                {
+                    GUIHelper.getHTMLToolBar().showAttributes(editor, e.getDot());
+                }
+                
+            });
+
+           setNavigationFilter(new CustomNavigationFilter());
         }
 
         

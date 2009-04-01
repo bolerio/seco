@@ -15,7 +15,6 @@ import javax.swing.text.Element;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
-import seco.notebook.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookTransferHandler;
 import seco.things.CellGroup;

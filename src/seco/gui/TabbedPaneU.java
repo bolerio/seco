@@ -26,7 +26,6 @@ import org.wonderly.swing.tabs.TabCloseEvent;
 import org.wonderly.swing.tabs.TabCloseListener;
 
 import seco.ThisNiche;
-import seco.notebook.GUIHelper;
 import seco.notebook.NotebookUI;
 import seco.notebook.gui.CloseableDnDTabbedPane;
 import seco.notebook.gui.DialogDisplayer;
@@ -74,7 +73,8 @@ public class TabbedPaneU
         if (tp.getTabCount() == 0) 
             TopFrame.getInstance().setTitle("Seco");
         else
-            GUIHelper.updateFrameTitle();
+            GUIHelper.updateFrameTitle(
+                    getHandleAt(currentTP,currentTP.getSelectedIndex()));
     }
 
     private static int promptAndSaveDoc()
@@ -150,7 +150,8 @@ public class TabbedPaneU
                     String t = nd.getInputText();
                     ui.getDoc().setTitle(t);
                     currentTP.setTitleAt(currentTP.getSelectedIndex(), makeTabTitle(t));
-                    GUIHelper.updateFrameTitle();
+                    GUIHelper.updateFrameTitle(
+                            getHandleAt(currentTP,currentTP.getSelectedIndex()));
                 }
             }
         };
@@ -232,9 +233,10 @@ public class TabbedPaneU
             {
                JScrollPane comp =  (JScrollPane) c; 
                NotebookUI.setFocusedNotebookUI((NotebookUI) comp.getViewport().getView());
-               GUIHelper.updateFrameTitle();
             }else
                 NotebookUI.setFocusedNotebookUI(null);
+            GUIHelper.updateFrameTitle(
+                    getHandleAt(tabbedPane,tabbedPane.getSelectedIndex()));
         }
     }
 

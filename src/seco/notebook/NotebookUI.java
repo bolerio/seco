@@ -115,7 +115,16 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     protected int lastCaretEnd = -1;
 
     protected static NBFocusListener nbFocusListener = new NBFocusListener();
-
+    protected static HTMLEditor html_editor;
+    public static void setFocusedHTMLEditor(HTMLEditor e)
+    {
+        html_editor = e;
+    }
+    public static HTMLEditor getFocusedHTMLEditor()
+    {
+        return html_editor;
+    }
+    
     public NotebookUI(HGHandle book)
     {
         this(book, ThisNiche.getContextFor(book));
@@ -301,7 +310,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             super.replaceSelection(content);
     }
 
-    UndoManager getUndoManager()
+    public UndoManager getUndoManager()
     {
         return undo;
     }
@@ -861,7 +870,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         undo.discardAllEdits();
     }
 
-    JTree getParseTree(int offset)
+    public JTree getParseTree(int offset)
     {
         ScriptSupport sup = getDoc().getScriptSupport(offset);
         if (sup != null && sup.getParser() != null)

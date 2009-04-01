@@ -1,4 +1,4 @@
-package seco.notebook;
+package seco.gui;
 
 import static seco.notebook.Actions.COPY;
 import static seco.notebook.Actions.CUT;
@@ -51,19 +51,19 @@ import com.jgoodies.looks.plastic.theme.DesertBluer;
 
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
-import seco.gui.CellContainerVisual;
-import seco.gui.PSwingNode;
-import seco.gui.PiccoloCanvas;
-import seco.gui.TabbedPaneU;
-import seco.gui.TabbedPaneVisual;
-import seco.gui.TopFrame;
-import seco.gui.VisualAttribs;
-import seco.gui.VisualsManager;
 import seco.gui.layout.DRect;
 import seco.gui.layout.DValue;
 import seco.gui.layout.DefaultLayoutHandler;
 import seco.gui.layout.LayoutHandler;
 import seco.gui.layout.RefPoint;
+import seco.notebook.ActionManager;
+import seco.notebook.Actions;
+import seco.notebook.AppConfig;
+import seco.notebook.NotebookCellsTree;
+import seco.notebook.NotebookEditorKit;
+import seco.notebook.NotebookTreeModel;
+import seco.notebook.NotebookUI;
+import seco.notebook.ScriptletAction;
 import seco.notebook.gui.DialogDisplayer;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.NotifyDescriptor;
@@ -659,17 +659,18 @@ public class GUIHelper
         }
     }
 
-    public static void updateFrameTitle()
+    public static void updateFrameTitle(HGHandle h)
     {
-        NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-        if (ui == null) return;
-        CellGroupMember book = ui.getDoc().getBook();
+       // NotebookUI ui = NotebookUI.getFocusedNotebookUI();
+       // if (ui == null) return;
+        CellGroupMember book = ThisNiche.hg.get(h);//ui.getDoc().getBook();
         String name = (book instanceof CellGroup) ? ((CellGroup) book)
                 .getName() : "Cell";
         RuntimeContext rcInstance = (RuntimeContext) ThisNiche.hg.get(
                 TopFrame.getInstance().getCurrentRuntimeContext());
         String title = rcInstance.getName() + " " + name;
         TopFrame.getInstance().setTitle(title);
+        TopFrame.getInstance().showHTMLToolBar(false);
     }
 
     // ensure that tabbedPane is presented in Canvas

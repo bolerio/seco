@@ -7,9 +7,12 @@
  */
 package seco.notebook.html;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -38,7 +41,10 @@ import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTML;
 
 import seco.gui.TopFrame;
+import seco.notebook.NotebookUI;
 import seco.notebook.gui.ToolbarButton;
+import seco.notebook.view.HtmlView.InnerHTMLEditor;
+import sun.awt.AppContext;
 
 import static javax.swing.text.html.HTML.Tag.*;
 
@@ -73,10 +79,13 @@ public class HTMLToolBar extends JToolBar
     private ToolbarButton insRowButton;
     private ToolbarButton insColButton;
 
+    // ////////////////////////
+
     public HTMLToolBar()
     {
         super(HTMLEditor.TOOLBAR_NAME);
-        //init();
+        // init();
+
     }
 
     public void init()
@@ -86,33 +95,36 @@ public class HTMLToolBar extends JToolBar
                 .getActionByName(MyHTMLEditorKit.fontAction), "Font"));
         Action act = htmlKit.getActionByName("font-bold");
         act.putValue(Action.SMALL_ICON, HTMLUtils.resolveIcon("Bold16.gif"));
-        bBold = new MyToggleButton(act, "Bold font");
+        bBold = new MyToggleButton("bBold", act, "Bold font");
         add(bBold);
         act = htmlKit.getActionByName("font-italic");
         act.putValue(Action.SMALL_ICON, HTMLUtils.resolveIcon("Italic16.gif"));
-        bItalic = new MyToggleButton(act, "Italic font");
+        bItalic = new MyToggleButton("bItalic", act, "Italic font");
         add(bItalic);
         act = htmlKit.getActionByName("font-underline");
-        act.putValue(Action.SMALL_ICON, HTMLUtils.resolveIcon("Underline16.gif"));
-        bUnderline = new MyToggleButton(act, "Underline font");
+        act.putValue(Action.SMALL_ICON, HTMLUtils
+                .resolveIcon("Underline16.gif"));
+        bUnderline = new MyToggleButton("bUnderline", act, "Underline font");
         add(bUnderline);
-        bSubscript = new MyToggleButton(htmlKit
+        bSubscript = new MyToggleButton("bSubscript", htmlKit
                 .getActionByName(MyHTMLEditorKit.subscriptAction), "Subscript");
         add(bSubscript);
-        bSuperscript = new MyToggleButton(htmlKit
+        bSuperscript = new MyToggleButton("bSuperscript", htmlKit
                 .getActionByName(MyHTMLEditorKit.superscriptAction),
                 "Superscript");
         add(bSuperscript);
-        bStrike = new MyToggleButton(htmlKit
+        bStrike = new MyToggleButton("bStrike", htmlKit
                 .getActionByName(MyHTMLEditorKit.strikeAction), "Strike");
         add(bStrike);
 
         linkButton = new ToolbarButton(htmlKit
                 .getActionByName(MyHTMLEditorKit.linkAction), "Link");
+        linkButton.setName("linkButton");
         add(linkButton);
 
         imageButton = new ToolbarButton(htmlKit
                 .getActionByName(MyHTMLEditorKit.imageAction), "Image");
+        imageButton.setName("imageButton");
         add(imageButton);
         add(new ToolbarButton(htmlKit
                 .getActionByName(MyHTMLEditorKit.insertSymbolAction),
@@ -121,29 +133,34 @@ public class HTMLToolBar extends JToolBar
         cbStyles = new MyComboBox(STYLES);
         cbStyles.setMaximumSize(new Dimension(45, 23));
         cbStyles.setRequestFocusEnabled(false);
+        cbStyles.setName("cbStyles");
         add(cbStyles);
-        AbstractAction lst = new StylesAction();  
+        AbstractAction lst = new StylesAction();
         cbStyles.setAction(lst);
-        bUnorderedList = new MyToggleButton(htmlKit
+        bUnorderedList = new MyToggleButton("bUnorderedList", htmlKit
                 .getActionByName(MyHTMLEditorKit.unorderedListAction),
                 "Unordered List");
         add(bUnorderedList);
-        bOrderedList = new MyToggleButton(htmlKit
+        bOrderedList = new MyToggleButton("bOrderedList", htmlKit
                 .getActionByName(MyHTMLEditorKit.orderedListAction),
                 "Ordered List");
         add(bOrderedList);
         addSeparator();
         ButtonGroup alignGroup = new ButtonGroup();
-        bAlignLeft = new MyToggleButton(htmlKit.getActionByName("left"));
+        bAlignLeft = new MyToggleButton("bAlignLeft", htmlKit
+                .getActionByName("left"), "Align Left");
         add(bAlignLeft);
         alignGroup.add(bAlignLeft);
-        bAlignCenter = new MyToggleButton(htmlKit.getActionByName("center"));
+        bAlignCenter = new MyToggleButton("bAlignCenter", htmlKit
+                .getActionByName("center"), "Align Center");
         add(bAlignCenter);
         alignGroup.add(bAlignCenter);
-        bAlignRight = new MyToggleButton(htmlKit.getActionByName("right"));
+        bAlignRight = new MyToggleButton("bAlignRight", htmlKit
+                .getActionByName("right"), "bAlign Right");
         add(bAlignRight);
         alignGroup.add(bAlignRight);
-        bAlignJustify = new MyToggleButton(htmlKit.getActionByName("justify"));
+        bAlignJustify = new MyToggleButton("bAlignJustify", htmlKit
+                .getActionByName("justify"), "Align Justify");
         add(bAlignJustify);
         alignGroup.add(bAlignJustify);
 
@@ -165,18 +182,127 @@ public class HTMLToolBar extends JToolBar
         fmtTableButton = new ToolbarButton(htmlKit
                 .getActionByName(MyHTMLEditorKit.formatTableAction),
                 "Format Table");
+        fmtTableButton.setName("fmtTableButton");
         add(fmtTableButton);
         insRowButton = new ToolbarButton(htmlKit
                 .getActionByName(MyHTMLEditorKit.insertTableRowAction),
                 "Insert Table Row");
+        insRowButton.setName("insRowButton");
         add(insRowButton);
         insColButton = new ToolbarButton(htmlKit
                 .getActionByName(MyHTMLEditorKit.insertTableColAction),
                 "Insert Table Column");
+        insColButton.setName("insColButton"); 
         add(insColButton);
 
         // add( new ToolbarButton(htmlKit.getActionByName(
         // MyHTMLEditorKit.sourceAction), "Go to Source"););
+    }
+    
+    public void showAttributes(HTMLEditor editor, int p)
+    {
+        // TODO: change this method, because buttons are not persistent
+        //if (TopFrame.PICCOLO) return;
+        if(editor == null) return;
+        AttributeSet attr = editor.getDoc().getCharacterElement(p)
+                .getAttributes();
+        updateToggle(bBold, "bBold", StyleConstants.isBold(attr));
+        updateToggle(bItalic, "bItalic", StyleConstants.isItalic(attr));
+        updateToggle(bUnderline, "bUnderline",StyleConstants.isUnderline(attr));
+        updateToggle(bStrike, "bStrike",StyleConstants.isStrikeThrough(attr));
+        updateToggle(bSubscript, "bSubscript",StyleConstants.isSubscript(attr));
+        updateToggle(bSuperscript, "bSuperscript",StyleConstants.isSuperscript(attr));
+
+        boolean link = ((editor.getSelectionEnd() > editor.getSelectionStart()));
+        updateButton(linkButton, "linkButton", link);
+
+        String align = (String) attr
+                .getAttribute(javax.swing.text.html.HTML.Attribute.ALIGN);
+        if (align == null)
+            align = "" + attr.getAttribute(CSS.Attribute.TEXT_ALIGN);
+        if (align != null)
+        {// left, right, center, justify
+            updateToggle(bAlignCenter, "bAlignCenter",align.equalsIgnoreCase("center"));
+            updateToggle(bAlignLeft, "bAlignLeft",align.equalsIgnoreCase("left"));
+            updateToggle(bAlignRight, "bAlignRight",align.equalsIgnoreCase("right"));
+            updateToggle(bAlignJustify, "bAlignJustify",align.equalsIgnoreCase("justify"));
+        }
+        else
+        {
+            updateToggle(bAlignCenter,"bAlignCenter",false);
+            updateToggle(bAlignLeft,"bAlignLeft",false);
+            updateToggle(bAlignRight,"bAlignRight",false);
+            updateToggle(bAlignJustify,"bAlignJustify",false);
+        }
+
+        Element ep = editor.getDoc().getParagraphElement(p);
+        HTML.Tag tag = HTMLUtils.getName(ep);
+        int index = -1;
+        if (tag != null)
+        {
+            for (int k = 0; k < STYLES.length; k++)
+            {
+                if (STYLES[k].equals(tag))
+                {
+                    index = k;
+                    break;
+                }
+            }
+        }
+        cbStyles =(cbStyles != null) ? cbStyles : 
+            (MyComboBox) getComponent("cbStyles");
+        cbStyles.setSelectedIndexEx(index);
+        updateToggle(bUnorderedList, "bUnorderedList", HTMLUtils.isInTag(editor, UL));
+        updateToggle(bOrderedList, "bOrderedList", HTMLUtils.isInTag(editor, OL));
+        MyHTMLEditorKit htmlKit = new MyHTMLEditorKit();
+        bUnorderedList = (bUnorderedList == null) ?
+                getMyToggleButton("bUnorderedList"): bUnorderedList;
+        bOrderedList = (bOrderedList == null) ?
+                        getMyToggleButton("bOrderedList"): bOrderedList;        
+        if(bUnorderedList != null)
+           htmlKit.getActionByName(MyHTMLEditorKit.listFormatAction).setEnabled(
+                bUnorderedList.isSelected() 
+                || bOrderedList.isSelected());
+
+        boolean inTable = HTMLUtils.isInTag(editor, TABLE);
+        updateButton(fmtTableButton, "fmtTableButton", inTable);
+        updateButton(insRowButton, "insRowButton", inTable);
+        updateButton(insColButton, "insColButton", inTable);
+
+        htmlKit.getActionByName(MyHTMLEditorKit.deleteTableRowAction)
+                .setEnabled(inTable);
+        htmlKit.getActionByName(MyHTMLEditorKit.deleteTableColAction)
+                .setEnabled(inTable);
+    }
+    
+    private void updateToggle(MyToggleButton but, String name, boolean b)
+    {
+        if(but == null)
+            but = getMyToggleButton(name);
+        if(but != null)
+            but.setSelectedEx(b);
+    }
+    
+    private void updateButton(ToolbarButton but, String name, boolean b)
+    {
+        if(but == null)
+            but = (ToolbarButton) getComponent(name);
+        if(but != null)
+            but.setEnabled(b);
+    }
+    
+    private MyToggleButton getMyToggleButton(String name)
+    {
+       return (MyToggleButton) getComponent(name);
+        
+    }
+    
+    private Component getComponent(String name)
+    {
+        for(int i = 0; i < getComponentCount(); i++)
+            if(name.equals(getComponent(i).getName()))
+                return getComponent(i);
+        return null;
     }
 
     private static HTMLEditor getEditor(ActionEvent e)
@@ -196,74 +322,9 @@ public class HTMLToolBar extends JToolBar
         return HTMLEditor.editor;
     }
 
-    public void showAttributes(HTMLEditor editor, int p)
-    {
-        //TODO: change this method, because buttons are not persistent
-        if(TopFrame.PICCOLO) return;
-            
-        AttributeSet attr = editor.getDoc().getCharacterElement(p)
-                .getAttributes();
-        bBold.setSelectedEx(StyleConstants.isBold(attr));
-        bItalic.setSelectedEx(StyleConstants.isItalic(attr));
-        bUnderline.setSelectedEx(StyleConstants.isUnderline(attr));
-        bStrike.setSelectedEx(StyleConstants.isStrikeThrough(attr));
-        bSubscript.setSelectedEx(StyleConstants.isSubscript(attr));
-        bSuperscript.setSelectedEx(StyleConstants.isSuperscript(attr));
 
-        boolean link = ((editor.getSelectionEnd() > editor.getSelectionStart()));
-        linkButton.setEnabled(link);
-
-        String align = (String) attr
-                .getAttribute(javax.swing.text.html.HTML.Attribute.ALIGN);
-        if (align == null) align = ""
-                + attr.getAttribute(CSS.Attribute.TEXT_ALIGN);
-        if (align != null)
-        {// left, right, center, justify
-            bAlignCenter.setSelectedEx(align.equalsIgnoreCase("center"));
-            bAlignLeft.setSelectedEx(align.equalsIgnoreCase("left"));
-            bAlignRight.setSelectedEx(align.equalsIgnoreCase("right"));
-            bAlignJustify.setSelectedEx(align.equalsIgnoreCase("justify"));
-        } else
-        {
-            bAlignCenter.setSelectedEx(false);
-            bAlignLeft.setSelectedEx(false);
-            bAlignRight.setSelectedEx(false);
-            bAlignJustify.setSelectedEx(false);
-        }
-
-        Element ep = editor.getDoc().getParagraphElement(p);
-        HTML.Tag tag = HTMLUtils.getName(ep);
-        int index = -1;
-        if (tag != null)
-        {
-            for (int k = 0; k < STYLES.length; k++)
-            {
-                if (STYLES[k].equals(tag))
-                {
-                    index = k;
-                    break;
-                }
-            }
-        }
-        cbStyles.setSelectedIndexEx(index);
-        bUnorderedList.setSelectedEx(HTMLUtils.isInTag(editor, UL));
-        bOrderedList.setSelectedEx(HTMLUtils.isInTag(editor, OL));
-        MyHTMLEditorKit htmlKit = new MyHTMLEditorKit();
-        htmlKit.getActionByName(MyHTMLEditorKit.listFormatAction).setEnabled(
-                bUnorderedList.isSelected() || bOrderedList.isSelected());
-
-        boolean inTable = HTMLUtils.isInTag(editor, TABLE);
-        fmtTableButton.setEnabled(inTable);
-        insRowButton.setEnabled(inTable);
-        insColButton.setEnabled(inTable);
-
-        htmlKit.getActionByName(MyHTMLEditorKit.deleteTableRowAction)
-                .setEnabled(inTable);
-        htmlKit.getActionByName(MyHTMLEditorKit.deleteTableColAction)
-                .setEnabled(inTable);
-    }
-
-    public static class MyToggleButton extends JToggleButton implements MouseListener
+    public static class MyToggleButton extends JToggleButton implements
+            MouseListener
     {
         private final static Dimension buttonSize = new Dimension(24, 24);
 
@@ -288,24 +349,25 @@ public class HTMLToolBar extends JToolBar
             addMouseListener(this);
         }
 
-        public MyToggleButton(Action a)
-        {
-            this(a, (String) a.getValue(Action.SHORT_DESCRIPTION));
-        }
+        // public MyToggleButton(Action a)
+        // {
+        // this(a, (String) a.getValue(Action.SHORT_DESCRIPTION));
+        // }
 
-        public MyToggleButton(Action a, String tip)
+        public MyToggleButton(String name, Action a, String tip)
         {
             super(a);
+            this.setName(name);
             setToolTipText(tip);
             init();
             addMouseListener(this);
         }
 
-        public MyToggleButton(Action a, String tip, ImageIcon img)
-        {
-            this(a, tip);
-            a.putValue(Action.SMALL_ICON, img);
-        }
+        // public MyToggleButton(Action a, String tip, ImageIcon img)
+        // {
+        // this(a, tip);
+        // a.putValue(Action.SMALL_ICON, img);
+        // }
 
         public boolean isFocusable()
         {
@@ -384,7 +446,7 @@ public class HTMLToolBar extends JToolBar
             m_border = m_inactive;
             setBorder(m_inactive);
         }
-        
+
         public void setText(String text)
         {
             super.setText("");
@@ -447,7 +509,7 @@ public class HTMLToolBar extends JToolBar
         public void actionPerformed(ActionEvent e)
         {
             if (!isEnabled()) return;
-            if(!(e.getSource() instanceof MyComboBox)) return;
+            if (!(e.getSource() instanceof MyComboBox)) return;
             MyComboBox cbStyles = (MyComboBox) e.getSource();
             HTML.Tag style = (HTML.Tag) cbStyles.getSelectedItem();
             if (style == null) return;
@@ -459,4 +521,5 @@ public class HTMLToolBar extends JToolBar
         }
 
     }
+
 }

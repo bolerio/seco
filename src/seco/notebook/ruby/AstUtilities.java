@@ -35,7 +35,7 @@ import org.jruby.ast.SymbolNode;
 import org.jruby.ast.VCallNode;
 import org.jruby.ast.types.INameNode;
 import org.jruby.lexer.yacc.ISourcePosition;
-import org.jruby.lexer.yacc.SourcePosition;
+//import org.jruby.lexer.yacc.SourcePosition;
 import org.jruby.parser.StaticScope;
 import org.jruby.runtime.DynamicScope;
 import org.jruby.runtime.ThreadContext;

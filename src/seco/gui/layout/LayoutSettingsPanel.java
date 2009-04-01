@@ -13,11 +13,11 @@ package seco.gui.layout;
 
 import edu.umd.cs.piccolo.util.PBounds;
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
 import seco.gui.TopFrame;
 import seco.gui.VisualAttribs;
-import seco.notebook.GUIHelper;
 import seco.things.CellGroupMember;
 
 /**

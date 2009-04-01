@@ -13,7 +13,6 @@ import java.awt.GridLayout;
 import javax.swing.JPanel;
 import javax.swing.event.CaretListener;
 
-import seco.notebook.GUIHelper;
 import seco.notebook.StatusBar;
 import seco.notebook.gui.AKDockLayout;
 
