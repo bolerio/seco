@@ -11,7 +11,12 @@ import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery;
 import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.query.*;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -56,6 +61,27 @@ public class U
         if(home != null && home.startsWith(QUOTE))
            home = unquote(home);
         return home;
+    }
+    
+    public static String getResourceContentAsString(String name)
+    {
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        InputStream in = loader.getResourceAsStream(name);
+        if (in == null)
+            return null;
+        try
+        {
+            InputStreamReader reader = new InputStreamReader(in);
+            StringBuffer result = new StringBuffer();
+            char [] buf = new char[1024];
+            for (int c = reader.read(buf); c > -1; c = reader.read(buf))
+                result.append(buf);
+            return result.toString();
+        }
+        catch (IOException ex)
+        {
+            throw new RuntimeException(ex);
+        }
     }
     
     /**
@@ -126,23 +152,23 @@ public class U
         }
     };
     
-    public static void apply(Lambda f, Collection c)
+    public static void apply(Lambda f, Collection<?> c)
     {
         apply(f, c.iterator());
     }
     
-    public static void apply(Lambda f, Iterator i)
+    public static void apply(Lambda f, Iterator<?> i)
     {
         while (i.hasNext())
             f.E(i.next());
     }
     
-    public static void apply(Lambda f, HGQuery query)
+    public static void apply(Lambda f, HGQuery<?> query)
     {
         apply(f, query.execute());
     }
     
-    public static HGHandle hgType(Class c)
+    public static HGHandle hgType(Class<?> c)
     {
         return ThisNiche.getHyperGraph().getTypeSystem().getTypeHandle(c);
     }
@@ -152,9 +178,19 @@ public class U
         return ThisNiche.getHyperGraph().find(c);
     }
     
-    public static Object hget(HGHandle h)
+    public static <T> T hget(HGHandle h)
     {
         return ThisNiche.getHyperGraph().get(h);
+    }
+
+    public static <T> List<T> hget(HGQueryCondition cond)
+    {
+        return hg.getAll(ThisNiche.getHyperGraph(), cond);
+    }
+    
+    public static <T> T hgetOne(HGQueryCondition cond)
+    {
+        return hg.getOne(ThisNiche.getHyperGraph(), cond);
     }
     
     public static HGHandle hhandle(Object x)

@@ -5,9 +5,23 @@ import org.hypergraphdb.HGPlainLink;
 
 import seco.ThisNiche;
 
-
-
-
+/**
+ * <p>
+ * Represents an event subscription for a particular event type. The 
+ * subscription is always bound to a specific publisher and subscriber.
+ * However, the event handler itself is an autonomous objects. Usually in
+ * event handling frameworks, the interested party of the event is also
+ * the one that handles it. In this framework however, the event handler
+ * is an independent entity that receive both publisher and subscriber 
+ * as parameters. Nothing prevents from a subscriber to also BE the event
+ * handler or the event handler could further delegate to the subscriber
+ * by some means. It is also possible to define an EventPubSub with 
+ * no subscriber (nullHandle or anyHandle).
+ * </p>
+ * 
+ * @author Borislav Iordanov
+ *
+ */
 public class EventPubSub extends HGPlainLink 
 {
 	public EventPubSub(HGHandle [] targetSet)

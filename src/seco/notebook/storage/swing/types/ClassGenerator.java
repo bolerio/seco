@@ -52,7 +52,7 @@ import seco.notebook.storage.swing.GenUtils;
 public class ClassGenerator
 {
     private static final boolean WRITE_TO_DISK = false;
-	private static final String GENERATED_CLASSES_OUTPUT_DIR = "c:/temp/scribagen/";
+	private static final String GENERATED_CLASSES_OUTPUT_DIR = "/tmp/scribagen"; // "c:/temp/scribagen/";
 	private static final String GET_VALUE_DESC = "(Lorg/hypergraphdb/type/Record;Ljava/lang/String;)Ljava/lang/Object;";
 	private static final String SET_VALUE_DESC = "(Lorg/hypergraphdb/type/Record;Ljava/lang/String;Ljava/lang/Object;)V";
 	private static final String BASE_CLS_NAME = GeneratedClass.class.getName()

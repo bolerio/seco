@@ -146,6 +146,16 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
                 new HGHandle[] { h }, new HGHandle[0]));
     }
 
+    public void append(HGHandle h)
+    {
+        insert(getArity(), h);
+    }
+    
+    public void append(CellGroupMember m)    
+    {
+        insert(getArity(), m);
+    }
+    
     public void insert(int ind, HGHandle h)
     {
         if (h == null)

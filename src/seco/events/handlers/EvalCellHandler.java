@@ -8,12 +8,16 @@ import seco.events.EvalCellEvent;
 import seco.events.EventDispatcher;
 import seco.events.EventHandler;
 import seco.notebook.NotebookDocument;
-import seco.things.Cell;
 import seco.things.CellGroupMember;
-import seco.things.CellUtils;
 
-
-
+/**
+ * <p>
+ * Handle scriptlet cell evaluation events.
+ * </p>
+ * 
+ * @author Borislav Iordanov
+ *
+ */
 public class EvalCellHandler implements EventHandler
 {
     private static HGHandle instance = null;

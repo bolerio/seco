@@ -370,6 +370,9 @@ public class IOUtils
     {
         try
         {
+            File f = new File(filename);
+            if (!f.getParentFile().exists())
+                f.getParentFile().mkdirs();
             FileWriter fw = new FileWriter(filename);
             fw.write("<" + XMLConstants.NOTEBOOK);
             if (gr.getName() != null)

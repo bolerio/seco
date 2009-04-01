@@ -3,6 +3,7 @@
 (import "seco.gui.*")
 (import "seco.rtenv.*")
 (import "seco.notebook.gui.*")
+(import "seco.talk.*")
 
 (use-module "elf/basic.scm")
 (use-module "jlib/Swing.scm")
@@ -31,7 +32,7 @@
 	   (.updateUI bar)
   )))
 )
-	       
+
 (define (runtime-menu)
   (menu "Runtime"
       (menuitem "New Context" (action (lambda (e) 
@@ -43,6 +44,12 @@
       )))
       (menuitem "Manage Contexts" (action (lambda (e) 
           (.show (manage-contexts-dialog)))))
+  )
+)
+
+(define (network-menu)
+  (menu "Network"
+    (menuitem "Peer List" (action (lambda (e) (.println System.out$ "Open Peer list"))))
   )
 )
 

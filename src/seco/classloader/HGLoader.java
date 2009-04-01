@@ -30,7 +30,7 @@ public class HGLoader extends ClassLoader
 	
 	public Class<?> loadClass(String name, boolean resolve)
 	{
-		Class ret = null;
+		Class<?> ret = null;
 		
 		return ret;
 	}
