@@ -793,6 +793,13 @@ public class NotebookEditorKit extends StyledEditorKit
             if (ed == null) return;
             NotebookUI editor = (NotebookUI) ed;
             int pos = editor.getCaretPosition();
+            NotebookDocument doc = editor.getDoc();
+            if (doc.isInsertionPoint(pos))
+            {    
+                editor.setCaretPosition(
+                        doc.insPointInsert(pos, ""));
+                return;
+            }
             Frame f = GUIUtilities.getFrame(editor);
             try
             {

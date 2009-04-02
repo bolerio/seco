@@ -7,16 +7,29 @@
  */
 package seco.notebook.html;
 
+import static javax.swing.text.html.HTML.Tag.CITE;
+import static javax.swing.text.html.HTML.Tag.CODE;
+import static javax.swing.text.html.HTML.Tag.H1;
+import static javax.swing.text.html.HTML.Tag.H2;
+import static javax.swing.text.html.HTML.Tag.H3;
+import static javax.swing.text.html.HTML.Tag.H4;
+import static javax.swing.text.html.HTML.Tag.H5;
+import static javax.swing.text.html.HTML.Tag.H6;
+import static javax.swing.text.html.HTML.Tag.OL;
+import static javax.swing.text.html.HTML.Tag.P;
+import static javax.swing.text.html.HTML.Tag.PRE;
+import static javax.swing.text.html.HTML.Tag.TABLE;
+import static javax.swing.text.html.HTML.Tag.UL;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Vector;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
@@ -40,13 +53,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTML;
 
-import seco.gui.TopFrame;
-import seco.notebook.NotebookUI;
 import seco.notebook.gui.ToolbarButton;
-import seco.notebook.view.HtmlView.InnerHTMLEditor;
-import sun.awt.AppContext;
-
-import static javax.swing.text.html.HTML.Tag.*;
 
 public class HTMLToolBar extends JToolBar
 {

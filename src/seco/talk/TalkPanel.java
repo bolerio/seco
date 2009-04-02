@@ -19,47 +19,35 @@ public class TalkPanel extends JPanel
     private static final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a");
     
     private HGPeerIdentity friend;
-    private JPanel inPanel;
-    private JPanel outPanel;
-    private JTextPane inText;
+    //private JPanel inPanel;
+    //private JPanel outPanel;
+    //private JTextPane inText;
     private JTextPane outText;
-    private JSplitPane splitPane;
+    //private JSplitPane splitPane;
     private TalkActivity talkActivity;
     
-    protected void initComponents()
+    public void initComponents()
     {
         setLayout(new BorderLayout());
         
-        inText = new JTextPane();
-        inPanel = new JPanel();
+        JTextPane inText = new JTextPane();
+        JPanel inPanel = new JPanel();
         inPanel.setLayout(new BorderLayout());
         inPanel.add(inText, BorderLayout.CENTER);
-        inText.addKeyListener(new KeyAdapter() {
-            public void keyTyped(KeyEvent e) 
-            {
-                if (e.getKeyChar() == '\n')
-                    if (!e.isShiftDown())  
-                    {
-                        String msg = inText.getText();
-                        inText.setText("");
-                        talkActivity.chat(msg);
-                        chatFrom(friend, msg);
-                    }
-                    else
-                    {
-                        inText.setText(inText.getText() + "\n");
-                    }
-            }        
-        });        
-        
+        inText.addKeyListener(new KeyListener(inText, this));
+                
         outText = new JTextPane();
         outText.setEditable(false);
-        outPanel = new JPanel();
+        JPanel outPanel = new JPanel();
         outPanel.setLayout(new BorderLayout());
         outPanel.add(outText, BorderLayout.CENTER);
         
-        splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, outPanel, inPanel);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, outPanel, inPanel);
         this.add(splitPane, BorderLayout.CENTER);
+    }
+    
+    public TalkPanel()
+    {
     }
     
     public TalkPanel(TalkActivity talkActivity)
@@ -84,6 +72,16 @@ public class TalkPanel extends JPanel
         s += (from.equals(friend) ? "me" : from.getName()) + ":" + text;
         outText.setText(outText.getText() + s);        
     }
+    
+    public TalkActivity getTalkActivity()
+    {
+        return talkActivity;
+    }
+
+    public void setTalkActivity(TalkActivity talkActivity)
+    {
+        this.talkActivity = talkActivity;
+    }         
      
     public static void main(String [] argv)
     {
@@ -94,4 +92,67 @@ public class TalkPanel extends JPanel
         frame.setLocation(300, 200);
         frame.setVisible(true);
     }
+    
+    private static class KeyListener extends KeyAdapter
+    {
+        private JTextPane inText;
+        private TalkPanel panel;
+      
+        public KeyListener()
+        {
+        }
+
+        public KeyListener(JTextPane inText, TalkPanel panel)
+        {
+            this.inText = inText;
+            this.panel = panel;
+        }
+
+        public void keyTyped(KeyEvent e) 
+        {
+            if (e.getKeyChar() == '\n')
+                if (!e.isShiftDown())  
+                {
+                    String msg = inText.getText();
+                    inText.setText("");
+                    panel.getTalkActivity().chat(msg);
+                    panel.chatFrom(panel.getFriend(), msg);
+                }
+                else
+                {
+                    inText.setText(inText.getText() + "\n");
+                }
+        }
+
+        public JTextPane getInText()
+        {
+            return inText;
+        }
+
+        public void setInText(JTextPane inText)
+        {
+            this.inText = inText;
+        }
+
+        public TalkPanel getPanel()
+        {
+            return panel;
+        }
+
+        public void setPanel(TalkPanel panel)
+        {
+            this.panel = panel;
+        }        
+    }
+
+    public JTextPane getOutText()
+    {
+        return outText;
+    }
+
+    public void setOutText(JTextPane outText)
+    {
+        this.outText = outText;
+    }
+  
 }

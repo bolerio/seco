@@ -60,7 +60,6 @@ public class Token
 		}
 	} //}}}
 
-	//{{{ tokenToString() method
 	/**
 	 * Converts a token type constant to a token type string.
 	 * @since jEdit 4.2pre1
@@ -68,7 +67,7 @@ public class Token
 	public static String tokenToString(byte token)
 	{
 		return TOKEN_TYPES[token];
-	} //}}}
+	}
 
 	//{{{ Token types
 	public static final String[] TOKEN_TYPES = new String[] {

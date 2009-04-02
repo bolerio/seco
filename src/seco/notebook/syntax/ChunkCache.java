@@ -48,7 +48,7 @@ import seco.notebook.util.SegmentCache;
 public class ChunkCache
 {
 	private LineInfo[] lineInfo;
-	private ArrayList out;
+	private ArrayList<Chunk> out;
 	private int firstInvalidLine;
 	private int lastScreenLine;
 	private boolean needFullRepaint;
@@ -63,7 +63,7 @@ public class ChunkCache
 		this.manager = manager;
 		this.el = manager.getElement();
 		this.lineMgr = manager.getLineMgr();
-		out = new ArrayList();
+		out = new ArrayList<Chunk>();
 		tokenHandler = new DisplayTokenHandler();
 		recalculateVisibleLines();// el.getElementCount());
 	}
@@ -133,19 +133,18 @@ public class ChunkCache
 	LineInfo[] getLineInfosForPhysicalLine(int physicalLine)
 	{
 		out.clear();
-		// if(buffer.isLoaded())
 		lineToChunkList(physicalLine, out);
 		if (out.size() == 0) out.add(null);
-		ArrayList returnValue = new ArrayList(out.size());
+		ArrayList<LineInfo> returnValue = new ArrayList<LineInfo>(out.size());
 		getLineInfosForPhysicalLine(physicalLine, returnValue);
 		return (LineInfo[]) returnValue.toArray(new LineInfo[out.size()]);
 	}
 
-	private void getLineInfosForPhysicalLine(int physicalLine, List list)
+	private void getLineInfosForPhysicalLine(int physicalLine, List<LineInfo> list)
 	{
 		for (int i = 0; i < out.size(); i++)
 		{
-			Chunk chunks = (Chunk) out.get(i);
+			Chunk chunks = out.get(i);
 			LineInfo info = new LineInfo();
 			info.physicalLine = physicalLine;
 			if (i == 0)
@@ -162,7 +161,7 @@ public class ChunkCache
 						- info.offset + 1;
 			} else
 			{
-				info.length = ((Chunk) out.get(i + 1)).offset - info.offset;
+				info.length = out.get(i + 1).offset - info.offset;
 			}
 			info.chunks = chunks;
 			list.add(info);
@@ -272,11 +271,11 @@ public class ChunkCache
 			// otherwise, the number of subregions
 			else
 			{
-				chunks = (Chunk) out.get(0);
+				chunks = out.get(0);
 				out.remove(0);
 				offset = chunks.offset;
 				if (out.size() != 0)
-					length = ((Chunk) out.get(0)).offset - offset;
+					length = out.get(0).offset - offset;
 				else
 					length = getLineLength(physicalLine) - offset + 1;
 			}
@@ -332,7 +331,7 @@ public class ChunkCache
 	}
 	public TabExpander expander;
 
-	private void lineToChunkList(int physicalLine, List out)
+	private void lineToChunkList(int physicalLine, List<Chunk> out)
 	{
 		tokenHandler.init(manager.getSyntaxStyles(), null, expander, out, 0.0f);
 		markTokens(physicalLine, tokenHandler);

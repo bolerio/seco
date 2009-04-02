@@ -349,9 +349,9 @@ public class CellUtils
         return res;
     }
 
-    public static HGHandle createCellHandle(String text)
+    public static HGHandle createCellHandle(NotebookDocument doc, String text)
     {
-        Scriptlet s = new Scriptlet(defaultEngineName, text);
+        Scriptlet s = new Scriptlet(doc.getDefaultEngineName(), text);
         HGHandle h = ThisNiche.handleOf(s);
         if (h == null) h = ThisNiche.hg.add(s);
         return CellUtils.getCellHForRefH(h);

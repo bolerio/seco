@@ -685,8 +685,9 @@ public abstract class XModeHandler extends HandlerBase
 			error("empty-keyword",null);
 			return;
 		}
-
+		 
 		if (keywords == null) return;
+		
 		keywords.add(k,id);
 	} //}}}
 

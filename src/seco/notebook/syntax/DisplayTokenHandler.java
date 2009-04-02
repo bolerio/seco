@@ -42,10 +42,22 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 	// don't have chunks longer than 100 characters to avoid slowing things down
 	public static final int MAX_CHUNK_LEN = 100;
 
+	private SyntaxStyle[] styles;
+    private FontRenderContext fontRenderContext;
+    private TabExpander expander;
+    private float x;
+
+    private List<Chunk> out;
+    private float wrapMargin;
+    private float endX;
+    private Token end;
+
+    private boolean seenNonWhitespace;
+    private float endOfWhitespace;
 	
 	public void init(SyntaxStyle[] styles,
 		FontRenderContext fontRenderContext,
-		TabExpander expander, List out,
+		TabExpander expander, List<Chunk> out,
 		float wrapMargin)
 	{
 		super.init();
@@ -70,15 +82,14 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 	} 
 	
 	
-	//{{{ getChunkList() method
 	/**
 	 * Returns the list of chunks.
 	 * @since jEdit 4.1pre7
 	 */
-	public List getChunkList()
+	public List<Chunk> getChunkList()
 	{
 		return out;
-	} //}}}
+	} 
 
 	//{{{ handleToken() method
 	/**
@@ -154,23 +165,6 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 		}
 	} //}}}
 
-	//{{{ Private members
-
-	//{{{ Instance variables
-	private SyntaxStyle[] styles;
-	private FontRenderContext fontRenderContext;
-	private TabExpander expander;
-	private float x;
-
-	private List out;
-	private float wrapMargin;
-	private float endX;
-	private Token end;
-
-	private boolean seenNonWhitespace;
-	private float endOfWhitespace;
-	
-
 	private Chunk createChunk(byte id, int offset, int length,
 		TokenMarker.LineContext context)
 	{
@@ -238,7 +232,7 @@ public class DisplayTokenHandler extends DefaultTokenHandler
 		if(c1.id == c2.id && c1.id == Token.OPERATOR)
 			return false;
 				
-		return ((c1.style == c2.style)
+		return ((c1.id == c2.id) && (c1.style == c2.style)
 			&& ch1 != '\t' && ch2 != '\t'
 			&& (c1.length + c2.length <= MAX_CHUNK_LEN));
 	} 

@@ -176,16 +176,16 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         if (handle != null) return handle;
         handle = ThisNiche.handleOf(this);
-        //if (handle != null) 
+        if (handle != null) 
             return handle;
 
-//        Set<HGHandle> list = CellUtils.findAll(ThisNiche.hg, hg.type(getClass()));
-//        for (HGHandle h : list)
-//            if (bookH.equals(((NotebookDocument) ThisNiche.hg.get(h)).bookH))
-//                return handle = h;
-//        handle = ThisNiche.hg.add(this);
-//        System.out.println("Adding DOC: " + this);
-//        return handle;
+        Set<HGHandle> list = CellUtils.findAll(ThisNiche.hg, hg.type(getClass()));
+        for (HGHandle h : list)
+            if (bookH.equals(((NotebookDocument) ThisNiche.hg.get(h)).bookH))
+                return handle = h;
+        handle = ThisNiche.hg.add(this);
+        //System.out.println("Adding DOC: " + this);
+        return handle;
     }
     
     
@@ -559,11 +559,11 @@ public class NotebookDocument extends DefaultStyledDocument
             {
                 child = CellUtils.createGroupHandle();
                 CellGroup group = (CellGroup) ThisNiche.hg.get(child);
-                group.insert(0, CellUtils.createCellHandle(str));
+                group.insert(0, CellUtils.createCellHandle(this, str));
             }
             else
             {
-                child = CellUtils.createCellHandle(str);
+                child = CellUtils.createCellHandle(this,str);
                 result--;
             }
         }

@@ -107,7 +107,7 @@ public class TokenMarker
 	public LineContext markTokens(LineContext prevContext,
 		TokenHandler tokenHandler, Segment line)
 	{
-		//{{{ Set up some instance variables
+		// Set up some instance variables
 		// this is to avoid having to pass around lots and lots of
 		// parameters.
 		this.tokenHandler = tokenHandler;
@@ -133,9 +133,9 @@ public class TokenMarker
 
 		seenWhitespaceEnd = false;
 		whitespaceEnd = line.offset;
-		//}}}
+		
 
-		//{{{ Main parser loop
+		//Main parser loop
 		ParserRule rule;
 		int terminateChar = context.rules.getTerminateChar();
 		boolean terminated = false;
