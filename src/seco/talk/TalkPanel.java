@@ -24,6 +24,7 @@ public class TalkPanel extends JPanel
     private JTextPane inText;
     private JTextPane outText;
     private JSplitPane splitPane;
+    private TalkActivity talkActivity;
     
     protected void initComponents()
     {
@@ -41,7 +42,8 @@ public class TalkPanel extends JPanel
                     {
                         String msg = inText.getText();
                         inText.setText("");
-                        outText.setText(outText.getText() + msg);
+                        talkActivity.chat(msg);
+                        chatFrom(friend, msg);
                     }
                     else
                     {
@@ -60,9 +62,10 @@ public class TalkPanel extends JPanel
         this.add(splitPane, BorderLayout.CENTER);
     }
     
-    public TalkPanel()
+    public TalkPanel(TalkActivity talkActivity)
     {
         initComponents();
+        this.talkActivity = talkActivity;
     }
      
     public HGPeerIdentity getFriend()
@@ -77,14 +80,15 @@ public class TalkPanel extends JPanel
 
     public void chatFrom(HGPeerIdentity from, String text)
     {        
-        outText.setText(outText.getText() + "(" + sdf.format(new Date()) + ") " + 
-                        from.getName() + ":" + text);        
+        String s = "(" + sdf.format(new Date()) + ") ";
+        s += (from.equals(friend) ? "me" : from.getName()) + ":" + text;
+        outText.setText(outText.getText() + s);        
     }
      
     public static void main(String [] argv)
     {
         JFrame frame = new JFrame();
-        final TalkPanel talk = new TalkPanel();
+        final TalkPanel talk = new TalkPanel(null);
         frame.add(talk);
         frame.setSize(500, 500);
         frame.setLocation(300, 200);

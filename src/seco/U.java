@@ -14,10 +14,17 @@ import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.query.*;
 
+import seco.api.CallableCallback;
+import seco.api.CompletionCallback;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 /**
  * <p>
@@ -208,5 +215,75 @@ public class U
     {
     	if (rs != null)
     		try { rs.close(); } catch (Throwable t) { }
-    }   
+    }
+    
+    public static void run(Runnable r) { ThisNiche.executorService.execute(r); }
+    public static <V> Future<V> run(Callable<V> c) { return ThisNiche.executorService.submit(c); }
+    public static <V> void run(Runnable r, final CompletionCallback<V> callback)
+    {
+        FutureTask<V> ft = new FutureTask<V>(r, null) 
+        {
+            protected void done()
+            {
+                try
+                {
+                    callback.onCompletion(get(), null);
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (ExecutionException e)
+                {
+                    callback.onCompletion(null, e.getCause());
+                }
+            }
+        };
+        ThisNiche.executorService.submit(ft);
+    }
+    public static <V> void run(final Callable<V> c, final CompletionCallback<V> callback)
+    {
+        FutureTask<V> ft = new FutureTask<V>(c) 
+        {
+            protected void done()
+            {
+                try
+                {
+                    callback.onCompletion(get(), null);
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (ExecutionException e)
+                {
+                    callback.onCompletion(null, e.getCause());
+                }
+            }
+        };
+        ThisNiche.executorService.submit(ft);        
+    }    
+    
+    public static <V> void run(final CallableCallback<V> cc)
+    {
+        FutureTask<V> ft = new FutureTask<V>(cc) 
+        {
+            protected void done()
+            {
+                try
+                {
+                    cc.onCompletion(get(), null);
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (ExecutionException e)
+                {
+                    cc.onCompletion(null, e.getCause());
+                }
+            }
+        };
+        ThisNiche.executorService.submit(ft);         
+    }
 }

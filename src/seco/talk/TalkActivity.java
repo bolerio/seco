@@ -1,5 +1,6 @@
 package seco.talk;
 
+import java.awt.Rectangle;
 import java.util.Map;
 import java.util.UUID;
 
@@ -13,8 +14,11 @@ import org.hypergraphdb.peer.protocol.Performative;
 import org.hypergraphdb.peer.workflow.Activity;
 import org.hypergraphdb.peer.workflow.WorkflowState;
 
+import seco.ThisNiche;
 import seco.U;
 import seco.events.EventDispatcher;
+import seco.gui.GUIHelper;
+import seco.things.CellGroup;
 import static org.hypergraphdb.peer.Messages.*;
 import static org.hypergraphdb.peer.Structs.*;
 
@@ -31,12 +35,29 @@ public class TalkActivity extends Activity
     public static final String TYPENAME = "seco-talk";
     
     private HGPeerIdentity friend;
+    private TalkPanel talkPanel;
+    
+    void openPanel()
+    {
+        talkPanel = new TalkPanel(this);
+        CellGroup group = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        HGHandle h = ThisNiche.hg.add(talkPanel);
+        GUIHelper.addToTopCellGroup(h, 
+                                    group,  
+                                    null, 
+                                    null, 
+                                    new Rectangle(500, 200, 200, 100), 
+                                    true);         
+    }
     
     private void initFriend(Message msg)
     {
         HGPeerIdentity id = getThisPeer().getIdentity(getSender(msg));
         if (friend == null)
+        {
             friend = id;
+            openPanel();
+        }
         else if (!friend.equals(id))
             throw new RuntimeException("Wrong activity for Talk msg, received from " + 
                                        id + ", but expecting " + friend);
@@ -47,6 +68,13 @@ public class TalkActivity extends Activity
         super(thisPeer);
     }
 
+    public TalkActivity(HyperGraphPeer thisPeer, HGPeerIdentity friend)
+    {
+        this(thisPeer);
+        this.friend = friend;
+        openPanel();
+    }
+    
     public TalkActivity(HyperGraphPeer thisPeer, UUID id)
     {
         super(thisPeer, id);
@@ -56,6 +84,7 @@ public class TalkActivity extends Activity
     {
         super(thisPeer, id);
         this.friend = friend;
+        openPanel();
     }
 
     public void chat(String text)
@@ -92,9 +121,10 @@ public class TalkActivity extends Activity
         {
             String text = getPart(content, "text");
             assert text != null : new RuntimeException("No text in TalkActivity chat.");            
-            EventDispatcher.dispatch(U.hgType(ChatEvent.class), 
-                                     friend.getId(), 
-                                     new ChatEvent(friend, text));
+//            EventDispatcher.dispatch(U.hgType(ChatEvent.class), 
+//                                     friend.getId(), 
+//                                     new ChatEvent(friend, text));
+            talkPanel.chatFrom(friend, text);
         }
         else if ("atom".equals(type))
         {

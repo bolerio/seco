@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -17,14 +18,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGQuery.hg;
+import org.hypergraphdb.annotation.HGIgnore;
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;
 import org.hypergraphdb.peer.PeerPresenceListener;
@@ -33,19 +35,23 @@ import org.hypergraphdb.util.CompletedFuture;
 
 import seco.ThisNiche;
 import seco.U;
+import seco.api.CallableCallback;
 import seco.notebook.util.IconManager;
 
 public class PeerList extends JPanel
 {
     private static final long serialVersionUID = 1L;
 
+    @HGIgnore
     private HyperGraphPeer thisPeer;
     private JList list;
     private PeerListModel peers = new PeerListModel();
-
+    private List<TalkActivity> talks = new ArrayList<TalkActivity>();
+    private String peerConfigResource = "seco/talk/default-peer-config.json";
+    
     private Future<Boolean> openPeer(String peerName)
     {
-        String configResource = U.getResourceContentAsString("seco/talk/default-peer-config.json");
+        String configResource = U.getResourceContentAsString(peerConfigResource);
         if (configResource == null)
             throw new RuntimeException(
                     "Unable to find default config seco/talk/default-peer-config.json");
@@ -72,17 +78,43 @@ public class PeerList extends JPanel
         return f;
     }
 
-    public PeerList()
+    public void initComponents()
     {
         setLayout(new BorderLayout());
+        setBorder(new BevelBorder(BevelBorder.RAISED));
         list = new JList(peers);
         list.setCellRenderer(new PeerItemRenderer());
         add(list, BorderLayout.CENTER);
-        JButton connectButton = new JButton("Connect");
+        final JButton connectButton = new JButton("Connect");
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev)
             {
-                startConnecting("seco");
+                connectButton.setText("Connecting...");
+                connectButton.setEnabled(false);
+                U.run(new CallableCallback<Boolean>() {
+                  public Boolean call() throws Exception 
+                  { 
+                      return startConnecting("seco").get(); 
+                  }
+                  public void onCompletion(Boolean result, Throwable t)
+                  {
+                      if (t == null && result)
+                      {
+                          JOptionPane.showMessageDialog(PeerList.this, 
+                                                        "Successfully connected to network.");
+                          connectButton.setText("Disconnect");
+                      }
+                      else
+                      {
+                          if (t != null)
+                              t.printStackTrace(System.err);
+                          JOptionPane.showMessageDialog(PeerList.this, 
+                                                        "Failed to connected to network, see error console.");
+                          connectButton.setText("Connect");                          
+                      }
+                      connectButton.setEnabled(true);                      
+                  }
+                });                  
             }
         });
         add(connectButton, BorderLayout.NORTH);
@@ -99,19 +131,29 @@ public class PeerList extends JPanel
                  }
             }
         };
-        list.addMouseListener(mouseListener);                
+        list.addMouseListener(mouseListener);
+    }
+    
+    public PeerList()
+    {                
     }
 
     public void openTalkPanel(HGPeerIdentity friend)
     {
-        TalkPanel existing = U.hgetOne(hg.and(hg.type(TalkPanel.class), 
-                                              hg.eq("friend", friend)));
-        if (existing == null)
-        {
-            existing = new TalkPanel();
-            existing.setFriend(friend);
-            HGHandle h = ThisNiche.hg.add(existing);
-        }
+        // Ideally,we'd want to put a TalkPanel component in the workspace and that
+        // shows up the next time the system is started.
+        
+        
+//        TalkPanel existing = U.hgetOne(hg.and(hg.type(TalkPanel.class), 
+//                                              hg.eq("friend", friend)));
+//        if (existing == null)
+//        {
+//            existing = new TalkPanel();
+//            existing.setFriend(friend);
+//            HGHandle h = ThisNiche.hg.add(existing);
+//        }
+        TalkActivity activity = new TalkActivity(thisPeer, friend);
+        talks.add(activity);
     }
     
     public Future<Boolean> startConnecting(String peerName)
@@ -130,19 +172,19 @@ public class PeerList extends JPanel
 
     public void cancelConnection()
     {
-        // TODO
+        throw new UnsupportedOperationException();
     }
 
     public void disconnect()
     {
-        // TODO
+        thisPeer.stop();
     }
 
     public HyperGraphPeer getThisPeer()
     {
         return thisPeer;
     }
-
+    
     static class PeerListModel implements ListModel
     {
         private ArrayList<ListDataListener> listeners = new ArrayList<ListDataListener>();
@@ -213,6 +255,5 @@ public class PeerList extends JPanel
             setOpaque(true);
             return this;
         }
-    }
-    
+    }    
 }

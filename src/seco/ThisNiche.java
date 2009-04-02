@@ -14,11 +14,20 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.query.*;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+
+import seco.api.CompletionCallback;
 import seco.boot.NicheManager;
 import seco.rtenv.ContextLink;
 import seco.rtenv.EvaluationContext;
 
 import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public final class ThisNiche
 {
@@ -149,4 +158,7 @@ public final class ThisNiche
         return hg.getHandle(atom);
     }
 
+    // Task execution, keep package private cause it's not clear at this point where
+    // this API should go.
+    static ExecutorService executorService = Executors.newCachedThreadPool();
 }
