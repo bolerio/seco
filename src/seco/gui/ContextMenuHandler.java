@@ -12,9 +12,7 @@ import seco.ThisNiche;
 import seco.boot.NicheManager;
 import seco.gui.layout.LayoutSettingsPanel;
 import seco.notebook.AppConfig;
-import seco.notebook.NotebookDocument;
 import seco.notebook.ScriptletAction;
-import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.IOUtils;
@@ -51,7 +49,7 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         JPopupMenu menu = new JPopupMenu();
         menu.setLabel("Main Menu");
         JMenuItem mi = new JMenuItem(new ScriptletAction(
-                "desktop.getCanvas().relayout();"));
+                "canvas.relayout();"));
         mi.setText("Layout");
         menu.add(mi);
         mi = new JMenuItem(new ScriptletAction(
@@ -60,7 +58,7 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         menu.add(mi);
 
         mi = new JMenuItem(new ScriptletAction(
-                "desktop.getCanvas().getCamera().setViewScale(1.0);"));
+                "canvas.getCamera().setViewScale(1.0);"));
         mi.setText("Reset Zoom");
         menu.add(mi);
         mi = new JMenuItem(new ScriptletAction(
@@ -76,17 +74,17 @@ public class ContextMenuHandler extends PBasicInputEventHandler
     public void showNodeMenu(PInputEvent event)
     {
         PNode node = event.getPickedNode();
-        System.out.println("ContextMenuHandler - node: " + node);
+        //System.out.println("ContextMenuHandler - node: " + node);
         JPopupMenu menu = new JPopupMenu();
         JMenuItem mi = new JMenuItem(
                 new ScriptletAction(
-                        "desktop.getCanvas().getCamera().animateViewToCenterBounds("
+                        "canvas.getCamera().animateViewToCenterBounds("
                                 + "desktop.getCanvas().getLayer().getFullBounds(), true, 50l );"));
         mi.setText("Fit To Screen");
         menu.add(mi);
         mi = new JMenuItem(new ScriptletAction(
                 "seco.gui.ContextMenuHandler.showLayoutSettingsDlg("
-                        + "desktop.getCanvas().getSelection().get(0));"));
+                        + "canvas.getSelection().get(0));"));
         mi.setText("Pin/Unpin");
         menu.add(mi);
         show_menu(event, menu);

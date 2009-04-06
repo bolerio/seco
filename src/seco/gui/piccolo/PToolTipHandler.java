@@ -15,7 +15,7 @@ public class PToolTipHandler extends PBasicInputEventHandler {
     this.camera = camera;
     tooltipNode = new PToolTip();
     tooltipNode.setPickable(false);
-    camera.addChild( tooltipNode );
+    //camera.addChild( tooltipNode );
   }
 
   public void mouseMoved(PInputEvent event) {
@@ -32,11 +32,13 @@ public class PToolTipHandler extends PBasicInputEventHandler {
       event.getPath().canvasToLocal( p, camera);
       String tip = ( String )event.getInputManager().getMouseOver().getPickedNode().getAttribute("tooltip");
       if ( tip != null ) { 
+        camera.addChild( tooltipNode );
         tooltipNode.setText( tip ); 
         tooltipNode.setOffset(p.getX() + 8, 
                               p.getY() - 8);
       } else {
-        tooltipNode.setText( "" ); 
+        tooltipNode.setText( "" );
+        camera.removeChild(tooltipNode);
       }
     
     } catch ( Exception e ) {}

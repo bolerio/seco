@@ -15,7 +15,6 @@ import org.hypergraphdb.HGQuery;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HGTypeSystem;
-import org.hypergraphdb.HGValueLink;
 import org.hypergraphdb.annotation.AtomReference;
 import org.hypergraphdb.atom.AtomProjection;
 import org.hypergraphdb.atom.HGAtomRef;

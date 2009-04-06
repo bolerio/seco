@@ -10,6 +10,7 @@ import org.hypergraphdb.HGPersistentHandle;
 
 import seco.ThisNiche;
 import seco.things.Cell;
+import seco.things.CellUtils;
 import seco.things.Scriptlet;
 
 
@@ -79,7 +80,7 @@ public class CellTextChangeEvent extends AbstractUndoableEdit
         ThisNiche.hg.update(s);
         type = (type == CellTextChangeEvent.EventType.REMOVE) ? 
                 CellTextChangeEvent.EventType.INSERT : CellTextChangeEvent.EventType.REMOVE;
-        cell.fireCellTextChanged(this);
+        CellUtils.fireCellTextChanged(cellH, this);
     }
 
     @Override
@@ -101,7 +102,7 @@ public class CellTextChangeEvent extends AbstractUndoableEdit
         ThisNiche.hg.update(s);
         type = (type == CellTextChangeEvent.EventType.REMOVE) ? 
                 CellTextChangeEvent.EventType.INSERT : CellTextChangeEvent.EventType.REMOVE;
-        cell.fireCellTextChanged(this);
+        CellUtils.fireCellTextChanged(cellH, this);
     }
 
     @Override

@@ -25,7 +25,7 @@ public class SwingTypeIntrospector
 	protected Map<String, Method> getters = new HashMap<String, Method>();
 	protected Map<String, EventSetDescriptor> esd = new HashMap<String, EventSetDescriptor>();
 	protected Map<String, Class<?>> ctrs;
-	protected Map<String, Class> addons;
+	protected Map<String, Class<?>> addons;
 
 	public SwingTypeIntrospector(HyperGraph hg, SwingType type)
 	{
@@ -85,7 +85,7 @@ public class SwingTypeIntrospector
 		}
 	}
 
-	private boolean checkType(String label, Class t)
+	private boolean checkType(String label, Class<?> t)
 	{
 		if (ctrs != null && ctrs.containsKey(label))
 			return t.isAssignableFrom(ctrs.get(label));
@@ -103,7 +103,7 @@ public class SwingTypeIntrospector
 		return getters.containsKey(label);
 	}
 
-	public Map<String, Class> getAddonsMap()
+	public Map<String, Class<?>> getAddonsMap()
 	{
 		return addons;
 	}

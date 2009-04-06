@@ -1,72 +1,32 @@
 package seco.notebook.storage.swing;
 
-import static org.objectweb.asm.Opcodes.CHECKCAST;
-import static org.objectweb.asm.Opcodes.PUTFIELD;
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.beans.BeanInfo;
-import java.beans.EventHandler;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.beans.XMLEncoder;
-import java.io.FileOutputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
+
 import javax.swing.Action;
-import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JLayeredPane;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.KeyStroke;
-import javax.swing.plaf.ColorUIResource;
-import javax.swing.plaf.InsetsUIResource;
 import javax.swing.text.StyledEditorKit;
-import javax.swing.text.html.HTMLEditorKit;
+
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.atom.HGRelType;
-import org.hypergraphdb.atom.HGStats;
 import org.hypergraphdb.query.AtomTypeCondition;
-import org.hypergraphdb.type.BonesOfBeans;
 import org.hypergraphdb.type.javaprimitive.IntType;
-import org.objectweb.asm.Type;
-
-import seco.notebook.storage.swing.types.ClassGenerator;
 
 
 public class MasterTest
@@ -391,14 +351,14 @@ public class MasterTest
 
 	public static class TestBeanConverter extends DefaultConverter
 	{
-		public TestBeanConverter(Class type)
+		public TestBeanConverter(Class<?> type)
 		{
 			super(TestBean.class);
 		}
 
-		public final Map<String, Class> map = new HashMap<String, Class>();
+		public final Map<String, Class<?>> map = new HashMap<String, Class<?>>();
 
-		protected Map<String, Class> getAuxSlots()
+		protected Map<String, Class<?>> getAuxSlots()
 		{
 			if (map != null && map.size() == 0)
 			{
@@ -409,89 +369,4 @@ public class MasterTest
 		}
 	}
 
-	static Class getPrivateFieldType(Class declaringClass, String name)
-	{
-		int dot = name.indexOf(".");
-		if (dot > 0)
-		{
-			Class c = getPrivateFieldType(declaringClass, name
-					.substring(0, dot));
-			return getPrivateFieldType(c, name.substring(dot + 1));
-		}
-		try
-		{
-			Field f = declaringClass.getDeclaredField(name);
-			if (!Modifier.isStatic(f.getModifiers()))
-			{
-				f.setAccessible(true);
-				return f.getType();
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		return getGetterType(declaringClass, name);
-	}
-
-	static Class getGetterType(Class declaringClass, String name)
-	{
-		try
-		{
-			Method m = declaringClass.getMethod(getter(name));
-			return m.getReturnType();
-		}
-		catch (Exception ex)
-		{
-			// System.err.println("" + e + " in " + declaringClass);
-			return null;
-		}
-	}
-
-	static String getter(String s)
-	{
-		return "get" + s.substring(0, 1).toUpperCase() + s.substring(1);
-	}
-
-	static Class getPrivateFieldType1(Class declaringClass, String name)
-	{
-		try
-		{
-			Field f = getPublicField(declaringClass, name);
-			if (f != null) return f.getType();
-			f = declaringClass.getDeclaredField(name);
-			if (!Modifier.isStatic(f.getModifiers()))
-			{
-				f.setAccessible(true);
-				return f.getType();
-			}
-			return f.getType();
-		}
-		catch (Exception e)
-		{
-			try
-			{
-				Method m = declaringClass.getDeclaredMethod(getter(name));
-				return m.getReturnType();
-			}
-			catch (Exception ex)
-			{
-				System.err.println("" + e + " in " + declaringClass);
-			}
-		}
-		return null;
-	}
-
-	static Field getPublicField(Class declaringClass, String name)
-	{
-		try
-		{
-			Field f = declaringClass.getField(name);
-			if (f != null && !Modifier.isStatic(f.getModifiers())) return f;
-		}
-		catch (Exception e)
-		{
-		}
-		return null;
-	}
 }

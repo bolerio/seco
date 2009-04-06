@@ -29,6 +29,7 @@ import seco.events.CellGroupChangeEvent;
 import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
 import seco.events.EvalResult;
+import seco.events.EventDispatcher;
 import seco.events.EventHandler;
 import seco.events.EventPubSub;
 import seco.events.handlers.CopyAttributeChangeHandler;
@@ -684,7 +685,12 @@ public class CellUtils
         }
         s.setCode(res.toString());
         ThisNiche.hg.update(s);
-        c.fireCellTextChanged(e);
+        fireCellTextChanged(cH, e);
+    }
+    
+    public static void fireCellTextChanged(HGHandle cellH, CellTextChangeEvent e)
+    {
+        EventDispatcher.dispatch(CellTextChangeEvent.HANDLE, cellH, e);
     }
 
     // TODO: looks like a bug in HG.... sometimes it returns a list with

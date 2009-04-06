@@ -34,7 +34,7 @@ public class PiccoloFrame extends TopFrame
         canvas = new PiccoloCanvas();
         canvas.setTransferHandler(new PiccoloTransferHandler(canvas));
         // Set up basic frame
-        setBounds(50, 50, 750, 750);
+        setBounds(50, 50, 950, 750);
         setResizable(true);
         setBackground(null);
 

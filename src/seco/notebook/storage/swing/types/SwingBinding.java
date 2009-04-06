@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractButton;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JMenuItem;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.ListDataListener;
 
@@ -25,7 +23,6 @@ import org.hypergraphdb.IncidenceSetRef;
 import org.hypergraphdb.LazyRef;
 import org.hypergraphdb.atom.HGAtomRef;
 import org.hypergraphdb.atom.HGRelType;
-
 import org.hypergraphdb.type.HGAtomTypeBase;
 import org.hypergraphdb.type.Record;
 import org.hypergraphdb.type.Slot;
@@ -61,7 +58,7 @@ public class SwingBinding extends HGAtomTypeBase
     public Object make(HGPersistentHandle handle,
             LazyRef<HGHandle[]> targetSet, IncidenceSetRef incidenceSet)
     {
-        Class<?> c = hgType.getJavaClass();
+        //Class<?> c = hgType.getJavaClass();
         Object bean = null;
         try
         {

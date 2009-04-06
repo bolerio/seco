@@ -21,7 +21,6 @@ import javax.swing.tree.MutableTreeNode;
 
 import org.hypergraphdb.HGException;
 import org.hypergraphdb.HGLink;
-import org.hypergraphdb.HGValueLink;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.atom.HGRelType;
 import org.hypergraphdb.type.BonesOfBeans;
@@ -48,7 +47,7 @@ public class AddOnFactory
     public static final String GRID_BAG_LAYOUT = "gridBagLayout";
     public static final String BORDER_LAYOUT = "borderLayout";
 
-    static Map<String, Class[]> linkTypes = new HashMap<String, Class[]>();
+    static Map<String, Class<?>[]> linkTypes = new HashMap<String, Class<?>[]>();
     static
     {
         linkTypes.put(ADD_STR, new Class[] { String.class });
@@ -64,7 +63,7 @@ public class AddOnFactory
                 Component.class });
     }
 
-    public static Class[] getLinkTypes(HGRelType link)
+    public static Class<?>[] getLinkTypes(HGRelType link)
     {
         return linkTypes.get(link.getName());
     }
@@ -149,7 +148,7 @@ public class AddOnFactory
            //  + ":" + link.getName() + ":" + value);
 
             if (value == null) return;
-            Class[] args = getLinkTypes(link); 
+            Class<?>[] args = getLinkTypes(link); 
             m = instance.getClass().getMethod("add", args);
             if (value.getClass().isArray())
             {
@@ -161,7 +160,7 @@ public class AddOnFactory
             } else if (Collection.class.isAssignableFrom(value.getClass()))
             {
 
-                Collection c = (Collection) value;
+                Collection<Object> c = (Collection) value;
                 Object[] array = c.toArray(new Object[c.size()]);
                 for (int i = 0; i < array.length; i++)
                     if (array[i] != null) m.invoke(instance, array[i]);
@@ -231,8 +230,8 @@ public class AddOnFactory
             }
         }
 
-        Class beanClass = type.getJavaClass();
-        Constructor ctr = null;
+        Class<?> beanClass = type.getJavaClass();
+        Constructor<?> ctr = null;
         try
         {
             ctr = beanClass.getDeclaredConstructor(types);
@@ -285,17 +284,17 @@ public class AddOnFactory
         return values;
     }
 
-    public static Map<String, Class> getAddOnSlots(HyperGraph hg, SwingType type)
+    public static Map<String, Class<?>> getAddOnSlots(HyperGraph hg, SwingType type)
     {
         // System.out.println("getAddOnSlots00: " + type.getJavaClass() + ":");
 
         AddOnLink addons = (AddOnLink) hg.get(type.getAddOnsHandle());
         if (addons == null) return null;
-        Map<String, Class> res = new HashMap<String, Class>();
+        Map<String, Class<?>> res = new HashMap<String, Class<?>>();
         for (int i = 0; i < addons.getArity(); i++)
         {
             HGRelType link = (HGRelType) hg.get(addons.getTargetAt(i));
-            Class[] types = getLinkTypes(link);
+            Class<?>[] types = getLinkTypes(link);
             if (types == null) continue;
             for (int j = 0; j < link.getArity(); j++)
             {
@@ -313,7 +312,7 @@ public class AddOnFactory
     {
         String getName();
 
-        Class[] getTypes();
+        Class<?>[] getTypes();
 
         void processLink(HyperGraph hg, HGRelType link, Record record,
                 Object instance);

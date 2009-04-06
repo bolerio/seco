@@ -39,9 +39,9 @@ import seco.notebook.storage.swing.types.SwingType;
 
 public class GenUtils
 {
-	private final static Map<Class, String> DESCRIPTORS;
-	private final static Map<Class, Method> METHODS;
-	private final static Map<Class, Type> WRAP_TYPES;
+	private final static Map<Class<?>, String> DESCRIPTORS;
+	private final static Map<Class<?>, Method> METHODS;
+	private final static Map<Class<?>, Type> WRAP_TYPES;
 	final static Type BYTE_TYPE = Type.getObjectType("java/lang/Byte");
 	final static Type BOOLEAN_TYPE = Type.getObjectType("java/lang/Boolean");
 	final static Type SHORT_TYPE = Type.getObjectType("java/lang/Short");
@@ -64,7 +64,7 @@ public class GenUtils
 			.getMethod("double doubleValue()");
 	static
 	{
-		DESCRIPTORS = new HashMap<Class, String>();
+		DESCRIPTORS = new HashMap<Class<?>, String>();
 		DESCRIPTORS.put(Byte.TYPE, "B");
 		DESCRIPTORS.put(Character.TYPE, "C");
 		DESCRIPTORS.put(Double.TYPE, "D");
@@ -73,7 +73,7 @@ public class GenUtils
 		DESCRIPTORS.put(Long.TYPE, "J");
 		DESCRIPTORS.put(Short.TYPE, "S");
 		DESCRIPTORS.put(Boolean.TYPE, "Z");
-		METHODS = new HashMap<Class, Method>();
+		METHODS = new HashMap<Class<?>, Method>();
 		METHODS.put(Byte.TYPE, INT_VALUE);
 		METHODS.put(Character.TYPE, CHAR_VALUE);
 		METHODS.put(Double.TYPE, DOUBLE_VALUE);
@@ -82,7 +82,7 @@ public class GenUtils
 		METHODS.put(Long.TYPE, LONG_VALUE);
 		METHODS.put(Short.TYPE, INT_VALUE);
 		METHODS.put(Boolean.TYPE, BOOLEAN_VALUE);
-		WRAP_TYPES = new HashMap<Class, Type>();
+		WRAP_TYPES = new HashMap<Class<?>, Type>();
 		WRAP_TYPES.put(Byte.TYPE, BYTE_TYPE);
 		WRAP_TYPES.put(Character.TYPE, CHARACTER_TYPE);
 		WRAP_TYPES.put(Double.TYPE, DOUBLE_TYPE);
@@ -93,30 +93,30 @@ public class GenUtils
 		WRAP_TYPES.put(Boolean.TYPE, BOOLEAN_TYPE);
 	}
 
-	public static String getPrimitiveClassDesc(Class c)
+	public static String getPrimitiveClassDesc(Class<?> c)
 	{
 		return DESCRIPTORS.get(c);
 	}
 
-	public static Method getPrimitiveMethod(Class c)
+	public static Method getPrimitiveMethod(Class<?> c)
 	{
 		return METHODS.get(c);
 	}
 
-	public static Type getWrapType(Class c)
+	public static Type getWrapType(Class<?> c)
 	{
 		return WRAP_TYPES.get(c);
 	}
 
-	public static String getSetterDesc(Class c)
+	public static String getSetterDesc(Class<?> c)
 	{
-		Class out = c;
+		Class<?> out = c;
 		// if (c.isPrimitive()) out = BonesOfBeans.wrapperEquivalentOf(c);
 		return Type.getMethodDescriptor(Type.VOID_TYPE, new Type[] { Type
 				.getType(out) });
 	}
 
-	public static void unbox(MethodVisitor mv, Class c)
+	public static void unbox(MethodVisitor mv, Class<?> c)
 	{
 		Method m = METHODS.get(c);
 		if (m != null)
@@ -129,7 +129,7 @@ public class GenUtils
 		}
 	}
 
-	public static void box(MethodVisitor mv, Class c)
+	public static void box(MethodVisitor mv, Class<?> c)
 	{
 		Method m = METHODS.get(c);
 		if (m != null)
@@ -169,7 +169,7 @@ public class GenUtils
 		System.out.println(getSetterDesc(String.class));
 		System.out.println(s1);
 		// if(true) return;
-		Class cls = JButton.class;
+		Class<?> cls = JButton.class;
 		try
 		{
 			// temp.javax_swing_JComponent.class;

@@ -24,10 +24,13 @@ import static javax.swing.text.html.HTML.Tag.UL;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Rectangle2D;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
@@ -36,6 +39,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -44,6 +48,10 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.SoftBevelBorder;
+import javax.swing.plaf.basic.BasicComboBoxUI;
+import javax.swing.plaf.basic.BasicComboPopup;
+import javax.swing.plaf.basic.ComboPopup;
+import javax.swing.plaf.metal.MetalComboBoxUI;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
@@ -52,6 +60,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.html.CSS;
 import javax.swing.text.html.HTML;
+
+import edu.umd.cs.piccolox.pswing.PSwing;
 
 import seco.notebook.gui.ToolbarButton;
 
@@ -465,21 +475,25 @@ public class HTMLToolBar extends JToolBar
         public MyComboBox()
         {
             super();
+            setUI(new ComboUI());
         }
 
         public MyComboBox(ComboBoxModel aModel)
         {
             super(aModel);
+            setUI(new ComboUI());
         }
 
         public MyComboBox(Object[] items)
         {
             super(items);
+            setUI(new ComboUI());
         }
 
         public MyComboBox(Vector<?> items)
         {
             super(items);
+            setUI(new ComboUI());
         }
 
         public void setSelectedItemEx(Object item)
@@ -510,6 +524,46 @@ public class HTMLToolBar extends JToolBar
             this.getComponent(i).setEnabled(enabled);
     }
 
+    private static class ComboUI extends MetalComboBoxUI
+    {
+        @Override
+        protected ComboPopup createPopup() {
+            PBasicComboPopup popup = new PBasicComboPopup(comboBox);
+            popup.getAccessibleContext().setAccessibleParent(comboBox);
+            return popup;
+        }
+    }
+    
+    static class PBasicComboPopup extends BasicComboPopup {
+
+        public PBasicComboPopup(JComboBox combo) {
+            super(combo);
+        }
+
+       protected Rectangle computePopupBounds(int px, int py, int pw, int ph) {
+            Point r = getPopupMenuOrigin();
+            Rectangle sup = super.computePopupBounds(px, py, pw, ph);
+            if(r == null) return sup;
+            return new Rectangle((int) r.getX(), (int) r.getY(), (int) sup.getWidth(), (int) sup.getHeight());
+        }
+       
+       private Point getPopupMenuOrigin()
+       {
+           Point pt = null;
+           //System.out.println("PBasicComboPopup: " + comboBox.getParent());
+           if (comboBox.getParent() != null && comboBox.getParent() instanceof JComponent)
+           {
+               PSwing p = (PSwing) ((JComponent) comboBox.getParent())
+                       .getClientProperty(PSwing.PSWING_PROPERTY);
+               if (p != null)
+               {
+                   Rectangle r = p.getFullBounds().getBounds();
+                   return new Point(r.x, r.y);
+               }
+           }
+           return pt;
+       }
+    }
     public static class StylesAction extends AbstractAction
     {
 

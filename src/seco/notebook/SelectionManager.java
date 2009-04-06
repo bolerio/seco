@@ -197,13 +197,13 @@ public class SelectionManager extends
     public void left(Element el, boolean select)
     {
         // System.out.println("SelectionManager - left: " + select + ":" + el);
-        CellGroup from = (CellGroup) NotebookDocument.getNBElement(el);
-        if (from.getArity() > 0)
+        CellGroupMember from = NotebookDocument.getNBElement(el);
+        if(from instanceof CellGroup && ((CellGroup)from).getArity() > 0)
         {
             if (!select) clearSelections();
             else
                 removeCellSelection(el);
-            select(from.getElement(0), true);
+            select(((CellGroup)from).getElement(0), true);
         } else
         {
             clearSelections();
@@ -347,7 +347,7 @@ public class SelectionManager extends
         NotebookDocument doc = notebookUI.getDoc();
         Element par_el = NotebookDocument.getContainerEl(el, false);
         CellGroup parent = (par_el == null) ? (CellGroup) doc.getBook()
-                : (CellGroup) NotebookDocument.getNBElement(el);
+                : (CellGroup) NotebookDocument.getNBElement(par_el);
         if (parent == null) return null;
         if (par_el == null) par_el = doc.getRootElements()[0];
         int index = parent.indexOf(NotebookDocument.getNBElementH(el));
@@ -360,7 +360,7 @@ public class SelectionManager extends
         NotebookDocument doc = notebookUI.getDoc();
         Element par_el = NotebookDocument.getContainerEl(el, false);
         CellGroup parent = (par_el == null) ? (CellGroup) doc.getBook()
-                : (CellGroup) NotebookDocument.getNBElement(el);
+                : (CellGroup) NotebookDocument.getNBElement(par_el);
 
         if (parent == null) return null;
         if (par_el == null) par_el = doc.getRootElements()[0];

@@ -100,7 +100,8 @@ public class CellHandleView extends HidableComponentView
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e)
 				{
-					if (!ui.isEditable()) return;
+					if (!ui.isVisible() || !ui.isEditable()) return;
+					if(!button.isVisible()) return;
 					int mode = e.getModifiers();
 					SelectionManager manager = ui.getSelectionManager();
 					if (!button.drawInsertionLine)

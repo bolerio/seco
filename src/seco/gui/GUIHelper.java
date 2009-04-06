@@ -120,7 +120,7 @@ public class GUIHelper
             group = new CellGroup("TabbedPaneCellGroup");
             ThisNiche.hg.define(ThisNiche.TABBED_PANE_GROUP_HANDLE, group);
             group.setVisual(ThisNiche.hg.add(new TabbedPaneVisual()));
-            group.setAttribute(VisualAttribs.rect, new Rectangle(0, 50, 600,
+            group.setAttribute(VisualAttribs.rect, new Rectangle(0, 60, 600,
                     600));
             ThisNiche.hg.update(group);
         }
@@ -539,15 +539,15 @@ public class GUIHelper
         addToTopCellGroup(GUIHelper.TOOLBAR_HANDLE, group, VisualsManager
                 .defaultVisualForAtom(GUIHelper.TOOLBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(0),
-                        new DValue(0), new DValue(40, true), new DValue(28)),
-                        RefPoint.TOP_RIGHT), null);
+                        new DValue(28), new DValue(280), new DValue(28)),
+                        RefPoint.TOP_LEFT), null);
         getHTMLToolBar();
         addToTopCellGroup(GUIHelper.HTML_TOOLBAR_HANDLE, group,
                 VisualsManager
                         .defaultVisualForAtom(GUIHelper.HTML_TOOLBAR_HANDLE),
-                new DefaultLayoutHandler(new DRect(new DValue(0),
-                        new DValue(0), new DValue(100, true), new DValue(28)),
-                        RefPoint.BOTTOM_LEFT), null);
+                new DefaultLayoutHandler(new DRect(new DValue(280),
+                        new DValue(28), new DValue(660), new DValue(28)),
+                        RefPoint.TOP_LEFT), null);
 
         getJTabbedPane();
         group.insert(group.getArity(), ThisNiche.TABBED_PANE_GROUP_HANDLE);

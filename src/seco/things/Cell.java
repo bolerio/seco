@@ -89,14 +89,7 @@ public class Cell extends BaseCellGroupMember implements EventHandler
 
     }
 
-   public void fireCellTextChanged(CellTextChangeEvent e)
-   {
-       HGHandle h = ThisNiche.handleOf(this);
-       if (h == null)
-           throw new NullPointerException("Cell with NULL handle: " + this);
-
-       EventDispatcher.dispatch(CellTextChangeEvent.HANDLE, h, e);
-    }
+   
    
    
 }

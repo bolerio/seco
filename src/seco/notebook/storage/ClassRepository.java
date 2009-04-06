@@ -458,7 +458,7 @@ public class ClassRepository
                     Class<?> thisClass = urlClassLoader
                             .loadClass(classDescriptor);
                     if (thisClass == null
-                            && (thisClass.getModifiers() & Modifier.PUBLIC) == 0) continue;
+                            || (thisClass.getModifiers() & Modifier.PUBLIC) == 0) continue;
                     String simple = thisClass.getCanonicalName();
                     if (simple == null) continue;
                     simple = thisClass.getSimpleName();

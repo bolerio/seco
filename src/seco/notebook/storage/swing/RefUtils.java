@@ -1,46 +1,29 @@
 package seco.notebook.storage.swing;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
-import org.hypergraphdb.HGValueLink;
-import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.atom.HGRelType;
-import org.hypergraphdb.type.BonesOfBeans;
-import org.hypergraphdb.type.Record;
-import org.hypergraphdb.type.Slot;
 
 
 public class RefUtils
 {
-	public static Method getGetMethod(final Class clazz, final String name)
+	public static Method getGetMethod(final Class<?> clazz, final String name)
 	{
 		final String fieldName = name.substring(0, 1).toUpperCase()
 				+ name.substring(1);
 		Method getMethod = null;
 		try
 		{
-			getMethod = clazz.getMethod("get" + fieldName, new Class[] {});
+			getMethod = clazz.getMethod("get" + fieldName, new Class<?>[] {});
 		}
 		catch (final Exception e)
 		{
 		}
 		if (getMethod == null) try
 		{
-			getMethod = clazz.getMethod("is" + fieldName, new Class[] {});
+			getMethod = clazz.getMethod("is" + fieldName, new Class<?>[] {});
 		}
 		catch (final Exception e)
 		{
@@ -48,7 +31,7 @@ public class RefUtils
 		return getMethod;
 	}
 
-	public static Method getSetMethod(final Class clazz, final String name)
+	public static Method getSetMethod(final Class<?> clazz, final String name)
 	{
 		final String fieldName = setterName(name);
 		Method setMethod = null;
@@ -70,7 +53,7 @@ public class RefUtils
 		return "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
 	}
 
-	public static Field getPublicField(Class cls, String name)
+	public static Field getPublicField(Class<?> cls, String name)
 	{
 		try
 		{
@@ -85,7 +68,7 @@ public class RefUtils
 		return null;
 	}
 
-	public static Field getPrivateField(Class cls, String name)
+	public static Field getPrivateField(Class<?> cls, String name)
 	{
 		try
 		{
@@ -101,7 +84,7 @@ public class RefUtils
 				.getSuperclass(), name);
 	}
 
-	public static Object getPrivateFieldValue(Object instance, Class cls,
+	public static Object getPrivateFieldValue(Object instance, Class<?> cls,
 			String name)
 	{
 		int dot = name.indexOf(".");
@@ -123,7 +106,7 @@ public class RefUtils
 		return null;
 	}
 	
-	public static void setPrivateFieldValue(Object instance, Class cls,
+	public static void setPrivateFieldValue(Object instance, Class<?> cls,
 			String name, Object value)
 	{
 		int dot = name.indexOf(".");
@@ -146,12 +129,12 @@ public class RefUtils
 		}
 	}
 
-	public static Class getType(Class cls, String name)
+	public static Class<?> getType(Class<?> cls, String name)
 	{
 		int dot = name.indexOf(".");
 		if (dot > 0)
 		{
-			Class c = getType(cls, name.substring(0, dot));
+			Class<?> c = getType(cls, name.substring(0, dot));
 			return getType(c, name.substring(dot + 1));
 		}
 		Field f = getPublicField(cls, name);
@@ -162,7 +145,7 @@ public class RefUtils
 		return (f != null) ? f.getType() : null;
 	}
 
-	public static Object getValue(Object instance, Class cls, String name)
+	public static Object getValue(Object instance, Class<?> cls, String name)
 	{
 		int dot = name.indexOf(".");
 		if (dot > 0)
@@ -197,7 +180,7 @@ public class RefUtils
 	{
 	}
 
-	public static BeanInfo getBeanInfo(Class type)
+	public static BeanInfo getBeanInfo(Class<?> type)
 	{
 		BeanInfo info = null;
 		try

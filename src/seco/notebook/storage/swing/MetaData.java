@@ -39,7 +39,6 @@ import javax.swing.tree.TreeNode;
 
 import seco.notebook.storage.swing.types.AddOnFactory;
 
-
 /*
  * Like the <code>Intropector</code>, the <code>MetaData</code> class
  * contains <em>meta</em> objects that describe the way
@@ -81,7 +80,7 @@ public class MetaData
         // The color and font properties in Component need special treatment,
         // see above.
         removeProperty("java.awt.Component", "foreground");
-        //removeProperty("java.awt.Component", "background");
+        // removeProperty("java.awt.Component", "background");
         removeProperty("java.awt.Component", "font");
         // The visible property of Component needs special treatment because of
         // Windows.
@@ -116,7 +115,7 @@ public class MetaData
         removeProperty("javax.swing.JMenu", "UI");
         removeProperty("javax.swing.JMenuBar", "UI");
         removeProperty("javax.swing.JMenuBar", "layout");
-       
+
         removeProperty("javax.swing.JMenuItem", "UI");
         removeProperty("javax.swing.JMenuItem", "layout");
         removeProperty("javax.swing.JPopupMenu", "UI");
@@ -154,7 +153,7 @@ public class MetaData
         removeProperty("javax.swing.JComboBox", "editor");
         removeProperty("javax.swing.JComboBox", "renderer");
         removeProperty("javax.swing.JComboBox", "layout");
-        //normally UI-s write here some non-persistent stuff..
+        // normally UI-s write here some non-persistent stuff..
         removeProperty("javax.swing.JComboBox", "component");
         // All selection information should come after the JTabbedPane is built
         removeProperty("javax.swing.JTabbedPane", "selectedIndex");
@@ -186,10 +185,9 @@ public class MetaData
 
         // removeProperty("javax.swing.JFrame", "menuBar");
 
-        registerConstructor("javax.swing.GroupLayout",
-                new String[] { "host" },
+        registerConstructor("javax.swing.GroupLayout", new String[] { "host" },
                 new Class[] { Container.class });
-        
+
         registerConstructor("javax.swing.DefaultCellEditor",
                 new String[] { "editorComponent" },
                 new Class[] { JCheckBox.class });
@@ -395,8 +393,9 @@ public class MetaData
         }
         return info;
     }
-    
-    public static Collection<String> getTransientProperties(String cls_name){
+
+    public static Collection<String> getTransientProperties(String cls_name)
+    {
         return transientProperties.get(cls_name);
     }
 
@@ -408,15 +407,15 @@ public class MetaData
     }
 
     public synchronized static void registerConstructor(String typeName,
-            String[] constructor, Class[] ctr_types)
+            String[] constructor, Class<?>[] ctr_types)
     {
         converters.put(typeName, new DefaultConverter(typeName, constructor,
                 ctr_types));
     }
 
-    public synchronized static void registerFactoryConstructor(Class type,
-            Class fcls, String method, String[] ctrParamNames,
-            Class[] ctrParamTypes)
+    public synchronized static void registerFactoryConstructor(Class<?> type,
+            Class<?> fcls, String method, String[] ctrParamNames,
+            Class<?>[] ctrParamTypes)
     {
         DefaultConverter c = new DefaultConverter(type);
         c.setFactoryCtr(fcls, method, ctrParamNames, ctrParamTypes);
@@ -537,8 +536,8 @@ public class MetaData
  * class StaticFieldsPersistenceDelegate extends PersistenceDelegate { protected
  * void installFields(Encoder out, Class<?> cls) { Field fields[] =
  * cls.getFields(); for(int i = 0; i < fields.length; i++) { Field field =
- * fields[i]; // Don't install primitives, their identity will not be preserved //
- * by wrapping. if (Object.class.isAssignableFrom(field.getType())) {
+ * fields[i]; // Don't install primitives, their identity will not be preserved
+ * // by wrapping. if (Object.class.isAssignableFrom(field.getType())) {
  * out.writeExpression(new Expression(field, "get", new Object[]{null})); } } }
  * 
  * protected Expression instantiate(Object oldInstance, Encoder out) { throw new
@@ -567,7 +566,8 @@ class java_awt_Component_PersistenceDelegate extends DefaultConverter
     private static final String FOREGROUND = "foreground";
     private static final String BACKGROUND = "background";
 
-    private static final Map<String, Class> map = new HashMap<String, Class>(6);
+    private static final Map<String, Class<?>> map = new HashMap<String, Class<?>>(
+            6);
     static
     {
         map.put(SIZE, Dimension.class);
@@ -584,7 +584,7 @@ class java_awt_Component_PersistenceDelegate extends DefaultConverter
     }
 
     @Override
-    protected Map<String, Class> getAuxSlots()
+    protected Map<String, Class<?>> getAuxSlots()
     {
         return map;
     }
@@ -603,7 +603,7 @@ class java_awt_Container_PersistenceDelegate extends DefaultConverter
     static
     {
         addOnFields.add(new DefaultConverter.Add(AddOnFactory.ADD_COMP,
-               new String[] { "component" }, new Class[] { Component.class }));
+                new String[] { "component" }, new Class[] { Component.class }));
     }
 
     public Set<AddOnType> getAddOnFields()
@@ -771,14 +771,14 @@ class javax_swing_AbstractAction_PersistenceDelegate extends DefaultConverter
         super(AbstractAction.class);
     }
 
-    protected static final Map<String, Class> map = new HashMap<String, Class>(
+    protected static final Map<String, Class<?>> map = new HashMap<String, Class<?>>(
             1);
     static
     {
         map.put("arrayTable", Object.class);
     }
 
-    protected Map<String, Class> getAuxSlots()
+    protected Map<String, Class<?>> getAuxSlots()
     {
         return map;
     }
@@ -798,14 +798,14 @@ class javax_swing_ArrayTable_PersistenceDelegate extends DefaultConverter
         }
     }
 
-    protected static final Map<String, Class> map = new HashMap<String, Class>(
+    protected static final Map<String, Class<?>> map = new HashMap<String, Class<?>>(
             1);
     static
     {
         map.put("table", Object.class);
     }
 
-    protected Map<String, Class> getAuxSlots()
+    protected Map<String, Class<?>> getAuxSlots()
     {
         return map;
     }

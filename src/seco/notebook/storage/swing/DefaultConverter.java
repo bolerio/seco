@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hypergraphdb.HGException;
+import org.hypergraphdb.annotation.HGIgnore;
 import org.hypergraphdb.type.BonesOfBeans;
 
 public class DefaultConverter // implements Converter
@@ -22,7 +23,7 @@ public class DefaultConverter // implements Converter
     public static final String LISTENERS_KEY = "Listeners";
     protected String[] ctrParamNames = new String[0];
     protected Class<?>[] ctrParamTypes;
-    protected Map<String, Class> map = new HashMap<String, Class>();
+    protected Map<String, Class<?>> map = new HashMap<String, Class<?>>();
     protected Constructor<?> ctr;
     protected Class<?> type;
     protected Method factoryMethod;
@@ -172,7 +173,8 @@ public class DefaultConverter // implements Converter
         Field[] fs = type.getFields();
         for (Field f : fs)
             if (Modifier.isPublic(f.getModifiers())
-                    && !Modifier.isStatic(f.getModifiers())) cachedSlots.put(f
+                    && !Modifier.isStatic(f.getModifiers())
+                    && annCheck(f)) cachedSlots.put(f
                     .getName(), f.getType());
         // EventListeners
         EventSetDescriptor[] eventSetDescriptors = info
@@ -180,11 +182,13 @@ public class DefaultConverter // implements Converter
         for (int e = 0; e < eventSetDescriptors.length; e++)
         {
             EventSetDescriptor d = eventSetDescriptors[e];
+            //TODO: maybe here we could add some sort of annot check too
+            //if(!isAcceptable(d)) continue;
             Class<?> listenerType = d.getListenerType();
             cachedSlots.put(d.getName() + LISTENERS_KEY, listenerType);
         }
 
-        Map<String, Class> inner = getAuxSlots();
+        Map<String, Class<?>> inner = getAuxSlots();
         if (inner != null) for (String key : inner.keySet())
             cachedSlots.put(key, inner.get(key));
         Set<AddOnType> adds = getAllAddOnFields();
@@ -208,7 +212,7 @@ public class DefaultConverter // implements Converter
         return cachedSlots;
     }
 
-    protected Map<String, Class> getAuxSlots()
+    protected Map<String, Class<?>> getAuxSlots()
     {
         return map;
     }
@@ -218,7 +222,7 @@ public class DefaultConverter // implements Converter
         // System.out.println(type.getName() + ":" + props);
         int nArgs = (ctrParamNames != null) ? ctrParamNames.length : 0;
         Object[] constructorArgs = new Object[nArgs];
-        Class[] params = new Class[nArgs];
+        Class<?>[] params = new Class<?>[nArgs];
         for (int i = 0; i < nArgs; i++)
             constructorArgs[i] = props.get(ctrParamNames[i]);
         try
@@ -255,8 +259,23 @@ public class DefaultConverter // implements Converter
 
     static boolean isAcceptable(Class<?> type, PropertyDescriptor pd)
     {
-        return pd != null && pd.getReadMethod() != null
-                && pd.getWriteMethod() != null;
+        return pd != null && annCheck(pd.getReadMethod())
+                && annCheck(pd.getWriteMethod()) && 
+                annCheck(RefUtils.getPrivateField(
+                        pd.getPropertyType(), pd.getName()));
+    }
+    
+    
+    
+    static boolean annCheck(Method m)
+    {
+        return m != null && m.getAnnotation(HGIgnore.class) == null;
+    }
+    
+    static boolean annCheck(Field f)
+    {
+        if(f == null) return true;
+        return f != null && f.getAnnotation(HGIgnore.class) == null;
     }
 
     public Constructor<?> getCtr()

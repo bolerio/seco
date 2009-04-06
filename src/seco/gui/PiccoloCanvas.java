@@ -28,10 +28,12 @@ import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
+import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.event.PZoomEventHandler;
 import edu.umd.cs.piccolo.util.PNodeFilter;
 import edu.umd.cs.piccolo.util.PPaintContext;
 import edu.umd.cs.piccolox.pswing.PSwingCanvas;
+import edu.umd.cs.piccolox.pswing.PSwingEventHandler;
 
 public class PiccoloCanvas extends PSwingCanvas
 {
@@ -100,6 +102,14 @@ public class PiccoloCanvas extends PSwingCanvas
 
     public PiccoloCanvas()
     {
+        //new PSwingEventHandler(this, getCamera()).setActive(true);
+        //ugly way to remove parent PSwingEventHandler
+        PInputEventListener[] list = getCamera().getListenerList().getListeners(PInputEventListener.class);
+        for(PInputEventListener l: list)
+            if(l instanceof PSwingEventHandler)
+                getCamera().removeInputEventListener(l);
+        //then add our fixed one
+        new PSwingEventHandlerEx(this, getCamera()).setActive(true);
         init();
     }
 

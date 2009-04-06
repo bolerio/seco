@@ -74,7 +74,7 @@ public class TabbedPaneU
             TopFrame.getInstance().setTitle("Seco");
         else
             GUIHelper.updateFrameTitle(
-                    getHandleAt(currentTP,currentTP.getSelectedIndex()));
+                    getHandleAt(tp, tp.getSelectedIndex()));
     }
 
     private static int promptAndSaveDoc()
