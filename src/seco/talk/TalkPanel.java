@@ -35,7 +35,6 @@ public class TalkPanel extends JPanel
         inPanel.setLayout(new BorderLayout());
         inPanel.add(inText, BorderLayout.CENTER);
         inText.addKeyListener(new KeyListener(inText, this));
-                
         outText = new JTextPane();
         outText.setEditable(false);
         JPanel outPanel = new JPanel();
@@ -69,7 +68,7 @@ public class TalkPanel extends JPanel
     public void chatFrom(HGPeerIdentity from, String text)
     {        
         String s = "(" + sdf.format(new Date()) + ") ";
-        s += (from.equals(friend) ? "me" : from.getName()) + ":" + text;
+        s += (!from.equals(friend) ? "me" : from.getName()) + ":" + text;
         outText.setText(outText.getText() + s);        
     }
     
@@ -115,14 +114,14 @@ public class TalkPanel extends JPanel
                 {
                     String msg = inText.getText();
                     inText.setText("");
-                    panel.getTalkActivity().chat(msg);
-                    panel.chatFrom(panel.getFriend(), msg);
+                    panel.talkActivity.chat(msg);
+                    panel.chatFrom(panel.talkActivity.getThisPeer().getIdentity(), msg);
                 }
                 else
                 {
                     inText.setText(inText.getText() + "\n");
                 }
-        }
+        }   
 
         public JTextPane getInText()
         {

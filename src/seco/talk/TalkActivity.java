@@ -40,6 +40,7 @@ public class TalkActivity extends Activity
     void openPanel()
     {
         talkPanel = new TalkPanel(this);
+        talkPanel.setFriend(friend);
         CellGroup group = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         HGHandle h = ThisNiche.hg.add(talkPanel);
         GUIHelper.addToTopCellGroup(h, 
@@ -90,19 +91,19 @@ public class TalkActivity extends Activity
     public void chat(String text)
     {
         assert friend == null : new RuntimeException("No destination for TalkActivity.");
-        Message msg = createMessage(Performative.QueryRef, TalkActivity.this);
+        Message msg = makeReply(this, Performative.QueryRef, null);
         combine(msg, struct(Messages.CONTENT, 
           struct("type", "chat", "text", text)));
-        send(friend, msg);
+        post(friend, msg);
     }
     
     public void sendAtom(HGHandle atom)
     {
         assert friend == null : new RuntimeException("No destination for TalkActivity.");
-        Message msg = createMessage(Performative.QueryRef, TalkActivity.this);
+        Message msg = makeReply(this, Performative.QueryRef, null);
         combine(msg, struct(Messages.CONTENT, 
           struct("type", "atom", "atom", atom)));
-        send(friend, msg);
+        post(friend, msg);
     }
     
     public void close()
@@ -114,10 +115,17 @@ public class TalkActivity extends Activity
     public void handleMessage(Message msg)
     {
         initFriend(msg);
+        if (msg.getPerformative() == Performative.AcceptProposal)
+            return;
         Map<String, Object> content = getPart(msg, CONTENT);
         String type = (String)content.get("type");
         assert type != null : new RuntimeException("No type in TalkActivity content.");
-        if ("chat".equals(type))
+        if ("start-chat".equals(type))
+        {
+            Message reply = getReply(msg, Performative.AcceptProposal);
+            send(friend, reply);            
+        }
+        else if ("chat".equals(type))
         {
             String text = getPart(content, "text");
             assert text != null : new RuntimeException("No text in TalkActivity chat.");            
@@ -140,9 +148,12 @@ public class TalkActivity extends Activity
     @Override
     public void initiate()
     {
-        // nothing to do...
+        assert friend == null : new RuntimeException("No destination for TalkActivity.");
+        Message msg = createMessage(Performative.Propose, TalkActivity.this);
+        combine(msg, struct(Messages.CONTENT, struct("type", "start-chat")));
+        post(friend, msg);
     }
-    
+     
     @Override
     public String getType()
     {

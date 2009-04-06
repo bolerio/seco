@@ -153,6 +153,7 @@ public class PeerList extends JPanel
 //            HGHandle h = ThisNiche.hg.add(existing);
 //        }
         TalkActivity activity = new TalkActivity(thisPeer, friend);
+        thisPeer.getActivityManager().initiateActivity(activity);
         talks.add(activity);
     }
     

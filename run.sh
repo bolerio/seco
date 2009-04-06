@@ -21,9 +21,10 @@ cd $SCRIBA_BIN_DIR
 export SCRIBA_HOME="`pwd`"
 echo "Using Scriba home directory '$SCRIBA_HOME'"
 
-JAVA_EXEC="$JAVA_HOME/bin/java"
+JAVA_EXEC=java
 
-SCRIBA_CLASSPATH="$SCRIBA_HOME/scriba.jar"
+#SCRIBA_CLASSPATH="/usr/local/classpath/share/classpath:$SCRIBA_HOME/bin"
+SCRIBA_CLASSPATH="$SCRIBA_HOME/bin"
 
 for f in lib/*.jar; do
   SCRIBA_CLASSPATH="$SCRIBA_CLASSPATH$pathsep$f"
@@ -36,6 +37,8 @@ if $cygwin; then
   [ -n "$SCRIBA_NATIVE" ] && SCRIBA_NATIVE=`cygpath --path --windows "$SCRIBA_NATIVE"`
 fi
 
-PATH=$SCRIBA_NATIVE:$PATH
+#export LD_LIBRARY_PATH=/usr/local/classpath/lib/classpath:/usr/local/BerkeleyDB.4.7/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/local/BerkeleyDB.4.7/lib:$LD_LIBRARY_PATH
+#NATIVE=/usr/local/classpath/lib/classpath:/usr/local/BerkeleyDB.4.7/lib
 
-exec $JAVA_EXEC -cp $SCRIBA_CLASSPATH -Djava.library.path=$SCRIBA_NATIVE com.kobrix.scriba.boot.StartMeUp
+exec $JAVA_EXEC -cp $SCRIBA_CLASSPATH  seco.boot.StartMeUp

@@ -7,25 +7,36 @@
                 {"class" : "org.hypergraphdb.peer.bootstrap.CACTBootstrap", "config" : {}},
                 {"class" : "seco.talk.SecoTalkBootstrap", "config" : {}}
               ],
-"interfaceType"	: "org.hypergraphdb.peer.jxta.JXTAPeerInterface",
+"interfaceType"	: "org.hypergraphdb.peer.jxta.JXTAPeerInterface2",
 "peerName"	: "Peer2",
 
 "jxta"		:
 {
     "user" : "bolerio",
     "password" : "password",
-	"jxtaDir"	: "./hgdb_edge/.jxta2",
-	"peerGroup"	: "HGDBNET",
-
+	"peerName"	: "Peer2",    
+	"jxtaDir"	: "./hgdb_edge/.jxta2",	
+	"createGroup" : false,
+	"deleteJxtaDir" : true,		
+	"peerGroup"	: "SecoNet",
+	"peerGroupId" : "urn:jxta:uuid-AA4861129B334B6EBF919814C05726F002",
 	"mode"		: "EDGE",
 	"tcp"		:
 	{
 		"enabled"	: true,
-		"port"		: 9802
+		"port"		: 9901
+	},	
+	"http"		:
+	{
+		"enabled"	: true,
+		"port"		: 9902
 	},
+/*    "needsRendezVous" : true,        
+    "rdvs"          : ["tcp://192.168.2.101:9702"] */ 
+	
     "needsRendezVous" : true,        
     "rdvs"          : ["tcp://kobrix.com:9702","http://kobrix.com:9703"],
     "needsRelay"    : true,        
-    "relays"        : ["tcp://kobrix.com:9702","http://kobrix.com:9703"],
+    "relays"        : ["tcp://kobrix.com:9702","http://kobrix.com:9703"] 
 }
 }

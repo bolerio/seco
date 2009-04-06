@@ -152,7 +152,11 @@ public class ClassGenerator
 			genMakePubField(mv, f);
 		for (Field f : inspector.getPrivFieldsMap().values())
 		{
-		    //don't generate make for private fields used in addons 
+		    //don't generate make for private fields used in addons
+		    if (inspector.addons == null)
+		        throw new NullPointerException("inspector.addons");
+		    else if (f == null)
+		        throw new NullPointerException("f");
 		    if(!inspector.addons.containsKey(f.getName()))
 			   genMakePrivField(mv, f);
 		}
