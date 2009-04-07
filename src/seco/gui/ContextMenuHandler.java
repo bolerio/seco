@@ -1,31 +1,26 @@
 package seco.gui;
 
-import java.awt.Dimension;
 import java.awt.event.InputEvent;
-import java.io.File;
 
-import javax.swing.JDialog;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import seco.ThisNiche;
-import seco.boot.NicheManager;
-import seco.gui.layout.LayoutSettingsPanel;
-import seco.notebook.AppConfig;
 import seco.notebook.ScriptletAction;
-import seco.things.CellGroup;
+import seco.things.Cell;
 import seco.things.CellGroupMember;
-import seco.things.IOUtils;
-
+import seco.things.CellUtils;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
-import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 
 public class ContextMenuHandler extends PBasicInputEventHandler
 {
+    JPopupMenu global_menu;
+    JPopupMenu node_menu;
+    
     public ContextMenuHandler()
     {
     }
@@ -44,116 +39,66 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         showNodeMenu(event);
     }
 
+    /**
+     * Creates and shows the global JMenu 
+     */
     public void showGlobMenu(PInputEvent event)
     {
-        JPopupMenu menu = new JPopupMenu();
-        menu.setLabel("Main Menu");
-        JMenuItem mi = new JMenuItem(new ScriptletAction(
-                "canvas.relayout();"));
-        mi.setText("Layout");
-        menu.add(mi);
-        mi = new JMenuItem(new ScriptletAction(
-                "seco.gui.ContextMenuHandler.birdsEyeView();"));
-        mi.setText("BirdsEyeView");
-        menu.add(mi);
-
-        mi = new JMenuItem(new ScriptletAction(
+        if(global_menu != null) {
+            show_menu(event, global_menu); return;
+        }
+        global_menu = new JPopupMenu();
+        global_menu.add(makeMenuItem("Restore Default GUI",
+                "seco.gui.CommonActions.restoreDefaultGUI();"));
+        global_menu.add(makeMenuItem("BirdsEyeView",
+                "seco.gui.CommonActions.birdsEyeView();"));
+        global_menu.add(makeMenuItem("Reset Zoom",
                 "canvas.getCamera().setViewScale(1.0);"));
-        mi.setText("Reset Zoom");
-        menu.add(mi);
-        mi = new JMenuItem(new ScriptletAction(
-                "seco.gui.ContextMenuHandler.backup();"));
-        mi.setText("Backup");
-        menu.add(mi);
-        show_menu(event, menu);
+        global_menu.add(makeMenuItem("Backup", "seco.gui.CommonActions.backup();"));
+        show_menu(event, global_menu);
     }
 
     /**
-     * Creates the Appropriate JMenu for the particular node type
+     * Creates and shows the appropriate JMenu for selected node
      */
     public void showNodeMenu(PInputEvent event)
     {
-        PNode node = event.getPickedNode();
-        //System.out.println("ContextMenuHandler - node: " + node);
-        JPopupMenu menu = new JPopupMenu();
-        JMenuItem mi = new JMenuItem(
-                new ScriptletAction(
-                        "canvas.getCamera().animateViewToCenterBounds("
-                                + "desktop.getCanvas().getLayer().getFullBounds(), true, 50l );"));
-        mi.setText("Fit To Screen");
-        menu.add(mi);
-        mi = new JMenuItem(new ScriptletAction(
-                "seco.gui.ContextMenuHandler.showLayoutSettingsDlg("
-                        + "canvas.getSelection().get(0));"));
-        mi.setText("Pin/Unpin");
-        menu.add(mi);
-        show_menu(event, menu);
+        if(node_menu != null) {
+            show_menu(event, node_menu); return;
+        }
+        node_menu = new JPopupMenu();
+        node_menu.add(makeMenuItem("Fit To Screen",
+                "canvas.getCamera().animateViewToCenterBounds("
+                        + "canvas.getLayer().getFullBounds(), true, 50l );"));
+        node_menu.add(makeMenuItem("Pin/Unpin",
+                "seco.gui.CommonActions.showLayoutSettingsDlg("
+                        + "canvas.getSelectedPSwingNode());"));
+        node_menu.add(makeMenuItem("Store Changes",
+                "seco.gui.ContextMenuHandler.updateSelPSCell();"));
+        show_menu(event, node_menu);
     }
 
+    public static void updateSelPSCell()
+    {
+        PSwingNode ps = TopFrame.getInstance().getCanvas().getSelectedPSwingNode();
+        CellGroupMember cell = ThisNiche.hg.get(ps.getHandle());
+        if(cell instanceof Cell && ((Cell) cell).getValue() instanceof JComponent)
+           CellUtils.updateCellValue((Cell) cell, ps.getComponent());
+    }
+    
     private void show_menu(PInputEvent event, JPopupMenu menu)
     {
+        
         menu.show((PCanvas) event.getComponent(), (int) event
                 .getCanvasPosition().getX(), (int) event.getCanvasPosition()
                 .getY());
     }
 
-    public static void showLayoutSettingsDlg(PSwingNode node)
+    private static JMenuItem makeMenuItem(String label, String code)
     {
-        LayoutSettingsPanel panel = new LayoutSettingsPanel(node);
-        JDialog dialog = new JDialog(TopFrame.getInstance(), "Layout Settings");
-        dialog.add(panel);
-        dialog.setSize(new Dimension(270, 170));
-        dialog.setVisible(true);
+        JMenuItem mi = new JMenuItem(new ScriptletAction(code));
+        mi.setText(label);
+        return mi;
     }
 
-    public static void birdsEyeView()
-    {
-        PCanvas canvas = TopFrame.getInstance().getCanvas();
-        BirdsEyeView bev = new BirdsEyeView();
-        bev.connect(canvas, new PLayer[] { canvas.getLayer() });
-
-        bev.setMinimumSize(new Dimension(180, 180));
-        bev.setSize(new Dimension(180, 180));
-        bev.updateFromViewed();
-        JDialog dialog = new JDialog(TopFrame.getInstance(), "BirdsEyeView");
-        dialog.add(bev);
-        dialog.setSize(new Dimension(220, 220));
-        dialog.setVisible(true);
-        bev.revalidate();
-    }
-
-    private static String bck_dir = "seco_bck";
-
-    public static void backup()
-    {
-        File dir = new File(AppConfig.getConfigDirectory(), 
-                bck_dir + File.separator + NicheManager.getNicheName(ThisNiche.hg));
-        if (!dir.exists()) dir.mkdir();
-        System.out.println("Backup in: " + dir.getAbsolutePath());
-        CellGroup group = (CellGroup) ThisNiche.hg
-                .get(ThisNiche.TABBED_PANE_GROUP_HANDLE);
-        for (int i = 0; i < group.getArity(); i++)
-        {
-            CellGroupMember c = group.getElement(i);
-            
-            if(!(c instanceof CellGroup)) continue;
-           
-            CellGroup g = (CellGroup) c;
-            // escape some illegal chars which could be introduced during
-            // previous book import
-            String fn = g.getName().replace('\\', '_').replace('/', '_')
-                    .replace(':', '_');
-            if (!fn.endsWith(".nb")) fn += ".nb";
-            try
-            {
-                IOUtils.exportCellGroup(g, new File(dir, fn).getAbsolutePath());
-            }
-            catch (Exception ex)
-            {
-                IOUtils.exportCellGroup(g, new File(dir, "BCK" + i)
-                        .getAbsolutePath()
-                        + ".nb");
-            }
-        }
-    }
 }

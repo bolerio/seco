@@ -526,23 +526,30 @@ public class GUIHelper
 
     public static void makeTopCellGroup(HyperGraph hg)
     {
-        CellGroup group = new CellGroup("TOP_CELL_GROUP");
-        hg.define(ThisNiche.TOP_CELL_GROUP_HANDLE, group);
+        CellGroup group = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        if(group == null)
+        {
+           group = new CellGroup("TOP_CELL_GROUP");
+           hg.define(ThisNiche.TOP_CELL_GROUP_HANDLE, group);
+        }
         group.setVisual(CellContainerVisual.getHandle());
         getMenuBar();
-        addToTopCellGroup(GUIHelper.MENUBAR_HANDLE, group,
+        if(group.indexOf(GUIHelper.MENUBAR_HANDLE) < 0)
+           addToTopCellGroup(GUIHelper.MENUBAR_HANDLE, group,
                 VisualsManager.defaultVisualForAtom(GUIHelper.MENUBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(0),
                         new DValue(0), new DValue(25, true), new DValue(28)),
                         RefPoint.TOP_LEFT), null);
         getMainToolBar();
-        addToTopCellGroup(GUIHelper.TOOLBAR_HANDLE, group, VisualsManager
+        if(group.indexOf(GUIHelper.TOOLBAR_HANDLE) < 0)
+          addToTopCellGroup(GUIHelper.TOOLBAR_HANDLE, group, VisualsManager
                 .defaultVisualForAtom(GUIHelper.TOOLBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(0),
                         new DValue(28), new DValue(280), new DValue(28)),
                         RefPoint.TOP_LEFT), null);
         getHTMLToolBar();
-        addToTopCellGroup(GUIHelper.HTML_TOOLBAR_HANDLE, group,
+        if(group.indexOf(GUIHelper.HTML_TOOLBAR_HANDLE) < 0)
+          addToTopCellGroup(GUIHelper.HTML_TOOLBAR_HANDLE, group,
                 VisualsManager
                         .defaultVisualForAtom(GUIHelper.HTML_TOOLBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(280),
@@ -550,7 +557,8 @@ public class GUIHelper
                         RefPoint.TOP_LEFT), null);
 
         getJTabbedPane();
-        group.insert(group.getArity(), ThisNiche.TABBED_PANE_GROUP_HANDLE);
+        if(group.indexOf(ThisNiche.TABBED_PANE_GROUP_HANDLE) < 0)
+           group.insert(group.getArity(), ThisNiche.TABBED_PANE_GROUP_HANDLE);
     }
 
     static void setLayoutHandler(HGHandle cellH, LayoutHandler lh)

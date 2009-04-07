@@ -11,9 +11,7 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.atom.HGAtomRef; 
 
 import seco.ThisNiche;
-import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
-//import seco.events.EvalResultEventType;
 import seco.events.EventDispatcher;
 import seco.events.EventHandler;
 import seco.notebook.XMLConstants;

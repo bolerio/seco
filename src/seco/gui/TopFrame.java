@@ -77,7 +77,7 @@ public abstract class TopFrame extends JFrame
                 ThisNiche.TOP_CELL_GROUP_HANDLE);
         group.setAttribute(VisualAttribs.rect, getBounds());
         if(AUTO_BACKUP)
-            ContextMenuHandler.backup();
+            CommonActions.backup();
         System.exit(0);
     }
 

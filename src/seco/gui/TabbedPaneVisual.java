@@ -40,6 +40,7 @@ public class TabbedPaneVisual implements CellVisual, EventHandler
         final JTabbedPane tp = (ThisNiche.TABBED_PANE_GROUP_HANDLE
                 .equals(groupH)) ? GUIHelper.getJTabbedPane() : TabbedPaneU
                 .createTabbedPane(group);
+        tp.removeAll();        
         for (int i = 0; i < group.getArity(); i++)
             addChild(tp, group.getTargetAt(i));
         group.setVisualInstance(tp);

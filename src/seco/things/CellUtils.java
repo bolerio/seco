@@ -332,6 +332,12 @@ public class CellUtils
         return (h != null) ? (Cell) ThisNiche.hg.get(h) : null;
     }
 
+    public static void updateCellValue(Cell cell, Object val)
+    {
+        HGHandle  h = CellUtils.addSerializable(val);
+        cell.ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
+        ThisNiche.hg.update(cell);
+    }
     public static HGHandle createOutputCellH(HGHandle par, EvalResult res)
     {
         return createOutputCellH(par, res.getText(), res.getComponent(), res

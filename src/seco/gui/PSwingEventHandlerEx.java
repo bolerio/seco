@@ -121,9 +121,10 @@ public class PSwingEventHandlerEx implements PInputEventListener {
 //                //System.out.println("PSwingEventHandlerEx: " + component[0]);
 //            }
             //but the addition of comp.isVisible() will have the same effect
+            //isEnabled() chek probably will speed up things too 
             for (int i = 0; i < ncomponents; i++) {
                 Component comp = component[i];
-                if (comp != null && comp.isVisible()) {
+                if (comp != null && comp.isVisible() && comp.isEnabled()) {
                     Point p = comp.getLocation();
                     if (comp instanceof Container) {
                         comp = findShowingComponentAt(comp, x - (int) p.getX(), y - (int) p.getY());
