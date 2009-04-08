@@ -159,4 +159,6 @@ public class TalkActivity extends Activity
     {
         return TYPENAME;
     }
+    
+    
 }

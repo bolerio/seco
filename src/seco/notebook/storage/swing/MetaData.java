@@ -60,11 +60,16 @@ public class MetaData
 
     static
     {
+        removeProperty("javax.swing.JEditorPane", "focusTraversalPolicy");
+        //removeProperty("javax.swing.JEditorPane", "UI");
+        
+        //not needed, components will be added by setTopXX, setLeftXX
+        removeProperty("javax.swing.JSplitPane", "component");
         // TODO: throws IllegalArgExc if > 0 and set before label
         removeProperty("javax.swing.AbstractButton", "displayedMnemonicIndex");
-        removeProperty("javax.swing.JList", "UI");
-        removeProperty("javax.swing.JScrollBar", "UI");
-        removeProperty("javax.swing.JScrollPane", "UI");
+        //removeProperty("javax.swing.JList", "UI");
+        //removeProperty("javax.swing.JScrollBar", "UI");
+        //removeProperty("javax.swing.JScrollPane", "UI");
         // Transient properties
         // awt
         // Infinite graphs.
@@ -97,6 +102,8 @@ public class MetaData
         removeProperty("javax.swing.JComponent", "minimumSize");
         removeProperty("javax.swing.JComponent", "preferredSize");
         removeProperty("javax.swing.JComponent", "maximumSize");
+        
+        removeProperty("javax.swing.JComponent", "actionMap");
         // These properties have platform specific implementations
         // and should not appear in archives.
         removeProperty("javax.swing.ImageIcon", "image");
@@ -112,18 +119,18 @@ public class MetaData
         // This property unconditionally throws a "not implemented" exception.
         removeProperty("javax.swing.JMenuBar", "helpMenu");
         // XXX
-        removeProperty("javax.swing.JMenu", "UI");
-        removeProperty("javax.swing.JMenuBar", "UI");
+        //removeProperty("javax.swing.JMenu", "UI");
+        //removeProperty("javax.swing.JMenuBar", "UI");
         removeProperty("javax.swing.JMenuBar", "layout");
 
-        removeProperty("javax.swing.JMenuItem", "UI");
+        //removeProperty("javax.swing.JMenuItem", "UI");
         removeProperty("javax.swing.JMenuItem", "layout");
-        removeProperty("javax.swing.JPopupMenu", "UI");
-        removeProperty("javax.swing.JSeparator", "UI");
+        //removeProperty("javax.swing.JPopupMenu", "UI");
+        //removeProperty("javax.swing.JSeparator", "UI");
         removeProperty("javax.swing.JPopupMenu", "layout");
-        removeProperty("javax.swing.JButton", "UI");
-        removeProperty("javax.swing.JToolBar", "UI");
-        removeProperty("javax.swing.JComboBox", "UI");
+       // removeProperty("javax.swing.JButton", "UI");
+       // removeProperty("javax.swing.JToolBar", "UI");
+       // removeProperty("javax.swing.JComboBox", "UI");
         removeProperty("javax.swing.JToolBar", "layout");
         removeProperty("javax.swing.AbstractAction", "enabled");
 

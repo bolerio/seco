@@ -51,8 +51,9 @@ import seco.notebook.storage.swing.GenUtils;
 
 public class ClassGenerator
 {
-    private static final boolean WRITE_TO_DISK = false;
-	private static final String GENERATED_CLASSES_OUTPUT_DIR = "/tmp/scribagen"; // "c:/temp/scribagen/";
+    private static final boolean WRITE_TO_DISK = !false;
+	private static final String GENERATED_CLASSES_OUTPUT_DIR = "c:/temp/scribagen/";
+	          //"/tmp/scribagen"; // 
 	private static final String GET_VALUE_DESC = "(Lorg/hypergraphdb/type/Record;Ljava/lang/String;)Ljava/lang/Object;";
 	private static final String SET_VALUE_DESC = "(Lorg/hypergraphdb/type/Record;Ljava/lang/String;Ljava/lang/Object;)V";
 	private static final String BASE_CLS_NAME = GeneratedClass.class.getName()
@@ -153,11 +154,9 @@ public class ClassGenerator
 		for (Field f : inspector.getPrivFieldsMap().values())
 		{
 		    //don't generate make for private fields used in addons
-		    if (inspector.addons == null)
-		        throw new NullPointerException("inspector.addons");
-		    else if (f == null)
-		        throw new NullPointerException("f");
-		    if(!inspector.addons.containsKey(f.getName()))
+		    if (f == null)
+		        throw new NullPointerException("null field in " + className);
+		    if(inspector.addons != null && !inspector.addons.containsKey(f.getName()))
 			   genMakePrivField(mv, f);
 		}
 		for (EventSetDescriptor e : inspector.getEventSetDescriptorsMap().values())

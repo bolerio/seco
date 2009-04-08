@@ -261,8 +261,7 @@ public class DefaultConverter // implements Converter
     {
         return pd != null && annCheck(pd.getReadMethod())
                 && annCheck(pd.getWriteMethod()) && 
-                annCheck(RefUtils.getPrivateField(
-                        pd.getPropertyType(), pd.getName()));
+                annPropField(type, pd);
     }
     
     
@@ -274,8 +273,21 @@ public class DefaultConverter // implements Converter
     
     static boolean annCheck(Field f)
     {
+        return f != null && (
+                f.getAnnotation(HGIgnore.class) == null
+                ||Modifier.isTransient(f.getModifiers()));
+    }
+    
+    private static boolean annPropField(Class<?> type, PropertyDescriptor pd)
+    {
+        Field f = RefUtils.getPrivateField(type, pd.getName());
         if(f == null) return true;
-        return f != null && f.getAnnotation(HGIgnore.class) == null;
+        //field with same type and annotation
+        if(pd.getPropertyType().isAssignableFrom(f.getType())
+                && (f.getAnnotation(HGIgnore.class) != null ||
+                        Modifier.isTransient(f.getModifiers())))
+            return false;
+        return true;
     }
 
     public Constructor<?> getCtr()

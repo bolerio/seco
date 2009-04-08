@@ -234,13 +234,24 @@ public class SwingBinding extends HGAtomTypeBase
 //                    .getPersistentHandle(graph.add(val));
 //            val = new HGAtomRef(valueAtomHandle, refMode);
 //        }
-        rec.set(slot, val);
+        rec.set(slot, filterValue(val));
+    }
+    
+    protected Object filterValue(Object val) 
+    {
+        if(val == null) return null;
+        if (val.getClass().isAnonymousClass())
+            return null;
+        
+        if (val.getClass().isMemberClass()
+                && !Modifier.isStatic(val.getClass().getModifiers()))
+        {
+           // System.err.println("Filtering1 " + e);
+            return null;
+        }
+        return val;
     }
 
-//    private void debug(Object o, Object o2){
-//        System.out.println("SBDEBUG: " + o + ":" + o2);
-//    }
-    
     public Object getValue(Record rec, String name)
     {
         HGHandle slotHandle = hgType.slotHandles.get(name);

@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
 
+import org.hypergraphdb.annotation.HGIgnore;
 import org.hypergraphdb.peer.HGPeerIdentity;
 
 public class TalkPanel extends JPanel
@@ -24,6 +25,7 @@ public class TalkPanel extends JPanel
     //private JTextPane inText;
     private JTextPane outText;
     //private JSplitPane splitPane;
+    @HGIgnore
     private TalkActivity talkActivity;
     
     public void initComponents()
