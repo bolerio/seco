@@ -175,8 +175,10 @@ public class SwingType extends RecordType
 			String[] args = a.getArgs();
 			HGHandle[] t = new HGHandle[args.length];
 			for (int j = 0; j < args.length; j++){
-				t[j] = slotHandles.get(args[j]);
-				System.out.println("AddOnSlots: " + graph.get(t[j]));
+			    t[j] = slotHandles.get(args[j]);
+			    System.out.println("AddOnSlots: " + javaClass + ":"
+			            + args[j] + ":" + c);
+			    System.out.println("AddOnSlots: " + graph.get(t[j]));
 			}
 			HGLink link = new HGRelType(a.getName(), t);
 			System.out.println("ADDONLINK: " + javaClass + ":" + a.getName()

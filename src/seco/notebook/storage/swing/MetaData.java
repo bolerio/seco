@@ -31,6 +31,7 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.ToolTipManager;
@@ -60,16 +61,18 @@ public class MetaData
 
     static
     {
+        removeProperty("javax.swing.text.AbstractDocument", "documentProperties");
+        removeProperty("javax.swing.text.DefaultCaret", "dot"); 
         removeProperty("javax.swing.JEditorPane", "focusTraversalPolicy");
-        //removeProperty("javax.swing.JEditorPane", "UI");
-        
-        //not needed, components will be added by setTopXX, setLeftXX
+        removeProperty("javax.swing.JEditorPane", "UI");
         removeProperty("javax.swing.JSplitPane", "component");
+        removeProperty("javax.swing.JSplitPane", "nextFocusableComponent");
+        removeProperty("javax.swing.JSplitPane", "UI");
         // TODO: throws IllegalArgExc if > 0 and set before label
         removeProperty("javax.swing.AbstractButton", "displayedMnemonicIndex");
-        //removeProperty("javax.swing.JList", "UI");
-        //removeProperty("javax.swing.JScrollBar", "UI");
-        //removeProperty("javax.swing.JScrollPane", "UI");
+        removeProperty("javax.swing.JList", "UI");
+        removeProperty("javax.swing.JScrollBar", "UI");
+        removeProperty("javax.swing.JScrollPane", "UI");
         // Transient properties
         // awt
         // Infinite graphs.
@@ -119,18 +122,18 @@ public class MetaData
         // This property unconditionally throws a "not implemented" exception.
         removeProperty("javax.swing.JMenuBar", "helpMenu");
         // XXX
-        //removeProperty("javax.swing.JMenu", "UI");
-        //removeProperty("javax.swing.JMenuBar", "UI");
+        removeProperty("javax.swing.JMenu", "UI");
+        removeProperty("javax.swing.JMenuBar", "UI");
         removeProperty("javax.swing.JMenuBar", "layout");
 
-        //removeProperty("javax.swing.JMenuItem", "UI");
+        removeProperty("javax.swing.JMenuItem", "UI");
         removeProperty("javax.swing.JMenuItem", "layout");
-        //removeProperty("javax.swing.JPopupMenu", "UI");
-        //removeProperty("javax.swing.JSeparator", "UI");
+        removeProperty("javax.swing.JPopupMenu", "UI");
+        removeProperty("javax.swing.JSeparator", "UI");
         removeProperty("javax.swing.JPopupMenu", "layout");
-       // removeProperty("javax.swing.JButton", "UI");
-       // removeProperty("javax.swing.JToolBar", "UI");
-       // removeProperty("javax.swing.JComboBox", "UI");
+        removeProperty("javax.swing.JButton", "UI");
+        removeProperty("javax.swing.JToolBar", "UI");
+        removeProperty("javax.swing.JComboBox", "UI");
         removeProperty("javax.swing.JToolBar", "layout");
         removeProperty("javax.swing.AbstractAction", "enabled");
 
@@ -211,7 +214,12 @@ public class MetaData
 
         registerConstructor("javax.swing.plaf.InsetsUIResource", new String[] {
                 "top", "left", "bottom", "right" });
-
+        
+        registerConstructor("javax.swing.plaf.basic.BasicBorders$ButtonBorder",
+                new String[] {"shadow", "darkShadow", "highlight", "lightHighlight"});
+        registerConstructor("javax.swing.plaf.basic.BasicBorders$SplitPaneBorder",
+                new String[] {"highlight", "shadow"});
+        
         registerConstructor("java.awt.MenuShortcut", new String[] { "key",
                 "usesShift" });
         registerConstructor("javax.swing.plaf.IconUIResource",
@@ -265,19 +273,7 @@ public class MetaData
                 "axis" });
         registerConstructor("javax.swing.Box$Filler", new String[] {
                 "minimumSize", "preferredSize", "maximumSize" });
-        /*
-         * This is required because the JSplitPane reveals a private layout
-         * class called BasicSplitPaneUI$BasicVerticalLayoutManager which
-         * changes with the orientation. To avoid the necessity for
-         * instantiating it we cause the orientation attribute to get set before
-         * the layout manager - that way the layout manager will be changed as a
-         * side effect. Unfortunately, the layout property belongs to the
-         * superclass and therefore precedes the orientation property. PENDING -
-         * we need to allow this kind of modification. For now, put the property
-         * in the constructor.
-         */
-        registerConstructor("javax.swing.JSplitPane",
-                new String[] { "orientation" });
+        
         // Try to synthesize the ImageIcon from its description.
         // XXX
         // registerConstructor("javax.swing.ImageIcon",
@@ -854,6 +850,32 @@ class javax_swing_JComboBox_PersistenceDelegate extends DefaultConverter
     }
 }
 
+//component add-on not needed, components will be added by setTopXX, setLeftXX
+class javax_swing_JSplitPane_PersistenceDelegate extends DefaultConverter
+{
+    /*
+     * This is required because the JSplitPane reveals a private layout
+     * class called BasicSplitPaneUI$BasicVerticalLayoutManager which
+     * changes with the orientation. To avoid the necessity for
+     * instantiating it we cause the orientation attribute to get set before
+     * the layout manager - that way the layout manager will be changed as a
+     * side effect. Unfortunately, the layout property belongs to the
+     * superclass and therefore precedes the orientation property. PENDING -
+     * we need to allow this kind of modification. For now, put the property
+     * in the constructor.
+     */
+    public javax_swing_JSplitPane_PersistenceDelegate()
+    {
+        super(JSplitPane.class, new String[] { "orientation" });
+    }
+
+    @Override
+    public Set<AddOnType> getAllAddOnFields()
+    {
+        return null;
+    }
+}
+
 // DefaultComboBoxModel
 class javax_swing_DefaultComboBoxModel_PersistenceDelegate extends
         DefaultConverter
@@ -987,16 +1009,16 @@ class javax_swing_JFrame_PersistenceDelegate extends DefaultConverter
     }
 }
 
-class javax_swing_JPanel_PersistenceDelegate extends DefaultConverter
-{
-
-    public javax_swing_JPanel_PersistenceDelegate()
-    {
-        super(JPanel.class);
-    }
-
-    public Set<AddOnType> getAllAddOnFields()
-    {
-        return null;
-    }
-}
+//class javax_swing_JPanel_PersistenceDelegate extends DefaultConverter
+//{
+//
+//    public javax_swing_JPanel_PersistenceDelegate()
+//    {
+//        super(JPanel.class);
+//    }
+//
+//    public Set<AddOnType> getAllAddOnFields()
+//    {
+//        return null;
+//    }
+//}

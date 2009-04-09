@@ -3,7 +3,10 @@ package seco.notebook.storage.swing.types;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
+import java.awt.LayoutManager;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -16,6 +19,7 @@ import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.tree.MutableTreeNode;
 
@@ -75,37 +79,45 @@ public class AddOnFactory
         if (ADD_STR.equals(name) || ADD_COMP.equals(name)
                 || ADD_TREE.equals(name))
         {
-            addChildren(hg, (HGRelType) link, record, instance);
-        } else if (ADD_EL.equals(name))
+            if (instance instanceof Container) addLayoutChildren(hg,
+                    (HGRelType) link, record, instance);
+            else
+                addChildren(hg, (HGRelType) link, record, instance);
+        }
+        else if (ADD_EL.equals(name))
         {
             Vector value1 = (Vector) getLinkValue(hg, link, record);
             if (value1 == null) return;
-            System.out.println("AddonF - ADD_EL:" + instance  + ":" + value1.get(0));
+            System.out.println("AddonF - ADD_EL:" + instance + ":"
+                    + value1.get(0));
             Object[] value = new Object[value1.size()];
             value1.copyInto(value);
             boolean combo = instance instanceof DefaultComboBoxModel;
             for (Object o : value)
             {
-                System.out.println("AddonF - ADD_EL:" + instance  + ":" + o);
+                System.out.println("AddonF - ADD_EL:" + instance + ":" + o);
                 if (combo) ((DefaultComboBoxModel) instance).addElement(o);
                 else
                     ((DefaultListModel) instance).addElement(o);
             }
-        } else if (CARD_LAYOUT.equals(name))
+        }
+        else if (CARD_LAYOUT.equals(name))
         {
             CardLayout c = ((CardLayout) instance);
             Vector items = (Vector) getLinkValue(hg, link, record);
-            if (items != null) for (int i = 0; i < items.size(); i++)
-                if (items.get(i) != null)
-                {
-                    Object card = items.get(i);
-                    String n = (String) RefUtils.getValue(card,
-                            card.getClass(), "name");
-                    Component comp = (Component) RefUtils.getValue(card, card
-                            .getClass(), "comp");
-                    c.addLayoutComponent(comp, n);
-                }
-        } else if (GRID_BAG_LAYOUT.equals(name))
+            if (items != null)
+                for (int i = 0; i < items.size(); i++)
+                    if (items.get(i) != null)
+                    {
+                        Object card = items.get(i);
+                        String n = (String) RefUtils.getValue(card, card
+                                .getClass(), "name");
+                        Component comp = (Component) RefUtils.getValue(card,
+                                card.getClass(), "comp");
+                        c.addLayoutComponent(comp, n);
+                    }
+        }
+        else if (GRID_BAG_LAYOUT.equals(name))
         {
             Hashtable comptable = (Hashtable) getLinkValue(hg, link, record);
             if (comptable != null)
@@ -117,38 +129,48 @@ public class AddOnFactory
                     c.addLayoutComponent(child, comptable.get(child));
                 }
             }
-        } else if (BORDER_LAYOUT.equals(name))
+        }
+        else if (BORDER_LAYOUT.equals(name))
         {
             Object[] items = getLinkValues(hg, link, record);
             BorderLayout c = ((BorderLayout) instance);
-            if (c != null && items != null) for (int i = 0; i < gbNames.length; i++)
-                if (items[i] != null) c.addLayoutComponent(
-                        (Component) items[i], gbNames[i]);
-        } else if (ADD_TAB.equals(name))
+            System.out.println("AddonF - BORDER_LAYOUT:" + c + ":" + items);
+            if (c != null && items != null)
+                for (int i = 0; i < gbNames.length; i++)
+                    if (items[i] != null)
+                    {
+                        System.out.println("AddonF - BORDER_LAYOUT:"
+                                + gbNames[i] + ":" + items[i]);
+                        c.addLayoutComponent((Component) items[i], gbNames[i]);
+                    }
+        }
+        else if (ADD_TAB.equals(name))
         {
             JTabbedPane c = ((JTabbedPane) instance);
             Object[] values = getLinkValues(hg, link, record);
             Component[] items = (Component[]) values[0];
             String[] titles = (String[]) values[1];
             Icon[] icons = (Icon[]) values[2];
-            if (items != null && titles != null && icons != null) for (int i = 0; i < items.length; i++)
-                c.addTab(titles[i], icons[i], items[i]);
+            if (items != null && titles != null && icons != null)
+                for (int i = 0; i < items.length; i++)
+                    c.addTab(titles[i], icons[i], items[i]);
         }
     }
 
     static void addChildren(HyperGraph hg, HGRelType link, Record record,
             Object instance)
     {
-        Method m = null; Object value = null;
+        Method m = null;
+        Object value = null;
         try
         {
             if (instance == null) return;
             value = getLinkValue(hg, link, record);
-            //System.out.println("AddonF - addChildren1:" + instance.getClass()
-           //  + ":" + link.getName() + ":" + value);
+            // System.out.println("AddonF - addChildren1:" + instance.getClass()
+            // + ":" + link.getName() + ":" + value);
 
             if (value == null) return;
-            Class<?>[] args = getLinkTypes(link); 
+            Class<?>[] args = getLinkTypes(link);
             m = instance.getClass().getMethod("add", args);
             if (value.getClass().isArray())
             {
@@ -157,34 +179,73 @@ public class AddOnFactory
                 {
                     if (array[i] != null) m.invoke(instance, array[i]);
                 }
-            } else if (Collection.class.isAssignableFrom(value.getClass()))
+            }
+            else if (Collection.class.isAssignableFrom(value.getClass()))
             {
 
                 Collection<Object> c = (Collection) value;
                 Object[] array = c.toArray(new Object[c.size()]);
                 for (int i = 0; i < array.length; i++)
                     if (array[i] != null) m.invoke(instance, array[i]);
-                
-               //java.util.ConcurrentModificationException
+
+                // java.util.ConcurrentModificationException
                 // for (Object o : c)
-                 //   m.invoke(instance, o);
-            } else
+                // m.invoke(instance, o);
+            }
+            else
             {
                 m.invoke(instance, value);
             }
         }
         catch (Exception ex)
         {
-            System.err.println("AddonF - addChildren:" + instance.getClass() + ":"
-                    + m.getName() + ":" + value + ":" + value.getClass());
+            System.err.println("AddonF - addChildren:" + instance.getClass()
+                    + ":" + m.getName() + ":" + value + ":" + value.getClass());
             ex.printStackTrace();
         }
+    }
+
+    static void addLayoutChildren(HyperGraph hg, HGRelType link, Record record,
+            Object instance)
+    {
+        if (instance == null) return;
+        Object value = getLinkValue(hg, link, record);
+        //System.out.println("AddonF - addLayoutChildren:" + instance.getClass()
+         //       + ":" + link.getName() + ":" + value);
+        if (value == null) return;
+        if (!(instance instanceof Container)) return;
+        Container cont = (Container) instance;
+        LayoutManager l = cont.getLayout();
+        Object[] values = null;
+        if (value.getClass().isArray()) values = (Object[]) value;
+        else if (Collection.class.isAssignableFrom(value.getClass()))
+            values = ((Collection) value).toArray();
+        if (values == null) return;
+
+        for (Object o : values)
+            if (o != null)
+            {
+                Object cs = getConstrints(l, (Component) o);
+                if (cs == null) cont.add((Component) o);
+                else
+                    cont.add((Component) o, cs);
+            }
+    }
+
+    static Object getConstrints(LayoutManager l, Component c)
+    {
+        if (l instanceof GridBagLayout) return ((GridBagLayout) l)
+                .getConstraints(c);
+        else if (l instanceof BorderLayout) return ((BorderLayout) l)
+                .getConstraints(c);
+        else
+            return null;
     }
 
     static Object instantiateFactoryConstructorLink(HyperGraph hg,
             SwingType type, FactoryConstructorLink link, Record record)
     {
-    	Class<?>[] types = new Class[0];
+        Class<?>[] types = new Class[0];
         Object[] args = new Object[0];
         int nArgs = link.getArity() - 2;
         args = new Object[nArgs];
@@ -222,11 +283,11 @@ public class AddOnFactory
             types = new Class[nArgs];
             for (int i = 0; i < nArgs; i++)
             {
-            	types[i] = link.getTypeAt(hg, i);
+                types[i] = link.getTypeAt(hg, i);
                 Slot s = link.getSlotAt(hg, i);
                 args[i] = record.get(s);
                 // System.out.println("SB - instantiate - args: " + s.getLabel()
-                // + ":" +  args[i]);
+                // + ":" + args[i]);
             }
         }
 
@@ -242,8 +303,9 @@ public class AddOnFactory
         {
             for (int i = 0; i < types.length; i++)
             {
-                if (types[i] == null) System.err.println("NullParam at index: "
-                        + i + ":" + beanClass);
+                if (types[i] == null)
+                    System.err.println("NullParam at index: " + i + ":"
+                            + beanClass);
                 types[i] = BonesOfBeans.primitiveEquivalentOf(types[i]);
             }
             try
@@ -254,7 +316,8 @@ public class AddOnFactory
             }
             catch (Exception ex)
             {
-                System.err.println("instantiateConstructorLink - CTR: " + beanClass + ":" + ex.toString());
+                System.err.println("instantiateConstructorLink - CTR: "
+                        + beanClass + ":" + ex.toString());
                 for (int i = 0; i < args.length; i++)
                 {
                     System.err.println("args: " + args[i] + ":" + types[i]);
@@ -284,7 +347,8 @@ public class AddOnFactory
         return values;
     }
 
-    public static Map<String, Class<?>> getAddOnSlots(HyperGraph hg, SwingType type)
+    public static Map<String, Class<?>> getAddOnSlots(HyperGraph hg,
+            SwingType type)
     {
         // System.out.println("getAddOnSlots00: " + type.getJavaClass() + ":");
 

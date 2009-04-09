@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.DefaultCellEditor;
+import javax.swing.JPanel;
 
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.type.BonesOfBeans;

@@ -17,21 +17,22 @@ import org.hypergraphdb.peer.HGPeerIdentity;
 public class TalkPanel extends JPanel
 {
     private static final long serialVersionUID = -4034875448632992670L;
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a");
-    
+    private static final SimpleDateFormat sdf = new SimpleDateFormat(
+            "hh:mm:ss a");
+
     private HGPeerIdentity friend;
-    //private JPanel inPanel;
-    //private JPanel outPanel;
-    //private JTextPane inText;
+    // private JPanel inPanel;
+    // private JPanel outPanel;
+    // private JTextPane inText;
     private JTextPane outText;
-    //private JSplitPane splitPane;
+    // private JSplitPane splitPane;
     @HGIgnore
     private TalkActivity talkActivity;
-    
+
     public void initComponents()
     {
         setLayout(new BorderLayout());
-        
+
         JTextPane inText = new JTextPane();
         JPanel inPanel = new JPanel();
         inPanel.setLayout(new BorderLayout());
@@ -42,21 +43,22 @@ public class TalkPanel extends JPanel
         JPanel outPanel = new JPanel();
         outPanel.setLayout(new BorderLayout());
         outPanel.add(outText, BorderLayout.CENTER);
-        
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, outPanel, inPanel);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+                outPanel, inPanel);
         this.add(splitPane, BorderLayout.CENTER);
     }
-    
+
     public TalkPanel()
     {
     }
-    
+
     public TalkPanel(TalkActivity talkActivity)
     {
         initComponents();
         this.talkActivity = talkActivity;
     }
-     
+
     public HGPeerIdentity getFriend()
     {
         return friend;
@@ -68,12 +70,12 @@ public class TalkPanel extends JPanel
     }
 
     public void chatFrom(HGPeerIdentity from, String text)
-    {        
+    {
         String s = "(" + sdf.format(new Date()) + ") ";
         s += (!from.equals(friend) ? "me" : from.getName()) + ":" + text;
-        outText.setText(outText.getText() + s);        
+        outText.setText(outText.getText() + s);
     }
-    
+
     public TalkActivity getTalkActivity()
     {
         return talkActivity;
@@ -82,9 +84,9 @@ public class TalkPanel extends JPanel
     public void setTalkActivity(TalkActivity talkActivity)
     {
         this.talkActivity = talkActivity;
-    }         
-     
-    public static void main(String [] argv)
+    }
+
+    public static void main(String[] argv)
     {
         JFrame frame = new JFrame();
         final TalkPanel talk = new TalkPanel(null);
@@ -93,12 +95,12 @@ public class TalkPanel extends JPanel
         frame.setLocation(300, 200);
         frame.setVisible(true);
     }
-    
-    private static class KeyListener extends KeyAdapter
+
+    public static class KeyListener extends KeyAdapter
     {
         private JTextPane inText;
         private TalkPanel panel;
-      
+
         public KeyListener()
         {
         }
@@ -109,21 +111,25 @@ public class TalkPanel extends JPanel
             this.panel = panel;
         }
 
-        public void keyTyped(KeyEvent e) 
+        public void keyTyped(KeyEvent e)
         {
             if (e.getKeyChar() == '\n')
-                if (!e.isShiftDown())  
+                if (!e.isShiftDown())
                 {
                     String msg = inText.getText();
                     inText.setText("");
-                    panel.talkActivity.chat(msg);
-                    panel.chatFrom(panel.talkActivity.getThisPeer().getIdentity(), msg);
+                    if (panel.talkActivity != null)
+                    {
+                        panel.talkActivity.chat(msg);
+                        panel.chatFrom(panel.talkActivity.getThisPeer()
+                                .getIdentity(), msg);
+                    }
                 }
                 else
                 {
                     inText.setText(inText.getText() + "\n");
                 }
-        }   
+        }
 
         public JTextPane getInText()
         {
@@ -143,7 +149,7 @@ public class TalkPanel extends JPanel
         public void setPanel(TalkPanel panel)
         {
             this.panel = panel;
-        }        
+        }
     }
 
     public JTextPane getOutText()
@@ -155,5 +161,5 @@ public class TalkPanel extends JPanel
     {
         this.outText = outText;
     }
-  
+
 }

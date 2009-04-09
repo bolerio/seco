@@ -657,6 +657,7 @@ public class CellUtils
                 }
                 catch (Throwable ex)
                 {
+                    ex.printStackTrace();
                     HGHandle t = ts.getTypeHandle(Serializable.class);
                     h = ThisNiche.hg.add(o, t);
                 }
@@ -668,6 +669,7 @@ public class CellUtils
         {
             System.err.println("Unable to add Cell value: " + o + " Reason: "
                     + ex);
+            ex.printStackTrace();
             h = ThisNiche.hg.add(ex.toString());
         }
         return h;

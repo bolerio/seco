@@ -28,9 +28,6 @@ public abstract class GeneratedClass extends SwingBinding
 		//System.out.println("Make - res: " + hgType.getJavaClass().getName());
 		try {
 			Record record = (Record) hgType.make(handle, targetSet, incidenceSet);
-			//if(hgType.getJavaClass().equals(
-			//		javax.swing.plaf.metal.MetalScrollButton.class))
-			//	return null;
 			bean = instantiate(record); 
 			if(bean == null) return null;
 			if(!bean.getClass().isAssignableFrom(hgType.getJavaClass()))

@@ -2,6 +2,8 @@ package seco.notebook.storage.swing.types;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ContainerListener;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseListener;
 import java.beans.EventSetDescriptor;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Field;
@@ -14,7 +16,11 @@ import java.util.Set;
 
 import javax.swing.AbstractButton;
 import javax.swing.event.AncestorListener;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataListener;
+import javax.swing.text.Caret;
+import javax.swing.text.DefaultCaret;
+import javax.swing.text.JTextComponent;
 
 import org.hypergraphdb.HGException;
 import org.hypergraphdb.HGHandle;
@@ -326,6 +332,13 @@ public class SwingBinding extends HGAtomTypeBase
                // System.err.println("Filtering4 " + e);
                 continue;
             }
+            if(e instanceof DefaultCaret) continue;
+            //filter those package private JTextComponent.MutableCaretEvent listers
+            //that get re-added in ctr
+            if ((instance instanceof JTextComponent || instance instanceof Caret) &&
+                    e instanceof ChangeListener && e instanceof FocusListener
+                    && e instanceof MouseListener)
+                continue;
            
             res.add(e);
         }
