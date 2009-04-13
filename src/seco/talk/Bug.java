@@ -1,6 +1,12 @@
 package seco.talk;
 
 //TODO: to be removed, usecase for inner class serialization HG bug
+//bug = new Bug();
+//h = ThisNiche.hg.add(bug);
+////dae2eb8e-c334-4711-8714-d26fa0243bc5
+//After restart
+//h = org.hypergraphdb.HGHandleFactory.makeHandle("dae2eb8e-c334-4711-8714-d26fa0243bc5");
+//ThisNiche.hg.get(h);
 public class Bug
 {
     private InnerStatic inner;
