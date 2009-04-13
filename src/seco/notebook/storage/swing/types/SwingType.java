@@ -176,13 +176,13 @@ public class SwingType extends RecordType
 			HGHandle[] t = new HGHandle[args.length];
 			for (int j = 0; j < args.length; j++){
 			    t[j] = slotHandles.get(args[j]);
-			    System.out.println("AddOnSlots: " + javaClass + ":"
-			            + args[j] + ":" + c);
-			    System.out.println("AddOnSlots: " + graph.get(t[j]));
+//			    System.out.println("AddOnSlots: " + javaClass + ":"
+//			            + args[j] + ":" + c);
+//			    System.out.println("AddOnSlots: " + graph.get(t[j]));
 			}
 			HGLink link = new HGRelType(a.getName(), t);
-			System.out.println("ADDONLINK: " + javaClass + ":" + a.getName()
-					+ ":" + args[0] + ":" + args.length);
+			//System.out.println("ADDONLINK: " + javaClass + ":" + a.getName()
+			//		+ ":" + args[0] + ":" + args.length);
 			targets[i] = graph.add(link);
 			i++;
 		}
@@ -325,10 +325,6 @@ public class SwingType extends RecordType
 	 
 	 public synchronized HGAtomRef.Mode getReferenceMode(HGHandle slot)
 	 {
-		 if(thisHandle == null)	{
-			 System.out.println("SwingTypeStore-getReferenceMode: " + slot + ":" + thisHandle);
-			 Thread.currentThread().dumpStack();
-		 }
-         return super.getReferenceMode(slot);
+		 return super.getReferenceMode(slot);
 	 }
 }

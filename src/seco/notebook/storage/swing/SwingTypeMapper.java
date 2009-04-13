@@ -50,7 +50,8 @@ public class SwingTypeMapper extends JavaObjectMapper
         if (javaClass.getName().startsWith("javax")
             || javaClass.getName().startsWith("java.awt")
             || javaClass.getName().startsWith("java.beans")
-            || mapAsSerializableObject(javaClass))
+            || mapAsSerializableObject(javaClass)
+            || javaClass.getName().startsWith("seco.talk.B"))
         {
 
             SwingType type = new SwingType(javaClass);

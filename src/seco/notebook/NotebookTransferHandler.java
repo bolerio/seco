@@ -32,12 +32,12 @@ public class NotebookTransferHandler extends TransferHandler
 {
     public final static String mimeType = DataFlavor.javaJVMLocalObjectMimeType
             + ";class=javax.swing.text.Element";
-    public static DataFlavor nbFlavor = null;
+    public static DataFlavor FLAVOR = null;
     static
     {
         try
         {
-            nbFlavor = new DataFlavor(mimeType);
+            FLAVOR = new DataFlavor(mimeType);
         }
         catch (ClassNotFoundException e)
         {
@@ -56,7 +56,7 @@ public class NotebookTransferHandler extends TransferHandler
         {
             for (int i = 0; i < flavors.length; i++)
                 if (flavors[i].equals(DataFlavor.stringFlavor)
-                        || flavors[i].equals(nbFlavor)) return flavors[i];
+                        || flavors[i].equals(FLAVOR)) return flavors[i];
         }
         return null;
     }
@@ -143,7 +143,7 @@ public class NotebookTransferHandler extends TransferHandler
             InputContext ic = c.getInputContext();
             if (ic != null) ic.endComposition();
 
-            if (importFlavor.equals(nbFlavor))
+            if (importFlavor.equals(FLAVOR))
             {
                 Vector<Element> els = (Vector<Element>) t
                         .getTransferData(importFlavor);
@@ -183,7 +183,7 @@ public class NotebookTransferHandler extends TransferHandler
             {
                 ic.endComposition();
             }
-            if (importFlavor.equals(nbFlavor))
+            if (importFlavor.equals(FLAVOR))
             {
                 shouldRemove = false;
                 return true;
@@ -338,12 +338,12 @@ public class NotebookTransferHandler extends TransferHandler
 
         public DataFlavor[] getTransferDataFlavors()
         {
-            return new DataFlavor[] { nbFlavor };
+            return new DataFlavor[] { FLAVOR };
         }
 
         public boolean isDataFlavorSupported(DataFlavor flavor)
         {
-            return nbFlavor.equals(flavor);
+            return FLAVOR.equals(flavor);
         }
 
         void removeText()

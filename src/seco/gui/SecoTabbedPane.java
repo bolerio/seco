@@ -115,9 +115,7 @@ public class SecoTabbedPane extends JTabbedPane
 
         protected Transferable createTransferable(JComponent comp)
         {
-            JComponent c = (JComponent) tp.getComponentAt(tp.dragTabIndex);
-            return new SecoTransferable(c, TabbedPaneU.getHandleAt(tp,
-                    tp.dragTabIndex));
+            return new SecoTransferable(TabbedPaneU.getHandleAt(tp,tp.dragTabIndex));
         }
 
         protected void exportDone(JComponent source, Transferable data,
@@ -140,13 +138,11 @@ public class SecoTabbedPane extends JTabbedPane
             {
                 if (fl.equals(SecoTransferable.FLAVOR))
                 {
-                    SecoTransferable.Data data = (SecoTransferable.Data) t
-                            .getTransferData(fl);
-                    System.out.println("TPTransferHandler1: " + tp.groupH + ":" + data.getHandle());
-                    if (tp.getCellGroup().indexOf(data.getHandle()) >= 0)
+                    HGHandle data = (HGHandle) t.getTransferData(fl);
+                    System.out.println("TPTransferHandler1: " + tp.groupH + ":" + data);
+                    if (tp.getCellGroup().indexOf(data) >= 0)
                         return false;
-                    tp.getCellGroup().insert(tp.getCellGroup().getArity(),
-                            data.getHandle());
+                    tp.getCellGroup().insert(tp.getCellGroup().getArity(), data);
                     return true;
                 }
             }

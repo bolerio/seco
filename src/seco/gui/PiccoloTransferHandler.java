@@ -31,20 +31,20 @@ public class PiccoloTransferHandler extends TransferHandler
         this.canvas = canvas;
     }
 
-    // The data type exported from NotebookUI.
-    static DataFlavor elFlavor;
-    static DataFlavor tabFlavor;
-    static
-    {
-        try
-        {
-            elFlavor = new DataFlavor(NotebookTransferHandler.mimeType);
-            tabFlavor = new DataFlavor(SecoTransferable.mimeType);
-        }
-        catch (ClassNotFoundException e)
-        {
-        }
-    }
+//    // The data type exported from NotebookUI.
+//    static DataFlavor elFlavor;
+//    static DataFlavor secoFlavor;
+//    static
+//    {
+//        try
+//        {
+//            elFlavor = new DataFlavor(NotebookTransferHandler.mimeType);
+//            secoFlavor = new DataFlavor(SecoTransferable.mimeType);
+//        }
+//        catch (ClassNotFoundException e)
+//        {
+//        }
+//    }
     
     
 
@@ -58,11 +58,13 @@ public class PiccoloTransferHandler extends TransferHandler
                 ":" + support.getComponent());
         try
         {
-            if (support.isDataFlavorSupported(tabFlavor))
+            if(check_and_handle_in_nodes(support)) return true;
+            if (support.isDataFlavorSupported(SecoTransferable.FLAVOR))
                 return handleSecoTransfer(support);
 
-            Vector<Element> els = (Vector<Element>) t.getTransferData(elFlavor);
-            PiccoloCanvas canvas = (PiccoloCanvas) support.getComponent();
+            Vector<Element> els = (Vector<Element>) 
+                   t.getTransferData(NotebookTransferHandler.FLAVOR);
+            //PiccoloCanvas canvas = (PiccoloCanvas) support.getComponent();
             boolean move = (support.getDropAction() == MOVE);
             for (Element e : els)
             {
@@ -95,18 +97,18 @@ public class PiccoloTransferHandler extends TransferHandler
         return false;
     }
 
-    public boolean handleSecoTransfer(TransferSupport support)
-            throws UnsupportedFlavorException, IOException
+    private boolean check_and_handle_in_nodes(TransferSupport support)
     {
         Point pt = support.getDropLocation().getDropPoint();
         for(Object o: canvas.getNodeLayer().getAllNodes())
         {
            if(!(o instanceof PSwingNode)) continue;
            PSwingNode node = (PSwingNode) o;
+           //System.out.println("handleSecoTransfer" + pt + ":" + node.getFullBounds());
            if(node.getFullBounds().contains(pt))
            {
-               System.out.println("handleSecoTransfer - inner" +
-                       node.getComponent() + ":" + node.getComponent().getTransferHandler());
+               //System.out.println("handleSecoTransfer - inner" +
+               //        node.getComponent() + ":" + node.getComponent().getTransferHandler());
                TransferHandler handler = node.getComponent().getTransferHandler();
                if(handler != null && handler.importData(support))
                {
@@ -120,18 +122,25 @@ public class PiccoloTransferHandler extends TransferHandler
                }
            }
         }
-        SecoTransferable.Data data = 
-            (SecoTransferable.Data) support.getTransferable().getTransferData(tabFlavor);
+        return false;
+    }
+    
+    public boolean handleSecoTransfer(TransferSupport support)
+            throws UnsupportedFlavorException, IOException
+    {
+        Point pt = support.getDropLocation().getDropPoint();
+        HGHandle data = 
+            (HGHandle) support.getTransferable().getTransferData(SecoTransferable.FLAVOR);
         boolean move = (support.getDropAction() == MOVE);
         if (move)
         {
             if(support.getComponent() == canvas)
             {
                 CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-                if(top.indexOf(data.getHandle()) > -1) 
+                if(top.indexOf(data) > -1) 
                    return false;
             }
-            add_to_top_group(data.getHandle(), pt);
+            add_to_top_group(data, pt);
         }
         return true;
     }
@@ -154,11 +163,12 @@ public class PiccoloTransferHandler extends TransferHandler
     protected boolean hasFlavor(DataFlavor[] flavors)
     {
         for (int i = 0; i < flavors.length; i++)
-            if (elFlavor.equals(flavors[i]) || tabFlavor.equals(flavors[i]))
+            if (flavors[i].equals(SecoTransferable.FLAVOR) ||
+                    flavors[i].equals(NotebookTransferHandler.FLAVOR))
                 return true;
         return false;
     }
-
+    
     public boolean canImport(JComponent c, DataFlavor[] flavors)
     {
         return hasFlavor(flavors);
@@ -175,7 +185,7 @@ public class PiccoloTransferHandler extends TransferHandler
     {
        PiccoloCanvas canvas = (PiccoloCanvas) comp;
        PSwingNode node = canvas.getSelectedPSwingNode(); 
-       return new SecoTransferable(node.getComponent(), node.getHandle());
+       return new SecoTransferable(node.getHandle());
     }
 
 }

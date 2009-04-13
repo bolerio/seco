@@ -91,8 +91,8 @@ public class MetaData
         // removeProperty("java.awt.Component", "background");
         removeProperty("java.awt.Component", "font");
         // The visible property of Component needs special treatment because of
-        // Windows.
-        removeProperty("java.awt.Component", "visible");
+        // Windows. 
+        removeProperty("java.awt.Window"/*java.awt.Component*/, "visible");
         // This property throws an exception if accessed when there is no child.
         removeProperty("java.awt.ScrollPane", "scrollPosition");
         // 4917458 this should be removed for XAWT since it may throw

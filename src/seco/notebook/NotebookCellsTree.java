@@ -143,12 +143,9 @@ public class NotebookCellsTree extends JTree
                 HGHandle h = ThisNiche.handleOf(node);
                 Cell c = (Cell) ThisNiche.hg.get(h);
                 group.remove(c);
-                //NotebookCellsTree.this.ru
-                //System.out.println("Value: " + val +
-                //        ":" + ThisNiche.handleOf(node));
             }
         });
-        menuItem.setEnabled((node instanceof Cell) && group!=null);
+        //menuItem.setEnabled((node instanceof Cell) && group!=null);
         popup.add(menuItem);
         return popup;
     }

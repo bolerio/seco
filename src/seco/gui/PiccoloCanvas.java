@@ -262,19 +262,12 @@ public class PiccoloCanvas extends PSwingCanvas
             if (r != null)
             {
                 normalize(r);
-//                if(r.height == 0 || r.width==0);
-//                {
-//                    
-//                    r.width = Math.max(20, dim.width); 
-//                    r.width = Math.min(r.width, 500); 
-//                    r.height = Math.max(20, dim.height);
-//                    r.height = Math.min(r.height, 400);
-//                }
                 p.setBounds(r);
                 p.translate(r.x, r.y);
             }else
                 p.setBounds(new Rectangle(0, 0 , dim.width, dim.height));
         }
+        comp.revalidate();
         return p;
     }
     

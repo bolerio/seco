@@ -29,6 +29,8 @@ import org.hypergraphdb.IncidenceSetRef;
 import org.hypergraphdb.LazyRef;
 import org.hypergraphdb.atom.HGAtomRef;
 import org.hypergraphdb.atom.HGRelType;
+import org.hypergraphdb.type.HGAbstractType;
+import org.hypergraphdb.type.HGAtomType;
 import org.hypergraphdb.type.HGAtomTypeBase;
 import org.hypergraphdb.type.Record;
 import org.hypergraphdb.type.Slot;
@@ -71,6 +73,7 @@ public class SwingBinding extends HGAtomTypeBase
             Record record = (Record) hgType.make(handle, targetSet, null);
             // System.out.println("Make: " + c);
             bean = instantiate(hgType.getCtrHandle(), record); // MetaData.getConverter(beanClass).make(map);
+            TypeUtils.setValueFor(graph, handle, bean);
             makeBean(bean, record);
             // System.out.println("Make - res: " + bean);
             AddOnLink addons = (AddOnLink) graph.get(hgType.getAddOnsHandle());
@@ -79,7 +82,7 @@ public class SwingBinding extends HGAtomTypeBase
                 HGRelType l = (HGRelType) graph.get(addons.getTargetAt(i));
                 AddOnFactory.processLink(graph, l, record, bean);
             }
-            TypeUtils.setValueFor(graph, handle, bean);
+            
         }
         catch (Throwable t)
         {
@@ -224,23 +227,26 @@ public class SwingBinding extends HGAtomTypeBase
         }
     }
 
-    public void setValue(Record rec, String name, Object val)
+    public void setValue(Record rec, String name, Object value)
     {
         HGHandle slotHandle = hgType.slotHandles.get(name);
         Slot slot = (Slot) graph.get(slotHandle);
-//        if (val != null
-//                && "model".equals(name)
-//                && val instanceof DefaultComboBoxModel) 
-//            debug(slotHandle, rec);
-//        HGAtomRef.Mode refMode = hgType.getReferenceMode(slotHandle);
-//        if (refMode != null)
-//        {
-//            HGHandle valueAtomHandle = graph.getHandle(val);
-//            if (valueAtomHandle == null) valueAtomHandle = graph
-//                    .getPersistentHandle(graph.add(val));
-//            val = new HGAtomRef(valueAtomHandle, refMode);
-//        }
-        rec.set(slot, filterValue(val));
+        HGAtomRef.Mode refMode = hgType.getReferenceMode(slotHandle);
+        if (refMode != null && value != null)
+        {
+            HGHandle valueAtomHandle = graph.getHandle(value);
+            if (valueAtomHandle == null)
+            {
+                HGAtomType valueType = (HGAtomType)graph.get(slot.getValueType());
+                valueAtomHandle = graph.getPersistentHandle(
+                        graph.add(value, 
+                            valueType instanceof HGAbstractType ?
+                                 graph.getTypeSystem().getTypeHandle(value.getClass()) :    
+                                 slot.getValueType()));
+            }
+            value = new HGAtomRef(valueAtomHandle, refMode);
+        }
+        rec.set(slot, filterValue(value));
     }
     
     protected Object filterValue(Object val) 
@@ -258,16 +264,13 @@ public class SwingBinding extends HGAtomTypeBase
         return val;
     }
 
-    public Object getValue(Record rec, String name)
+    public Object getValue(Record record, String name)
     {
         HGHandle slotHandle = hgType.slotHandles.get(name);
-        Object value = rec.get((Slot) graph.get(slotHandle));
-//        if ("model".equals(name)
-//                && hgType.getJavaClass().getName().indexOf(
-//                        "MyComboBox") > 0) 
-    //        debug(value, rec);
-       // if (hgType.getReferenceMode(slotHandle) != null) value = graph
-         //       .get(((HGAtomRef) value).getReferent());
+        Slot slot = (Slot)graph.get(slotHandle);
+        Object value = record.get(slot);
+        if (value != null && hgType.getReferenceMode(slotHandle) != null)
+            value = graph.get(((HGAtomRef)value).getReferent());
         return value;
     }
 

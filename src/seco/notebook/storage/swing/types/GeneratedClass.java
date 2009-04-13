@@ -29,6 +29,7 @@ public abstract class GeneratedClass extends SwingBinding
 		try {
 			Record record = (Record) hgType.make(handle, targetSet, incidenceSet);
 			bean = instantiate(record); 
+			TypeUtils.setValueFor(graph, handle, bean);
 			if(bean == null) return null;
 			if(!bean.getClass().isAssignableFrom(hgType.getJavaClass()))
 			{
@@ -36,7 +37,6 @@ public abstract class GeneratedClass extends SwingBinding
 			            " .Expected: " + hgType.getJavaClass().getName());
 			    return null;
 			}    
-			TypeUtils.setValueFor(graph, handle, bean);
 			makeBean(bean, record);
 			//System.out.println("Make - res: " + bean);
 			
@@ -73,13 +73,7 @@ public abstract class GeneratedClass extends SwingBinding
 				.getTransactionObjectRefMap(graph);
 		HGPersistentHandle result = refMap.get(instance);
 		if (result == null) {
-			 final Record record = new SwingRecord(typeHandle, instance);
-			// if(hgType.getJavaClass().equals(
-		//				javax.swing.plaf.metal.MetalScrollButton.class))
-		//		System.err.println("GenClass - store: " + instance);
-		//	 else
-		//		System.err.println("GenClass - store1: " + instance);
-				
+			final Record record = new SwingRecord(typeHandle, instance);
 			storeBean(instance, record);
 			result = hgType.store(record);
 		}
@@ -136,4 +130,5 @@ public abstract class GeneratedClass extends SwingBinding
     	SwingRecord(HGHandle h, Object bean) { super(h); this.bean = bean;}
     	public Object getRealInstance() { return bean; }
     }
+
 }

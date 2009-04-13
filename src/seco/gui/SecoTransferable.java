@@ -1,12 +1,9 @@
 package seco.gui;
 
-import java.awt.Component;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-
-import javax.swing.JComponent;
 
 import org.hypergraphdb.HGHandle;
 
@@ -28,11 +25,11 @@ public class SecoTransferable implements Transferable
         }
     };
 
-    protected Data data;
+    protected HGHandle data;
     
-    public SecoTransferable(JComponent comp, HGHandle h)
+    public SecoTransferable(HGHandle h)
     {
-        data = new Data(comp, h);
+        data = h;
     }
 
     public DataFlavor[] getTransferDataFlavors()
@@ -51,28 +48,5 @@ public class SecoTransferable implements Transferable
         if (isDataFlavorSupported(flavor)) return data;
         return null;
     }
-    
-    public static class Data
-    {
-        protected JComponent component;
-        protected HGHandle top_cell_handle;
-        
-        public Data(JComponent c, HGHandle top_cell_handle)
-        {
-            super();
-            this.component = c;
-            this.top_cell_handle = top_cell_handle;
-        }
-
-        public JComponent getComponent()
-        {
-            return component;
-        }
-
-        public HGHandle getHandle()
-        {
-            return top_cell_handle;
-        }
-       
-    }
+   
 }
