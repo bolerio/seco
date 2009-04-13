@@ -127,10 +127,11 @@ public class TalkPanel extends JPanel
         transfer = null;
     }
     
-    //called by Transfer handler when smth is im 
+    //called by Transfer handler when smth is imported  
     public void acceptTransfer(HGHandle h)
     {
         //TODO: send notification to peers and show their "Accept Transfer" button
+        //instead of these 2 lines
         transfer = h;
         showTransferButton();
     }
@@ -358,6 +359,7 @@ public class TalkPanel extends JPanel
         {
             TalkPanel talkPanel = (TalkPanel) 
                 ((Component)e.getSource()).getParent();
+            //TODO: negotiate with the peer and get the copy here
             talkPanel.transferAccepted(talkPanel.transfer);
         }
     } 
