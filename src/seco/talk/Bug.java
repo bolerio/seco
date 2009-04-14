@@ -49,4 +49,6 @@ public class Bug
             this.outer = outer;
         }
     }
+    
+   
 }

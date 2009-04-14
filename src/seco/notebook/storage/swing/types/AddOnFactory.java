@@ -134,13 +134,12 @@ public class AddOnFactory
         {
             Object[] items = getLinkValues(hg, link, record);
             BorderLayout c = ((BorderLayout) instance);
-            System.out.println("AddonF - BORDER_LAYOUT:" + c + ":" + items);
             if (c != null && items != null)
                 for (int i = 0; i < gbNames.length; i++)
                     if (items[i] != null)
                     {
-                        System.out.println("AddonF - BORDER_LAYOUT:"
-                                + gbNames[i] + ":" + items[i]);
+                        //System.out.println("AddonF - BORDER_LAYOUT:"
+                        //         + gbNames[i] + ":" + items[i]);
                         c.addLayoutComponent((Component) items[i], gbNames[i]);
                     }
         }

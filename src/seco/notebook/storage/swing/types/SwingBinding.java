@@ -24,6 +24,7 @@ import javax.swing.text.JTextComponent;
 
 import org.hypergraphdb.HGException;
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.IncidenceSetRef;
 import org.hypergraphdb.LazyRef;
@@ -37,7 +38,6 @@ import org.hypergraphdb.type.Slot;
 import org.hypergraphdb.type.TypeUtils;
 
 import seco.notebook.storage.swing.DefaultConverter;
-import seco.notebook.storage.swing.types.GeneratedClass.SwingRecord;
 
 public class SwingBinding extends HGAtomTypeBase
 {
@@ -58,22 +58,34 @@ public class SwingBinding extends HGAtomTypeBase
 
     protected SwingTypeIntrospector getInspector()
     {
-        if (inspector == null) inspector = new SwingTypeIntrospector(graph,
-                hgType);
+        if (inspector == null)
+            inspector = new SwingTypeIntrospector(graph, hgType);
         return inspector;
     }
 
     public Object make(HGPersistentHandle handle,
             LazyRef<HGHandle[]> targetSet, IncidenceSetRef incidenceSet)
     {
-        //Class<?> c = hgType.getJavaClass();
         Object bean = null;
         try
         {
+            //current make mechanism impose some limitation: 
+            //class with special constructor can't contain properties
+            //that reference this class's instance  
+            boolean no_spec_ctr = hgType.getCtrHandle() == null ||
+                    HGHandleFactory.nullHandle().equals(hgType.getCtrHandle());
+            //System.out.println("Make: " + hgType.getJavaClass() + ":" + no_spec_ctr);
+            if (no_spec_ctr)
+            {
+                bean = instantiate(hgType.getCtrHandle(), null);
+                TypeUtils.setValueFor(graph, handle, bean);
+            }
             Record record = (Record) hgType.make(handle, targetSet, null);
-            // System.out.println("Make: " + c);
-            bean = instantiate(hgType.getCtrHandle(), record); // MetaData.getConverter(beanClass).make(map);
-            TypeUtils.setValueFor(graph, handle, bean);
+            if (!no_spec_ctr)
+            {
+                bean = instantiate(hgType.getCtrHandle(), record);
+                TypeUtils.setValueFor(graph, handle, bean);
+            }
             makeBean(bean, record);
             // System.out.println("Make - res: " + bean);
             AddOnLink addons = (AddOnLink) graph.get(hgType.getAddOnsHandle());
@@ -82,7 +94,7 @@ public class SwingBinding extends HGAtomTypeBase
                 HGRelType l = (HGRelType) graph.get(addons.getTargetAt(i));
                 AddOnFactory.processLink(graph, l, record, bean);
             }
-            
+
         }
         catch (Throwable t)
         {
@@ -99,12 +111,7 @@ public class SwingBinding extends HGAtomTypeBase
         if (result == null)
         {
             final Record record = new SwingRecord(typeHandle, instance);
-            // System.out.println("Store: " + instance);
             storeBean(instance, record);
-            // System.out.println("StoreType: " + hgType + ":"
-            // + ((RecordType) hgType).slotCount() + ":" + record);
-            // hgType.setHyperGraph(graph);
-            // System.out.println("Store1: " + hgType);
             result = hgType.store(record);
         }
         return result;
@@ -120,9 +127,9 @@ public class SwingBinding extends HGAtomTypeBase
         ConstructorLink link = (ConstructorLink) graph.get(h);
         // System.out.println("SB - instantiate" +
         // hgType.getJavaClass() + ":" + link);
-        if (link != null && link instanceof FactoryConstructorLink) return AddOnFactory
-                .instantiateFactoryConstructorLink(graph, hgType,
-                        (FactoryConstructorLink) link, record);
+        if (link != null && link instanceof FactoryConstructorLink)
+            return AddOnFactory.instantiateFactoryConstructorLink(graph,
+                    hgType, (FactoryConstructorLink) link, record);
         return AddOnFactory.instantiateConstructorLink(graph, hgType, link,
                 record);
     }
@@ -134,8 +141,8 @@ public class SwingBinding extends HGAtomTypeBase
             Slot slot = (Slot) graph.get(slotHandle);
             String label = slot.getLabel();
             Object value = record.get(slot);
-            if (hgType.getReferenceMode(slotHandle) != null) value = graph
-                    .get(((HGAtomRef) value).getReferent());
+            if (hgType.getReferenceMode(slotHandle) != null)
+                value = graph.get(((HGAtomRef) value).getReferent());
             // System.out.println("Slot: " + slot.getLabel() + ":" + value);
             if (value == null) continue;
             SwingTypeIntrospector insp = this.getInspector();
@@ -153,7 +160,7 @@ public class SwingBinding extends HGAtomTypeBase
             {
                 Field f = insp.getPrivFieldsMap().get(label);
                 f.setAccessible(true);
-                
+
                 f.set(bean, value);
             }
             catch (IllegalAccessException ex)
@@ -175,17 +182,19 @@ public class SwingBinding extends HGAtomTypeBase
                 {
                     t.printStackTrace();
                 }
-            } else if (insp.getSettersMap().containsKey(label)) try
-            {
-                insp.getSettersMap().get(label).invoke(bean,
-                        new Object[] { value });
             }
-            catch (Throwable t)
-            {
-                // System.err.println("Unable to set property: " + label + "
-                // on " +
-                // hgType.getJavaClass().getName() + ".Reason: " + t);
-            }
+            else if (insp.getSettersMap().containsKey(label))
+                try
+                {
+                    insp.getSettersMap().get(label).invoke(bean,
+                            new Object[] { value });
+                }
+                catch (Throwable t)
+                {
+                    System.err.println("Unable to set property: " + label
+                            + " on " + hgType.getJavaClass().getName()
+                            + ".Reason: " + t);
+                }
         }
     }
 
@@ -237,28 +246,28 @@ public class SwingBinding extends HGAtomTypeBase
             HGHandle valueAtomHandle = graph.getHandle(value);
             if (valueAtomHandle == null)
             {
-                HGAtomType valueType = (HGAtomType)graph.get(slot.getValueType());
-                valueAtomHandle = graph.getPersistentHandle(
-                        graph.add(value, 
-                            valueType instanceof HGAbstractType ?
-                                 graph.getTypeSystem().getTypeHandle(value.getClass()) :    
-                                 slot.getValueType()));
+                HGAtomType valueType = (HGAtomType) graph.get(slot
+                        .getValueType());
+                valueAtomHandle = graph.getPersistentHandle(graph.add(value,
+                        valueType instanceof HGAbstractType ? graph
+                                .getTypeSystem()
+                                .getTypeHandle(value.getClass()) : slot
+                                .getValueType()));
             }
             value = new HGAtomRef(valueAtomHandle, refMode);
         }
         rec.set(slot, filterValue(value));
     }
-    
-    protected Object filterValue(Object val) 
+
+    protected Object filterValue(Object val)
     {
-        if(val == null) return null;
-        if (val.getClass().isAnonymousClass())
-            return null;
-        
+        if (val == null) return null;
+        if (val.getClass().isAnonymousClass()) return null;
+
         if (val.getClass().isMemberClass()
                 && !Modifier.isStatic(val.getClass().getModifiers()))
         {
-           // System.err.println("Filtering1 " + e);
+            // System.err.println("Filtering1 " + e);
             return null;
         }
         return val;
@@ -267,10 +276,10 @@ public class SwingBinding extends HGAtomTypeBase
     public Object getValue(Record record, String name)
     {
         HGHandle slotHandle = hgType.slotHandles.get(name);
-        Slot slot = (Slot)graph.get(slotHandle);
+        Slot slot = (Slot) graph.get(slotHandle);
         Object value = record.get(slot);
         if (value != null && hgType.getReferenceMode(slotHandle) != null)
-            value = graph.get(((HGAtomRef)value).getReferent());
+            value = graph.get(((HGAtomRef) value).getReferent());
         return value;
     }
 
@@ -300,51 +309,68 @@ public class SwingBinding extends HGAtomTypeBase
         {
             if (e instanceof PropertyChangeListener
                     || e instanceof AncestorListener
-                    || e instanceof ListDataListener 
+                    || e instanceof ListDataListener
                     || e instanceof ContainerListener)
             {
                 continue;
             }
-            
+
             if (e.getClass().isAnonymousClass())
             {
                 // System.err.println("Filtering0 " + e);
                 continue;
-             }
-            
+            }
+
             if (e.getClass().isMemberClass()
                     && !Modifier.isStatic(e.getClass().getModifiers()))
             {
-               // System.err.println("Filtering1 " + e);
+                // System.err.println("Filtering1 " + e);
                 continue;
             }
-           
-            
+
             // normally those listeners will be added during construction
             if (e.getClass().equals(hgType.getJavaClass()))
             {
-                //System.err.println("Filtering3 " + e);
+                // System.err.println("Filtering3 " + e);
                 continue;
             }
-           
+
             // the action is added as event listener too, so filter it
             if (e instanceof ActionListener
-                && instance instanceof AbstractButton
-                && ((AbstractButton) instance).getAction() != null)
+                    && instance instanceof AbstractButton
+                    && ((AbstractButton) instance).getAction() != null)
             {
-               // System.err.println("Filtering4 " + e);
+                // System.err.println("Filtering4 " + e);
                 continue;
             }
-            if(e instanceof DefaultCaret) continue;
-            //filter those package private JTextComponent.MutableCaretEvent listers
-            //that get re-added in ctr
-            if ((instance instanceof JTextComponent || instance instanceof Caret) &&
-                    e instanceof ChangeListener && e instanceof FocusListener
-                    && e instanceof MouseListener)
+            if (e instanceof DefaultCaret) continue;
+            // filter those package private JTextComponent.MutableCaretEvent
+            // listers
+            // that get re-added in ctr
+            if ((instance instanceof JTextComponent || instance instanceof Caret)
+                    && e instanceof ChangeListener
+                    && e instanceof FocusListener && e instanceof MouseListener)
                 continue;
-           
+
             res.add(e);
         }
         return res.toArray(new EventListener[res.size()]);
+    }
+
+    static class SwingRecord extends Record implements
+            TypeUtils.WrappedRuntimeInstance
+    {
+        Object bean;
+
+        SwingRecord(HGHandle h, Object bean)
+        {
+            super(h);
+            this.bean = bean;
+        }
+
+        public Object getRealInstance()
+        {
+            return bean;
+        }
     }
 }

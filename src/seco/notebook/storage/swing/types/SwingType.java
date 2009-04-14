@@ -1,32 +1,20 @@
 package seco.notebook.storage.swing.types;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.hypergraphdb.HGException;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGLink;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGPlainLink;
-import org.hypergraphdb.HGQuery;
-import org.hypergraphdb.HGQuery.hg;
-import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HGTypeSystem;
-import org.hypergraphdb.annotation.AtomReference;
-import org.hypergraphdb.atom.AtomProjection;
-import org.hypergraphdb.atom.HGAtomRef;
+import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.atom.HGRelType;
-import org.hypergraphdb.query.AtomValueCondition;
-import org.hypergraphdb.type.AtomRefType;
 import org.hypergraphdb.type.BonesOfBeans;
-import org.hypergraphdb.type.HGAtomType;
-import org.hypergraphdb.type.Record;
 import org.hypergraphdb.type.RecordType;
 import org.hypergraphdb.type.Slot;
-import org.hypergraphdb.type.TypeUtils;
 
 import seco.notebook.storage.swing.DefaultConverter;
 import seco.notebook.storage.swing.MetaData;
@@ -48,7 +36,6 @@ public class SwingType extends RecordType
 	public void init(HGHandle typeHandle)
 	{
 		this.thisHandle = typeHandle;
-		//System.out.println("SwingType: " + javaClass.getName());
 		DefaultConverter c = MetaData.getConverter(javaClass);
 		createSlots(c);
 		ctrHandle = createCtrLink(c);
@@ -112,55 +99,23 @@ public class SwingType extends RecordType
 		Map<String, Class<?>> slots = c.getSlots();
 		//System.out.println("SwingType: " + javaClass + ":" + slots.size() + ":" + 
 		//		((DefaultConverter)c).getType() + ":" + graph);
-		
 		HGTypeSystem typeSystem = graph.getTypeSystem();
-		HGHandle slotType = typeSystem.getTypeHandle(Slot.class);
 		for (String s : slots.keySet())
 		{
-			Slot slot = new Slot();
-			slot.setLabel(s); 
-			//System.out.println("Slot: " + slot.getLabel());
+			//System.out.println("Slot: " + s);
 			Class<?> propType = slots.get(s);
 			if (propType == null)
 				System.err.println("NULL Class for " + s + " in " + javaClass);
 			if (propType.isPrimitive())
 				propType = BonesOfBeans.wrapperEquivalentOf(propType);
 			HGHandle valueTypeHandle = typeSystem.getTypeHandle(propType);
-			slot.setValueType(valueTypeHandle);
-			AtomValueCondition cond = new AtomValueCondition(slot);
-			HGQuery query = HGQuery.make(typeSystem.getHyperGraph(), cond);
-			HGSearchResult<HGHandle> res = null;
-			HGHandle slotHandle;
-			try
-			{
-				res = query.execute();
-				if (!res.hasNext())
-				{
-					slotHandle = typeSystem.getHyperGraph().add(slot, slotType);
-				} else
-				// the Slot is in the DB, but not in cache so put it
-				// //here
-				{
-					slotHandle = res.next();
-					slot = (Slot) typeSystem.getHyperGraph().get(slotHandle);
-					if(slot == null) 
-						System.err.println("NULL AddOnSlot in SwingType: " + javaClass);
-				}
-			}
-			catch (Throwable t)
-			{
-				throw new HGException(t);
-			}
-			finally
-			{
-				if (res != null) res.close();
-			}
-			
+			HGHandle slotHandle = 
+			    typeSystem.getJavaTypeFactory().getSlotHandle(s, valueTypeHandle);
 			addSlot(slotHandle);
-			HGAtomRef.Mode refMode = getReferenceMode(javaClass, slot.getLabel());
-			if (refMode != null)
-				typeSystem.getHyperGraph().add(
-						new AtomProjection(thisHandle, slot.getLabel(), slot.getValueType(), refMode));
+			//HGAtomRef.Mode refMode = getReferenceMode(javaClass, slot.getLabel());
+			//if (refMode != null)
+			//	typeSystem.getHyperGraph().add(
+			//			new AtomProjection(thisHandle, slot.getLabel(), slot.getValueType(), refMode));
 		}
 	}
 
@@ -233,98 +188,4 @@ public class SwingType extends RecordType
 		slots.remove(i);
 		slotHandles.remove(s);
 	}
-
-
-	private HGAtomRef.Mode getReferenceMode(Class<?> javaClass, String name)
-	{
-		//
-		// Retrieve or recursively create a new type for the nested
-		// bean.
-		//
-		try
-		{
-			Field field = javaClass.getDeclaredField(name);
-			AtomReference ann = (AtomReference) field
-					.getAnnotation(AtomReference.class);
-			if (ann == null) return null;
-			String s = ann.value();
-			if ("hard".equals(s))
-				return HGAtomRef.Mode.hard;
-			else if ("symbolic".equals(s))
-				return HGAtomRef.Mode.symbolic;
-			else if ("floating".equals(s))
-				return HGAtomRef.Mode.floating;
-			else
-				throw new HGException(
-						"Wrong annotation value '"
-								+ s
-								+ "' for field '"
-								+ field.getName()
-								+ "' of class '"
-								+ javaClass.getName()
-								+ "', must be one of \"hard\", \"symbolic\" or \"floating\".");
-		}
-		catch (NoSuchFieldException ex)
-		{
-			// Perhaps issue a warning here if people are misspelling
-			// unintentionally? Proper spelling is only useful for
-			// annotation, so a warning/error should be really issued if
-			// we find an annotation for a field that we can't make
-			// use of?
-			return null;
-		}
-	}
-	
-	 public HGPersistentHandle store(Object instance)
-	    {
-	        HGPersistentHandle handle = TypeUtils.getNewHandleFor(graph, instance);
-	        if (! (instance instanceof Record))
-	            throw new HGException("RecordType.store: object is not of type Record.");
-	        Record record = (Record)instance;
-	        HGPersistentHandle [] layout = new HGPersistentHandle[slots.size() * 2];
-	        for (int i = 0; i < slots.size(); i++)
-	        {     	
-	        	HGHandle slotHandle = getAt(i);
-	        	Slot slot = (Slot)graph.get(slotHandle);
-	            Object value = record.get(slot);            
-	            if (value == null)
-	            {
-	            	layout[2*i] = graph.getPersistentHandle(slot.getValueType());
-	            	layout[2*i + 1] = HGHandleFactory.nullHandle();
-	            }
-	            else
-	            {
-		        	HGAtomRef.Mode refMode = getReferenceMode(slotHandle);        	
-		        	if (refMode == null)
-		        	{
-		                HGHandle actualTypeHandle = graph.getTypeSystem().getTypeHandle(value.getClass());
-		                if (actualTypeHandle == null)
-		                	actualTypeHandle = slot.getValueType();
-		                HGAtomType type = graph.getTypeSystem().getType(actualTypeHandle);                
-		                layout[2*i] = graph.getPersistentHandle(actualTypeHandle);
-		                layout[2*i + 1] = TypeUtils.storeValue(graph, value, type);
-		        	}
-		        	else
-		        	{
-		                layout[2*i] = graph.getPersistentHandle(slot.getValueType());
-		                if (value instanceof HGAtomRef)
-		                {
-			        		AtomRefType refType = (AtomRefType)graph.get(AtomRefType.HGHANDLE);
-			                layout[2*i + 1] = refType.store((HGAtomRef)value);
-		                }
-		                else
-		                	throw new HGException("Slot " + slot.getLabel() + 
-		                						  " should have an atom reference for record " + 
-		                						  graph.getHandle(this));
-		        	}
-	            }
-	        }
-	        graph.getStore().store(handle, layout);
-	        return handle;
-	    }
-	 
-	 public synchronized HGAtomRef.Mode getReferenceMode(HGHandle slot)
-	 {
-		 return super.getReferenceMode(slot);
-	 }
 }
