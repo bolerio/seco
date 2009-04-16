@@ -1002,6 +1002,11 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     {
         return getSelectedNBElement(inputCellBox);
     }
+    
+    public Element getSelectedContentCellElement()
+    {
+        return getSelectedNBElement(commonCell);
+    }
 
     private Element getSelectedNBElement(ElementType type)
     {

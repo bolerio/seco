@@ -729,11 +729,15 @@ public class GUIHelper
         menu.add(new JMenuItem(man.putAction(act, KeyStroke.getKeyStroke(
                 KeyEvent.VK_V, ActionEvent.CTRL_MASK), IconManager
                 .resolveIcon("Paste16.gif"))));
-        menu.addSeparator();
-        act = kit.getActionByName(DefaultEditorKit.selectAllAction);
-        act.putValue(Action.NAME, SELECT_ALL);
-        menu.add(new JMenuItem(man.putAction(act, KeyStroke.getKeyStroke(
-                KeyEvent.VK_A, ActionEvent.CTRL_MASK))));
+// TODO: the selection is not visible if invoked from menu,
+// but CTRL + A work as expected ...
+        man.putAction(act, KeyStroke.getKeyStroke(
+              KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+//        menu.addSeparator();
+//        act = kit.getActionByName(DefaultEditorKit.selectAllAction);
+//        act.putValue(Action.NAME, SELECT_ALL);
+//        menu.add(new JMenuItem(man.putAction(act, KeyStroke.getKeyStroke(
+//                KeyEvent.VK_A, ActionEvent.CTRL_MASK))));
         menu.addSeparator();
         menu.add(new JMenuItem(man.putAction(kit
                 .getActionByName(NotebookEditorKit.findAction), KeyStroke
@@ -781,10 +785,11 @@ public class GUIHelper
     {
         JMenu menu = new NBMenu("Format");
         menu.setMnemonic('o');
-        final JCheckBoxMenuItem m = new JCheckBoxMenuItem("Cell Numbers");
-        m.addItemListener(new CellNumItemListener());
-        menu.add(m);
-        menu.addSeparator();
+        //NOT USED
+//        final JCheckBoxMenuItem m = new JCheckBoxMenuItem("Cell Numbers");
+//        m.addItemListener(new CellNumItemListener());
+//        menu.add(m);
+//        menu.addSeparator();
         menu.add(new EnhancedMenu("Visual Properties", new VisPropsProvider()));
         Action act = kit.getActionByName(NotebookEditorKit.formatAction);
         act.putValue(Action.NAME, "Format");
@@ -815,8 +820,8 @@ public class GUIHelper
         menu.add(new JMenuItem(act));
         act = kit.getActionByName(NotebookEditorKit.clearEngineContextAction);
         menu.add(new JMenuItem(act));
-        act = kit.getActionByName(NotebookEditorKit.resetCellNumAction);
-        menu.add(new JMenuItem(act));
+        //act = kit.getActionByName(NotebookEditorKit.resetCellNumAction);
+        //menu.add(new JMenuItem(act));
         menu.add(new GlobMenuItem(kit
                 .getActionByName(NotebookEditorKit.javaDocManagerAction)));
         menu.add(new JMenuItem(kit

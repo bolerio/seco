@@ -18,6 +18,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import org.hypergraphdb.HGHandle;
@@ -61,8 +63,10 @@ public class NotebookCellsTree extends JTree
     {
         final CellGroupMember node = (CellGroupMember) getLastSelectedPathComponent();
         TreePath selPath = getSelectionModel().getSelectionPath();
-        final CellGroup group = (selPath != null) ?
-            (CellGroup) selPath.getParentPath().getLastPathComponent() : null;
+        CellGroupMember par = (selPath != null) ?
+            (CellGroupMember) selPath.getParentPath().getLastPathComponent() : null;
+        final CellGroup group = (par != null && par instanceof CellGroup) ?
+                (CellGroup) par : null;
         JPopupMenu popup = new JPopupMenu();
         JMenuItem menuItem = new JMenuItem("Publisher");
         menuItem.addActionListener(new ActionListener() {
@@ -143,6 +147,18 @@ public class NotebookCellsTree extends JTree
                 HGHandle h = ThisNiche.handleOf(node);
                 Cell c = (Cell) ThisNiche.hg.get(h);
                 group.remove(c);
+                //TreePath currentSelection = getSelectionPath();
+               // if (currentSelection != null) {
+                   //DefaultMutableTreeNode node = (DefaultMutableTreeNode) currentSelection
+                   //      .getLastPathComponent();
+                   //DefaultTreeModel model = ((DefaultTreeModel) getModel());
+                   //model.removeNodeFromParent(node);
+               // }
+                
+                //TODO: rather brutal refresh, but the remove operation 
+                //is not expected to be very frequent
+                setModel(new NotebookTreeModel( (CellGroupMember)
+                        getModel().getRoot())); 
             }
         });
         //menuItem.setEnabled((node instanceof Cell) && group!=null);

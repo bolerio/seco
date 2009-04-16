@@ -17,9 +17,7 @@ import seco.ThisNiche;
 import seco.gui.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookEditorKit;
-import seco.things.Cell;
 import seco.things.CellGroup;
-import seco.things.CellGroupMember;
 
 
 
@@ -47,18 +45,10 @@ public class OpenBookPanel extends JPanel
         CellGroup tp = ThisNiche.hg.get(ThisNiche.TABBED_PANE_GROUP_HANDLE);
         for(int i = 0; i < tp.getArity(); i++)
         {
-            CellGroupMember cgm = tp.getElement(i);
-            if(cgm instanceof Cell)
-            {
-                Object o = ((Cell) cgm).getValue();
-                if(o instanceof CellGroupMember)
-                {
-                    HGHandle bookH = ThisNiche.handleOf(o);
-                    for(NotebookDocument doc: new ArrayList<NotebookDocument>(docs))
-                        if(doc.getBookHandle().equals(bookH))
+            HGHandle bookH = tp.getTargetAt(i);
+            for(NotebookDocument doc: new ArrayList<NotebookDocument>(docs))
+               if(doc.getBookHandle().equals(bookH))
                             docs.remove(doc);
-                }
-            }
         }
     }
     

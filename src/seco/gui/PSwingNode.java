@@ -54,6 +54,7 @@ public class PSwingNode extends PSwing
     {
        // System.out.println("PSwingNode: endResizeBounds");
         getComponent().revalidate();
+        if(handle == null || ThisNiche.hg == null) return;
         CellGroupMember cm = (CellGroupMember) ThisNiche.hg.get(getHandle());
         if (cm != null)
             cm.setAttribute(VisualAttribs.rect, getFullBounds().getBounds());

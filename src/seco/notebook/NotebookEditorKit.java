@@ -966,10 +966,11 @@ public class NotebookEditorKit extends StyledEditorKit
 
         protected void action(final NotebookUI ui) throws Exception
         {
-            Element el = ui.getSelectedCellElement();
+            Element el = ui.getSelectedContentCellElement();
+            System.out.println("SelectAllAction: " + el);
             if (el == null) return;
             ui.setCaretPosition(el.getStartOffset());
-            ui.moveCaretPosition(el.getEndOffset());
+            ui.moveCaretPosition(el.getEndOffset()-1);
         }
 
     }

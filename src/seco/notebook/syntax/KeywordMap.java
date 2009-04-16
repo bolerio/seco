@@ -226,15 +226,13 @@ loop:		for(int i = 0; i < keyword.length; i++)
 				% mapLength;
 	} //}}}
 
-	//{{{ getSegmentMapKey() method
+	//getSegmentMapKey() method
 	protected int getSegmentMapKey(Segment s, int off, int len)
 	{
 		return (Character.toUpperCase(s.array[off]) +
 				Character.toUpperCase(s.array[off + len - 1]))
 				% mapLength;
-	} //}}}
-
-	//}}}
+	} 
 
 	//{{{ Keyword class
 	class Keyword

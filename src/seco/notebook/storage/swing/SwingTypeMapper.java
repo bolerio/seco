@@ -1,7 +1,16 @@
 package seco.notebook.storage.swing;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 
@@ -9,10 +18,16 @@ import org.hypergraphdb.HGException;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGIndex;
 import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.HGTypeSystem;
+import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.annotation.HGIgnore;
 import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.indexing.HGIndexer;
+import org.hypergraphdb.type.BonesOfBeans;
 import org.hypergraphdb.type.HGAtomType;
 import org.hypergraphdb.type.JavaObjectMapper;
+import org.hypergraphdb.type.JavaTypeFactory;
+import org.hypergraphdb.type.RecordType;
 
 import seco.notebook.storage.swing.types.ClassGenerator;
 import seco.notebook.storage.swing.types.GeneratedClass;
@@ -50,8 +65,7 @@ public class SwingTypeMapper extends JavaObjectMapper
         if (javaClass.getName().startsWith("javax")
             || javaClass.getName().startsWith("java.awt")
             || javaClass.getName().startsWith("java.beans")
-            || mapAsSerializableObject(javaClass)
-            || javaClass.getName().startsWith("seco.talk.B"))
+            || mapAsSerializableObject(javaClass))
         {
 
             SwingType type = new SwingType(javaClass);
@@ -139,6 +153,82 @@ public class SwingTypeMapper extends JavaObjectMapper
             return true;
     }
 
+    public static void defineGUIPanelType(HyperGraph graph, Class<?> javaClass, Class<?> parent)
+    {
+        HGPersistentHandle typeConstructor = 
+            graph.getPersistentHandle(
+                    graph.getTypeSystem().getTypeHandle(RecordType.class));
+        HGAtomType type = makeGUIBeanType(graph, javaClass, parent);
+       // graph.getTypeSystem().addPredefinedType(typeConstructor, type, javaClass);
+    }
+    
+    static RecordType makeGUIBeanType(HyperGraph graph, Class<?> javaClass, Class<?> parent)
+    {
+        HGTypeSystem typeSystem = graph.getTypeSystem();
+        JavaTypeFactory javaTypes = typeSystem.getJavaTypeFactory();
+        BeanInfo bi = null;
+        try{
+          bi = Introspector.getBeanInfo(javaClass, parent);
+        }catch(IntrospectionException e){
+            throw new HGException(e); 
+        }
+        Map<String, PropertyDescriptor> descriptors = new HashMap<String, PropertyDescriptor>();
+        for(PropertyDescriptor pd: bi.getPropertyDescriptors())
+        {
+            //
+            // Accept only properties that are both readable and writeable!
+            //
+            if (!includeProperty(javaClass, pd)) continue;
+            descriptors.put(pd.getName(), pd);
+        }
+        RecordType recordType = new RecordType();
+        recordType.setHyperGraph(graph);
+        for (Iterator<PropertyDescriptor> i = descriptors.values().iterator(); i.hasNext();) 
+        {
+            PropertyDescriptor desc = i.next();
+            Class<?> propType = desc.getPropertyType();
+            if (propType.isPrimitive())
+                propType = BonesOfBeans.wrapperEquivalentOf(propType);
+            HGHandle valueTypeHandle = typeSystem.getTypeHandle(propType);
+            if (valueTypeHandle == null)
+                throw new HGException("Unable to get HyperGraph type for Java class " + 
+                                      propType.getName() + ": make sure it's default or 'link' constructible.");
+            HGHandle slotHandle = javaTypes.getSlotHandle(desc.getName(), 
+                                                          valueTypeHandle);
+            //Slot slot = graph.get(slotHandle);
+            recordType.addSlot(slotHandle);
+            // HGAtomRef.Mode refMode = getReferenceMode(javaClass, desc);                     
+            // if (refMode != null)
+            //    typeSystem.getHyperGraph().add(new AtomProjection(typeHandle, 
+            //                                                      slot.getLabel(),
+            //                                                      slot.getValueType(), 
+            //                                                      refMode));
+        }
+        return recordType;
+    }
+    
+    private static boolean includeProperty(Class<?> javaClass, PropertyDescriptor desc)
+    {
+        Method reader = desc.getReadMethod();
+        Method writer = desc.getWriteMethod();
+        if (reader == null || writer == null)
+            return false;
+        if (reader.getAnnotation(HGIgnore.class) != null ||
+            writer.getAnnotation(HGIgnore.class) != null)
+            return false;
+        try
+        {
+            Field field = javaClass.getDeclaredField(desc.getName());
+            return field.getAnnotation(HGIgnore.class) == null && 
+                  (field.getModifiers() & Modifier.TRANSIENT) == 0; 
+        }
+        catch (NoSuchFieldException ex)
+        {
+            return true;
+        }
+    }
+    
+    
     public static class HGSerializable
     {
         private String classname;

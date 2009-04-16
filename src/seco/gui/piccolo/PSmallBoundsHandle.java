@@ -65,7 +65,7 @@ public class PSmallBoundsHandle extends PSmallHandle
                 .createSouthWestLocator(aNode)));
 
         //TODO: temp check
-        if(!(((PSwingNode)aNode).getHandle().equals(ThisNiche.TABBED_PANE_GROUP_HANDLE)))
+        if(!(ThisNiche.TABBED_PANE_GROUP_HANDLE.equals(((PSwingNode)aNode).getHandle())))
           aNode.addChild(new CopyHandle(aNode, SwingConstants.NORTH_EAST,
                 new Point(-10, 0)));
     }
