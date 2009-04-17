@@ -166,7 +166,8 @@ public class PSwingEventHandlerEx implements PInputEventListener {
             PSwing swing = (PSwing) currentNode;
             PNode grabNode = pickedNode;
 
-            if (grabNode.isDescendentOf(canvas.getRoot())) {
+            if (grabNode.isDescendentOf(canvas.getRoot())) 
+            {
                 pt = new Point2D.Double(pSwingMouseEvent.getX(), pSwingMouseEvent.getY());
                 cameraToLocal(pSwingMouseEvent.getPath().getTopCamera(), pt, grabNode);
                 prevPoint = new Point2D.Double(pt.getX(), pt.getY());
@@ -200,6 +201,12 @@ public class PSwingEventHandlerEx implements PInputEventListener {
                         rightButtonData.setState(swing, pickedNode, comp, offX, offY);
                     }
                 }
+            }
+            //MINE:
+            if(leftButtonData.getFocusedComponent() == null)
+            {
+                leftButtonData.focusNode = swing;
+                leftButtonData.focusComponent =  swing.getComponent();
             }
         }
 

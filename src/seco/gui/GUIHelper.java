@@ -236,8 +236,7 @@ public class GUIHelper
             Point pt = super.getPopupMenuOrigin();
             if (getParent() != null && getParent() instanceof JComponent)
             {
-                PSwing p = (PSwing) ((JComponent) getParent())
-                        .getClientProperty(PSwing.PSWING_PROPERTY);
+                PSwing p = GUIHelper.getPSwingNode((JComponent) getParent());
                 if (p != null)
                 {
                     Rectangle r = p.getFullBounds().getBounds();
@@ -535,21 +534,21 @@ public class GUIHelper
         group.setVisual(CellContainerVisual.getHandle());
         getMenuBar();
         if(group.indexOf(GUIHelper.MENUBAR_HANDLE) < 0)
-           addToTopCellGroup(GUIHelper.MENUBAR_HANDLE, group,
+           addToCellGroup(GUIHelper.MENUBAR_HANDLE, group,
                 VisualsManager.defaultVisualForAtom(GUIHelper.MENUBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(0),
                         new DValue(0), new DValue(25, true), new DValue(28)),
                         RefPoint.TOP_LEFT), null);
         getMainToolBar();
         if(group.indexOf(GUIHelper.TOOLBAR_HANDLE) < 0)
-          addToTopCellGroup(GUIHelper.TOOLBAR_HANDLE, group, VisualsManager
+          addToCellGroup(GUIHelper.TOOLBAR_HANDLE, group, VisualsManager
                 .defaultVisualForAtom(GUIHelper.TOOLBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(0),
                         new DValue(28), new DValue(280), new DValue(28)),
                         RefPoint.TOP_LEFT), null);
         getHTMLToolBar();
         if(group.indexOf(GUIHelper.HTML_TOOLBAR_HANDLE) < 0)
-          addToTopCellGroup(GUIHelper.HTML_TOOLBAR_HANDLE, group,
+          addToCellGroup(GUIHelper.HTML_TOOLBAR_HANDLE, group,
                 VisualsManager
                         .defaultVisualForAtom(GUIHelper.HTML_TOOLBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(280),
@@ -574,7 +573,7 @@ public class GUIHelper
         return (LayoutHandler) m.getAttribute(VisualAttribs.layoutHandler);
     }
 
-    public static HGHandle addToTopCellGroup(HGHandle h, CellGroup group,
+    public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
             HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell)
     {
         HGHandle cellH = (create_cell) ? CellUtils.getCellHForRefH(h) : h;
@@ -586,23 +585,28 @@ public class GUIHelper
         return cellH;
     }
 
-    public static HGHandle addToTopCellGroup(HGHandle h, CellGroup group,
+    public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
             HGHandle visualH, LayoutHandler lh, Rectangle r)
     {
-       return addToTopCellGroup(h, group, visualH, lh, r, true);
+       return addToCellGroup(h, group, visualH, lh, r, true);
     }
     
-    public static HGHandle moveToTopCell(HGHandle h, 
+    public static HGHandle addToTopCellGroup(HGHandle h, 
             HGHandle visualH, LayoutHandler lh, Rectangle r)
     {
         CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-        return addToTopCellGroup(h, top, visualH, lh, r, false);
+        return addToCellGroup(h, top, visualH, lh, r, false);
     }
 
-    public static void removeFromTopCellGroup(HGHandle h)
+    public static void removeFromCellGroup(HGHandle groupH, HGHandle h)
     {
-        CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        CellGroup top = ThisNiche.hg.get(groupH);
         top.remove((CellGroupMember) ThisNiche.hg.get(h));
+    }
+    
+    public static PSwingNode getPSwingNode(JComponent c)
+    {
+       return c == null ? null : (PSwingNode) c.getClientProperty(PSwing.PSWING_PROPERTY);
     }
 
     public static void openNotebook(HGHandle bookH)

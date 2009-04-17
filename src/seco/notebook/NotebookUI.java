@@ -70,6 +70,7 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.UpdatablePopupMenu;
@@ -566,8 +567,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                     e.getY(), f);
             if (e.getComponent() instanceof JComponent)
             {
-                PSwing p = (PSwing) ((JComponent) e.getComponent())
-                        .getClientProperty(PSwing.PSWING_PROPERTY);
+                PSwing p = GUIHelper.getPSwingNode((JComponent) e.getComponent());
                 if (p != null)
                 {
                     Rectangle r = p.getFullBounds().getBounds();

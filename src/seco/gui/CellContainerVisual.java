@@ -1,12 +1,16 @@
 package seco.gui;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 
 import javax.swing.JComponent;
+import javax.swing.border.MatteBorder;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
+
+import edu.umd.cs.piccolo.PCamera;
 
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
@@ -40,10 +44,11 @@ public class CellContainerVisual implements CellVisual, EventHandler
         }
         else
         {
-            // TODO:
             canvas = new PiccoloCanvas();
+            canvas.setBorder(new MatteBorder(1,1,1,1, Color.blue));
+            //canvas.setBackground(new Color(250, 250, 255));
         }
-
+        element.setVisualInstance(canvas);
         for (int i = 0; i < group.getArity(); i++)
             addChild(canvas, group.getTargetAt(i));
         if (canvas != null) canvas.relayout();
@@ -68,13 +73,23 @@ public class CellContainerVisual implements CellVisual, EventHandler
         }
     }
 
-    private void addChild(PiccoloCanvas canvas, HGHandle childH)
+    private void addChild(PiccoloCanvas top_canvas, HGHandle childH)
     {
         CellGroupMember x = ThisNiche.hg.get(childH);
         CellVisual visual = CellUtils.getVisual(x);
         JComponent comp = visual.bind(x);
         if(comp != null)
-           canvas.addComponent(comp, x);
+        {
+           PSwingNode ps = top_canvas.addComponent(comp, x); 
+           if(comp instanceof PiccoloCanvas)
+           {
+               PiccoloCanvas canvas = (PiccoloCanvas) comp;
+               PCamera camera = new PCamera();
+               ps.addChild(camera);
+               camera.addLayer(canvas.getNodeLayer());
+               canvas.setCamera(camera);
+           }
+        }
         CellUtils.addEventPubSub(
                 EvalCellEvent.HANDLE, childH, getHandle(), getHandle());
     }
@@ -84,9 +99,9 @@ public class CellContainerVisual implements CellVisual, EventHandler
         HGHandle h = publisher;//event.getCellHandle();
         CellGroup group = CellUtils.getParentGroup(h);
         System.out.println("rebind: " + h + ":" + group);
-        //PiccoloCanvas canvas = (PiccoloCanvas) group.getVisualInstance();
+        PiccoloCanvas canvas = (PiccoloCanvas) group.getVisualInstance();
         //TODO: this is not correct in general
-        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
+        //PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         PSwingNode ps = canvas.getPSwingNodeForHandle(h);
         if(ps != null)  ps.removeFromParent();
         addChild(canvas, h);

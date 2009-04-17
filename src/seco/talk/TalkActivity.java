@@ -43,7 +43,7 @@ public class TalkActivity extends Activity
         talkPanel.setFriend(friend);
         CellGroup group = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         HGHandle h = ThisNiche.hg.add(talkPanel);
-        GUIHelper.addToTopCellGroup(h, 
+        GUIHelper.addToCellGroup(h, 
                                     group,  
                                     null, 
                                     null, 

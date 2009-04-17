@@ -1,12 +1,17 @@
 package seco.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.border.MatteBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
@@ -32,7 +37,6 @@ public class PiccoloFrame extends TopFrame
     protected void initFrame()
     {
         canvas = new PiccoloCanvas();
-        canvas.setTransferHandler(new PiccoloTransferHandler(canvas));
         // Set up basic frame
         setBounds(50, 50, 950, 750);
         setResizable(true);
@@ -56,6 +60,7 @@ public class PiccoloFrame extends TopFrame
 
     public void exit()
     {
+        if(ThisNiche.hg == null) System.exit(0);
         CellGroup group = (CellGroup) ThisNiche.hg.get(
                 ThisNiche.TOP_CELL_GROUP_HANDLE);
         group.setAttribute(VisualAttribs.rect, getBounds());
@@ -92,20 +97,30 @@ public class PiccoloFrame extends TopFrame
        // inner.add(new JButton("Outer"));
                 
         PiccoloCanvas pc = new PiccoloCanvas();//f.canvas.getRoot());
+        pc.setBackground(new Color(250, 250,255));
+        pc.setBorder(new MatteBorder(1,1,1,1, Color.blue));
         pc.setSize(450, 400);
         //pc.setTransferHandler(new PiccoloTransferHandler());
         //inner.add(pc);
         PScrollPane scroll = new PScrollPane(pc);
         scroll.setSize(500,500);
        // inner.add(scroll);
-        PSwingNode p = new PSwingNode(pc, new JButton("Test"));
+        JButton b = new JButton("Test");
+        b.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e)
+            {
+               System.out.println("Test button clicked!");
+            }
+            
+        });
+        PSwingNode p = new PSwingNode(pc, b);
         pc.getNodeLayer().addChild(p);
-        p.setBounds(new Rectangle(0,0,400,400));
+        p.setBounds(new Rectangle(0,0,100,30));
         p.translate(0, 0);
         
         PSwingNode p1 = new PSwingNode(pc, new JCheckBox("Check"));
         pc.getNodeLayer().addChild(p1);
-        p1.setBounds(new Rectangle(60,66,400,400));
+        p1.setBounds(new Rectangle(60,66,100,30));
         p1.translate(60,66);
         
         PSwing x = f.add_comp(pc, new Rectangle(0,0,500,500));
@@ -115,6 +130,7 @@ public class PiccoloFrame extends TopFrame
 //        x.addChild(layer);             
         camera.addLayer(pc.getNodeLayer());
         pc.setCamera(camera);
+        //pc.updatePSwingEventHandler();
 //        pc.setSize(450, 400);
         pc.setBounds(0, 0, 450, 350);
         f.add_comp(new JButton("Outer"), new Rectangle(0,600,100,100));

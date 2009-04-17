@@ -1,15 +1,21 @@
 package seco.gui;
 
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.io.File;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 
+import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
 
 import seco.ThisNiche;
 import seco.boot.NicheManager;
+import seco.gui.layout.LayoutHandler;
 import seco.gui.layout.LayoutSettingsPanel;
 import seco.notebook.AppConfig;
 import seco.things.Cell;
@@ -93,5 +99,26 @@ public class CommonActions
         v.bind(group);
     }
     
+    public static void testEmbededContainer()
+    {
+        CellGroup group = new CellGroup("EMBEDED CONTAINER");
+        HGHandle groupH = ThisNiche.hg.add(group);
+        HGHandle cellH1 = CellUtils.createOutputCellH(null, null, new JButton("Test"), false);
+        HGHandle cellH2 = CellUtils.createOutputCellH(null, null, new JCheckBox("Test"), false);
+        group.insert(0, cellH1);
+        group.insert(0, cellH2);
+        GUIHelper.addToTopCellGroup(groupH, CellContainerVisual.getHandle(), null, new Rectangle(200, 200, 500, 500)); 
+    }
     
+    public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
+            HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell)
+    {
+        HGHandle cellH = (create_cell) ? CellUtils.getCellHForRefH(h) : h;
+        CellGroupMember out = ThisNiche.hg.get(cellH);
+        if (r != null) out.setAttribute(VisualAttribs.rect, r);
+        if (visualH != null) out.setVisual(visualH);
+        if (lh != null) out.setAttribute(VisualAttribs.layoutHandler, lh);
+        group.insert(group.getArity(), out);
+        return cellH;
+    }
 }

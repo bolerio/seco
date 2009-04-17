@@ -44,6 +44,7 @@ public class PiccoloCanvas extends PSwingCanvas
 
     private void init()
     {
+        setTransferHandler(new PiccoloTransferHandler(this));
         nodeLayer = new PLayer() {
             public void addChild(int index, PNode child)
             {
@@ -57,12 +58,47 @@ public class PiccoloCanvas extends PSwingCanvas
                         getChildrenReference());
             }
         };
+
+        getLayer().addChild(nodeLayer);
+        setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
+        setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
+        setDefaultRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
+        selectionHandler = new PCSelectionHandler();
+        // getLayer(), getNodeLayer(), getCamera());
+        selectionHandler.setEventFilter(new PInputEventFilter(
+                InputEvent.BUTTON1_MASK));
+        addInputEventListener(selectionHandler);
+        getRoot().getDefaultInputManager().setKeyboardFocus(selectionHandler);
+
+        setPanEventHandler(null);
+        PZoomEventHandler zoomer = getZoomEventHandler();
+        if (zoomer != null)
+        {
+            zoomer.setMinScale(.25);
+            zoomer.setMaxScale(3);
+        }
+        setZoomEventHandler(zoomer);
+
+        ContextMenuHandler ctxMenuHandler = new ContextMenuHandler();
+        ctxMenuHandler.setEventFilter(new PInputEventFilter(
+                InputEvent.BUTTON3_MASK));
+        addInputEventListener(ctxMenuHandler);
+    }
+
+    public PiccoloCanvas()
+    {
+        updatePSwingEventHandler();
+        init();
+    }
+
+    void updatePSwingEventHandler()
+    {
         final PCamera camera = getCamera();
         camera.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS,
                 new PropertyChangeListener() {
                     public void propertyChange(PropertyChangeEvent evt)
                     {
-                       relayout();
+                        relayout();
                     }
                 });
         // camera.addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM,
@@ -74,43 +110,19 @@ public class PiccoloCanvas extends PSwingCanvas
         // }
         // });
 
-        getLayer().addChild(nodeLayer);
-        setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
-        setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
-        setDefaultRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
-        selectionHandler = new PCSelectionHandler();
-                //getLayer(), getNodeLayer(), getCamera());
-        selectionHandler.setEventFilter(new PInputEventFilter(
-                InputEvent.BUTTON1_MASK));
-        addInputEventListener(selectionHandler);
-        getRoot().getDefaultInputManager().setKeyboardFocus(selectionHandler);
-       
-       setPanEventHandler(null);
-       PZoomEventHandler zoomer = getZoomEventHandler();
-        if(zoomer != null)
+        // new PSwingEventHandler(this, getCamera()).setActive(true);
+        // ugly way to remove parent PSwingEventHandler
+        if (getCamera().getListenerList() != null)
         {
-            zoomer.setMinScale(.25);
-            zoomer.setMaxScale(3);
+            PInputEventListener[] list = getCamera().getListenerList()
+                    .getListeners(PInputEventListener.class);
+            for (PInputEventListener l : list)
+                if (l instanceof PSwingEventHandler)
+                    getCamera().removeInputEventListener(l);
         }
-        setZoomEventHandler(zoomer);
-        
-        ContextMenuHandler ctxMenuHandler = new ContextMenuHandler();
-        ctxMenuHandler.setEventFilter(new PInputEventFilter(InputEvent.BUTTON3_MASK));
-        addInputEventListener(ctxMenuHandler);
-        getCamera().addInputEventListener(new PToolTipHandler(getCamera()));
-    }
-
-    public PiccoloCanvas()
-    {
-        //new PSwingEventHandler(this, getCamera()).setActive(true);
-        //ugly way to remove parent PSwingEventHandler
-        PInputEventListener[] list = getCamera().getListenerList().getListeners(PInputEventListener.class);
-        for(PInputEventListener l: list)
-            if(l instanceof PSwingEventHandler)
-                getCamera().removeInputEventListener(l);
-        //then add our fixed one
+        // then add our fixed one
         new PSwingEventHandlerEx(this, getCamera()).setActive(true);
-        init();
+        getCamera().addInputEventListener(new PToolTipHandler(getCamera()));
     }
 
     public void relayout()
@@ -119,16 +131,23 @@ public class PiccoloCanvas extends PSwingCanvas
         {
             if (!(o instanceof PSwingNode)) continue;
             LayoutHandler vh = GUIHelper.getLayoutHandler((PSwingNode) o);
-            if (vh != null) vh.layout(PiccoloCanvas.this,(PSwingNode) o);
+            if (vh != null) vh.layout(PiccoloCanvas.this, (PSwingNode) o);
         }
     }
-    
+
+    public HGHandle getGroupH()
+    {
+        PSwingNode p = GUIHelper.getPSwingNode(this);
+        return p != null ? p.getHandle() : ThisNiche.TOP_CELL_GROUP_HANDLE;
+    }
+
     public void deleteSelection()
     {
         for (PNode node : selectionHandler.getSelection())
         {
             if (node instanceof PSwingNode && false) continue;
-            GUIHelper.removeFromTopCellGroup(((PSwingNode) node).getHandle());
+            GUIHelper.removeFromCellGroup(getGroupH(), ((PSwingNode) node)
+                    .getHandle());
             Object ui = ((PSwingNode) node).getComponent();
             if (ui instanceof NotebookUI) remove_and_clean((NotebookUI) ui);
             node.removeFromParent();
@@ -139,12 +158,12 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         return selectionHandler.getSelection();
     }
-    
+
     public PSwingNode getSelectedPSwingNode()
     {
         return selectionHandler.getSelectedPSwingNode();
     }
-    
+
     public void saveDims()
     {
         for (Object o : getNodeLayer().getAllNodes())
@@ -162,93 +181,91 @@ public class PiccoloCanvas extends PSwingCanvas
             cm.setAttribute(VisualAttribs.rect, p.getFullBounds().getBounds());
     }
 
-//    public void addCopyComponent(HGHandle h, HGHandle masterH, Point pt)
-//    {
-//        Object nb = ThisNiche.hg.get(h);
-//        if (nb instanceof Cell)
-//        {
-//            HGHandle par = CellUtils.getOutCellParent(masterH);
-//            if (par == null) // normal cell
-//            {
-//                par = masterH;
-//                CellUtils.addCopyListeners(h, masterH);
-//            }
-//            // TODO: should we remove the Cell from parent or not?
-//            // CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, par,
-//            // HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
-//            else
-//            {
-//                CellUtils.addEventPubSub(EvalCellEvent.HANDLE, par,
-//                        ((NotebookUI) comp).getDoc().getHandle(),
-//                        OutputCellDocument.CopyEvalCellHandler.getInstance());
-//            }
-//        }
-//        else
-//        {
-//            CellUtils.addCopyListeners(h, masterH);
-//        }
-//
-//        GUIHelper.addToTopCellGroup(h,
-//                    VisualsManager.defaultVisualForType(h), ps.getFullBounds()
-//                            .getBounds()));
-//        
-//    }
-    
-//    public PSwingNode addComponent(HGHandle h, Point pt)
-//    {
-//        HGHandle topH = GUIHelper.addToTopCellGroup(h);
-//        Cell top = ThisNiche.hg.get(topH);
-//        CellVisual vis = CellUtils.getVisual(top);
-//        JComponent comp = vis.bind(top);
-//        PSwingNode ps = new PSwingNode(this, comp);
-//        ps.setHandle(topH);
-//        getNodeLayer().addChild(ps);
-//        ps.translate(pt.x, pt.y);
-//        return ps;
-//   }
+    // public void addCopyComponent(HGHandle h, HGHandle masterH, Point pt)
+    // {
+    // Object nb = ThisNiche.hg.get(h);
+    // if (nb instanceof Cell)
+    // {
+    // HGHandle par = CellUtils.getOutCellParent(masterH);
+    // if (par == null) // normal cell
+    // {
+    // par = masterH;
+    // CellUtils.addCopyListeners(h, masterH);
+    // }
+    // // TODO: should we remove the Cell from parent or not?
+    // // CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, par,
+    // // HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
+    // else
+    // {
+    // CellUtils.addEventPubSub(EvalCellEvent.HANDLE, par,
+    // ((NotebookUI) comp).getDoc().getHandle(),
+    // OutputCellDocument.CopyEvalCellHandler.getInstance());
+    // }
+    // }
+    // else
+    // {
+    // CellUtils.addCopyListeners(h, masterH);
+    // }
+    //
+    // GUIHelper.addToTopCellGroup(h,
+    // VisualsManager.defaultVisualForType(h), ps.getFullBounds()
+    // .getBounds()));
+    //        
+    // }
+
+    // public PSwingNode addComponent(HGHandle h, Point pt)
+    // {
+    // HGHandle topH = GUIHelper.addToTopCellGroup(h);
+    // Cell top = ThisNiche.hg.get(topH);
+    // CellVisual vis = CellUtils.getVisual(top);
+    // JComponent comp = vis.bind(top);
+    // PSwingNode ps = new PSwingNode(this, comp);
+    // ps.setHandle(topH);
+    // getNodeLayer().addChild(ps);
+    // ps.translate(pt.x, pt.y);
+    // return ps;
+    // }
 
     public PSwingNode getPSwingNodeForHandle(HGHandle h)
     {
-        for(Object p: getNodeLayer().getAllNodes())
-            if(p instanceof PSwingNode &&
-                    (h.equals(((PSwingNode)p).getHandle())))
-                return (PSwingNode)p;
-        for(Object p: getCamera().getAllNodes())
-            if(p instanceof PSwingNode &&
-                    (h.equals(((PSwingNode)p).getHandle())))
-                return (PSwingNode)p; 
+        for (Object p : getNodeLayer().getAllNodes())
+            if (p instanceof PSwingNode
+                    && (h.equals(((PSwingNode) p).getHandle())))
+                return (PSwingNode) p;
+        for (Object p : getCamera().getAllNodes())
+            if (p instanceof PSwingNode
+                    && (h.equals(((PSwingNode) p).getHandle())))
+                return (PSwingNode) p;
         return null;
-    } 
-    
+    }
+
     public PSwingNode getOutCellNodeForHandle(HGHandle h)
     {
-        for(Object p: getNodeLayer().getAllNodes())
-            if(p instanceof PSwingNode &&
-                    check_is_output((PSwingNode)p, h))
-                        return (PSwingNode)p;
-        for(Object p: getCamera().getAllNodes())
-            if(p instanceof PSwingNode &&
-                    check_is_output((PSwingNode)p, h))
-                        return (PSwingNode)p;
+        for (Object p : getNodeLayer().getAllNodes())
+            if (p instanceof PSwingNode && check_is_output((PSwingNode) p, h))
+                return (PSwingNode) p;
+        for (Object p : getCamera().getAllNodes())
+            if (p instanceof PSwingNode && check_is_output((PSwingNode) p, h))
+                return (PSwingNode) p;
         return null;
-    } 
-    
+    }
+
     private boolean check_is_output(PSwingNode p, HGHandle h)
     {
-        if(h.equals(p.getHandle())) return true;
+        if (h.equals(p.getHandle())) return true;
         CellGroupMember cgm = ThisNiche.hg.get(p.getHandle());
-        if(cgm instanceof Cell && ((Cell) cgm).getAtomHandle().equals(h))
-               return true;
+        if (cgm instanceof Cell && ((Cell) cgm).getAtomHandle().equals(h))
+            return true;
         return false;
     }
-    
+
     public PSwingNode addComponent(JComponent comp, CellGroupMember cell)
     {
         HGHandle cellH = ThisNiche.handleOf(cell);
         PSwingNode p = null;
         p = new PSwingNode(this, comp, cellH);
-        LayoutHandler vh = (LayoutHandler) 
-           cell.getAttribute(VisualAttribs.layoutHandler);
+        LayoutHandler vh = (LayoutHandler) cell
+                .getAttribute(VisualAttribs.layoutHandler);
         if (vh != null)
         {
             getCamera().addChild(p);
@@ -264,28 +281,29 @@ public class PiccoloCanvas extends PSwingCanvas
                 normalize(r);
                 p.setBounds(r);
                 p.translate(r.x, r.y);
-            }else
-                p.setBounds(new Rectangle(0, 0 , dim.width, dim.height));
+            }
+            else
+                p.setBounds(new Rectangle(0, 0, dim.width, dim.height));
         }
         comp.revalidate();
         return p;
     }
-    
-    //TODO: temp solution during testing
-    private void normalize( Rectangle r)
+
+    // TODO: temp solution during testing
+    private void normalize(Rectangle r)
     {
-        //System.out.println("normalize1: " + r);
-        if(r.x < 0) r.x = 0;
-        if(r.x > 1000) r.x = 1000;
-        if(r.y < 0) r.y = 0;
-        if(r.y > 1000) r.y = 1000;
-        if(r.width > 1000) r.width = 1000;
-        if(r.width <= 0) r.width =50;
-        if(r.height > 1000) r.height = 1000;
-        if(r.height <= 0) r.height =50;
-        //System.out.println("normalize2: " + r);
+        // System.out.println("normalize1: " + r);
+        if (r.x < 0) r.x = 0;
+        if (r.x > 1000) r.x = 1000;
+        if (r.y < 0) r.y = 0;
+        if (r.y > 1000) r.y = 1000;
+        if (r.width > 1000) r.width = 1000;
+        if (r.width <= 0) r.width = 50;
+        if (r.height > 1000) r.height = 1000;
+        if (r.height <= 0) r.height = 50;
+        // System.out.println("normalize2: " + r);
     }
-  
+
     private void remove_and_clean(NotebookUI ui)
     {
         NotebookDocument doc = ui.getDoc();
@@ -301,7 +319,6 @@ public class PiccoloCanvas extends PSwingCanvas
         return nodeLayer;
     }
 
-
     private static class PSwingFilter implements PNodeFilter
     {
 
@@ -315,5 +332,5 @@ public class PiccoloCanvas extends PSwingCanvas
             return true;
         }
     }
-   
+
 }

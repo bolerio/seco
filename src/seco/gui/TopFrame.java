@@ -73,9 +73,6 @@ public abstract class TopFrame extends JFrame
     public void exit()
     {
         Log.end();
-        CellGroup group = (CellGroup) ThisNiche.hg.get(
-                ThisNiche.TOP_CELL_GROUP_HANDLE);
-        group.setAttribute(VisualAttribs.rect, getBounds());
         if(AUTO_BACKUP)
             CommonActions.backup();
         System.exit(0);

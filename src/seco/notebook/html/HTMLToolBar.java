@@ -63,6 +63,7 @@ import javax.swing.text.html.HTML;
 
 import edu.umd.cs.piccolox.pswing.PSwing;
 
+import seco.gui.GUIHelper;
 import seco.notebook.gui.ToolbarButton;
 
 public class HTMLToolBar extends JToolBar
@@ -553,8 +554,7 @@ public class HTMLToolBar extends JToolBar
            //System.out.println("PBasicComboPopup: " + comboBox.getParent());
            if (comboBox.getParent() != null && comboBox.getParent() instanceof JComponent)
            {
-               PSwing p = (PSwing) ((JComponent) comboBox.getParent())
-                       .getClientProperty(PSwing.PSWING_PROPERTY);
+               PSwing p = GUIHelper.getPSwingNode((JComponent) comboBox.getParent());
                if (p != null)
                {
                    Rectangle r = p.getFullBounds().getBounds();
