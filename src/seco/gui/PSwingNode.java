@@ -13,9 +13,14 @@ import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
 import seco.things.CellGroupMember;
+import seco.things.CellUtils;
 
+import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.PLayer;
+import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolox.pswing.PSwing;
 import edu.umd.cs.piccolox.pswing.PSwingCanvas;
+import edu.umd.cs.piccolox.swing.PScrollPane;
 
 public class PSwingNode extends PSwing
 {
@@ -56,7 +61,7 @@ public class PSwingNode extends PSwing
         getComponent().revalidate();
         if(handle == null || ThisNiche.hg == null) return;
         CellGroupMember cm = (CellGroupMember) ThisNiche.hg.get(getHandle());
-        if (cm != null)
+        if (cm != null && !CellUtils.isMinimized(cm))
             cm.setAttribute(VisualAttribs.rect, getFullBounds().getBounds());
     }
 
@@ -75,5 +80,39 @@ public class PSwingNode extends PSwing
     {
         return "PSwing0: " + getComponent();
     }
+    
+    PiccoloCanvas canv = null;
+    public PiccoloCanvas getCanvas()
+    {
+        if(canv == null)
+            canv = findCanvas(this);
+        return canv;
+    }
+    
+    private PiccoloCanvas findCanvas( PNode node ) {
+        //need to get the full tree for this node
+        PNode p = node;
+        while( p != null ) {
+            PNode parent = p;
+//            System.out.println( "parent = " + parent.getClass() );
+            if( parent instanceof PCamera) {
+                PCamera cam = (PCamera) parent;
+                if( cam.getComponent() instanceof PiccoloCanvas ) {
+                    return (PiccoloCanvas) cam.getComponent();
+                }
+            } else if( parent instanceof PLayer ) {
+                PLayer player = (PLayer)parent;
+//                System.out.println( "Found player: with " + player.getCameraCount() + " cameras" );
+                for( int i = 0; i < player.getCameraCount(); i++ ) {
+                    PCamera cam = player.getCamera( i );
+                    if( cam.getComponent() instanceof PiccoloCanvas ) 
+                        return (PiccoloCanvas)cam.getComponent();
+                }
+            }
+            p = p.getParent();
+        }
+        return null;
+    }
+
 
 }

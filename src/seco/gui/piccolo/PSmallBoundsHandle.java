@@ -45,29 +45,35 @@ public class PSmallBoundsHandle extends PSmallHandle
 
     private PBasicInputEventHandler handleCursorHandler;
 
-    public static void addBoundsHandlesTo(PNode aNode)
+    public static void addBoundsHandlesTo(PNode node)
     {
-        aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createEastLocator(aNode)));
-        aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createWestLocator(aNode)));
-        aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createNorthLocator(aNode)));
-        aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createSouthLocator(aNode)));
-        aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createNorthEastLocator(aNode)));
-        aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createNorthWestLocator(aNode)));
-        aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createSouthEastLocator(aNode)));
-        aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createSouthWestLocator(aNode)));
+        node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                .createEastLocator(node)));
+        node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                .createWestLocator(node)));
+        node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                .createNorthLocator(node)));
+        node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                .createSouthLocator(node)));
+        node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                .createNorthEastLocator(node)));
+        node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                .createNorthWestLocator(node)));
+        node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                .createSouthEastLocator(node)));
+        node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                .createSouthWestLocator(node)));
 
-        //TODO: temp check
-        if(!(ThisNiche.TABBED_PANE_GROUP_HANDLE.equals(((PSwingNode)aNode).getHandle())))
-          aNode.addChild(new CopyHandle(aNode, SwingConstants.NORTH_EAST,
-                new Point(-10, 0)));
+        if (node instanceof PSwingNode)
+        {
+            // TODO: temp check
+            if (!ThisNiche.TABBED_PANE_GROUP_HANDLE.equals(((PSwingNode) node)
+                    .getHandle()))
+                node.addChild(new CopyHandle((PSwingNode) node,
+                        SwingConstants.NORTH_EAST, new Point(-10, 0)));
+            node.addChild(new MinimizeHandle((PSwingNode) node,
+                    SwingConstants.NORTH_EAST, new Point(-25, 0)));
+        }
     }
 
     public static void addBoundsHandlesTo(PNode aNode, boolean only_quadrants)

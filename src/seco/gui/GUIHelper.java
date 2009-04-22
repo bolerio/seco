@@ -9,7 +9,9 @@ import static seco.notebook.Actions.OPEN;
 import static seco.notebook.Actions.PASTE;
 import static seco.notebook.Actions.SELECT_ALL;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -17,13 +19,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Point2D;
 import java.io.File;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -176,6 +181,22 @@ public class GUIHelper
         htmlToolBar.setFloatable(false);
         ThisNiche.hg.define(GUIHelper.HTML_TOOLBAR_HANDLE, htmlToolBar);
         return htmlToolBar;
+    }
+    
+    static Dimension def_min_size = new Dimension(70,30);
+    public static Dimension getMinimizedUISize()
+    {
+        return def_min_size;
+    }
+    public static JComponent getMinimizedUI(CellGroupMember cgm)
+    {
+        String text = "Untitled";
+        if(cgm instanceof CellGroup)
+            text = ((CellGroup) cgm).getName();
+        //JLabel l = new JLabel(text);
+        JButton l = new JButton(text);
+        l.setBackground(Color.YELLOW);
+        return l;
     }
 
     // disable menuItems if no notebook presented
@@ -606,7 +627,12 @@ public class GUIHelper
     
     public static PSwingNode getPSwingNode(JComponent c)
     {
-       return c == null ? null : (PSwingNode) c.getClientProperty(PSwing.PSWING_PROPERTY);
+       if(c == null) return null;
+       PSwingNode ps = (PSwingNode) c.getClientProperty(PSwing.PSWING_PROPERTY);
+       if (ps != null) return ps;
+       if(c.getParent() instanceof JComponent) 
+           return getPSwingNode((JComponent)c.getParent());
+       return null;
     }
 
     public static void openNotebook(HGHandle bookH)

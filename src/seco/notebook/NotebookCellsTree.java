@@ -145,7 +145,7 @@ public class NotebookCellsTree extends JTree
             public void actionPerformed(ActionEvent e)
             {
                 HGHandle h = ThisNiche.handleOf(node);
-                Cell c = (Cell) ThisNiche.hg.get(h);
+                CellGroupMember c = ThisNiche.hg.get(h);
                 group.remove(c);
                 //TreePath currentSelection = getSelectionPath();
                // if (currentSelection != null) {

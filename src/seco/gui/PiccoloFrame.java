@@ -96,14 +96,14 @@ public class PiccoloFrame extends TopFrame
        // JPanel inner = new JPanel();
        // inner.add(new JButton("Outer"));
                 
-        PiccoloCanvas pc = new PiccoloCanvas();//f.canvas.getRoot());
+        PiccoloCanvas pc = new PiccoloCanvas(true);//f.canvas.getRoot());
         pc.setBackground(new Color(250, 250,255));
         pc.setBorder(new MatteBorder(1,1,1,1, Color.blue));
         pc.setSize(450, 400);
         //pc.setTransferHandler(new PiccoloTransferHandler());
         //inner.add(pc);
         PScrollPane scroll = new PScrollPane(pc);
-        scroll.setSize(500,500);
+        //scroll.setSize(500,500);
        // inner.add(scroll);
         JButton b = new JButton("Test");
         b.addActionListener(new ActionListener(){
@@ -123,17 +123,24 @@ public class PiccoloFrame extends TopFrame
         p1.setBounds(new Rectangle(60,66,100,30));
         p1.translate(60,66);
         
-        PSwing x = f.add_comp(pc, new Rectangle(0,0,500,500));
+        PSwing x = f.add_comp(pc, new Rectangle(60,0,500,500));
         PCamera camera = new PCamera();
-//        PLayer layer = new PLayer();
         x.addChild(camera);
-//        x.addChild(layer);             
         camera.addLayer(pc.getNodeLayer());
         pc.setCamera(camera);
+        pc.setName("Inner Canvas");
+       // pc.removePSwingEventHandler();
+       // new PSwingEventHandlerExInner(pc, pc.getCamera()).setActive(true);
+       // new PSwingEventHandlerEx(pc, camera).setActive(true);
         //pc.updatePSwingEventHandler();
-//        pc.setSize(450, 400);
+        
+        
         pc.setBounds(0, 0, 450, 350);
         f.add_comp(new JButton("Outer"), new Rectangle(0,600,100,100));
+        f.add_comp(new JButton("Outer1"), new Rectangle(0,600,100,100));
+        f.add_comp(new JButton("Outer2"), new Rectangle(0,600,100,100));
+        f.add_comp(new JButton("Outer3"), new Rectangle(0,600,100,100));
+        f.add_comp(new JButton("Outer4"), new Rectangle(0,600,100,100));
         f.validate();
         f.setVisible(true);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

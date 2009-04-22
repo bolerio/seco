@@ -23,6 +23,7 @@ import edu.umd.cs.piccolo.event.PDragSequenceEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.util.PDimension;
 
+
 /**
  * <code>PCSelectionHandler</code> provides standard interaction for selection.
  * Alt - clicking selects the object under the cursor. 
@@ -70,11 +71,11 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         PSmallBoundsHandle.addBoundsHandlesTo(node);
     }
 
-    public void unselect(Collection<PNode> items)
-    {
-        for (PNode node : items)
-            unselect(node);
-    }
+//    public void unselect(Collection<PNode> items)
+//    {
+//        for (PNode node : items)
+//            unselect(node);
+//    }
 
     public void unselect(PNode node)
     {
@@ -120,6 +121,8 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     // //////////////////////////////////////////////////////
     protected void startDrag(PInputEvent e)
     {
+       // System.out.println("startDrag - redirect " + 
+       //         e.getPath().getPickedNode()); // + ":" + pc.getNodeLayer().getChildrenCount());
         super.startDrag(e);
         initializeSelection(e);
         if (!isOptionSelection(e)) 
@@ -162,6 +165,24 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
             else
                 pressNode = pressNode.getParent();
         }
+        
+//        if(pressNode instanceof PSwingNode &&
+//                ((PSwingNode)pressNode).getComponent() instanceof PiccoloCanvas)
+//        {
+//            PiccoloCanvas pc = (PiccoloCanvas)
+//                  ((PSwingNode)pressNode).getComponent();
+//            Point2D pt = pie.getCanvasPosition();
+//            PPickPath aPickPath = 
+//                pc.getCamera().pick(pt.getX(), pt.getY(), 1);
+//            PNode n =  aPickPath.getPickedNode();
+//            if(n != null && n instanceof PNode)
+//            {
+//               pc.selectionHandler.pressNode = n;
+//               pc.selectionHandler.select(n); 
+//               pressNode = null;
+//            }
+//        }
+        
         if (pressNode != null)
         {
             int onmask = InputEvent.ALT_DOWN_MASK

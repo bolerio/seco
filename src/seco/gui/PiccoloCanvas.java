@@ -1,35 +1,37 @@
 package seco.gui;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JComponent;
 
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
-import seco.events.EvalCellEvent;
 import seco.gui.layout.LayoutHandler;
 import seco.gui.piccolo.PToolTipHandler;
-import seco.notebook.OutputCellDocument;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.things.Cell;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
-import seco.things.CellVisual;
-
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.event.PZoomEventHandler;
+import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PNodeFilter;
 import edu.umd.cs.piccolo.util.PPaintContext;
 import edu.umd.cs.piccolox.pswing.PSwingCanvas;
@@ -41,7 +43,45 @@ public class PiccoloCanvas extends PSwingCanvas
 
     PLayer nodeLayer;
     PCSelectionHandler selectionHandler;
+    boolean nested;
+    
+    public PiccoloCanvas()
+    {
+        this(false);
+    }
+    
+    public PiccoloCanvas(boolean nested)
+    {
+        updatePSwingEventHandler(nested);
+        init();
+        this.nested = nested;
+    }
 
+
+    void updatePSwingEventHandler(boolean nested)
+    {
+        final PCamera camera = getCamera();
+        camera.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS,
+                new PropertyChangeListener() {
+                    public void propertyChange(PropertyChangeEvent evt)
+                    {
+                        relayout();
+                    }
+                });
+        // camera.addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM,
+        // new PropertyChangeListener() {
+        // public void propertyChange(PropertyChangeEvent evt)
+        // {
+        // PAffineTransform t = (PAffineTransform) evt
+        // .getNewValue();
+        // }
+        // });
+        removePSwingEventHandler();
+        new PSwingEventHandlerEx(this, getCamera()).setActive(true);
+        getCamera().addInputEventListener(new PToolTipHandler(getCamera()));
+    }
+    
+    Set<PSwingNode> inner_canvases = new HashSet<PSwingNode>();
     private void init()
     {
         setTransferHandler(new PiccoloTransferHandler(this));
@@ -56,6 +96,9 @@ public class PiccoloCanvas extends PSwingCanvas
                 invalidateFullBounds();
                 firePropertyChange(0, PROPERTY_CHILDREN, null,
                         getChildrenReference());
+                if(child instanceof PSwingNode && ((PSwingNode)child).getComponent() instanceof 
+                        PiccoloCanvas)
+                    inner_canvases.add((PSwingNode)child);
             }
         };
 
@@ -84,45 +127,18 @@ public class PiccoloCanvas extends PSwingCanvas
                 InputEvent.BUTTON3_MASK));
         addInputEventListener(ctxMenuHandler);
     }
-
-    public PiccoloCanvas()
+   
+    void removePSwingEventHandler()
     {
-        updatePSwingEventHandler();
-        init();
-    }
-
-    void updatePSwingEventHandler()
-    {
-        final PCamera camera = getCamera();
-        camera.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS,
-                new PropertyChangeListener() {
-                    public void propertyChange(PropertyChangeEvent evt)
-                    {
-                        relayout();
-                    }
-                });
-        // camera.addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM,
-        // new PropertyChangeListener() {
-        // public void propertyChange(PropertyChangeEvent evt)
-        // {
-        // PAffineTransform t = (PAffineTransform) evt
-        // .getNewValue();
-        // }
-        // });
-
-        // new PSwingEventHandler(this, getCamera()).setActive(true);
-        // ugly way to remove parent PSwingEventHandler
         if (getCamera().getListenerList() != null)
         {
             PInputEventListener[] list = getCamera().getListenerList()
                     .getListeners(PInputEventListener.class);
             for (PInputEventListener l : list)
-                if (l instanceof PSwingEventHandler)
+               if (l instanceof PSwingEventHandler ||
+                        l instanceof PSwingEventHandlerEx)
                     getCamera().removeInputEventListener(l);
         }
-        // then add our fixed one
-        new PSwingEventHandlerEx(this, getCamera()).setActive(true);
-        getCamera().addInputEventListener(new PToolTipHandler(getCamera()));
     }
 
     public void relayout()
@@ -145,9 +161,11 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         for (PNode node : selectionHandler.getSelection())
         {
-            if (node instanceof PSwingNode && false) continue;
-            GUIHelper.removeFromCellGroup(getGroupH(), ((PSwingNode) node)
-                    .getHandle());
+            if (!(node instanceof PSwingNode)) continue;
+            PSwingNode outer = GUIHelper.getPSwingNode(
+                    ((PSwingNode) node).getCanvas());
+            HGHandle groupH = (outer != null) ? outer.getHandle():getGroupH();
+            GUIHelper.removeFromCellGroup(groupH, ((PSwingNode) node).getHandle());
             Object ui = ((PSwingNode) node).getComponent();
             if (ui instanceof NotebookUI) remove_and_clean((NotebookUI) ui);
             node.removeFromParent();
@@ -161,6 +179,8 @@ public class PiccoloCanvas extends PSwingCanvas
 
     public PSwingNode getSelectedPSwingNode()
     {
+        if(nested)
+            return TopFrame.getInstance().getCanvas().getSelectedPSwingNode();
         return selectionHandler.getSelectedPSwingNode();
     }
 
@@ -264,6 +284,8 @@ public class PiccoloCanvas extends PSwingCanvas
         HGHandle cellH = ThisNiche.handleOf(cell);
         PSwingNode p = null;
         p = new PSwingNode(this, comp, cellH);
+        boolean minim = (CellUtils.isMinimized(cell));
+        
         LayoutHandler vh = (LayoutHandler) cell
                 .getAttribute(VisualAttribs.layoutHandler);
         if (vh != null)
@@ -275,11 +297,19 @@ public class PiccoloCanvas extends PSwingCanvas
         {
             getNodeLayer().addChild(p);
             Rectangle r = (Rectangle) cell.getAttribute(VisualAttribs.rect);
-            Dimension dim = comp.getPreferredSize();
+            Dimension dim = (minim) ? GUIHelper.getMinimizedUISize():
+                comp.getPreferredSize();
             if (r != null)
             {
                 normalize(r);
-                p.setBounds(r);
+                adjust_bounds(r);
+                if(minim)
+                {
+                    p.setHeight(dim.getHeight());
+                    p.setWidth(dim.getWidth());
+                }
+                else
+                  p.setBounds(r);
                 p.translate(r.x, r.y);
             }
             else
@@ -287,6 +317,17 @@ public class PiccoloCanvas extends PSwingCanvas
         }
         comp.revalidate();
         return p;
+    }
+    
+    private void adjust_bounds(Rectangle r)
+    {
+        if(!nested) return;
+        PSwingNode canv_node = GUIHelper.getPSwingNode(this);
+        if(canv_node == null) return;
+        PBounds fb = canv_node.getFullBounds();
+        //System.out.println("dispatchEvent0: " + pt + ":" + fb);
+        r.x = (int) (r.x - fb.x);
+        r.y = (int) (r.y - fb.y);
     }
 
     // TODO: temp solution during testing

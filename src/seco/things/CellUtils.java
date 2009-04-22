@@ -39,6 +39,7 @@ import seco.events.handlers.CopyEvalCellHandler;
 import seco.gui.JComponentVisual;
 import seco.gui.NBUIVisual;
 import seco.gui.TabbedPaneVisual;
+import seco.gui.VisualAttribs;
 import seco.gui.VisualsManager;
 import seco.notebook.NBStyle;
 import seco.notebook.NotebookDocument;
@@ -172,6 +173,19 @@ public class CellUtils
         return b != null && b.booleanValue();
     }
 
+    public static boolean isMinimized(CellGroupMember cgm)
+    {
+        Boolean b = (Boolean) cgm.getAttribute(VisualAttribs.minimized);
+        return b != null && b.booleanValue();
+    }
+    
+    public static void toggleMinimized(CellGroupMember cgm)
+    {
+        boolean b = isMinimized(cgm);
+        cgm.setAttribute(VisualAttribs.minimized, !b);
+    }
+    
+    
     public static void setCollapsed(CellGroupMember c, boolean b)
     {
         c.setAttribute(XMLConstants.ATTR_COLLAPSED, b);

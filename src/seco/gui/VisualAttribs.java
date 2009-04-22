@@ -4,5 +4,6 @@ public enum VisualAttribs
 {
     rect,
     pinned,
-    layoutHandler
+    layoutHandler,
+    minimized
 }

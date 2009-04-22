@@ -5,70 +5,50 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
-import javax.swing.TransferHandler;
-
+import seco.ThisNiche;
 import seco.gui.PSwingNode;
-import seco.gui.PiccoloCanvas;
+import seco.gui.VisualAttribs;
+import seco.things.CellGroupMember;
+import seco.things.CellUtils;
 
-import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.util.PDimension;
 import edu.umd.cs.piccolox.util.PBoundsLocator;
 
-public class CopyHandle extends PSmallBoundsHandle
+public class MinimizeHandle extends PSmallBoundsHandle
 {
     private int PREF_DIM = 10;
-    private boolean dragStarted = false;
     protected PSwingNode node;
-    public CopyHandle(PSwingNode node, int side, Point offsetP)
+    
+    public MinimizeHandle(PSwingNode node, int side, Point offsetP)
     {
         super(new OffsetPBoundsLocator(node, side, offsetP));
         this.node = node;
-        setPaint(Color.yellow);
+        setPaint(Color.orange);
         
         setWidth(PREF_DIM);
         setHeight(PREF_DIM);
-        this.setToolTip("Move");
+        this.setShape(PNodeEx.RECTANGLE);
+        this.setToolTip("Minimize");
+    }
+    
+    public void endHandleDrag(Point2D aLocalPoint, PInputEvent aEvent)
+    {
+        relocateHandle();
+        //setPaint(Color.yellow);
+        CellGroupMember cgm = ThisNiche.hg.get(node.getHandle());
+        CellUtils.toggleMinimized(cgm);
     }
     
     public Cursor getCursorFor(int side)
     {
         return new Cursor(Cursor.CROSSHAIR_CURSOR);
     }
-    
-    public void startHandleDrag(Point2D aLocalPoint, PInputEvent e)
-    {
-        dragStarted = true;
-        setPaint(Color.green);
-        PiccoloCanvas canvas = (PiccoloCanvas) node.getCanvas();
-        System.out.println("CopyHandle - startHandleDrag: " + canvas);
-        canvas.getTransferHandler().exportAsDrag(
-           canvas, e.getSourceSwingEvent(), TransferHandler.MOVE);
-    }
-
-    public void dragHandle(PDimension aLocalDimension, PInputEvent e)
-    {
-        offset(aLocalDimension.getWidth(), aLocalDimension.getHeight());
-        //System.out.println("CopyHandle -drag: ");// + gDist + ":" + dx + "," + dy + ":" + aLocalDimension);
-    }
-    
-    public void endHandleDrag(Point2D aLocalPoint, PInputEvent aEvent)
-    {
-        dragStarted = false;
-        relocateHandle();
-        setPaint(Color.yellow);
-       // System.out.println("CopyHandle - endHandleDrag");
-        //PBoundsLocator l = (PBoundsLocator) getLocator();
-        //l.getNode().endResizeBounds();
-    }
-    
     @Override
     public void relocateHandle()
     {
         // DO NOTHING WHEN DRAGING
-        if(!dragStarted)
-            super.relocateHandle();
+        super.relocateHandle();
     }
 
     

@@ -16,6 +16,7 @@ import seco.notebook.NotebookUI;
 import seco.rtenv.ContextLink;
 import seco.things.Cell;
 import seco.things.CellGroupMember;
+import seco.things.CellUtils;
 import seco.things.CellVisual;
 
 public class NBUIVisual implements CellVisual
@@ -30,6 +31,9 @@ public class NBUIVisual implements CellVisual
     
     public JComponent bind(CellGroupMember element)
     {
+        if(CellUtils.isMinimized(element))
+            return GUIHelper.getMinimizedUI(element);
+            
         HGHandle h = null;
         if(element instanceof Cell) 
         {

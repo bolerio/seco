@@ -11,6 +11,7 @@ import org.hypergraphdb.HGPersistentHandle;
 import seco.ThisNiche;
 import seco.things.Cell;
 import seco.things.CellGroupMember;
+import seco.things.CellUtils;
 import seco.things.CellVisual;
 
 public class JComponentVisual implements CellVisual
@@ -25,6 +26,9 @@ public class JComponentVisual implements CellVisual
 	
     public JComponent bind(CellGroupMember element)
     {
+        if(CellUtils.isMinimized(element))
+            return GUIHelper.getMinimizedUI(element);
+        
         Cell cell = (Cell)element;
         //if(!(ThisNiche.hg.get(cell.getAtomHandle()) instanceof JComponent))
         //    return null;

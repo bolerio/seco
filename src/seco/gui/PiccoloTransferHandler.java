@@ -57,7 +57,7 @@ public class PiccoloTransferHandler extends TransferHandler
                 CellGroup group = ThisNiche.hg.get(canvas.getGroupH());
                 if (move)
                 {
-                    GUIHelper.addToCellGroup(nbH, group, vis, null, new Rectangle(pt.x, pt.y, 200, 200)); 
+                    GUIHelper.addToCellGroup(nbH, group, vis, null, new Rectangle(pt.x, pt.y, 200, 200), false); 
                     NotebookDocument doc = ((NotebookDocument) e.getDocument());
                     doc.removeCellBoxElement(e);
                     CellUtils.removeHandlers(nbH, doc.getHandle());
@@ -66,10 +66,11 @@ public class PiccoloTransferHandler extends TransferHandler
                 {
                     HGHandle copyH = CellUtils.makeCopy(nbH);
                     System.out.println("PicTrH-importCopyData: " + copyH);
-                    GUIHelper.addToCellGroup(copyH, group, vis, null, new Rectangle(pt.x, pt.y, 200, 200)); 
+                    GUIHelper.addToCellGroup(copyH, group, vis, null, new Rectangle(pt.x, pt.y, 200, 200), false); 
                     //canvas.addCopyComponent(copyH, nbH, pt);
                 }
             }
+            return true;
         }
         catch (Exception ex)
         {
@@ -95,10 +96,12 @@ public class PiccoloTransferHandler extends TransferHandler
                {
                    System.out.println("handleSecoTransfer - inner done: " +
                            node.getComponent() + ":" +
-                           node.getComponent().getUIClassID());
+                           support.getComponent());
                    PSwingNode old = canvas.getSelectedPSwingNode();
                    if(old == null) return true;
-                   GUIHelper.removeFromCellGroup(canvas.getGroupH(), old.getHandle());
+                   PSwingNode canvN = GUIHelper.getPSwingNode(old.getCanvas());
+                   HGHandle groupH = (canvN != null) ? canvN.getHandle() : canvas.getGroupH();
+                   GUIHelper.removeFromCellGroup(groupH, old.getHandle());
                    return true;
                }
            }

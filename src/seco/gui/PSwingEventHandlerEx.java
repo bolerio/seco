@@ -6,6 +6,7 @@ import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventListener;
+import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolox.pswing.*;
 
 import javax.swing.*;
@@ -141,6 +142,14 @@ public class PSwingEventHandlerEx implements PInputEventListener {
         return c;
     }
 
+    Point2D innerPt(PSwingNode swing, Point2D pt)
+    {
+        PiccoloCanvas canvas = swing.getCanvas();
+        PSwingNode canv_node = GUIHelper.getPSwingNode(canvas);
+        if(canv_node == null) return pt;
+        PBounds fb = canv_node.getFullBounds();
+        return new Point2D.Double(pt.getX() - fb.x, pt.getY() - fb.y);
+    }
     /**
      * Determines if any Swing components in Piccolo should receive the given
      * MouseEvent and forwards the event to that component. However,
@@ -161,22 +170,27 @@ public class PSwingEventHandlerEx implements PInputEventListener {
 
         PNode currentNode = pSwingMouseEvent.getCurrentNode();
 
-        if (currentNode instanceof PSwing) {
+        if (currentNode instanceof PSwingNode) {
 
-            PSwing swing = (PSwing) currentNode;
+            PSwingNode swing = (PSwingNode) currentNode;
             PNode grabNode = pickedNode;
 
-            if (grabNode.isDescendentOf(canvas.getRoot())) 
+            if (true)//grabNode.isDescendentOf(canvas.getRoot())) 
             {
+                boolean inner = ! grabNode.isDescendentOf(canvas.getRoot());
                 pt = new Point2D.Double(pSwingMouseEvent.getX(), pSwingMouseEvent.getY());
-                cameraToLocal(pSwingMouseEvent.getPath().getTopCamera(), pt, grabNode);
+                
+                cameraToLocal(pSwingMouseEvent.getPath().getTopCamera(), pt, grabNode);  
+                if(inner) pt = innerPt(swing,pt);
+                
                 prevPoint = new Point2D.Double(pt.getX(), pt.getY());
 
                 // This is only partially fixed to find the deepest
                 // component at pt. It needs to do something like
                 // package private method:
                 // Container.getMouseEventTarget(int,int,boolean)
-                comp = findShowingComponentAt(swing.getComponent(), (int) pt.getX(), (int) pt.getY());
+                comp = //(inner) ?  swing.getComponent() :
+                        findShowingComponentAt(swing.getComponent(), (int) pt.getX(), (int) pt.getY());
 
                 // We found the right component - but we need to
                 // get the offset to put the event in the component's
@@ -187,6 +201,9 @@ public class PSwingEventHandlerEx implements PInputEventListener {
                         offY += c.getLocation().getY();
                     }
                 }
+               // if(inner)
+               //   System.out.println("dispatchEvent1: " + pt + ":" + offX + 
+               //         ":" + offY + ":" + comp + ":" + pSwingMouseEvent.paramString());
 
                 // Mouse Pressed gives focus - effects Mouse Drags and
                 // Mouse Releases
@@ -201,12 +218,6 @@ public class PSwingEventHandlerEx implements PInputEventListener {
                         rightButtonData.setState(swing, pickedNode, comp, offX, offY);
                     }
                 }
-            }
-            //MINE:
-            if(leftButtonData.getFocusedComponent() == null)
-            {
-                leftButtonData.focusNode = swing;
-                leftButtonData.focusComponent =  swing.getComponent();
             }
         }
 
@@ -319,9 +330,12 @@ public class PSwingEventHandlerEx implements PInputEventListener {
 
     private void handleButton(PSwingMouseEvent e1, PInputEvent aEvent, ButtonData buttonData) {
         Point2D pt;
-        if (buttonData.getPNode().isDescendentOf(canvas.getRoot())) {
+        if (true)//buttonData.getPNode().isDescendentOf(canvas.getRoot()))
+        {
             pt = new Point2D.Double(e1.getX(), e1.getY());
             cameraToLocal(e1.getPath().getTopCamera(), pt, buttonData.getPNode());
+            if(!buttonData.getPNode().isDescendentOf(canvas.getRoot()))
+                pt = innerPt((PSwingNode) buttonData.getPNode(), pt);
             // todo this probably won't handle viewing through multiple cameras.
             MouseEvent e_temp = new MouseEvent(buttonData.getFocusedComponent(), e1.getID(), e1.getWhen(), e1
                     .getModifiers(), (int) pt.getX() - buttonData.getOffsetX(), (int) pt.getY()
@@ -333,9 +347,7 @@ public class PSwingEventHandlerEx implements PInputEventListener {
         else {
             dispatchEvent(buttonData.getFocusedComponent(), e1);
         }
-        // buttonData.getPSwing().repaint(); //Experiment with SliderExample
-        // (from Martin) suggests this line is unnecessary, and a serious
-        // problem in performance.
+        
         e1.consume();
         if (e1.getID() == MouseEvent.MOUSE_RELEASED) {
             buttonData.mouseReleased();

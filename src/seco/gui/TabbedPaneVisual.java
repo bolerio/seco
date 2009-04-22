@@ -34,6 +34,8 @@ public class TabbedPaneVisual implements CellVisual, EventHandler
             System.err.println("TabbedPaneVisual - Unable to create visual for: " + element);
             return null;
         }
+        if(CellUtils.isMinimized(element))
+            return GUIHelper.getMinimizedUI(element);
         final CellGroup group = //element instanceof CellGroup ? 
                 (CellGroup) element; // : (CellGroup) ((Cell) element).getValue();
         HGHandle groupH = ThisNiche.handleOf(element);

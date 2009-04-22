@@ -13,6 +13,7 @@ import org.hypergraphdb.HGPersistentHandle;
 import edu.umd.cs.piccolo.PCamera;
 
 import seco.ThisNiche;
+import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EvalCellEvent;
 import seco.events.EventHandler;
@@ -44,7 +45,9 @@ public class CellContainerVisual implements CellVisual, EventHandler
         }
         else
         {
-            canvas = new PiccoloCanvas();
+            if(CellUtils.isMinimized(element))
+                return GUIHelper.getMinimizedUI(element);
+            canvas = new PiccoloCanvas(true);
             canvas.setBorder(new MatteBorder(1,1,1,1, Color.blue));
             //canvas.setBackground(new Color(250, 250, 255));
         }
@@ -71,6 +74,11 @@ public class CellContainerVisual implements CellVisual, EventHandler
         {
             rebind((EvalCellEvent) event, publisher);
         }
+        else if (eventType.equals(AttributeChangeEvent.HANDLE)
+                && subscriber.equals(ThisNiche.handleOf(this)))
+        {
+            minimize((AttributeChangeEvent) event, publisher);
+        }
     }
 
     private void addChild(PiccoloCanvas top_canvas, HGHandle childH)
@@ -92,6 +100,8 @@ public class CellContainerVisual implements CellVisual, EventHandler
         }
         CellUtils.addEventPubSub(
                 EvalCellEvent.HANDLE, childH, getHandle(), getHandle());
+        CellUtils.addEventPubSub(
+                AttributeChangeEvent.HANDLE, childH, getHandle(), getHandle());
     }
 
     private void rebind(EvalCellEvent event, HGHandle publisher)
@@ -105,6 +115,20 @@ public class CellContainerVisual implements CellVisual, EventHandler
         PSwingNode ps = canvas.getPSwingNodeForHandle(h);
         if(ps != null)  ps.removeFromParent();
         addChild(canvas, h);
+    }
+    
+    private void minimize(AttributeChangeEvent event, HGHandle publisher)
+    {
+        if(!event.getName().equals(VisualAttribs.minimized)) return;
+                
+        CellGroup group = CellUtils.getParentGroup(publisher);
+        System.out.println("minimize: " + publisher + ":" + group);
+        PiccoloCanvas canvas = (PiccoloCanvas) group.getVisualInstance();
+        //TODO: this is not correct in general
+        //PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
+        PSwingNode ps = canvas.getPSwingNodeForHandle(publisher);
+        if(ps != null)  ps.removeFromParent();
+        addChild(canvas, publisher);
     }
     
     private void handleEvent(CellGroupChangeEvent e)
