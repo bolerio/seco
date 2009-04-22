@@ -52,8 +52,8 @@ import seco.notebook.storage.swing.GenUtils;
 
 public class ClassGenerator
 {
-    private static final boolean WRITE_TO_DISK = !false;
-    private static final String GENERATED_CLASSES_OUTPUT_DIR;
+    private static final boolean WRITE_TO_DISK = false;
+    private static String GENERATED_CLASSES_OUTPUT_DIR = "";
     static
     {
         if (WRITE_TO_DISK)
