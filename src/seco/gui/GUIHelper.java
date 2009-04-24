@@ -553,22 +553,22 @@ public class GUIHelper
            addToCellGroup(GUIHelper.MENUBAR_HANDLE, group,
                 VisualsManager.defaultVisualForAtom(GUIHelper.MENUBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(0),
-                        new DValue(0), new DValue(25, true), new DValue(28)),
+                        new DValue(0), new DValue(100, true), new DValue(28)),
                         RefPoint.TOP_LEFT), null);
         getMainToolBar();
         if(group.indexOf(GUIHelper.TOOLBAR_HANDLE) < 0)
           addToCellGroup(GUIHelper.TOOLBAR_HANDLE, group, VisualsManager
                 .defaultVisualForAtom(GUIHelper.TOOLBAR_HANDLE),
                 new DefaultLayoutHandler(new DRect(new DValue(0),
-                        new DValue(28), new DValue(280), new DValue(28)),
+                        new DValue(28), new DValue(/*280*/33, true), new DValue(28)),
                         RefPoint.TOP_LEFT), null);
         getHTMLToolBar();
         if(group.indexOf(GUIHelper.HTML_TOOLBAR_HANDLE) < 0)
           addToCellGroup(GUIHelper.HTML_TOOLBAR_HANDLE, group,
                 VisualsManager
                         .defaultVisualForAtom(GUIHelper.HTML_TOOLBAR_HANDLE),
-                new DefaultLayoutHandler(new DRect(new DValue(280),
-                        new DValue(28), new DValue(660), new DValue(28)),
+                new DefaultLayoutHandler(new DRect(new DValue(/*280*/33, true),
+                        new DValue(28), new DValue(67,true), new DValue(28)),
                         RefPoint.TOP_LEFT), null);
 
         getJTabbedPane();
