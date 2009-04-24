@@ -4,6 +4,7 @@
 package seco.gui;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;
@@ -18,6 +19,7 @@ import seco.things.CellUtils;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.util.PPaintContext;
 import edu.umd.cs.piccolox.pswing.PSwing;
 import edu.umd.cs.piccolox.pswing.PSwingCanvas;
 import edu.umd.cs.piccolox.swing.PScrollPane;
@@ -59,12 +61,49 @@ public class PSwingNode extends PSwing
     {
        // System.out.println("PSwingNode: endResizeBounds");
         getComponent().revalidate();
+        storeBounds(getFullBounds().getBounds());
+    }
+    
+    protected void storeBounds(Rectangle r)
+    {
         if(handle == null || ThisNiche.hg == null) return;
         CellGroupMember cm = (CellGroupMember) ThisNiche.hg.get(getHandle());
-        if (cm != null && !CellUtils.isMinimized(cm))
-            cm.setAttribute(VisualAttribs.rect, getFullBounds().getBounds());
+        if(CellUtils.isMaximized(cm)) return;
+        if (cm != null)
+        {   
+            Rectangle old = (Rectangle) cm.getAttribute(VisualAttribs.rect);
+            if(r.equals(old)) return;
+            if(CellUtils.isMinimized(cm))
+            {
+                old.x = r.x; old.y = r.y;
+                r = old;
+            }
+            cm.setAttribute(VisualAttribs.rect, r);
+        }
     }
-
+    
+    private Rectangle last_bounds;
+    @Override
+    public void setVisible(boolean isVisible)
+    {
+        if(getVisible() == isVisible) return;
+        super.setVisible(isVisible);
+        if(getParent() instanceof PCamera)
+        {
+            if(isVisible)
+            {
+              getComponent().setEnabled(true);  
+              setBounds(last_bounds);
+            }else
+            {
+               last_bounds = getFullBounds().getBounds();
+               getComponent().setEnabled(false);
+               setBounds(0,0,0,0);
+               storeBounds(last_bounds);
+            }
+        }
+    }
+    
     public HGHandle getHandle()
     {
         return handle;
@@ -87,6 +126,16 @@ public class PSwingNode extends PSwing
         if(canv == null)
             canv = findCanvas(this);
         return canv;
+    }
+    
+    public void setTooltip(String tip)
+    {
+        addAttribute("tooltip", tip);
+    }
+    
+    public String getTooltip( )
+    {
+        return (String) getAttribute("tooltip");
     }
     
     private PiccoloCanvas findCanvas( PNode node ) {

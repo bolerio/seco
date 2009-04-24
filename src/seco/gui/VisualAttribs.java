@@ -5,5 +5,6 @@ public enum VisualAttribs
     rect,
     pinned,
     layoutHandler,
-    minimized
+    minimized,
+    maximized
 }

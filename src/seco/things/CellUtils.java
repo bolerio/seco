@@ -185,6 +185,17 @@ public class CellUtils
         cgm.setAttribute(VisualAttribs.minimized, !b);
     }
     
+    public static boolean isMaximized(CellGroupMember cgm)
+    {
+        Boolean b = (Boolean) cgm.getAttribute(VisualAttribs.maximized);
+        return b != null && b.booleanValue();
+    }
+    
+    public static void toggleMaximized(CellGroupMember cgm)
+    {
+        boolean b = isMaximized(cgm);
+        cgm.setAttribute(VisualAttribs.maximized, !b);
+    }
     
     public static void setCollapsed(CellGroupMember c, boolean b)
     {

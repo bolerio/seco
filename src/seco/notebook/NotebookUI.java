@@ -566,14 +566,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getX(),
                     e.getY(), f);
             if (e.getComponent() instanceof JComponent)
-            {
-                PSwing p = GUIHelper.getPSwingNode((JComponent) e.getComponent());
-                if (p != null)
-                {
-                    Rectangle r = p.getFullBounds().getBounds();
-                    return new Point(pt.x + r.x, pt.y + r.y);
-                }
-            }
+                return GUIHelper.computePoint((JComponent) e.getComponent(), pt);
             return pt;
         }
     }

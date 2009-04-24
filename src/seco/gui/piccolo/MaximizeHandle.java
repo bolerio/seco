@@ -11,29 +11,28 @@ import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import edu.umd.cs.piccolo.event.PInputEvent;
 
-public class MinimizeHandle extends PSmallBoundsHandle
+public class MaximizeHandle extends PSmallBoundsHandle
 {
     private int PREF_DIM = 10;
     protected PSwingNode node;
     
-    public MinimizeHandle(PSwingNode node, int side, Point offsetP)
+    public MaximizeHandle(PSwingNode node, int side, Point offsetP)
     {
         super(new OffsetPBoundsLocator(node, side, offsetP));
         this.node = node;
-        setPaint(Color.orange);
+        setPaint(new Color(255, 200, 200));
         
         setWidth(PREF_DIM);
         setHeight(PREF_DIM);
-        this.setShape(PNodeEx.ELLIPSE);
-        this.setToolTip("Minimize");
+        this.setShape(PNodeEx.RECTANGLE);
+        this.setToolTip("Maximize");
     }
     
     public void endHandleDrag(Point2D aLocalPoint, PInputEvent aEvent)
     {
         relocateHandle();
-        //setPaint(Color.yellow);
         CellGroupMember cgm = ThisNiche.hg.get(node.getHandle());
-        CellUtils.toggleMinimized(cgm);
+        CellUtils.toggleMaximized(cgm);
     }
     
     public Cursor getCursorFor(int side)
@@ -46,5 +45,6 @@ public class MinimizeHandle extends PSmallBoundsHandle
         // DO NOTHING WHEN DRAGING
         super.relocateHandle();
     }
-   
+    
 }
+

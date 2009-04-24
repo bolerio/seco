@@ -116,22 +116,20 @@ public class PiccoloTransferHandler extends TransferHandler
         HGHandle data = 
             (HGHandle) support.getTransferable().getTransferData(SecoTransferable.FLAVOR);
         boolean move = (support.getDropAction() == MOVE);
+        CellGroup old_group = CellUtils.getParentGroup(data);
+        CellGroup top = ThisNiche.hg.get(canvas.getGroupH());
+        if(old_group == top) return false; 
         if (move)
         {
-            if(support.getComponent() == canvas)
-            {
-                CellGroup top = ThisNiche.hg.get(canvas.getGroupH());
-                if(top.indexOf(data) > -1) 
-                   return false;
-            }
-            add_to_top_group(data, pt);
-        }
+            add_to_top_group(top, data, pt);
+            old_group.remove((CellGroupMember)ThisNiche.hg.get(data));
+        }else
+            add_to_top_group(top, CellUtils.makeCopy(data), pt);
         return true;
     }
     
-    private void add_to_top_group(HGHandle h, Point pt)
+    private void add_to_top_group(CellGroup top, HGHandle h, Point pt)
     {
-        CellGroup top = ThisNiche.hg.get(canvas.getGroupH());
         CellGroupMember cgm = ThisNiche.hg.get(h);
         Rectangle r = (Rectangle) cgm.getAttribute(VisualAttribs.rect);
         if(r == null) 

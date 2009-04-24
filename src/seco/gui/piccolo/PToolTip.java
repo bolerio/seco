@@ -17,8 +17,8 @@ public class PToolTip extends PPath
         text.setWidth(30);
         text.setConstrainWidthToTextWidth(true);
         addChild(text);
-        // setPaint( new java.awt.Color( 255, 255, 191 ) );
-        setPaint(java.awt.Color.lightGray);
+        setPaint( new java.awt.Color( 255, 255, 191 ) );
+        //setPaint(java.awt.Color.yellow);
         setStroke(new BasicStroke(1.2f));
         setStrokePaint(java.awt.Color.black);
         setText("");

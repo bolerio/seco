@@ -73,6 +73,8 @@ public class PSmallBoundsHandle extends PSmallHandle
                         SwingConstants.NORTH_EAST, new Point(-10, 0)));
             node.addChild(new MinimizeHandle((PSwingNode) node,
                     SwingConstants.NORTH_EAST, new Point(-25, 0)));
+            node.addChild(new MaximizeHandle((PSwingNode) node,
+                    SwingConstants.NORTH_EAST, new Point(-40, 0)));
         }
     }
 

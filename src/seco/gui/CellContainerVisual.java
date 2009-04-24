@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Rectangle;
 
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import javax.swing.border.MatteBorder;
 
 import org.hypergraphdb.HGHandle;
@@ -27,6 +28,8 @@ public class CellContainerVisual implements CellVisual, EventHandler
     private static final HGPersistentHandle handle = HGHandleFactory
             .makeHandle("cc88ae4c-f70b-4536-814c-95a6ac6a7b62");
 
+    private HGHandle maximized = null;
+    
     public static HGPersistentHandle getHandle()
     {
         return handle;
@@ -35,30 +38,42 @@ public class CellContainerVisual implements CellVisual, EventHandler
     public JComponent bind(CellGroupMember element)
     {
         CellGroup group = (CellGroup) element;
-        PiccoloCanvas canvas = null;
+        final PiccoloCanvas canvas;
         // container canvas....
         if (isTopContainer(element))
         {
+            maximized = null;
             canvas = TopFrame.getInstance().getCanvas();
             Rectangle r = (Rectangle) element.getAttribute(VisualAttribs.rect);
-            if (r != null) TopFrame.getInstance().setBounds(r);
+            if (r != null) 
+                TopFrame.getInstance().setBounds(r);
         }
         else
         {
-            if(CellUtils.isMinimized(element))
+            if (CellUtils.isMinimized(element))
                 return GUIHelper.getMinimizedUI(element);
             canvas = new PiccoloCanvas(true);
-            canvas.setBorder(new MatteBorder(1,1,1,1, Color.blue));
-            //canvas.setBackground(new Color(250, 250, 255));
+            canvas.setBorder(new MatteBorder(1, 1, 1, 1, Color.blue));
+            // canvas.setBackground(new Color(250, 250, 255));
         }
         element.setVisualInstance(canvas);
         for (int i = 0; i < group.getArity(); i++)
             addChild(canvas, group.getTargetAt(i));
         if (canvas != null) canvas.relayout();
         group.setVisualInstance(canvas);
-        CellUtils.addEventPubSub(
-                CellGroupChangeEvent.HANDLE, ThisNiche.handleOf(element), 
-                getHandle(), getHandle());
+        CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE, ThisNiche
+                .handleOf(element), getHandle(), getHandle());
+        if(isTopContainer(element) && maximized != null)
+        {
+            final PSwingNode ps = canvas.getPSwingNodeForHandle(maximized);
+            SwingUtilities.invokeLater(new Runnable(){
+                public void run()
+                {
+                    canvas.maximize(ps);
+                }
+            });
+            
+        }
         return canvas;
     }
 
@@ -69,7 +84,8 @@ public class CellContainerVisual implements CellVisual, EventHandler
                 && subscriber.equals(ThisNiche.handleOf(this)))
         {
             handleEvent((CellGroupChangeEvent) event);
-        }else if (eventType.equals(EvalCellEvent.HANDLE)
+        }
+        else if (eventType.equals(EvalCellEvent.HANDLE)
                 && subscriber.equals(ThisNiche.handleOf(this)))
         {
             rebind((EvalCellEvent) event, publisher);
@@ -77,60 +93,76 @@ public class CellContainerVisual implements CellVisual, EventHandler
         else if (eventType.equals(AttributeChangeEvent.HANDLE)
                 && subscriber.equals(ThisNiche.handleOf(this)))
         {
-            minimize((AttributeChangeEvent) event, publisher);
+            handleAttrEvent((AttributeChangeEvent) event, publisher);
         }
     }
 
     private void addChild(PiccoloCanvas top_canvas, HGHandle childH)
     {
         CellGroupMember x = ThisNiche.hg.get(childH);
+        if(CellUtils.isMaximized(x)) 
+            maximized = childH;
         CellVisual visual = CellUtils.getVisual(x);
         JComponent comp = visual.bind(x);
-        if(comp != null)
+        if (comp != null)
         {
-           PSwingNode ps = top_canvas.addComponent(comp, x); 
-           if(comp instanceof PiccoloCanvas)
-           {
-               PiccoloCanvas canvas = (PiccoloCanvas) comp;
-               PCamera camera = new PCamera();
-               ps.addChild(camera);
-               camera.addLayer(canvas.getNodeLayer());
-               canvas.setCamera(camera);
-           }
+            PSwingNode ps = top_canvas.addComponent(comp, x);
+            if (comp instanceof PiccoloCanvas)
+            {
+                PiccoloCanvas canvas = (PiccoloCanvas) comp;
+                PCamera camera = new PCamera();
+                ps.addChild(camera);
+                camera.addLayer(canvas.getNodeLayer());
+                canvas.setCamera(camera);
+            }
         }
-        CellUtils.addEventPubSub(
-                EvalCellEvent.HANDLE, childH, getHandle(), getHandle());
-        CellUtils.addEventPubSub(
-                AttributeChangeEvent.HANDLE, childH, getHandle(), getHandle());
+        CellUtils.addEventPubSub(EvalCellEvent.HANDLE, childH, getHandle(),
+                getHandle());
+        CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, childH,
+                getHandle(), getHandle());
     }
 
     private void rebind(EvalCellEvent event, HGHandle publisher)
     {
-        HGHandle h = publisher;//event.getCellHandle();
+        HGHandle h = publisher;// event.getCellHandle();
         CellGroup group = CellUtils.getParentGroup(h);
         System.out.println("rebind: " + h + ":" + group);
-        PiccoloCanvas canvas = (PiccoloCanvas) group.getVisualInstance();
-        //TODO: this is not correct in general
-        //PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
+        PiccoloCanvas canvas = getCanvas(group);
         PSwingNode ps = canvas.getPSwingNodeForHandle(h);
-        if(ps != null)  ps.removeFromParent();
+        if (ps != null) ps.removeFromParent();
         addChild(canvas, h);
     }
     
-    private void minimize(AttributeChangeEvent event, HGHandle publisher)
+    //TODO: this is not very correct in general
+    private PiccoloCanvas getCanvas(CellGroupMember cm)
     {
-        if(!event.getName().equals(VisualAttribs.minimized)) return;
-                
-        CellGroup group = CellUtils.getParentGroup(publisher);
-        System.out.println("minimize: " + publisher + ":" + group);
-        PiccoloCanvas canvas = (PiccoloCanvas) group.getVisualInstance();
-        //TODO: this is not correct in general
-        //PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
-        PSwingNode ps = canvas.getPSwingNodeForHandle(publisher);
-        if(ps != null)  ps.removeFromParent();
-        addChild(canvas, publisher);
+        JComponent c = (JComponent) cm.getVisualInstance();
+        if(c instanceof PiccoloCanvas) return (PiccoloCanvas) c;
+        return GUIHelper.getPSwingNode(c).getCanvas();
     }
-    
+
+    private void handleAttrEvent(AttributeChangeEvent event, HGHandle publisher)
+    {
+        CellGroup group = CellUtils.getParentGroup(publisher);
+        PiccoloCanvas canvas = getCanvas(group);
+        PSwingNode ps = canvas.getPSwingNodeForHandle(publisher);
+        if (event.getName().equals(VisualAttribs.minimized))
+        {
+            if (ps != null) ps.removeFromParent();
+               addChild(canvas, publisher);
+        }
+        else if (event.getName().equals(VisualAttribs.maximized))
+        {
+            if(((Boolean)event.getValue()).booleanValue())
+               canvas.maximize(ps);
+            else
+            {
+               canvas.showAllNodes();
+               canvas.placeNode(ps, false);
+            } 
+        }
+    }
+
     private void handleEvent(CellGroupChangeEvent e)
     {
         CellGroup group = (CellGroup) ThisNiche.hg.get(e.getCellGroup());
@@ -142,10 +174,9 @@ public class CellContainerVisual implements CellVisual, EventHandler
             for (int i = 0; i < removed.length; i++)
             {
                 PSwingNode ps = canvas.getPSwingNodeForHandle(removed[i]);
-                if(ps != null) 
-                   ps.removeFromParent();
-                CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, 
-                        removed[i], getHandle(), getHandle());
+                if (ps != null) ps.removeFromParent();
+                CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, removed[i],
+                        getHandle(), getHandle());
             }
         if (added != null && added.length > 0)
             for (int i = 0; i < added.length; i++)

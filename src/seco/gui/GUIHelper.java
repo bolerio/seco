@@ -90,6 +90,7 @@ import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.IOUtils;
+import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolox.pswing.PSwing;
 
 public class GUIHelper
@@ -196,6 +197,7 @@ public class GUIHelper
         //JLabel l = new JLabel(text);
         JButton l = new JButton(text);
         l.setBackground(Color.YELLOW);
+        l.putClientProperty("tooltip", text);
         return l;
     }
 
@@ -256,14 +258,7 @@ public class GUIHelper
         {
             Point pt = super.getPopupMenuOrigin();
             if (getParent() != null && getParent() instanceof JComponent)
-            {
-                PSwing p = GUIHelper.getPSwingNode((JComponent) getParent());
-                if (p != null)
-                {
-                    Rectangle r = p.getFullBounds().getBounds();
-                    return new Point(pt.x + r.x, pt.y + r.y);
-                }
-            }
+                return GUIHelper.computePoint((JComponent) getParent(), pt);
             return pt;
         }
     }
@@ -633,6 +628,19 @@ public class GUIHelper
        if(c.getParent() instanceof JComponent) 
            return getPSwingNode((JComponent)c.getParent());
        return null;
+    }
+    
+    public static Point computePoint(JComponent c, Point pt)
+    {
+        PSwingNode ps = getPSwingNode(c);
+        if(ps == null) return pt;
+        PBounds r = ps.getFullBounds();
+        PiccoloCanvas canvas = ps.getCanvas();
+        PSwingNode par = GUIHelper.getPSwingNode(canvas);
+        if(par == null) 
+            return new Point((int) (pt.x + r.x), (int)(pt.y + r.y));
+        PBounds r1 = par.getFullBounds();
+        return new Point((int)(r.x + r1.x + pt.x), (int)(r.y + r.y + pt.y));
     }
 
     public static void openNotebook(HGHandle bookH)

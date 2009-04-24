@@ -70,43 +70,4 @@ public class CopyHandle extends PSmallBoundsHandle
         if(!dragStarted)
             super.relocateHandle();
     }
-
-    
-    public static class OffsetPBoundsLocator extends PBoundsLocator
-    {
-        protected Point offsetP;
-        
-        public OffsetPBoundsLocator(PNode node, int side, Point offsetP)
-        {
-            super(node, side);
-            this.offsetP = offsetP;
-        }
-
-        @Override
-        public int getSide()
-        {
-            return super.getSide();
-        }
-
-        @Override
-        public double locateX()
-        {
-            return super.locateX() + offsetP.x;
-        }
-
-        @Override
-        public double locateY()
-        {
-            return super.locateY() + offsetP.y;
-        }
-
-        @Override
-        public void setSide(int side)
-        {
-            super.setSide(side);
-        }
-        
-        
-    }
-    
 }
