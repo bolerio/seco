@@ -7,6 +7,9 @@
  */
 package seco.notebook;
 
+import static seco.notebook.Actions.COPY;
+import static seco.notebook.Actions.CUT;
+import static seco.notebook.Actions.PASTE;
 import static seco.notebook.ElementType.*;
 
 import java.awt.Color;
@@ -19,6 +22,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentAdapter;
@@ -53,6 +57,7 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.plaf.UIResource;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
+import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 import javax.swing.text.EditorKit;
@@ -86,6 +91,7 @@ import seco.notebook.syntax.Mode;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.TokenMarker;
 import seco.notebook.syntax.XModeHandler;
+import seco.notebook.util.IconManager;
 import seco.notebook.view.HtmlView;
 import seco.rtenv.EvaluationContext;
 import seco.things.Cell;
@@ -263,8 +269,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     protected void initKeyBindings()
     {
         InputMap inputMap = getInputMap();
-        // InputMap inputMap = getInputMap(
-        // WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
                 InputEvent.SHIFT_DOWN_MASK);
         inputMap.put(key, NotebookEditorKit.evalAction);
@@ -282,11 +286,20 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         key = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,
                 InputEvent.CTRL_DOWN_MASK);
         inputMap.put(key, NotebookEditorKit.showInputTypePopup);
-        // NotebookEditorKit kit = new NotebookEditorKit();
+        
+        //UNDO, REDO
         key = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK);
         inputMap.put(key, NotebookEditorKit.undo);
         key = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK);
         inputMap.put(key, NotebookEditorKit.redo);
+        
+       //CUT, COPY, PASTE
+       key = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK);
+       inputMap.put(key,DefaultEditorKit.cutAction);
+       key = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK);
+       inputMap.put(key, DefaultEditorKit.copyAction);
+       key = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK);
+       inputMap.put(key, DefaultEditorKit.pasteAction);
     }
 
     void restoreCaret()

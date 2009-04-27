@@ -23,6 +23,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.text.Element;
 
 import seco.gui.StandaloneFrame;
+import seco.notebook.DocUtil;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.gui.GUIUtilities;
@@ -72,8 +73,7 @@ public class CellLangProvider implements DynamicMenuProvider
 				        doc.getEnclosingCellElement(offset));
 		if (nb == null || !(nb instanceof Cell)) return EMPTY;
 		final Cell cell = (Cell) nb;
-		String engine_name = CellUtils.getEngine(cell);
-		if(engine_name == null) engine_name = doc.getDefaultEngineName();
+		String engine_name = DocUtil.getEngineName(doc, cell);
 		if(langMenuItems == null)
 			initLangMenuItems(nbui, cell);
 		
@@ -98,9 +98,7 @@ public class CellLangProvider implements DynamicMenuProvider
 		NotebookDocument doc = nbui.getDoc();
 		ButtonGroup group = new ButtonGroup();
 		Iterator<String> languages = doc.getEvaluationContext().getLanguages();
-		String engine_name = CellUtils.getEngine(cell);
-		if(engine_name == null) 
-			engine_name = doc.getDefaultEngineName();
+		//String engine_name = DocUtil.getEngineName(doc, cell);
 		langMenuItems = new HashSet<JMenuItem>();
 		while (languages.hasNext())
 		{

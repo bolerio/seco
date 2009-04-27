@@ -179,7 +179,8 @@ public class PiccoloCanvas extends PSwingCanvas
             GUIHelper.removeFromCellGroup(groupH, ((PSwingNode) node)
                     .getHandle());
             Object ui = ((PSwingNode) node).getComponent();
-            if (ui instanceof NotebookUI) remove_and_clean((NotebookUI) ui);
+            if (ui instanceof NotebookUI) 
+                remove_and_clean((NotebookUI) ui);
             node.removeFromParent();
         }
     }

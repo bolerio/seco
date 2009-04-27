@@ -32,6 +32,8 @@ public class MaximizeHandle extends PSmallBoundsHandle
     {
         relocateHandle();
         CellGroupMember cgm = ThisNiche.hg.get(node.getHandle());
+        if(CellUtils.isMinimized(cgm))
+            CellUtils.toggleMinimized(cgm);
         CellUtils.toggleMaximized(cgm);
     }
     

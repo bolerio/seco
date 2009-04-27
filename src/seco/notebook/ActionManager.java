@@ -7,15 +7,17 @@
  */
 package seco.notebook;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
-public class ActionManager
+public class ActionManager implements Serializable
 {
-	private static ActionManager instance;
+	private static final long serialVersionUID = 6622882133321172241L;
+    private static ActionManager instance;
 	private static Map<String, Action> actions =
 		new HashMap<String, Action>();
 	

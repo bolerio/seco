@@ -195,6 +195,7 @@ public class TabbedPaneU
                     final Rectangle r = tabbedPane.getBoundsAt(i);
                     if (r == null || !r.contains(pt)) continue;
                     currentTP = tabbedPane;
+                    NotebookUI.setFocusedNotebookUI(getNotebookUIAt(tabbedPane, i));
                     getTabPopupMenu().putClientProperty(TAB_INDEX, i);
                     if (TopFrame.PICCOLO)
                     {
@@ -228,13 +229,8 @@ public class TabbedPaneU
         public void stateChanged(ChangeEvent e)
         {
             if (tabbedPane.getSelectedIndex() == -1) return;
-            Component c = tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
-            if(c instanceof JScrollPane)
-            {
-               JScrollPane comp =  (JScrollPane) c; 
-               NotebookUI.setFocusedNotebookUI((NotebookUI) comp.getViewport().getView());
-            }else
-                NotebookUI.setFocusedNotebookUI(null);
+            NotebookUI.setFocusedNotebookUI(
+                    getNotebookUIAt(tabbedPane, tabbedPane.getSelectedIndex()));
             GUIHelper.updateFrameTitle(
                     getHandleAt(tabbedPane,tabbedPane.getSelectedIndex()));
         }
@@ -249,6 +245,19 @@ public class TabbedPaneU
                     || res == JOptionPane.CLOSED_OPTION) return;
             closeAt((JTabbedPane) evt.getSource(), evt.getClosedTab());
         }
+    }
+    
+    private static NotebookUI getNotebookUIAt(JTabbedPane tp, int index)
+    {
+        if (tp.getSelectedIndex() == -1) return null;
+        Component c = tp.getComponentAt(index);
+        if(c instanceof JScrollPane)
+        {
+           JScrollPane comp =  (JScrollPane) c; 
+           return (NotebookUI) comp.getViewport().getView();
+        }else if(c instanceof NotebookUI)
+            return (NotebookUI) c;
+        return null;
     }
 
     public static void addTabToTabbedPaneGroup(HGHandle groupH, HGHandle h)

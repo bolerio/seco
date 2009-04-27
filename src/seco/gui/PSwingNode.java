@@ -83,6 +83,7 @@ public class PSwingNode extends PSwing
     }
     
     private Rectangle last_bounds;
+    private boolean last_enabled;
     @Override
     public void setVisible(boolean isVisible)
     {
@@ -92,11 +93,12 @@ public class PSwingNode extends PSwing
         {
             if(isVisible)
             {
-              getComponent().setEnabled(true);  
+              getComponent().setEnabled(last_enabled);  
               setBounds(last_bounds);
             }else
             {
                last_bounds = getFullBounds().getBounds();
+               last_enabled = getComponent().isEnabled();
                getComponent().setEnabled(false);
                setBounds(0,0,0,0);
                storeBounds(last_bounds);

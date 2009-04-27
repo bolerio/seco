@@ -345,6 +345,7 @@ public class SelectionManager extends
     private CellGroupMember next_nb(Element el)
     {
         NotebookDocument doc = notebookUI.getDoc();
+        if(el == doc.getRootElements()[0]) return null;
         Element par_el = NotebookDocument.getContainerEl(el, false);
         CellGroup parent = (par_el == null) ? (CellGroup) doc.getBook()
                 : (CellGroup) NotebookDocument.getNBElement(par_el);
@@ -358,6 +359,7 @@ public class SelectionManager extends
     private CellGroupMember prev_nb(Element el)
     {
         NotebookDocument doc = notebookUI.getDoc();
+        if(el == doc.getRootElements()[0]) return null;
         Element par_el = NotebookDocument.getContainerEl(el, false);
         CellGroup parent = (par_el == null) ? (CellGroup) doc.getBook()
                 : (CellGroup) NotebookDocument.getNBElement(par_el);

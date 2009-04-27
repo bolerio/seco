@@ -347,7 +347,7 @@ public class NotebookDocument extends DefaultStyledDocument
         CellGroupMember nb = getNBElement(el);
         if (!(nb instanceof Cell)) return;
         Cell cell = (Cell) nb;
-        String name = CellUtils.getEngine(cell);
+        String name = DocUtil.getEngineName(this, cell);
         el = getLowerElement(el, inputCellBox);
         Class<?> cls = NotebookUI.supports.get(name);
         MutableAttributeSet attrs = (MutableAttributeSet) el.getAttributes();
@@ -1205,7 +1205,8 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public String getDefaultEngineName()
     {
-       return CellUtils.getEngine(getBook());
+       String name = CellUtils.getEngine(getBook());
+       return name != null ? name : CellUtils.defaultEngineName;
     }
 
     public void setDefaultEngineName(String name)

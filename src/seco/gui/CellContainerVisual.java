@@ -154,7 +154,9 @@ public class CellContainerVisual implements CellVisual, EventHandler
         else if (event.getName().equals(VisualAttribs.maximized))
         {
             if(((Boolean)event.getValue()).booleanValue())
+            {
                canvas.maximize(ps);
+            }
             else
             {
                canvas.showAllNodes();

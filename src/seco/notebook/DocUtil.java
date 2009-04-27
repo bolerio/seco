@@ -36,7 +36,7 @@ import seco.things.CellUtils;
 import seco.things.IOUtils;
 import seco.things.Scriptlet;
 
-abstract class DocUtil
+abstract public class DocUtil
 {
     static final String ATTR_CELL = "CELL";
     private static final char[] NEWLINE = new char[] { '\n' };
@@ -266,12 +266,18 @@ abstract class DocUtil
         return doc_style;
     }
 
+    public static String getEngineName(NotebookDocument doc, Cell cell)
+    {
+        String name = CellUtils.getEngine(cell);
+        return (name != null) ? name : doc.getDefaultEngineName();
+    }
+    
     static EvalResult eval_result(NotebookDocument doc, Cell cell)
     {
         EvalResult res = new EvalResult();
         try
         {
-            String name = CellUtils.getEngine(cell);
+            String name = getEngineName(doc, cell);
             if (ThisNiche.getHyperGraph() == null) // are we running a niche or
             // some other testing/development mode?
             {

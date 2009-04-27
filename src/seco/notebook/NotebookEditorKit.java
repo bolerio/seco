@@ -372,9 +372,8 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             NotebookDocument doc = ui.getDoc();
             Element el = doc.getEnclosingCellElement(ui.getCaretPosition());
-             if (el == null) return;
-            CellGroup p = (CellGroup) NotebookDocument
-                    .getContainerEl(el, false);
+            if (el == null) return;
+            CellGroup p = (CellGroup) doc.getContainer(el);
             p.remove(NotebookDocument.getNBElement(el));
         }
     }

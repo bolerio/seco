@@ -264,7 +264,7 @@ public class CellUtils
     public static String getEngine(CellGroupMember c)
     {
         String eng = (String) c.getAttribute(XMLConstants.ATTR_ENGINE);
-        return eng != null ? eng : defaultEngineName;
+        return eng; //eng != null ? eng : defaultEngineName;
     }
 
     public static void setEngine(CellGroupMember c, String s)
