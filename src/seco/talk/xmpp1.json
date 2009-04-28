@@ -1,0 +1,19 @@
+{
+"hasLocalStorage"	: true,
+"localDB"           : "./hgdb_edge/mainDb1",
+"bootstrap" : [ {"class" : "org.hypergraphdb.peer.bootstrap.AffirmIdentityBootstrap", "config" : {}},
+                {"class" : "org.hypergraphdb.peer.bootstrap.CACTBootstrap", "config" : {}},
+                {"class" : "seco.talk.SecoTalkBootstrap", "config" : {}}
+              ],
+"interfaceType"	: "org.hypergraphdb.peer.xmpp.XMPPPeerInterface",
+"peerName"	: "Test 1",
+"interfaceConfig"		:
+{
+    "user" : "test1",
+    "password" : "test",
+	"serverUrl"	: "samizdat",
+	"port"	: 5222
+	"anonymous" : false,
+	"autoRegister" : false
+}
+}
