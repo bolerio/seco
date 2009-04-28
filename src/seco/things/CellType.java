@@ -1,6 +1,5 @@
 package seco.things;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,20 +11,20 @@ import org.hypergraphdb.LazyRef;
 import org.hypergraphdb.atom.HGAtomRef;
 import org.hypergraphdb.type.HGAtomType;
 import org.hypergraphdb.type.HGAtomTypeBase;
-import org.safehaus.uuid.UUIDGenerator;
 
 public class CellType extends HGAtomTypeBase 
 {
     public static final HGPersistentHandle HGHANDLE = 
         HGHandleFactory.makeHandle("45eccdb7-9f4c-11dc-9199-0db27d8f317c");
     
-	public Object make(HGPersistentHandle valueHandle, LazyRef<HGHandle[]> targetSet, IncidenceSetRef incidenceSet) 
+	@SuppressWarnings("unchecked")
+    public Object make(HGPersistentHandle valueHandle, LazyRef<HGHandle[]> targetSet, IncidenceSetRef incidenceSet) 
 	{
 		HGPersistentHandle [] layout = graph.getStore().getLink(valueHandle);
 		HGAtomType refType = graph.getTypeSystem().getAtomType(HGAtomRef.class);
 		HGAtomType mapType = graph.getTypeSystem().getAtomType(HashMap.class);
 		Cell cell = new Cell((HGAtomRef)refType.make(layout[0], null, null));
-		cell.attributes = (Map)mapType.make(layout[1], null, null);
+		cell.attributes = (Map<Object, Object>)mapType.make(layout[1], null, null);
 		return cell;
 	}
 

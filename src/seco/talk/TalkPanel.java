@@ -1,5 +1,7 @@
 package seco.talk;
 
+import static seco.U.hget;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -7,32 +9,26 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
-import javax.swing.TransferHandler.TransferSupport;
 import javax.swing.text.Element;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.annotation.HGIgnore;
 import org.hypergraphdb.peer.HGPeerIdentity;
 
-import seco.gui.SecoTabbedPane;
+import seco.ThisNiche;
+import seco.api.Callback;
 import seco.gui.SecoTransferable;
-import seco.gui.TabbedPaneU;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookTransferHandler;
 
@@ -41,35 +37,41 @@ public class TalkPanel extends JPanel
     private static final String LABEL_READY = "Ready";
     private static final String LABEL_ACCEPT_TRANSFER = "Accept Transfer";
     private static final long serialVersionUID = -4034875448632992670L;
-    private static final SimpleDateFormat sdf = new SimpleDateFormat(
-            "hh:mm:ss a");
-    private static final ActionListener transferButtonListener
-     = new TransferButtonListener();
+    
+    private static final ActionListener transferButtonListener = new TransferButtonListener();
 
     private HGPeerIdentity friend;
-    private JTextPane outText;
+    private ChatPane chatPane;
+    private TalkInputPane inputPane;
     private JButton transferButton;
     @HGIgnore
-    private TalkActivity talkActivity;
+    private transient TalkActivity talkActivity;
     private HGHandle transfer;
 
+    
     public void initComponents()
     {
         setLayout(new BorderLayout());
-
-        JTextPane inText = new JTextPane();
-        JPanel inPanel = new JPanel();
-        inPanel.setLayout(new BorderLayout());
-        inPanel.add(inText, BorderLayout.CENTER);
-        inText.addKeyListener(new KeyListener());
-        outText = new JTextPane();
-        outText.setEditable(false);
+        inputPane = new TalkInputPane();
+        inputPane.inputCallback = new Callback<String>()
+        {
+            public void callback(String msg)
+            {
+                if (talkActivity != null)
+                {
+                    talkActivity.chat(msg);
+                    chatPane.chatFrom(talkActivity.getThisPeer().getIdentity(), msg);
+                }                
+            }
+        };
+        chatPane = new ChatPane();
         JPanel outPanel = new JPanel();
         outPanel.setLayout(new BorderLayout());
-        outPanel.add(outText, BorderLayout.CENTER);
+        outPanel.add(new JScrollPane(chatPane), BorderLayout.CENTER);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                outPanel, inPanel);
+                                              outPanel, 
+                                              new JScrollPane(inputPane));
         this.add(splitPane, BorderLayout.CENTER);
         transferButton = new JButton(LABEL_ACCEPT_TRANSFER);
         transferButton.setForeground(Color.blue);
@@ -101,12 +103,15 @@ public class TalkPanel extends JPanel
     {
         this.friend = friend;
     }
-
-    public void chatFrom(HGPeerIdentity from, String text)
+    
+    public ChatPane getChatPane()
     {
-        String s = "(" + sdf.format(new Date()) + ") ";
-        s += (!from.equals(friend) ? "me" : from.getName()) + ":" + text;
-        outText.setText(outText.getText() + s);
+        return chatPane;
+    }
+
+    public void setChatPane(ChatPane chatPane)
+    {
+        this.chatPane = chatPane;
     }
 
     public TalkActivity getTalkActivity()
@@ -114,6 +119,7 @@ public class TalkPanel extends JPanel
         return talkActivity;
     }
 
+    @HGIgnore
     public void setTalkActivity(TalkActivity talkActivity)
     {
         this.talkActivity = talkActivity;
@@ -131,8 +137,22 @@ public class TalkPanel extends JPanel
     {
         //TODO: send notification to peers and show their "Accept Transfer" button
         //instead of these 2 lines
-        transfer = h;
-        showTransferButton();
+//        transfer = h;
+//        showTransferButton();
+        Object atom = hget(h);
+//        HGAtomType type = hget(htype(h));        
+        String label = atom.getClass().getSimpleName() + "(" +ThisNiche.hg.getPersistentHandle(h).toString() + ")";              
+            //ThisNiche.hg.getPersistentHandle(h).toString() + ":" + atom + ":" + type;
+        String msg = "Offered " + label;
+        chatPane.actionableChatFrom(this.talkActivity.getThisPeer().getIdentity(), msg, "Cancel",
+        new Runnable() {
+            public void run()
+            {
+                System.out.println("Action Cancelled.");
+            }
+        }
+        );
+        talkActivity.offerAtom(h, label);
     }
     
     public void showTransferButton()
@@ -162,74 +182,7 @@ public class TalkPanel extends JPanel
         frame.setVisible(true);
     }
 
-    public static class KeyListener extends KeyAdapter
-    {
-        //private JTextPane inText;
-        //private TalkPanel panel;
-
-        public KeyListener()
-        {
-        }
-
-//        public KeyListener(JTextPane inText, TalkPanel panel)
-//        {
-//            this.inText = inText;
-//            this.panel = panel;
-//        }
-
-        public void keyTyped(KeyEvent e)
-        {
-            TalkPanel panel = (TalkPanel) e.getComponent().getParent().getParent().getParent();
-            JTextPane inText = (JTextPane) e.getComponent();
-            if (e.getKeyChar() == '\n')
-                if (!e.isShiftDown())
-                {
-                    String msg = inText.getText();
-                    inText.setText("");
-                    if (panel.talkActivity != null)
-                    {
-                        panel.talkActivity.chat(msg);
-                        panel.chatFrom(panel.talkActivity.getThisPeer()
-                                .getIdentity(), msg);
-                    }
-                }
-                else
-                {
-                    inText.setText(inText.getText() + "\n");
-                }
-        }
-
-//        public JTextPane getInText()
-//        {
-//            return inText;
-//        }
-//
-//        public void setInText(JTextPane inText)
-//        {
-//            this.inText = inText;
-//        }
-//
-//        public TalkPanel getPanel()
-//        {
-//            return panel;
-//        }
-//
-//        public void setPanel(TalkPanel panel)
-//        {
-//            this.panel = panel;
-//        }
-    }
-
-    public JTextPane getOutText()
-    {
-        return outText;
-    }
-
-    public void setOutText(JTextPane outText)
-    {
-        this.outText = outText;
-    }
-
+    
     public JButton getTransferButton()
     {
         return transferButton;
@@ -266,7 +219,10 @@ public class TalkPanel extends JPanel
 
     public static class TPTransferHandler extends TransferHandler
     {
+        private static final long serialVersionUID = -2286292421264849858L;
+        
         private TalkPanel talkPanel;
+        
         public TPTransferHandler()
         {
             
@@ -305,6 +261,7 @@ public class TalkPanel extends JPanel
             talkPanel.endTransfer();
         }
 
+        @SuppressWarnings("unchecked")
         public boolean importData(TransferSupport support)
         {
             JComponent comp = (JComponent) support.getComponent();
@@ -319,7 +276,8 @@ public class TalkPanel extends JPanel
                 if (fl.equals(SecoTransferable.FLAVOR))
                 {
                     data = (HGHandle) t.getTransferData(fl);
-                }else if(fl.equals(NotebookTransferHandler.FLAVOR))
+                }
+                else if(fl.equals(NotebookTransferHandler.FLAVOR))
                 {
                     Vector<Element> els = (Vector<Element>) t.getTransferData(fl);
                     data = NotebookDocument.getNBElementH(els.get(0));
@@ -361,5 +319,5 @@ public class TalkPanel extends JPanel
             //TODO: negotiate with the peer and get the copy here
             talkPanel.transferAccepted(talkPanel.transfer);
         }
-    } 
+    }
 }

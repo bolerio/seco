@@ -173,11 +173,9 @@ public class PiccoloCanvas extends PSwingCanvas
         for (PNode node : selectionHandler.getSelection())
         {
             if (!(node instanceof PSwingNode)) continue;
-            PSwingNode outer = GUIHelper.getPSwingNode(((PSwingNode) node)
-                    .getCanvas());
+            PSwingNode outer = GUIHelper.getPSwingNode(((PSwingNode) node).getCanvas());
             HGHandle groupH = (outer != null) ? outer.getHandle() : getGroupH();
-            GUIHelper.removeFromCellGroup(groupH, ((PSwingNode) node)
-                    .getHandle());
+            GUIHelper.removeFromCellGroup(groupH, ((PSwingNode) node).getHandle());
             Object ui = ((PSwingNode) node).getComponent();
             if (ui instanceof NotebookUI) 
                 remove_and_clean((NotebookUI) ui);
@@ -428,5 +426,4 @@ public class PiccoloCanvas extends PSwingCanvas
             return true;
         }
     }
-
 }

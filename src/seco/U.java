@@ -184,20 +184,29 @@ public class U
     {
         return ThisNiche.getHyperGraph().find(c);
     }
-    
+
+    @SuppressWarnings("unchecked")
     public static <T> T hget(HGHandle h)
     {
-        return ThisNiche.getHyperGraph().get(h);
+        T result = (T)ThisNiche.getHyperGraph().get(h); 
+        return result;
     }
 
+    public static HGHandle htype(HGHandle h)
+    {
+        return ThisNiche.getHyperGraph().getType(h); 
+    }
+    
     public static <T> List<T> hget(HGQueryCondition cond)
     {
         return hg.getAll(ThisNiche.getHyperGraph(), cond);
     }
     
+    @SuppressWarnings("unchecked")
     public static <T> T hgetOne(HGQueryCondition cond)
     {
-        return hg.getOne(ThisNiche.getHyperGraph(), cond);
+        T result = (T)hg.getOne(ThisNiche.getHyperGraph(), cond); 
+        return result;
     }
     
     public static HGHandle hhandle(Object x)

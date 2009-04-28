@@ -16,6 +16,6 @@ public class ChatHandler implements EventHandler
     {
         ChatEvent chat = (ChatEvent)event;
         TalkPanel talk = U.hget(subscriber);
-        talk.chatFrom(chat.getFrom(), chat.getText());
+        talk.getChatPane().chatFrom(chat.getFrom(), chat.getText());
     }
 }

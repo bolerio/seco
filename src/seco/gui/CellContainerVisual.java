@@ -137,7 +137,10 @@ public class CellContainerVisual implements CellVisual, EventHandler
     private PiccoloCanvas getCanvas(CellGroupMember cm)
     {
         JComponent c = (JComponent) cm.getVisualInstance();
-        if(c instanceof PiccoloCanvas) return (PiccoloCanvas) c;
+        if(c == null || GUIHelper.getPSwingNode(c) == null) 
+            return TopFrame.getInstance().getCanvas();        
+        if(c instanceof PiccoloCanvas) 
+            return (PiccoloCanvas) c;
         return GUIHelper.getPSwingNode(c).getCanvas();
     }
 

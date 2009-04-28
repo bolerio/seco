@@ -21,6 +21,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.io.File;
+import java.util.concurrent.Callable;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -462,7 +463,8 @@ public class GUIHelper
             menuBar.add(createFormatMenu());
             menuBar.add(createToolsMenu());
             menuBar.add(createRuntimeMenu());
-
+            menuBar.add(createNetworkMenu());
+            
             ThisNiche.hg.define(GUIHelper.MENUBAR_HANDLE, menuBar);
             // force the creation of the NotebookUI static popup
             NotebookUI.getPopupMenu();
@@ -496,6 +498,19 @@ public class GUIHelper
         return menu;
     }
 
+    private static JMenu createNetworkMenu()
+    {
+        JMenu menu = new PiccoloMenu("Network");
+        menu.setMnemonic('n');
+        String lang = "jscheme";
+        String code = "(load \"jscheme/scribaui.scm\")\n(netdialog-action '())\n";
+        ScriptletAction a = new ScriptletAction(lang, code);
+        JMenuItem mi = new JMenuItem(a);
+        mi.setText("Connection");
+        menu.add(mi);
+        return menu;
+    }
+    
     public static final NotebookEditorKit kit = new NotebookEditorKit();
 
     public static void openElementTree()
@@ -589,8 +604,12 @@ public class GUIHelper
         return (LayoutHandler) m.getAttribute(VisualAttribs.layoutHandler);
     }
 
-    public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
-            HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell)
+    public static HGHandle addToCellGroup(HGHandle h, 
+                                          CellGroup group,
+                                          HGHandle visualH, 
+                                          LayoutHandler lh, 
+                                          Rectangle r, 
+                                          boolean create_cell)
     {
         HGHandle cellH = (create_cell) ? CellUtils.getCellHForRefH(h) : h;
         CellGroupMember out = ThisNiche.hg.get(cellH);
@@ -608,12 +627,49 @@ public class GUIHelper
     }
     
     public static HGHandle addToTopCellGroup(HGHandle h, 
-            HGHandle visualH, LayoutHandler lh, Rectangle r)
+                                             HGHandle visualH, 
+                                             LayoutHandler lh, 
+                                             Rectangle r)
     {
         CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         return addToCellGroup(h, top, visualH, lh, r, false);
     }
 
+    public static HGHandle addToTopCellGroup(final Object x, final Rectangle r)
+    {
+        return ThisNiche.hg.getTransactionManager().transact(new Callable<HGHandle>() {
+            public HGHandle call()
+            {
+                HGHandle h = ThisNiche.hg.getHandle(x);
+                if (h == null)
+                    h = ThisNiche.hg.add(x);
+                return addToTopCellGroup(h, null, null, r);
+            }
+        });
+    }
+    
+    public static HGHandle addIfNotThere(HGHandle groupHandle, 
+                                         HGHandle objectHandle,
+                                         HGHandle visualHandle,
+                                         LayoutHandler lh,
+                                         Rectangle r)
+    {        
+        CellGroup group = ThisNiche.hg.get(groupHandle);
+        for (int i = 0; i < group.getArity(); i++)
+        {
+            Object x = ThisNiche.hg.get(group.getTargetAt(i));
+            if (x instanceof Cell && ((Cell)x).getAtomHandle().equals(objectHandle))
+                return group.getTargetAt(i);
+        }
+        Object x = ThisNiche.hg.get(objectHandle);
+        return GUIHelper.addToCellGroup(objectHandle, 
+                                        group,  
+                                        null, 
+                                        null, 
+                                        r, 
+                                        !(x instanceof CellGroupMember));                       
+    }
+    
     public static void removeFromCellGroup(HGHandle groupH, HGHandle h)
     {
         CellGroup top = ThisNiche.hg.get(groupH);
