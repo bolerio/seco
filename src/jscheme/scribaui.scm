@@ -163,7 +163,7 @@
     (define user-label (label "Username:"))
     (define pwd-label (label "Password:"))
     (define username (textfield (.getUsername settings) 15))
-    (define password (JPasswordField. (.getUsername settings) 15))
+    (define password (JPasswordField. (.getPassword settings) 15))
     (define check-register (checkbox))
     ; Proxy settings fields
     (define proxy-user-label (label "Proxy Username:"))
