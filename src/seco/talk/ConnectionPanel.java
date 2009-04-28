@@ -103,10 +103,13 @@ public class ConnectionPanel extends JPanel
     private void fetchRooms()
     {
         XMPPPeerInterface peerInterface = (XMPPPeerInterface)thisPeer.getPeerInterface();
+        String server = peerInterface.getServerName();
+        if (server.indexOf("kobrix") > -1)
+            server = "kobrix.syspark.net";
         try
         {
             for (HostedRoom room : MultiUserChat.getHostedRooms(
-                                     peerInterface.getConnection(), "conference." + peerInterface.getServerName()))
+                                     peerInterface.getConnection(), "conference." + server))
             {
                 peerList.peers.thePeers.add(room);
                 peerList.peers.fireChangeEvent();
