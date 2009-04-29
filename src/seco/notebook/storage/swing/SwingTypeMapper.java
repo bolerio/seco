@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
+import javax.swing.JList;
 
 import org.hypergraphdb.HGException;
 import org.hypergraphdb.HGHandle;
@@ -60,6 +61,8 @@ public class SwingTypeMapper extends JavaObjectMapper
             return null;
         
         if (ImageIcon.class.isAssignableFrom(javaClass))
+            return graph.getTypeSystem().getAtomType(Serializable.class);
+        if (JList.class.isAssignableFrom(javaClass))
             return graph.getTypeSystem().getAtomType(Serializable.class);
 
         if (javaClass.getName().startsWith("javax")

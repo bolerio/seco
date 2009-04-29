@@ -147,8 +147,11 @@ public class PSwingEventHandlerEx implements PInputEventListener {
         PiccoloCanvas canvas = swing.getCanvas();
         PSwingNode canv_node = GUIHelper.getPSwingNode(canvas);
         if(canv_node == null) return pt;
-        PBounds fb = canv_node.getFullBounds();
-        return new Point2D.Double(pt.getX() - fb.x, pt.getY() - fb.y);
+        // PBounds fb = canv_node.getFullBounds();
+        // Point2D pt_out = new Point2D.Double(pt.getX() - fb.x, pt.getY() - fb.y);
+        cameraToLocal(canvas.getCamera(), pt, canv_node);
+        //System.out.println("innerPt: " + pt + ":" + pt_out);
+        return pt; //pt_out;
     }
     /**
      * Determines if any Swing components in Piccolo should receive the given
@@ -179,7 +182,6 @@ public class PSwingEventHandlerEx implements PInputEventListener {
             {
                 boolean inner = ! grabNode.isDescendentOf(canvas.getRoot());
                 pt = new Point2D.Double(pSwingMouseEvent.getX(), pSwingMouseEvent.getY());
-                
                 cameraToLocal(pSwingMouseEvent.getPath().getTopCamera(), pt, grabNode);  
                 if(inner) pt = innerPt(swing,pt);
                 
@@ -201,10 +203,7 @@ public class PSwingEventHandlerEx implements PInputEventListener {
                         offY += c.getLocation().getY();
                     }
                 }
-               // if(inner)
-               //   System.out.println("dispatchEvent1: " + pt + ":" + offX + 
-               //         ":" + offY + ":" + comp + ":" + pSwingMouseEvent.paramString());
-
+            
                 // Mouse Pressed gives focus - effects Mouse Drags and
                 // Mouse Releases
                 if (comp != null && pSwingMouseEvent.getID() == MouseEvent.MOUSE_PRESSED) {
@@ -370,8 +369,7 @@ public class PSwingEventHandlerEx implements PInputEventListener {
         catch (NoninvertibleTransformException e) {
             e.printStackTrace();
         }
-
-        /*
+         /*
          * Only apply the camera's view transform when this node is a descendant
          * of PLayer
          */
@@ -383,11 +381,8 @@ public class PSwingEventHandlerEx implements PInputEventListener {
                 break;
             }
         } while (searchNode != null);
-
-        if (node != null) {
+        if (node != null)
             node.globalToLocal(pt);
-        }
-        return;
     }
 
     /**

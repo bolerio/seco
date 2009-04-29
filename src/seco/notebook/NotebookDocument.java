@@ -441,26 +441,27 @@ public class NotebookDocument extends DefaultStyledDocument
         int offset = findElementOffset(e.getCellHandle());
         if (offset < 0) return;
         boolean create_new_output_cell = true;
-        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
+//        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         List<HGHandle> list = CellUtils.getOutCellHandles(e.getCellHandle());
-        for (HGHandle o : list)
-        {
-            int off = findElementOffset(o);
-            if (off < 0) 
-            {
-                //visible outCell in canvas
-                if(canvas != null && canvas.getOutCellNodeForHandle(o) != null)
-                {
-                    create_new_output_cell = false;
-                    break;
-                }
-            }
-            else //already have one in the notebook 
-            {
-              create_new_output_cell = false;
-              break;
-            }
-        }
+//        for (HGHandle o : list)
+//        {
+//            int off = findElementOffset(o);
+//            if (off < 0) 
+//            {
+//                //visible outCell in canvas
+//                if(canvas != null && canvas.getOutCellNodeForHandle(o) != null)
+//                {
+//                    create_new_output_cell = false;
+//                    break;
+//                }
+//            }
+//            else //already have one in the notebook 
+//            {
+//              create_new_output_cell = false;
+//              break;
+//            }
+//        }
+        create_new_output_cell = (list.isEmpty());
         if (!create_new_output_cell) return;
         HGHandle outH = CellUtils.createOutputCellH(e.getCellHandle(), e
                 .getValue());
@@ -1353,9 +1354,10 @@ public class NotebookDocument extends DefaultStyledDocument
         {
             ArrayList<SyntaxStyleBean> main = SyntaxUtilities
                     .getSyntaxStyles(support);
-            styles = new SyntaxStyle[main.size()];
+            int n = main.size();
+            styles = new SyntaxStyle[n];
             Font f = getInputCellFont();
-            for (int i = 0; i < main.size() - 1; i++)
+            for (int i = 0; i < n; i++)
             {
                 SyntaxStyle s = main.get(i).makeSyntaxStyle(f);
                 styles[i] = s;

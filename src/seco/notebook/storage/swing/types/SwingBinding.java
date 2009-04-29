@@ -86,6 +86,12 @@ public class SwingBinding extends HGAtomTypeBase
                 bean = instantiate(hgType.getCtrHandle(), record);
                 TypeUtils.setValueFor(graph, handle, bean);
             }
+            if(bean == null) 
+            {
+                System.err.println("Unable to create bean fo type: " + hgType.getJavaClass());
+                return null;
+            }
+            
             makeBean(bean, record);
             // System.out.println("Make - res: " + bean);
             AddOnLink addons = (AddOnLink) graph.get(hgType.getAddOnsHandle());

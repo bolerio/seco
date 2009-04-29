@@ -27,6 +27,7 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -144,6 +145,7 @@ public class MetaData
         removeProperty("javax.swing.JScrollPane", "horizontalScrollBar");
         removeProperty("javax.swing.JScrollPane", "rowHeader");
         removeProperty("javax.swing.JScrollPane", "columnHeader");
+        removeProperty("javax.swing.JScrollPane", "layout");
         removeProperty("javax.swing.JViewport", "extentSize");
         // Renderers need special treatment, since their properties
         // change during rendering.
@@ -994,6 +996,22 @@ class javax_swing_JScrollPane_PersistenceDelegate extends DefaultConverter
         return null;
     }
 }
+
+//TODO: no way to persist JList's AbstractListModel by current design 
+
+//class javax_swing_JList_PersistenceDelegate extends DefaultConverter
+//{
+//
+//    public javax_swing_JList_PersistenceDelegate()
+//    {
+//        super(JList.class);
+//    }
+//
+//    public Set<AddOnType> getAllAddOnFields()
+//    {
+//        return null;
+//    }
+//}
 
 class javax_swing_JFrame_PersistenceDelegate extends DefaultConverter
 {

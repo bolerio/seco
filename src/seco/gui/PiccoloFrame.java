@@ -123,17 +123,13 @@ public class PiccoloFrame extends TopFrame
         p1.setBounds(new Rectangle(60,66,100,30));
         p1.translate(60,66);
         
-        PSwing x = f.add_comp(pc, new Rectangle(60,0,500,500));
+        PSwing x = f.add_comp(scroll, new Rectangle(60,0,500,500));
         PCamera camera = new PCamera();
         x.addChild(camera);
         camera.addLayer(pc.getNodeLayer());
         pc.setCamera(camera);
         pc.setName("Inner Canvas");
-       // pc.removePSwingEventHandler();
-       // new PSwingEventHandlerExInner(pc, pc.getCamera()).setActive(true);
-       // new PSwingEventHandlerEx(pc, camera).setActive(true);
-        //pc.updatePSwingEventHandler();
-        
+        scroll.getViewport().setView(pc);
         
         pc.setBounds(0, 0, 450, 350);
         f.add_comp(new JButton("Outer"), new Rectangle(0,600,100,100));

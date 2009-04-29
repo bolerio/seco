@@ -12,6 +12,7 @@ import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 
 import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolox.swing.PScrollPane;
 
 import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
@@ -53,7 +54,7 @@ public class CellContainerVisual implements CellVisual, EventHandler
             if (CellUtils.isMinimized(element))
                 return GUIHelper.getMinimizedUI(element);
             canvas = new PiccoloCanvas(true);
-            canvas.setBorder(new MatteBorder(1, 1, 1, 1, Color.blue));
+            //canvas.setBorder(new MatteBorder(1, 1, 1, 1, Color.blue));
             // canvas.setBackground(new Color(250, 250, 255));
         }
         element.setVisualInstance(canvas);
@@ -106,15 +107,22 @@ public class CellContainerVisual implements CellVisual, EventHandler
         JComponent comp = visual.bind(x);
         if (comp != null)
         {
-            PSwingNode ps = top_canvas.addComponent(comp, x);
+            //PSwingNode ps = top_canvas.addComponent(comp, x);
             if (comp instanceof PiccoloCanvas)
             {
                 PiccoloCanvas canvas = (PiccoloCanvas) comp;
+                PScrollPane scroll = new PScrollPane(canvas);
+                scroll.setBorder(new MatteBorder(1, 1, 1, 1, Color.blue));
+                PSwingNode ps = top_canvas.addComponent(scroll, x);
                 PCamera camera = new PCamera();
                 ps.addChild(camera);
                 camera.addLayer(canvas.getNodeLayer());
                 canvas.setCamera(camera);
+                scroll.getViewport().setView(canvas);
+                scroll.setTransferHandler(canvas.getTransferHandler());
             }
+            else
+                top_canvas.addComponent(comp, x);
         }
         CellUtils.addEventPubSub(EvalCellEvent.HANDLE, childH, getHandle(),
                 getHandle());
@@ -141,6 +149,7 @@ public class CellContainerVisual implements CellVisual, EventHandler
             return TopFrame.getInstance().getCanvas();        
         if(c instanceof PiccoloCanvas) 
             return (PiccoloCanvas) c;
+        if(c == null || GUIHelper.getPSwingNode(c) == null) return TopFrame.getInstance().getCanvas();
         return GUIHelper.getPSwingNode(c).getCanvas();
     }
 

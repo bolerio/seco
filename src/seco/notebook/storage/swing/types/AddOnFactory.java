@@ -321,7 +321,7 @@ public class AddOnFactory
                 {
                     System.err.println("args: " + args[i] + ":" + types[i]);
                 }
-                ex.printStackTrace();
+                //ex.printStackTrace();
                 return null;
             }
         }

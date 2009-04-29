@@ -68,10 +68,6 @@ public class NBUIVisual implements CellVisual
         }
         TopFrame.setCurrentRuntimeContext(ctxH);
         scrollPane.setName(TabbedPaneU.makeTabTitle(doc.getTitle()));
-        //JPanel outer = new JPanel();
-        //outer.setName(scrollPane.getName());
-        //outer.setLayout(new java.awt.BorderLayout());
-       // outer.add(scrollPane, java.awt.BorderLayout.CENTER);
         return scrollPane;
     }
 

@@ -1,9 +1,14 @@
 package seco.gui;
 
+import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
@@ -36,6 +41,7 @@ import edu.umd.cs.piccolo.util.PNodeFilter;
 import edu.umd.cs.piccolo.util.PPaintContext;
 import edu.umd.cs.piccolox.pswing.PSwingCanvas;
 import edu.umd.cs.piccolox.pswing.PSwingEventHandler;
+import edu.umd.cs.piccolox.swing.PScrollPane;
 
 public class PiccoloCanvas extends PSwingCanvas
 {
@@ -412,7 +418,8 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         return nodeLayer;
     }
-
+    
+    
     private static class PSwingFilter implements PNodeFilter
     {
 
