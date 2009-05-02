@@ -38,7 +38,10 @@ public abstract class TopFrame extends JFrame
         Log.start();
     }
 
-    protected void initFrame(){}
+    protected void initFrame()
+    {
+        this.setTitle("[" + ThisNiche.hg.getLocation() + "] ");
+    }
     
     @Override
     protected void processWindowEvent(WindowEvent e)

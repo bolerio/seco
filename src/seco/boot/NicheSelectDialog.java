@@ -285,7 +285,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
                 continue;
             }            
             
-        	File location = dlg.getNicheLocation();
+        	File location = new File(dlg.getNicheLocation(), dlg.getNicheName());
         	
             if (!NicheManager.isLocationOk(location))
             {

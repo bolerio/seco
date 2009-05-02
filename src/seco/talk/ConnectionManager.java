@@ -65,9 +65,11 @@ public class ConnectionManager
         
         // Find an existing cell with that panel:
         // hmm, not sure what needs to be done here....
-        GUIHelper.addToCellGroup(panelHandle, (CellGroup)ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE),
-                                 null, null, new Rectangle(800, 100, 200, 100),
-                                 true);        
+        GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE,
+                                panelHandle,
+                                null, 
+                                null, 
+                                new Rectangle(800, 100, 200, 100));        
         ConnectionPanel panel = ThisNiche.hg.get(panelHandle);
         panel.initComponents();
         panel.connect();

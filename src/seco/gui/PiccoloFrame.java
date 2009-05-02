@@ -36,6 +36,7 @@ public class PiccoloFrame extends TopFrame
 
     protected void initFrame()
     {
+        super.initFrame();        
         canvas = new PiccoloCanvas();
         // Set up basic frame
         setBounds(50, 50, 950, 750);

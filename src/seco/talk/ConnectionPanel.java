@@ -6,9 +6,8 @@ import java.awt.BorderLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -19,26 +18,22 @@ import javax.swing.border.BevelBorder;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
-import org.hypergraphdb.annotation.AtomReference;
 import org.hypergraphdb.annotation.HGIgnore;
 import org.hypergraphdb.peer.HGPeerIdentity;
-import org.hypergraphdb.peer.xmpp.*;
 import org.hypergraphdb.peer.HyperGraphPeer;
 import org.hypergraphdb.peer.PeerPresenceListener;
 import org.hypergraphdb.peer.serializer.JSONReader;
+import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
 import org.hypergraphdb.util.CompletedFuture;
+import org.hypergraphdb.util.HGUtils;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
-
-import java.util.Collections;
 
 import seco.ThisNiche;
 import seco.U;
 import seco.api.CallableCallback;
 import seco.gui.GUIHelper;
-import seco.things.Cell;
-import seco.things.CellGroup;
 
 /**
  * <p>
@@ -148,8 +143,8 @@ public class ConnectionPanel extends JPanel
           {
               if (t == null && result)
               {
-                  JOptionPane.showMessageDialog(ConnectionPanel.this, 
-                                                "Successfully connected to network.");
+//                  JOptionPane.showMessageDialog(ConnectionPanel.this, 
+//                                                "Successfully connected to network.");
                   try { fetchRooms(); }
                   catch (Throwable error) 
                   { 
@@ -163,7 +158,9 @@ public class ConnectionPanel extends JPanel
                   if (t != null)
                       t.printStackTrace(System.err);
                   JOptionPane.showMessageDialog(ConnectionPanel.this, 
-                                                "Failed to connected to network, see error console.");
+                                                HGUtils.getRootCause(t),
+                                                "Failed to connected to network, see error console.",
+                                                JOptionPane.ERROR_MESSAGE);
                   connectButton.setText("Connect");                          
               }
               connectButton.setEnabled(true);                      
@@ -186,16 +183,18 @@ public class ConnectionPanel extends JPanel
                 {
                     peerList.peers.thePeers.clear();
                     peerList.peers.fireChangeEvent();
-                    JOptionPane.showMessageDialog(ConnectionPanel.this, 
-                                                  "Successfully disconnect from network.");
+//                    JOptionPane.showMessageDialog(ConnectionPanel.this, 
+//                                                  "Successfully disconnect from network.");
                     connectButton.setText("Connect");
                 }
                 else
                 {
                     if (t != null)
                         t.printStackTrace(System.err);
-                    JOptionPane.showMessageDialog(ConnectionPanel.this, 
-                                                  "Failed to connected to network, see error console.");
+                    JOptionPane.showMessageDialog(ConnectionPanel.this,
+                                                  t,
+                                                  "Failed to connected to network, see error console.",
+                                                  JOptionPane.ERROR_MESSAGE);
                     connectButton.setText("Disconnect");                          
                 }
                 connectButton.setEnabled(true);                      

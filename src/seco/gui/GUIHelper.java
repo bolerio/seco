@@ -770,7 +770,7 @@ public class GUIHelper
                 .getName() : "Cell";
         RuntimeContext rcInstance = (RuntimeContext) ThisNiche.hg.get(
                 TopFrame.getInstance().getCurrentRuntimeContext());
-        String title = rcInstance.getName() + " " + name;
+        String title = "[" + ThisNiche.hg.getLocation() + "] " + rcInstance.getName() + " " + name;
         TopFrame.getInstance().setTitle(title);
         TopFrame.getInstance().showHTMLToolBar(false);
     }

@@ -12,7 +12,7 @@
     "user" : "test1",
     "password" : "test",
 	"serverUrl"	: "samizdat",
-	"port"	: 5222
+	"port"	: 5222,
 	"anonymous" : false,
 	"autoRegister" : false
 }
