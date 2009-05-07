@@ -11,11 +11,16 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;
 import javax.swing.JToolBar;
 import javax.swing.RepaintManager;
+import javax.swing.event.ListDataListener;
 
 import org.hypergraphdb.HGHandle;
 
@@ -26,13 +31,14 @@ import seco.things.CellUtils;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.util.PObjectOutputStream;
 import edu.umd.cs.piccolo.util.PPaintContext;
 import edu.umd.cs.piccolox.pswing.PSwing;
 import edu.umd.cs.piccolox.pswing.PSwingCanvas;
 import edu.umd.cs.piccolox.pswing.PSwingRepaintManager;
 import edu.umd.cs.piccolox.swing.PScrollPane;
 
-public class PSwingNode extends PSwing
+public class PSwingNode extends PSwing implements Serializable
 {
     private static final long serialVersionUID = 4732523747800268384L;
     public boolean deleteable;
@@ -179,5 +185,16 @@ public class PSwingNode extends PSwing
         }
         return null;
     }
-   
+
+    private void writeObject(ObjectOutputStream out) throws IOException
+    {
+        //out.defaultWriteObject();
+        // ((PObjectOutputStream) out).writeConditionalObject(parent);
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException,
+            ClassNotFoundException
+    {
+        
+    }
 }

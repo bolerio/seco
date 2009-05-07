@@ -62,8 +62,8 @@ public class SwingTypeMapper extends JavaObjectMapper
         
         if (ImageIcon.class.isAssignableFrom(javaClass))
             return graph.getTypeSystem().getAtomType(Serializable.class);
-        if (JList.class.isAssignableFrom(javaClass))
-            return graph.getTypeSystem().getAtomType(Serializable.class);
+       // if (JList.class.isAssignableFrom(javaClass))
+       //     return graph.getTypeSystem().getAtomType(Serializable.class);
 
         if (javaClass.getName().startsWith("javax")
             || javaClass.getName().startsWith("java.awt")

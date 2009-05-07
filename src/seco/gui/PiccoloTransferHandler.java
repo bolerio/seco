@@ -58,9 +58,9 @@ public class PiccoloTransferHandler extends TransferHandler
                 if (move)
                 {
                     GUIHelper.addToCellGroup(nbH, group, vis, null, new Rectangle(pt.x, pt.y, 200, 200), false); 
-                    NotebookDocument doc = ((NotebookDocument) e.getDocument());
-                    doc.removeCellBoxElement(e);
-                    CellUtils.removeHandlers(nbH, doc.getHandle());
+                   // NotebookDocument doc = ((NotebookDocument) e.getDocument());
+                   // doc.removeCellBoxElement(e);
+                   // CellUtils.removeHandlers(nbH, doc.getHandle());
                 }
                 else
                 {

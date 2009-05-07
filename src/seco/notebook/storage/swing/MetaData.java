@@ -222,6 +222,7 @@ public class MetaData
         registerConstructor("javax.swing.plaf.basic.BasicBorders$SplitPaneBorder",
                 new String[] {"highlight", "shadow"});
         
+          
         registerConstructor("java.awt.MenuShortcut", new String[] { "key",
                 "usesShift" });
         registerConstructor("javax.swing.plaf.IconUIResource",

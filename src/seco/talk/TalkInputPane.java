@@ -12,7 +12,7 @@ import seco.api.Callback;
 public class TalkInputPane extends JTextPane
 {
     private static final long serialVersionUID = -5098690994202528529L;
-    @HGIgnore
+   
     Callback<String> inputCallback;
     
     public TalkInputPane()
@@ -31,7 +31,6 @@ public class TalkInputPane extends JTextPane
                     String msg = inText.getText();
                     inText.setText("");
                     inText.inputCallback.callback(msg);
-
                 }
                 else
                 {
@@ -39,6 +38,16 @@ public class TalkInputPane extends JTextPane
                 }
         }
 
+    }
+
+    public Callback<String> getInputCallback()
+    {
+        return inputCallback;
+    }
+
+    public void setInputCallback(Callback<String> inputCallback)
+    {
+        this.inputCallback = inputCallback;
     }
     
 }

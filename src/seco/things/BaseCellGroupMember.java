@@ -33,9 +33,12 @@ public class BaseCellGroupMember implements CellGroupMember
     public void setAttribute(Object key, Object value)
     {
         Object old = attributes.get(key);
-        if ((old != null && !old.equals(value))
-                || (value != null && !value.equals(old)))
-            attributes.put(key, value);
+        if(old == null && value == null) return;
+        if(old != null && old.equals(value)) return;
+        if(value != null)
+           attributes.put(key, value);
+        else
+           attributes.remove(old); 
         CellUtils.updateCellGroupMember(this);
         HGHandle h = ThisNiche.handleOf(this);
         if (h == null)

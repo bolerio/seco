@@ -53,17 +53,7 @@ public class TalkPanel extends JPanel
     {
         setLayout(new BorderLayout());
         inputPane = new TalkInputPane();
-        inputPane.inputCallback = new Callback<String>()
-        {
-            public void callback(String msg)
-            {
-                if (talkActivity != null)
-                {
-                    talkActivity.chat(msg);
-                    chatPane.chatFrom(talkActivity.getThisPeer().getIdentity(), msg);
-                }                
-            }
-        };
+        inputPane.inputCallback = new ChatCallback(this);
         chatPane = new ChatPane();
         JPanel outPanel = new JPanel();
         outPanel.setLayout(new BorderLayout());
@@ -318,6 +308,36 @@ public class TalkPanel extends JPanel
                 ((Component)e.getSource()).getParent();
             //TODO: negotiate with the peer and get the copy here
             talkPanel.transferAccepted(talkPanel.transfer);
+        }
+    }
+    
+    public static class ChatCallback implements Callback<String>
+    {
+        private TalkPanel panel;
+        public ChatCallback(TalkPanel panel)
+        {
+            this.panel = panel;
+        }
+        public ChatCallback()
+        {
+        
+        }
+        
+        public void callback(String msg)
+        {
+            if (panel.talkActivity != null)
+            {
+                panel.talkActivity.chat(msg);
+                panel.chatPane.chatFrom(panel.talkActivity.getThisPeer().getIdentity(), msg);
+            }                
+        }
+        public TalkPanel getPanel()
+        {
+            return panel;
+        }
+        public void setPanel(TalkPanel panel)
+        {
+            this.panel = panel;
         }
     }
 }

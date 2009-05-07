@@ -65,8 +65,8 @@ public class NotebookCellsTree extends JTree
         TreePath selPath = getSelectionModel().getSelectionPath();
         CellGroupMember par = (selPath != null) ?
             (CellGroupMember) selPath.getParentPath().getLastPathComponent() : null;
-        final CellGroup group = (par != null && par instanceof CellGroup) ?
-                (CellGroup) par : null;
+       // final CellGroup group = (par != null && par instanceof CellGroup) ?
+        //        (CellGroup) par : null;
         JPopupMenu popup = new JPopupMenu();
         JMenuItem menuItem = new JMenuItem("Publisher");
         menuItem.addActionListener(new ActionListener() {
@@ -146,7 +146,8 @@ public class NotebookCellsTree extends JTree
             {
                 HGHandle h = ThisNiche.handleOf(node);
                 CellGroupMember c = ThisNiche.hg.get(h);
-                group.remove(c);
+                CellGroup group = CellUtils.getParentGroup(h);
+                if(group != null)  group.remove(c);
                 //TreePath currentSelection = getSelectionPath();
                // if (currentSelection != null) {
                    //DefaultMutableTreeNode node = (DefaultMutableTreeNode) currentSelection

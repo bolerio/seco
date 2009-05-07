@@ -7,6 +7,7 @@
  */
 package seco.notebook;
 
+import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -20,6 +21,7 @@ import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.TransferHandler;
+import javax.swing.TransferHandler.TransferSupport;
 import javax.swing.plaf.UIResource;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -27,6 +29,13 @@ import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 import javax.swing.text.TextAction;
+
+import org.hypergraphdb.HGHandle;
+
+import seco.ThisNiche;
+import seco.things.CellGroup;
+import seco.things.CellGroupMember;
+import seco.things.CellUtils;
 
 public class NotebookTransferHandler extends TransferHandler
 {
@@ -124,9 +133,11 @@ public class NotebookTransferHandler extends TransferHandler
         exportComp = null;
     }
 
-    public boolean importData(JComponent comp, Transferable t)
+    public boolean importData(TransferSupport support)
     {
-        if(!(comp instanceof NotebookUI)) return false;
+        Transferable t = support.getTransferable();
+        Component comp = support.getComponent();
+        if (!(comp instanceof NotebookUI)) return false;
         NotebookUI c = (NotebookUI) comp;
         // Don't drop on myself.
         if ((c == exportComp && c.getCaretPosition() >= p0 && c
@@ -172,7 +183,7 @@ public class NotebookTransferHandler extends TransferHandler
             shouldRemove = false;
             return true;
         }
-       
+
         DataFlavor importFlavor = getImportFlavor(t.getTransferDataFlavors(), c);
         if (importFlavor == null) return false;
         boolean imported = false;
@@ -325,7 +336,7 @@ public class NotebookTransferHandler extends TransferHandler
         }
     }
 
-    public static class ElementTransferable implements Transferable 
+    public static class ElementTransferable implements Transferable
     {
         protected Vector<Element> elements;
         protected NotebookUI c;
@@ -349,14 +360,17 @@ public class NotebookTransferHandler extends TransferHandler
         void removeText()
         {
             NotebookDocument doc = c.getDoc();
-            for (Element el : elements)
+            for (Element e : elements)
             {
                 try
                 {
-                    doc.removeCellBoxElement(el);
+                    HGHandle nbH = NotebookDocument.getNBElementH(e);
+                    doc.removeCellBoxElement(e);
+                    CellUtils.removeHandlers(nbH, c.getDoc().getHandle());
                 }
-                catch (BadLocationException e)
+                catch (BadLocationException ex)
                 {
+                    ex.printStackTrace();
                 }
             }
         }

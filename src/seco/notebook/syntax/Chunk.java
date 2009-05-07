@@ -358,7 +358,8 @@ public class Chunk extends Token implements TabExpander
 		if (!accessable)
 		{
 			// do nothing
-		} else if (length == 1 && seg.array[seg.offset + offset] == '\t')
+		} else if (length == 1 && seg.offset + offset < seg.array.length &&
+		        seg.array[seg.offset + offset] == '\t')
 		{
 			visible = false;
 			if (expander == null) expander = this;

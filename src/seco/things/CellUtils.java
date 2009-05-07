@@ -411,7 +411,7 @@ public class CellUtils
                 EvalCellEvent.HANDLE, HGHandleFactory.anyHandle, cell_handle,
                 HGHandleFactory.anyHandle })));
         for (HGHandle s : set)
-            if (set != null) ThisNiche.hg.remove(s);
+            if (s != null) ThisNiche.hg.remove(s);
 
     }
 

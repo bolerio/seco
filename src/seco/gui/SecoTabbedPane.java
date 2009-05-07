@@ -57,10 +57,10 @@ public class SecoTabbedPane extends JTabbedPane
 
         private void initDrag(MouseEvent e)
         {
-            if(!SwingUtilities.isLeftMouseButton(e)) return;
+            if (!SwingUtilities.isLeftMouseButton(e)) return;
             int index = tp.getTargetTabIndex(e.getPoint());
-            System.out.println("SecoTP - initDrag: " + index);
             if (index < 0) return;
+            System.out.println("SecoTP - initDrag: " + index);
             tp.dragTabIndex = index;
             TransferHandler handler = tp.getTransferHandler();
             // MouseEvent m = SwingUtilities.convertMouseEvent(button, e, c);
@@ -116,7 +116,8 @@ public class SecoTabbedPane extends JTabbedPane
 
         protected Transferable createTransferable(JComponent comp)
         {
-            return new SecoTransferable(TabbedPaneU.getHandleAt(tp,tp.dragTabIndex));
+            return new SecoTransferable(TabbedPaneU.getHandleAt(tp,
+                    tp.dragTabIndex));
         }
 
         protected void exportDone(JComponent source, Transferable data,
@@ -132,7 +133,7 @@ public class SecoTabbedPane extends JTabbedPane
             Transferable t = support.getTransferable();
             System.out.println("TPTransferHandler: " + comp + ":" + tp);
             // Don't drop on myself.
-            if (comp == tp)  return true;
+            if (comp == tp) return true;
             DataFlavor fl = getImportFlavor(t.getTransferDataFlavors(), comp);
             if (fl == null) return false;
             try
@@ -140,10 +141,11 @@ public class SecoTabbedPane extends JTabbedPane
                 if (fl.equals(SecoTransferable.FLAVOR))
                 {
                     HGHandle data = (HGHandle) t.getTransferData(fl);
-                    System.out.println("TPTransferHandler1: " + tp.groupH + ":" + data);
-                    if (tp.getCellGroup().indexOf(data) >= 0)
-                        return false;
-                    tp.getCellGroup().insert(tp.getCellGroup().getArity(), data);
+                    System.out.println("TPTransferHandler1: " + tp.groupH + ":"
+                            + data);
+                    if (tp.getCellGroup().indexOf(data) >= 0) return false;
+                    tp.getCellGroup()
+                            .insert(tp.getCellGroup().getArity(), data);
                     return true;
                 }
             }

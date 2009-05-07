@@ -21,41 +21,41 @@ import org.jivesoftware.smackx.muc.HostedRoom;
 public class PeerList extends JPanel
 {
     private static final long serialVersionUID = 1L;
-
+    private transient MouseListener mouseListener;
     @HGIgnore
     private JList list;
     @HGIgnore
-    PeerListModel peers = new PeerListModel(); 
+    PeerListModel peers = new PeerListModel();
     @AtomReference("symbolic")
     private ConnectionPanel connectionPanel;
+
+    public PeerList()
+    {
+        mouseListener = new MouseAdapter() {
+            public void mouseClicked(MouseEvent e)
+            {
+                if (e.getClickCount() == 2)
+                {
+                    int index = list.locationToIndex(e.getPoint());
+                    Object x = peers.thePeers.get(index);
+                    if (x instanceof HGPeerIdentity) connectionPanel
+                            .openTalkPanel((HGPeerIdentity) x);
+                    else
+                        connectionPanel.openChatRoom((HostedRoom) x);
+                }
+            }
+        };
+    }
     
     public void initComponents()
     {
         setLayout(new BorderLayout());
         setBorder(new BevelBorder(BevelBorder.RAISED));
-        list = new JList(peers);
-        list.setCellRenderer(new PeerItemRenderer());
+        setList(new JList(peers));
         add(list, BorderLayout.CENTER);
-        
-        MouseListener mouseListener = new MouseAdapter() 
-        {
-            public void mouseClicked(MouseEvent e) 
-            {
-                if (e.getClickCount() == 2) 
-                {
-                    int index = list.locationToIndex(e.getPoint());
-                    Object x = peers.thePeers.get(index);                    
-                    if (x instanceof HGPeerIdentity)
-                        connectionPanel.openTalkPanel((HGPeerIdentity)x);
-                    else
-                        connectionPanel.openChatRoom((HostedRoom)x);
-                 }
-            }
-        };
-        list.addMouseListener(mouseListener);        
+      
     }
-    
-    
+
     static class PeerListModel implements ListModel
     {
         private ArrayList<ListDataListener> listeners = new ArrayList<ListDataListener>();
@@ -64,9 +64,7 @@ public class PeerList extends JPanel
         void fireChangeEvent()
         {
             ListDataEvent ev = new ListDataEvent(this,
-                                                 ListDataEvent.CONTENTS_CHANGED, 
-                                                 0, 
-                                                 thePeers.size());
+                    ListDataEvent.CONTENTS_CHANGED, 0, thePeers.size());
             for (ListDataListener l : listeners)
                 l.contentsChanged(ev);
         }
@@ -94,17 +92,38 @@ public class PeerList extends JPanel
         {
             listeners.remove(l);
         }
-    }
 
+        public ArrayList<Object> getThePeers()
+        {
+            return thePeers;
+        }
+
+        public void setThePeers(ArrayList<Object> thePeers)
+        {
+            this.thePeers = thePeers;
+        }
+    }
 
     public ConnectionPanel getConnectionPanel()
     {
         return connectionPanel;
     }
 
-
     public void setConnectionPanel(ConnectionPanel connectionPanel)
     {
         this.connectionPanel = connectionPanel;
-    }    
+    }
+
+    public JList getList()
+    {
+        return list;
+    }
+
+    public void setList(JList l)
+    {
+        this.list = l;
+        list.setCellRenderer(new PeerItemRenderer());
+        list.addMouseListener(mouseListener);
+        
+    }
 }

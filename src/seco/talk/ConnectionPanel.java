@@ -208,16 +208,7 @@ public class ConnectionPanel extends JPanel
             return;
         setLayout(new BorderLayout());
         setBorder(new BevelBorder(BevelBorder.RAISED));        
-        connectButton = new JButton("Connect");
-        connectButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ev)
-            {
-                if (connectButton.getText().equals("Connect"))
-                    connect();
-                else if (connectButton.getText().equals("Disconnect"))
-                    disconnect();
-            }
-        });
+        setConnectButton(new JButton("Connect"));
         add(connectButton, BorderLayout.NORTH);
         peerList = new PeerList();
         peerList.setConnectionPanel(this);
@@ -311,6 +302,35 @@ public class ConnectionPanel extends JPanel
     public HyperGraphPeer getThisPeer()
     {
         return thisPeer;
+    }
+
+    public JButton getConnectButton()
+    {
+        return connectButton;
+    }
+
+    public void setConnectButton(JButton button)
+    {
+        this.connectButton = button;
+        connectButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ev)
+            {
+                if (connectButton.getText().equals("Connect"))
+                    connect();
+                else if (connectButton.getText().equals("Disconnect"))
+                    disconnect();
+            }
+        });
+    }
+
+    public PeerList getPeerList()
+    {
+        return peerList;
+    }
+
+    public void setPeerList(PeerList peerList)
+    {
+        this.peerList = peerList;
     }
  
 }

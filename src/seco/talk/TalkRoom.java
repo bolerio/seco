@@ -89,21 +89,8 @@ public class TalkRoom extends JPanel
         
         setLayout(new BorderLayout());  
         inputPane = new TalkInputPane();
-        inputPane.inputCallback = new Callback<String>()
-        {
-            public void callback(String msg)
-            {
-                try
-                {
-                    getTheChat().sendMessage(msg);
-                    chatPane.chatFrom(connectionPanel.getThisPeer().getIdentity(), msg);
-                }
-                catch (XMPPException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        };        
+        inputPane.inputCallback = new ChatCallBack(this); 
+           
         chatPane = new ChatPane();
         JSplitPane split1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                               new JScrollPane(chatPane), 
@@ -134,4 +121,39 @@ public class TalkRoom extends JPanel
     {
         this.connectionPanel = panel;
     }    
+    
+    public static class ChatCallBack implements Callback<String>
+    {
+        private TalkRoom room;
+        
+        public ChatCallBack()
+        {
+        }
+        public ChatCallBack(TalkRoom room)
+        {
+            this.room = room;
+        }
+        
+        public void callback(String msg)
+        {
+            try
+            {
+                room.getTheChat().sendMessage(msg);
+                room.chatPane.chatFrom(
+                        room.connectionPanel.getThisPeer().getIdentity(), msg);
+            }
+            catch (XMPPException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        public TalkRoom getRoom()
+        {
+            return room;
+        }
+        public void setRoom(TalkRoom room)
+        {
+            this.room = room;
+        }
+    }        
 }
