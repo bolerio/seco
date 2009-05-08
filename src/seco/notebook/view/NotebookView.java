@@ -7,8 +7,10 @@
  */
 package seco.notebook.view;
 
+import java.awt.Container;
 import java.awt.Shape;
 
+import javax.swing.JScrollPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
 
@@ -105,4 +107,17 @@ public class NotebookView extends BoxView
         if(index < 0) return null;
         return super.getChildAllocation(index, a);
     }
+
+    @Override
+    public float getPreferredSpan(int axis)
+    {
+        float r =  super.getPreferredSpan(axis);
+        Container c = getContainer().getParent().getParent();
+        System.out.println("NBView - getPreferredSpan: " + r +
+                ":" + ((JScrollPane) c).getBounds());
+       
+        return r;
+    }
+    
+    
 }

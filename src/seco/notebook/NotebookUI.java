@@ -54,6 +54,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.plaf.TextUI;
 import javax.swing.plaf.UIResource;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
@@ -807,8 +808,9 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         registerScriptSupport(new HTMLScriptSupport());
     }
 
+   // the vertical scrolls don't work as expected, so we need to force them...
+   // by the next 2 methods
     @Override
-    // the scrolls don't work as expected, so we need to force them...
     public Dimension getPreferredSize()
     {
         if (getParent() instanceof JViewport)
@@ -820,7 +822,25 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         }
         return isPreferredSizeSet() ? super.getPreferredSize() : dim;
     }
-
+    
+    //return true only if NBUI is smaller then the viewport, thus we
+    //expand it to the whole viewport, avoiding ugly background at the bottom
+    //Needed because if (in the opposite case) this method returns true
+    //it breaks somehow the ScrollPaneLayout.layout() and
+    //the vertical scroll is not always shown accordingly
+    @Override
+    public boolean getScrollableTracksViewportHeight()
+    {
+        if (getParent() instanceof JViewport)
+        {
+            JViewport port = (JViewport)getParent();
+            int h = port.getHeight();
+            Dimension min = getPreferredSize();
+            return (h >= min.height);
+        }
+        return false;
+    }
+   
     private static final Dimension dim = new Dimension(300, 200);
 
     public void changedUpdate(DocumentEvent e)
@@ -1068,4 +1088,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             super.setDot(dot, dotBias);
         }
     }
+
+ 
 }
