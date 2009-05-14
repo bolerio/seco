@@ -46,5 +46,4 @@ public class JComponentVisual implements CellVisual
         }
         return comp;
     }
- 
 }

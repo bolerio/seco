@@ -43,7 +43,7 @@ public class ClassRepository
     // private static final String PATH = AppForm.getConfigDirectory()
     // .getAbsolutePath()
     // + "/.notebook/repository";
-    public static final String REPOSITORY_NAME = ".scribaRepository";
+    public static final String REPOSITORY_NAME = ".secoRepository";
     static String repositoryPath = new File(new File(U.findUserHome()),
             REPOSITORY_NAME).getAbsolutePath();
     static final HGPersistentHandle JARS_MAP_HANDLE = HGHandleFactory
