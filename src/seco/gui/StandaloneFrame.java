@@ -8,13 +8,19 @@
 package seco.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
+
 import javax.swing.JPanel;
 import javax.swing.event.CaretListener;
 
+import seco.ThisNiche;
 import seco.notebook.StatusBar;
 import seco.notebook.gui.AKDockLayout;
+import seco.things.CellGroup;
+import seco.things.CellGroupMember;
 
 /**
  * 
@@ -41,12 +47,35 @@ public class StandaloneFrame extends TopFrame
         setJMenuBar(GUIHelper.getMenuBar());
         getContentPane().setLayout(new AKDockLayout());
         getContentPane().add(GUIHelper.getMainToolBar(), AKDockLayout.NORTH);
-        getContentPane().add(GUIHelper.getJTabbedPane(), BorderLayout.CENTER);
+        getContentPane().add(getJTabbedPane(), BorderLayout.CENTER);
         getContentPane().add(statusPane, BorderLayout.SOUTH);
         setPreferredSize(new Dimension(1000, 700));
         setMinimumSize(new Dimension(1000, 700));
         pack();
     }
+    
+    private Component getJTabbedPane()
+    {
+        CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        for(int i = 0; i < top.getArity(); i++)
+        {
+            CellGroupMember cgm = top.getElement(i);
+            if(cgm instanceof CellGroup && 
+                    TabbedPaneVisual.getHandle().equals(cgm.getVisual()))
+            {
+                focusedContainerHandle = top.getTargetAt(i);
+                TabbedPaneVisual v = ThisNiche.hg.get(TabbedPaneVisual.getHandle());
+                return v.bind(cgm);
+            }
+        }
+        //no tabbedPane, add one
+        CellGroup group = new CellGroup("TabbedPaneCellGroup");
+        focusedContainerHandle = ThisNiche.hg.add(group);
+        group.setVisual(TabbedPaneVisual.getHandle());
+        ThisNiche.hg.update(group);
+        top.insert(top.getArity(), group);
+        return TabbedPaneU.createTabbedPane(group);
+    } 
 
     public CaretListener getCaretListener()
     {

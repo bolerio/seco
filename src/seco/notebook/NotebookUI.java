@@ -78,6 +78,9 @@ import org.hypergraphdb.HGQuery.hg;
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
+import seco.gui.GUIHelper.CellTreeAction;
+import seco.gui.GUIHelper.ElementTreeAction;
+import seco.gui.GUIHelper.ParseTreeAction;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.UpdatablePopupMenu;
 import seco.notebook.gui.menu.CellGroupPropsProvider;
@@ -364,6 +367,17 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                     new CellGroupPropsProvider()));
             popupMenu.addSeparator();
             popupMenu.add(new EnhancedMenu("Grouping", new GroupingProvider()));
+            popupMenu.addSeparator();
+            mi = new JMenuItem("View Element Tree");
+            mi.addActionListener(new ElementTreeAction());
+            popupMenu.add(mi);
+            mi = new JMenuItem("View Cells Tree");
+            mi.addActionListener(new CellTreeAction());
+            popupMenu.add(mi);
+            mi = new JMenuItem("View Parse Tree");
+            mi.addActionListener(new ParseTreeAction());
+            popupMenu.add(mi);
+            
             ThisNiche.hg.define(POPUP_HANDLE, popupMenu);
         }
     }

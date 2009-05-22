@@ -41,14 +41,10 @@ public class OpenBookPanel extends JPanel
     private void filterDocs()
     {
         docs.remove(NotebookEditorKit.getDefaultDocument());
-        //filter at least those doc that are opened in TabbedPane 
-        CellGroup tp = ThisNiche.hg.get(ThisNiche.TABBED_PANE_GROUP_HANDLE);
-        for(int i = 0; i < tp.getArity(); i++)
+        for(HGHandle bookH: GUIHelper.getOpenedBooks())
         {
-            HGHandle bookH = tp.getTargetAt(i);
-            for(NotebookDocument doc: new ArrayList<NotebookDocument>(docs))
-               if(doc.getBookHandle().equals(bookH))
-                            docs.remove(doc);
+            int i = docs.indexOf(bookH);
+            if(i >= 0) docs.remove(bookH);
         }
     }
     

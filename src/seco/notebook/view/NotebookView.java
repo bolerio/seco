@@ -27,13 +27,6 @@ public class NotebookView extends BoxView
         super(elem, View.Y_AXIS);
     }
     
-//    public float getAlignment(int axis)
-//    {
-//        if (axis == View.Y_AXIS)
-//            return 0.0f;
-//        else
-//            return 0.0f;
-//    }    
     
     @Override
 	protected short getBottomInset()
@@ -107,17 +100,5 @@ public class NotebookView extends BoxView
         if(index < 0) return null;
         return super.getChildAllocation(index, a);
     }
-
-    @Override
-    public float getPreferredSpan(int axis)
-    {
-        float r =  super.getPreferredSpan(axis);
-        Container c = getContainer().getParent().getParent();
-        System.out.println("NBView - getPreferredSpan: " + r +
-                ":" + ((JScrollPane) c).getBounds());
-       
-        return r;
-    }
-    
-    
+   
 }

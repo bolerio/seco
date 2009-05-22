@@ -18,6 +18,9 @@ import seco.boot.NicheManager;
 import seco.gui.layout.LayoutHandler;
 import seco.gui.layout.LayoutSettingsPanel;
 import seco.notebook.AppConfig;
+import seco.notebook.gui.DialogDisplayer;
+import seco.notebook.gui.GUIUtilities;
+import seco.notebook.gui.NotifyDescriptor;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -61,18 +64,18 @@ public class CommonActions
                 bck_dir + File.separator + NicheManager.getNicheName(ThisNiche.hg));
         if (!dir.exists()) dir.mkdir();
         System.out.println("Backup in: " + dir.getAbsolutePath());
-        CellGroup group = (CellGroup) ThisNiche.hg
-                .get(ThisNiche.TABBED_PANE_GROUP_HANDLE);
-        for (int i = 0; i < group.getArity(); i++)
+        int i = 1;
+        for (HGHandle h: GUIHelper.getOpenedBooks())
         {
-            CellGroupMember c = group.getElement(i);
-            
+            CellGroupMember c = ThisNiche.hg.get(h);
             if(!(c instanceof CellGroup)) continue;
            
             CellGroup g = (CellGroup) c;
             // escape some illegal chars which could be introduced during
             // previous book import
-            String fn = g.getName().replace('\\', '_').replace('/', '_')
+            String title = CellUtils.getName(g);
+            if(title == null) title = "Untitled" + i;
+            String fn = title.replace('\\', '_').replace('/', '_')
                     .replace(':', '_');
             if (!fn.endsWith(".nb")) fn += ".nb";
             try
@@ -85,6 +88,7 @@ public class CommonActions
                         .getAbsolutePath()
                         + ".nb");
             }
+            i++;
         }
     }
     
@@ -93,6 +97,9 @@ public class CommonActions
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         canvas.getCamera().removeAllChildren();
         canvas.getNodeLayer().removeAllChildren();
+        ThisNiche.hg.remove(GUIHelper.MENUBAR_HANDLE);
+        ThisNiche.hg.remove(GUIHelper.TOOLBAR_HANDLE);
+        ThisNiche.hg.remove(GUIHelper.HTML_TOOLBAR_HANDLE);
         GUIHelper.makeTopCellGroup(ThisNiche.hg);
         CellGroup group = (CellGroup) ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         CellVisual v = (CellVisual) ThisNiche.hg.get(group.getVisual());
@@ -110,15 +117,19 @@ public class CommonActions
         GUIHelper.addToTopCellGroup(groupH, CellContainerVisual.getHandle(), null, new Rectangle(200, 200, 500, 500)); 
     }
     
-    public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
-            HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell)
+    public static boolean renameCellGroupMember(HGHandle h)
     {
-        HGHandle cellH = (create_cell) ? CellUtils.getCellHForRefH(h) : h;
-        CellGroupMember out = ThisNiche.hg.get(cellH);
-        if (r != null) out.setAttribute(VisualAttribs.rect, r);
-        if (visualH != null) out.setVisual(visualH);
-        if (lh != null) out.setAttribute(VisualAttribs.layoutHandler, lh);
-        group.insert(group.getArity(), out);
-        return cellH;
-    }
+        CellGroupMember cgm = ThisNiche.hg.get(h);
+        String name = CellUtils.getName(cgm);
+        NotifyDescriptor.InputLine nd = new NotifyDescriptor.InputLine(
+                TopFrame.getInstance(), "Name: ", "Rename");
+        nd.setInputText(name);
+        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION)
+        {
+            String t = nd.getInputText();
+            CellUtils.setName(cgm, t);
+            return true;
+        }
+        return false;
+    } 
 }

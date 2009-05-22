@@ -21,6 +21,8 @@ import seco.gui.StandaloneFrame;
 import seco.gui.TopFrame;
 import seco.notebook.AppConfig;
 import seco.things.CellGroup;
+import seco.things.CellGroupMember;
+import seco.things.CellUtils;
 
 
 
@@ -58,7 +60,8 @@ public class RecentFilesProvider implements DynamicMenuProvider, Serializable
 		}
 		
 		for(int i = 0; i < recentH.size(); i++)
-		    recentVector.add(i, ((CellGroup)ThisNiche.hg.get(recentH.get(i))).getName());
+		    recentVector.add(i, CellUtils.getName((CellGroupMember)
+		            ThisNiche.hg.get(recentH.get(i))));
 				
 		boolean sort = true;
         if(sort)

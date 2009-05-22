@@ -9,7 +9,6 @@ package seco.things;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.hypergraphdb.HGException;
 import org.hypergraphdb.HGHandle;
@@ -18,12 +17,12 @@ import org.hypergraphdb.HGLink;
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EventDispatcher;
+import seco.gui.VisualAttribs;
 
 
 
 public class CellGroup extends BaseCellGroupMember implements HGLink
 {
-    private String name;
     protected List<HGHandle> outgoingSet = new ArrayList<HGHandle>();
 
     protected CellGroup()
@@ -33,14 +32,9 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
 
     public CellGroup(String name)
     {
-        this.name = name;
+        //add name without firing events
+        attributes.put(VisualAttribs.name, name);
     }
-
-//    public CellGroup(String name, Map attribs)
-//    {
-//        this.name = name;
-//        this.attributes = attribs;
-//    }
 
     public CellGroup(List<HGHandle> outgoingSet)
     {
@@ -64,7 +58,7 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
     @Override
     public String toString()
     {
-        return "CellGroup" + ":" + name + ":" + ThisNiche.handleOf(this) + ":" + getArity();
+        return "CellGroup" + ":" + CellUtils.getName(this) + ":" + ThisNiche.handleOf(this) + ":" + getArity();
     }
 
     public void setTargetAt(int i, HGHandle h)
@@ -82,17 +76,6 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
     public void notifyTargetRemoved(int i)
     {
     	outgoingSet.remove(i);
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-       this.name = name;
-       ThisNiche.hg.update(this);
     }
 
     public CellGroupMember getElement(int ind)
@@ -229,9 +212,6 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
         if (!(other instanceof CellGroup))
             return false;
         CellGroup rt = (CellGroup) other;
-        if (!rt.getName().equals(name))
-            return false;
-        else 
         if (outgoingSet == rt.outgoingSet)
             return true;
         else if (outgoingSet.size() != rt.outgoingSet.size())
@@ -245,7 +225,7 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
     @Override
     public int hashCode()
     {
-        return name != null ? name.hashCode() : super.hashCode();
+        return outgoingSet.hashCode();
     }
 
     void fireCellGroupChanged(CellGroupChangeEvent e)

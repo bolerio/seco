@@ -25,42 +25,35 @@ public class CellGroupType extends HGAtomTypeBase
 					   LazyRef<HGHandle[]> targets, 
 					   IncidenceSetRef incidenceSet) 
 	{
-		HGAtomType stringType = graph.getTypeSystem().getAtomType(String.class);
 		HGAtomType mapType = graph.getTypeSystem().getAtomType(HashMap.class);	
 		HGPersistentHandle [] layout = graph.getStore().getLink(valueHandle);
-		String name = (String)stringType.make(layout[0], null, null);
-		Map<Object, Object> attributes = (Map<Object, Object>)mapType.make(layout[1], null, null);
-		CellGroup group = new CellGroup(name);
+		Map<Object, Object> attributes = (Map<Object, Object>)mapType.make(layout[0], null, null);
+		CellGroup group = new CellGroup();
 		group.attributes = Collections.synchronizedMap(attributes);
-		if (layout.length > 2)
+		if (layout.length > 1)
         {
-		    for (int i = 2; i < layout.length; i++)
-                group.setTargetAt(i - 2, layout[i]);
+		    for (int i = 1; i < layout.length; i++)
+                group.setTargetAt(i - 1, layout[i]);
         }
 		return group;
 	}
 
 	public void release(HGPersistentHandle handle) 
 	{
-		HGAtomType stringType = graph.getTypeSystem().getAtomType(String.class);
 		HGAtomType mapType = graph.getTypeSystem().getAtomType(HashMap.class);
-		
 		HGPersistentHandle [] layout = graph.getStore().getLink(handle);
-		stringType.release(layout[0]);
-		mapType.release(layout[1]);
+		mapType.release(layout[0]);
 	}
 
 	public HGPersistentHandle store(Object instance) 
 	{
-		HGAtomType stringType = graph.getTypeSystem().getAtomType(String.class);
 		HGAtomType mapType = graph.getTypeSystem().getAtomType(HashMap.class);		
 		CellGroup group = (CellGroup)instance;
-		HGPersistentHandle [] layout = new HGPersistentHandle[group.getArity() + 2];
-        layout[0] = stringType.store(group.getName());
-		layout[1] = mapType.store(group.attributes);
-		for (int i = 2; i < layout.length; i++)
+		HGPersistentHandle [] layout = new HGPersistentHandle[group.getArity() + 1];
+       layout[0] = mapType.store(group.attributes);
+		for (int i = 1; i < layout.length; i++)
 		    layout[i] = graph.getPersistentHandle(
-		            group.getTargetAt(i - 2));
+		            group.getTargetAt(i - 1));
 		//System.out.println("store: " + group.getName() + ":" + layout.length);
         
 		return graph.getStore().store(layout);

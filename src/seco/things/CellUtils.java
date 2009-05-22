@@ -166,7 +166,7 @@ public class CellUtils
     {
         c.setAttribute(XMLConstants.ATTR_READONLY, b);
     }
-
+    
     public static boolean isCollapsed(CellGroupMember c)
     {
         Boolean b = (Boolean) c.getAttribute(XMLConstants.ATTR_COLLAPSED);
@@ -197,6 +197,23 @@ public class CellUtils
         cgm.setAttribute(VisualAttribs.maximized, !b);
     }
     
+    public static boolean isShowTitle(CellGroupMember cgm)
+    {
+        Boolean b = (Boolean) cgm.getAttribute(VisualAttribs.showTitle);
+        return b != null && b.booleanValue();
+    }
+    
+    public static void toggleShowTitle(CellGroupMember cgm)
+    {
+        boolean b = isShowTitle(cgm);
+        cgm.setAttribute(VisualAttribs.showTitle, !b);
+    }
+    
+    public static void toggleShowTitle(HGHandle h)
+    {
+        toggleShowTitle((CellGroupMember) ThisNiche.hg.get(h)); 
+    }
+    
     public static void setCollapsed(CellGroupMember c, boolean b)
     {
         c.setAttribute(XMLConstants.ATTR_COLLAPSED, b);
@@ -206,7 +223,17 @@ public class CellUtils
     {
         c.setAttribute(XMLConstants.ATTR_ERROR, b);
     }
-
+    
+    public static void setName(CellGroupMember c, String title)
+    {
+        c.setAttribute(VisualAttribs.name, title);
+    }
+    
+    public static String getName(CellGroupMember c)
+    {
+       return (String) c.getAttribute(VisualAttribs.name);
+    }
+    
     public static void setError(HGHandle h, boolean b)
     {
         CellGroupMember c = (CellGroupMember) ThisNiche.hg.get(h);
@@ -449,8 +476,7 @@ public class CellUtils
     private static HGHandle connect_output_cells(CellGroup in,
             Map<HGHandle, HGHandle> cells)
     {
-        CellGroup cg = (CellGroup) in;
-        CellGroup outG = new CellGroup(cg.getName());
+        CellGroup outG = new CellGroup();
         outG.attributes = in.attributes;
         HGHandle out = ThisNiche.hg.add(outG);
         for (int i = 0; i < in.getArity(); i++)

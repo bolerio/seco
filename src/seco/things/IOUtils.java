@@ -61,7 +61,7 @@ public class IOUtils
     {
         CellGroup top_group = (CellGroup) ThisNiche.hg.get(top_groupH);
         if (!top.getTagName().equals(XMLConstants.NOTEBOOK))
-            throw new RuntimeException("The document '" + top_group.getName()
+            throw new RuntimeException("The document '" + CellUtils.getName(top_group)
                     + "' is not a notebook.");
         // title = top.getAttribute(XMLConstants.ATTR_TITLE);
         String engine = top.getAttribute(XMLConstants.ATTR_ENGINE);
@@ -375,8 +375,8 @@ public class IOUtils
                 f.getParentFile().mkdirs();
             FileWriter fw = new FileWriter(filename);
             fw.write("<" + XMLConstants.NOTEBOOK);
-            if (gr.getName() != null)
-                fw.write(" " + XMLConstants.ATTR_TITLE + "=\"" + gr.getName()
+            if (CellUtils.getName(gr) != null)
+                fw.write(" " + XMLConstants.ATTR_TITLE + "=\"" + CellUtils.getName(gr)
                         + "\"");
             if (CellUtils.getEngine(gr) != null)
                 fw.write(" " + XMLConstants.ATTR_ENGINE + "=\""
@@ -408,7 +408,7 @@ public class IOUtils
 
     private static String writeGroup(CellGroup gr, int depth){
         String s =  XMLConstants.makeIndent(depth) + "<" + XMLConstants.CELL_GROUP;
-        s += " " + XMLConstants.ATTR_NAME + "=\"" + gr.getName()+ "\"";
+        s += " " + XMLConstants.ATTR_NAME + "=\"" + CellUtils.getName(gr)+ "\"";
         if (CellUtils.isInitCell(gr))
            s += " " + XMLConstants.ATTR_INIT_CELL + "=\"true\"";
         if(CellUtils.isCollapsed(gr))

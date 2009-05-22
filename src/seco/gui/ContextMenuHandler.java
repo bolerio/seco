@@ -6,6 +6,8 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import org.hypergraphdb.HGHandle;
+
 import seco.ThisNiche;
 import seco.notebook.ScriptletAction;
 import seco.things.Cell;
@@ -27,10 +29,13 @@ public class ContextMenuHandler extends PBasicInputEventHandler
 
     public void mousePressed(PInputEvent event)
     {
-        if (event.getPickedNode() instanceof PCamera)
+        if (event.getPickedNode() instanceof PCamera
+                && (event.getPickedNode().equals(TopFrame.getInstance().getCanvas().getCamera())))
         {
+            //System.out.println("ContextMenuHandler - showMenu: " + event.getPickedNode());
             int m = InputEvent.CTRL_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
-            if ((event.getModifiersEx() & m) == m) showGlobMenu(event);
+            if ((event.getModifiersEx() & m) == m) 
+                showGlobMenu(event);
             return;
         }
         else if (((PiccoloCanvas) event.getComponent()).getSelectedPSwingNode() == null)
@@ -55,7 +60,7 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         global_menu.add(makeMenuItem("Reset Zoom",
                 "canvas.getCamera().setViewScale(1.0);"));
         global_menu.add(makeMenuItem("Backup", "seco.gui.CommonActions.backup();"));
-        global_menu.add(makeMenuItem("Test Embedded Container", "seco.gui.CommonActions.testEmbededContainer();"));
+       //global_menu.add(makeMenuItem("Test Embedded Container", "seco.gui.CommonActions.testEmbededContainer();"));
         show_menu(event, global_menu);
         
     }
@@ -69,9 +74,11 @@ public class ContextMenuHandler extends PBasicInputEventHandler
             show_menu(event, node_menu); return;
         }
         node_menu = new JPopupMenu();
-        node_menu.add(makeMenuItem("Fit To Screen",
-                "canvas.getCamera().animateViewToCenterBounds("
-                        + "canvas.getLayer().getFullBounds(), true, 50l );"));
+        node_menu.add(makeMenuItem("Rename",
+                "seco.gui.CommonActions.renameCellGroupMember(canvas.getSelectedPSwingNode().getHandle())"));
+        node_menu.add(makeMenuItem("Title On/Off",
+        "seco.things.CellUtils.toggleShowTitle(canvas.getSelectedPSwingNode().getHandle())"));
+
         node_menu.add(makeMenuItem("Pin/Unpin",
                 "seco.gui.CommonActions.showLayoutSettingsDlg("
                         + "canvas.getSelectedPSwingNode());"));

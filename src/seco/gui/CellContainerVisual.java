@@ -3,9 +3,11 @@ package seco.gui;
 import java.awt.Color;
 import java.awt.Rectangle;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.border.MatteBorder;
+import javax.swing.border.TitledBorder;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
@@ -54,6 +56,12 @@ public class CellContainerVisual implements CellVisual, EventHandler
             if (CellUtils.isMinimized(element))
                 return GUIHelper.getMinimizedUI(element);
             canvas = new PiccoloCanvas(true);
+            String title = CellUtils.getName(element);
+            if(title != null){
+               TitledBorder border = BorderFactory.createTitledBorder(title);
+               border.setTitlePosition(TitledBorder.ABOVE_TOP);
+               canvas.setBorder(border);
+            }
             //canvas.setBorder(new MatteBorder(1, 1, 1, 1, Color.blue));
             // canvas.setBackground(new Color(250, 250, 255));
         }
@@ -107,7 +115,9 @@ public class CellContainerVisual implements CellVisual, EventHandler
         JComponent comp = visual.bind(x);
         if (comp != null)
         {
-            //PSwingNode ps = top_canvas.addComponent(comp, x);
+
+            String title = CellUtils.getName(x);
+            if(title != null) GUIHelper.handleTitle(x,  comp);
             if (comp instanceof PiccoloCanvas)
             {
                 PiccoloCanvas canvas = (PiccoloCanvas) comp;
@@ -174,6 +184,10 @@ public class CellContainerVisual implements CellVisual, EventHandler
                canvas.showAllNodes();
                canvas.placeNode(ps, false);
             } 
+        }else if(event.getName().equals(VisualAttribs.showTitle)){
+            GUIHelper.handleTitle((CellGroupMember)
+                    ThisNiche.hg.get(ps.getHandle()),
+                    ps.getComponent());
         }
     }
 

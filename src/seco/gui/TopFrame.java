@@ -20,8 +20,10 @@ public abstract class TopFrame extends JFrame
     public static boolean AUTO_BACKUP = true;
     //current RuntimeContext
     public static HGHandle currentRC = ThisNiche.TOP_CONTEXT_HANDLE; 
-
     private static TopFrame instance;
+    
+    protected HGHandle focusedContainerHandle = ThisNiche.TOP_CELL_GROUP_HANDLE;
+    
     public static TopFrame getInstance()
     { 
         if (instance == null) 
@@ -98,5 +100,15 @@ public abstract class TopFrame extends JFrame
         rcInstance.getBindings()
                 .put("notebook", ui.getDoc().getBook());
         ui.getDoc().setEvaluationContext(ThisNiche.getEvaluationContext(ch));
+    }
+
+    public HGHandle getFocusedContainerHandle()
+    {
+        return focusedContainerHandle;
+    }
+
+    public void setFocusedContainerHandle(HGHandle focusedContainerHandle)
+    {
+        this.focusedContainerHandle = focusedContainerHandle;
     }
 }

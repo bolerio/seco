@@ -36,12 +36,9 @@ public class TabbedPaneVisual implements CellVisual, EventHandler
         }
         if(CellUtils.isMinimized(element))
             return GUIHelper.getMinimizedUI(element);
-        final CellGroup group = //element instanceof CellGroup ? 
-                (CellGroup) element; // : (CellGroup) ((Cell) element).getValue();
+        final CellGroup group =(CellGroup) element; 
         HGHandle groupH = ThisNiche.handleOf(element);
-        final JTabbedPane tp = (ThisNiche.TABBED_PANE_GROUP_HANDLE
-                .equals(groupH)) ? GUIHelper.getJTabbedPane() : TabbedPaneU
-                .createTabbedPane(group);
+        final JTabbedPane tp = TabbedPaneU.createTabbedPane(group);
         tp.removeAll();        
         for (int i = 0; i < group.getArity(); i++)
             addChild(tp, group.getTargetAt(i));

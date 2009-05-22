@@ -1010,8 +1010,8 @@ public class NotebookDocument extends DefaultStyledDocument
         int ind = parent.indexOf(getNBElementH(el));
         if (ind < 0)
         {
-            System.err.println("Unable to ungroup: " + group.getName()
-                    + ". Parent: " + parent.getName());
+            System.err.println("Unable to ungroup: " + CellUtils.getName(group)
+                    + ". Parent: " + CellUtils.getName(parent));
             return;
         }
 
@@ -1067,13 +1067,14 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public String getTitle()
     {
-        return ( getBook() instanceof CellGroup) ? 
-                ((CellGroup) getBook()).getName() : "";
+        String text = CellUtils.getName(getBook());
+        if(text == null) text = "";
+        return text;
     }
 
     public void setTitle(String t)
     {
-        ((CellGroup) ThisNiche.hg.get(bookH)).setName(t);
+        CellUtils.setName(getBook(), t);
     }
 
     public static ElementType getElementType(Element el)

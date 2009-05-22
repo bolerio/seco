@@ -3,40 +3,24 @@
  */
 package seco.gui;
 
-import java.awt.BasicStroke;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Paint;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Stroke;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 
 import javax.swing.JComponent;
-import javax.swing.JMenuBar;
-import javax.swing.JToolBar;
-import javax.swing.RepaintManager;
-import javax.swing.event.ListDataListener;
 
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
-
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.util.PObjectOutputStream;
-import edu.umd.cs.piccolo.util.PPaintContext;
 import edu.umd.cs.piccolox.pswing.PSwing;
 import edu.umd.cs.piccolox.pswing.PSwingCanvas;
-import edu.umd.cs.piccolox.pswing.PSwingRepaintManager;
-import edu.umd.cs.piccolox.swing.PScrollPane;
 
 public class PSwingNode extends PSwing implements Serializable
 {
@@ -48,6 +32,8 @@ public class PSwingNode extends PSwing implements Serializable
     {
         super(component);
         this.handle = handle;
+        //component.putClientProperty("tooltip", CellUtils.getTitle(
+        //        (CellGroupMember) ThisNiche.hg.get(handle)));
     }
 
     public PSwingNode(PSwingCanvas canvas, JComponent component)

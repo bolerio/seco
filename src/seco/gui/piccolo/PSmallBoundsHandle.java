@@ -18,7 +18,9 @@ import javax.swing.SwingConstants;
 
 import seco.ThisNiche;
 import seco.gui.PSwingNode;
+import seco.gui.TabbedPaneVisual;
 import seco.gui.TopFrame;
+import seco.things.CellGroupMember;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
@@ -67,8 +69,8 @@ public class PSmallBoundsHandle extends PSmallHandle
         if (node instanceof PSwingNode)
         {
             // TODO: temp check
-            if (!ThisNiche.TABBED_PANE_GROUP_HANDLE.equals(((PSwingNode) node)
-                    .getHandle()))
+            CellGroupMember cgm = ThisNiche.hg.get(((PSwingNode) node).getHandle());
+            if (!TabbedPaneVisual.getHandle().equals(cgm.getVisual()))
                 node.addChild(new CopyHandle((PSwingNode) node,
                         SwingConstants.NORTH_EAST, new Point(-10, 0)));
             node.addChild(new MinimizeHandle((PSwingNode) node,

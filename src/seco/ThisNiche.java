@@ -45,8 +45,8 @@ public final class ThisNiche
             .makeHandle("8e579278-391d-11db-b473-e61fbd5cb97a");
     public static final HGPersistentHandle TOP_CELL_GROUP_HANDLE = HGHandleFactory
             .makeHandle("f00a2f20-e177-11dd-ad8b-0800200c9a66");
-    public static final HGPersistentHandle TABBED_PANE_GROUP_HANDLE = HGHandleFactory
-            .makeHandle("7b01b680-e186-11dd-ad8b-0800200c9a66");
+   // public static final HGPersistentHandle TABBED_PANE_GROUP_HANDLE = HGHandleFactory
+   //         .makeHandle("7b01b680-e186-11dd-ad8b-0800200c9a66");
 
     // we assume for now that an entity can only belong to a single context
     // this obviously doesn't make much sense "philosophically" ;)

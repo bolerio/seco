@@ -141,15 +141,10 @@ public class TabbedPaneU
             {
                 NotebookUI ui = NotebookUI.getFocusedNotebookUI();
                 if (ui == null) return;
-                String name = ui.getDoc().getTitle();
-                NotifyDescriptor.InputLine nd = new NotifyDescriptor.InputLine(
-                        GUIUtilities.getFrame(ui), "Name: ", "Rename CellGroup");
-                nd.setInputText(name);
-                if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION)
+                if(CommonActions.renameCellGroupMember(ui.getDoc().getBookHandle()))
                 {
-                    String t = nd.getInputText();
-                    ui.getDoc().setTitle(t);
-                    currentTP.setTitleAt(currentTP.getSelectedIndex(), makeTabTitle(t));
+                    currentTP.setTitleAt(currentTP.getSelectedIndex(), 
+                            makeTabTitle(CellUtils.getName(ui.getDoc().getBook())));
                     GUIHelper.updateFrameTitle(
                             getHandleAt(currentTP,currentTP.getSelectedIndex()));
                 }
@@ -200,14 +195,24 @@ public class TabbedPaneU
                     if (TopFrame.PICCOLO)
                     {
                         Frame f = GUIUtilities.getFrame(e.getComponent());
-                        pt = SwingUtilities.convertPoint(e.getComponent(), e
-                                .getX(), e.getY(), f);
+                        pt = getPoint(e, f);
                     }
                     getTabPopupMenu().show(tabbedPane, pt.x, pt.y);
+                    e.consume();
                     break;
                 }
             }
             TopFrame.getInstance().repaint();
+        }
+        
+        private Point getPoint(MouseEvent e, Frame f)
+        {
+            Point pt = //SwingUtilities.convertPoint(e.getComponent(), e.getX(),
+                   // e.getY(), f);
+               new Point(e.getX(), e.getY());
+            if (e.getComponent() instanceof JComponent)
+                return GUIHelper.computePoint((JComponent) e.getComponent(), pt);
+            return pt;
         }
     }
 
@@ -258,12 +263,6 @@ public class TabbedPaneU
         }else if(c instanceof NotebookUI)
             return (NotebookUI) c;
         return null;
-    }
-
-    public static void addTabToTabbedPaneGroup(HGHandle groupH, HGHandle h)
-    {
-        CellGroup group = (CellGroup) ThisNiche.hg.get(groupH);
-        group.insert(group.getArity(), h); //CellUtils.getCellHForRefH(h));
     }
 
     public static JTabbedPane createTabbedPane(CellGroup group)

@@ -44,6 +44,7 @@ public class JComponentVisual implements CellVisual
            area.setBackground(Color.white);
            comp = area;
         }
+        
         return comp;
     }
 }
