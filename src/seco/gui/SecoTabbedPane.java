@@ -19,7 +19,7 @@ import seco.things.CellGroup;
 
 public class SecoTabbedPane extends JTabbedPane
 {
-    private int dragTabIndex = -1;
+    private HGHandle dragTabHandle = null;
     protected HGHandle groupH;
 
     public SecoTabbedPane(HGHandle groupH)
@@ -59,9 +59,12 @@ public class SecoTabbedPane extends JTabbedPane
         {
             if (!SwingUtilities.isLeftMouseButton(e)) return;
             int index = tp.getTargetTabIndex(e.getPoint());
-            if (index < 0) return;
+            if (index < 0) {
+                tp.dragTabHandle = null;
+                return;
+            }
             System.out.println("SecoTP - initDrag: " + index);
-            tp.dragTabIndex = index;
+            tp.dragTabHandle = tp.getCellGroup().getTargetAt(index);
             TransferHandler handler = tp.getTransferHandler();
             // MouseEvent m = SwingUtilities.convertMouseEvent(button, e, c);
             int action = ((e.getModifiers() & MouseEvent.CTRL_MASK) == 0) ? TransferHandler.MOVE
@@ -71,14 +74,6 @@ public class SecoTabbedPane extends JTabbedPane
 
         public void mouseClicked(MouseEvent e)
         {
-            if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e))
-            {
-                // NotebookUI ui = (NotebookUI) button.view.getContainer();
-                // ui.showPopup(SwingUtilities.convertMouseEvent(button, e,
-                // ui));
-            }
-            // else
-            // initDrag(e);
         }
 
         public void mouseDragged(MouseEvent e)
@@ -116,15 +111,20 @@ public class SecoTabbedPane extends JTabbedPane
 
         protected Transferable createTransferable(JComponent comp)
         {
-            return new SecoTransferable(TabbedPaneU.getHandleAt(tp,
-                    tp.dragTabIndex));
+            return new SecoTransferable(tp.dragTabHandle);
         }
 
         protected void exportDone(JComponent source, Transferable data,
                 int action)
         {
             super.exportDone(source, data, action);
-            if (action == MOVE) TabbedPaneU.closeAt(tp, tp.dragTabIndex);
+            if (action == MOVE ) 
+            {
+                int i = tp.getCellGroup().indexOf(tp.dragTabHandle);
+                if(i > -1)
+                   TabbedPaneU.closeAt(tp, i);
+            }
+                
         }
 
         public boolean importData(TransferSupport support)

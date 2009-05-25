@@ -64,6 +64,7 @@ public class ResizableComponentView extends HidableComponentView implements
         return super.getAlignment(axis);
     }
 
+    private static int MIN_HEIGHT = 50;
     public float getPreferredSpan(int axis)
     {
         float m = super.getPreferredSpan(axis);
@@ -73,6 +74,10 @@ public class ResizableComponentView extends HidableComponentView implements
                     - InputCellView.WHITE_GAP_SPAN;
             if (m > l || m == 0)
                 return l;
+        }else
+        {
+            return (panel != null) ? 
+                    Math.max(panel.getPreferredSize().height, MIN_HEIGHT) : MIN_HEIGHT;
         }
         return m;
     }

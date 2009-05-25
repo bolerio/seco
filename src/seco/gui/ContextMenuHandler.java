@@ -105,7 +105,7 @@ public class ContextMenuHandler extends PBasicInputEventHandler
 
     private static JMenuItem makeMenuItem(String label, String code)
     {
-        JMenuItem mi = new JMenuItem(new ScriptletAction(code));
+        JMenuItem mi = new JMenuItem(new ScriptletAction("beanshell", code));
         mi.setText(label);
         return mi;
     }

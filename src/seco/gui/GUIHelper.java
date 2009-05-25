@@ -949,12 +949,15 @@ public class GUIHelper
         border.setTitlePosition(TitledBorder.ABOVE_TOP);
         if (CellUtils.isShowTitle(cgm) && title != null)
         {
-            comp.putClientProperty(BORDER_PROP, comp.getBorder());
+            if(!(comp.getBorder() instanceof TitledBorder))
+               comp.putClientProperty(BORDER_PROP, comp.getBorder());
             comp.setBorder(border);
         }
         else if (!CellUtils.isShowTitle(cgm))
         {
-            comp.setBorder((Border) comp.getClientProperty(BORDER_PROP));
+            Border oldB = (Border) comp.getClientProperty(BORDER_PROP);
+            if(!border.equals(oldB))
+               comp.setBorder(oldB);
         }
     }
 }

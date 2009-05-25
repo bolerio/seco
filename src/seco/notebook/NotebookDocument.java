@@ -445,27 +445,27 @@ public class NotebookDocument extends DefaultStyledDocument
         //residing in deeper levels, 
         //or floating around in HG if we adopt the other approach with:
         //create_new_output_cell = (list.isEmpty());
-        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
+//        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         List<HGHandle> list = CellUtils.getOutCellHandles(e.getCellHandle());
-        for (HGHandle o : list)
-        {
-            int off = findElementOffset(o);
-            if (off < 0) 
-            {
-                //visible outCell in canvas
-                if(canvas != null && canvas.getOutCellNodeForHandle(o) != null)
-                {
-                    create_new_output_cell = false;
-                    break;
-                }
-            }
-            else //already have one in the notebook 
-            {
-              create_new_output_cell = false;
-              break;
-            }
-        }
-       // create_new_output_cell = (list.isEmpty());
+//        for (HGHandle o : list)
+//        {
+//            int off = findElementOffset(o);
+//            if (off < 0) 
+//            {
+//                //visible outCell in canvas
+//                if(canvas != null && canvas.getOutCellNodeForHandle(o) != null)
+//                {
+//                    create_new_output_cell = false;
+//                    break;
+//                }
+//            }
+//            else //already have one in the notebook 
+//            {
+//              create_new_output_cell = false;
+//              break;
+//            }
+//        }
+        create_new_output_cell = (list.isEmpty());
         if (!create_new_output_cell) return;
         HGHandle outH = CellUtils.createOutputCellH(e.getCellHandle(), e
                 .getValue());

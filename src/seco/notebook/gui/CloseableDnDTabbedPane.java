@@ -192,8 +192,8 @@ public class CloseableDnDTabbedPane extends org.wonderly.swing.tabs.CloseableTab
 
 		public void drop(DropTargetDropEvent e)
 		{
-			Transferable t = e.getTransferable();
-			DataFlavor[] f = t.getTransferDataFlavors();
+			//Transferable t = e.getTransferable();
+			//DataFlavor[] f = t.getTransferDataFlavors();
 			if (isDropAcceptable(e))
 			{
 				convertTab(dragTabIndex, getTargetTabIndex(e.getLocation()));

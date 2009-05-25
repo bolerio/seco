@@ -3,7 +3,9 @@ package seco.notebook.gui;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JList;
@@ -41,10 +43,12 @@ public class OpenBookPanel extends JPanel
     private void filterDocs()
     {
         docs.remove(NotebookEditorKit.getDefaultDocument());
-        for(HGHandle bookH: GUIHelper.getOpenedBooks())
+        Set<HGHandle> opened = GUIHelper.getOpenedBooks();
+        for(NotebookDocument doc: 
+            new LinkedList<NotebookDocument>(docs))
         {
-            int i = docs.indexOf(bookH);
-            if(i >= 0) docs.remove(bookH);
+            if(opened.contains(doc.getBookHandle()))
+               docs.remove(doc);
         }
     }
     

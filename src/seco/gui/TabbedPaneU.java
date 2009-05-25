@@ -26,6 +26,9 @@ import org.wonderly.swing.tabs.TabCloseEvent;
 import org.wonderly.swing.tabs.TabCloseListener;
 
 import seco.ThisNiche;
+import seco.events.AttributeChangeEvent;
+import seco.events.CellGroupChangeEvent;
+import seco.events.EvalCellEvent;
 import seco.notebook.NotebookUI;
 import seco.notebook.gui.CloseableDnDTabbedPane;
 import seco.notebook.gui.DialogDisplayer;
@@ -70,6 +73,12 @@ public class TabbedPaneU
         ThisNiche.hg.unfreeze(h);
         CellGroup top = CellUtils.getParentGroup(h);
         top.remove(i);
+       
+        HGHandle visH = CellContainerVisual.getHandle();
+        CellUtils.removeEventPubSub(CellGroupChangeEvent.HANDLE, h, visH, visH);
+        CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, h, visH, visH);
+        CellUtils.removeEventPubSub(AttributeChangeEvent.HANDLE, h, visH, visH);
+       
         if (tp.getTabCount() == 0) 
             TopFrame.getInstance().setTitle("Seco");
         else

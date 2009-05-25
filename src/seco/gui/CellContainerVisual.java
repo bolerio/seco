@@ -159,13 +159,15 @@ public class CellContainerVisual implements CellVisual, EventHandler
             return TopFrame.getInstance().getCanvas();        
         if(c instanceof PiccoloCanvas) 
             return (PiccoloCanvas) c;
-        if(c == null || GUIHelper.getPSwingNode(c) == null) return TopFrame.getInstance().getCanvas();
+        if(c == null || GUIHelper.getPSwingNode(c) == null) 
+            return TopFrame.getInstance().getCanvas();
         return GUIHelper.getPSwingNode(c).getCanvas();
     }
 
     private void handleAttrEvent(AttributeChangeEvent event, HGHandle publisher)
     {
         CellGroup group = CellUtils.getParentGroup(publisher);
+        if(group == null) return;
         PiccoloCanvas canvas = getCanvas(group);
         PSwingNode ps = canvas.getPSwingNodeForHandle(publisher);
         if (event.getName().equals(VisualAttribs.minimized))
@@ -184,7 +186,8 @@ public class CellContainerVisual implements CellVisual, EventHandler
                canvas.showAllNodes();
                canvas.placeNode(ps, false);
             } 
-        }else if(event.getName().equals(VisualAttribs.showTitle)){
+        }else if(event.getName().equals(VisualAttribs.showTitle)
+                || event.getName().equals(VisualAttribs.name)){
             GUIHelper.handleTitle((CellGroupMember)
                     ThisNiche.hg.get(ps.getHandle()),
                     ps.getComponent());
@@ -193,7 +196,7 @@ public class CellContainerVisual implements CellVisual, EventHandler
 
     private void handleEvent(CellGroupChangeEvent e)
     {
-        CellGroup group = (CellGroup) ThisNiche.hg.get(e.getCellGroup());
+        CellGroup group = ThisNiche.hg.get(e.getCellGroup());
         if (!(group.getVisualInstance() instanceof PiccoloCanvas)) return;
         PiccoloCanvas canvas = (PiccoloCanvas) group.getVisualInstance();
         HGHandle[] added = e.getChildrenAdded();

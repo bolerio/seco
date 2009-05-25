@@ -169,6 +169,7 @@ public class CellUtils
     
     public static boolean isCollapsed(CellGroupMember c)
     {
+        if(c == null) return false;
         Boolean b = (Boolean) c.getAttribute(XMLConstants.ATTR_COLLAPSED);
         return b != null && b.booleanValue();
     }

@@ -7,13 +7,20 @@
  */
 package seco.notebook.gui.menu;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.List;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.text.Element;
 
+import org.hypergraphdb.HGHandle;
+
+import seco.ThisNiche;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.XMLConstants;
@@ -94,6 +101,24 @@ public class CellPropsProvider implements DynamicMenuProvider
 			});
 			menu.add(outputCellCheck);
 		}
+		
+		if (enabled && (nb != null))
+        {
+            final JMenuItem mi = new JMenuItem(
+                    "Remove Output Cells");
+            mi.addActionListener(new ActionListener() {
+                              @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    List<HGHandle> outs = 
+                        CellUtils.getOutCellHandles(ThisNiche.handleOf(nb));
+                    for(HGHandle h: outs)
+                        ThisNiche.hg.remove(h);
+                    
+                }
+            });
+            menu.add(mi);
+        }
 	}
 
 	public void update(final JMenu menu)
