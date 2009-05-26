@@ -330,7 +330,13 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         HGHandle cellH = ThisNiche.handleOf(cell);
         PSwingNode p = null;
-        p = new PSwingNode(this, comp, cellH);
+        try{
+          p = new PSwingNode(this, comp, cellH);
+        }catch(Exception ex)
+        {
+            ex.printStackTrace();
+            return null;
+        }
         p.setTooltip((String) comp.getClientProperty("tooltip"));
         
         LayoutHandler vh = (LayoutHandler) cell

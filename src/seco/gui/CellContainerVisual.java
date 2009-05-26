@@ -124,6 +124,7 @@ public class CellContainerVisual implements CellVisual, EventHandler
                 PScrollPane scroll = new PScrollPane(canvas);
                 scroll.setBorder(new MatteBorder(1, 1, 1, 1, Color.blue));
                 PSwingNode ps = top_canvas.addComponent(scroll, x);
+                if(ps == null) return;
                 PCamera camera = new PCamera();
                 ps.addChild(camera);
                 camera.addLayer(canvas.getNodeLayer());

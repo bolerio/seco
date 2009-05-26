@@ -20,15 +20,21 @@
 package seco.notebook.syntax.completion;
 
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+
 import javax.swing.JComponent;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
+
+import seco.gui.GUIHelper;
+import seco.gui.TopFrame;
 
 
 /**
@@ -221,7 +227,20 @@ abstract class CompletionLayoutPopup {
             popupBounds.height = Math.min(prefSize.height,
                     (screen.y + screen.height) - popupBounds.y);
         }
+        
+        correctBounds(popupBounds);
         return popupBounds;
+    }
+    
+    protected void correctBounds(Rectangle r)
+    {
+        if(TopFrame.getInstance().getCanvas() == null) return;
+        Point pt = new Point(r.x, r.y);
+            //SwingUtilities.convertPoint(getEditorComponent(), r.x,
+             //   r.y, TopFrame.getInstance());
+        Point corr = GUIHelper.computePoint(getEditorComponent(), pt);
+        //System.out.println("correctBounds: " + corr);
+        r.x = corr.x; r.y = corr.y;
     }
     
     /**
