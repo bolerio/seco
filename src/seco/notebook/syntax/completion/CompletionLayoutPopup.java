@@ -235,11 +235,9 @@ abstract class CompletionLayoutPopup {
     protected void correctBounds(Rectangle r)
     {
         if(TopFrame.getInstance().getCanvas() == null) return;
-        Point pt = new Point(r.x, r.y);
-            //SwingUtilities.convertPoint(getEditorComponent(), r.x,
+        //Point pt = SwingUtilities.convertPoint(getEditorComponent(), r.x,
              //   r.y, TopFrame.getInstance());
-        Point corr = GUIHelper.computePoint(getEditorComponent(), pt);
-        //System.out.println("correctBounds: " + corr);
+        Point corr = GUIHelper.computePoint(getEditorComponent(), new Point(r.x, r.y));
         r.x = corr.x; r.y = corr.y;
     }
     

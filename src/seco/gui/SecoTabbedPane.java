@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
@@ -28,6 +29,7 @@ public class SecoTabbedPane extends JTabbedPane
         this.groupH = groupH;
         DragMouseListener ml = new DragMouseListener(this);
         addMouseMotionListener(ml);
+        addMouseListener(ml);
         setTransferHandler(new TPTransferHandler(this));
     }
 
@@ -46,9 +48,15 @@ public class SecoTabbedPane extends JTabbedPane
         return -1;
     }
 
-    private static class DragMouseListener implements MouseMotionListener
+    private static class DragMouseListener extends MouseAdapter
     {
         private SecoTabbedPane tp;
+        private boolean draging = false;
+        private int lastX;
+        private int lastY;
+        //minimal distance between pressed/dragged to start dragging
+        //thus preventing unintentional drags 
+        private static final int MIN_DIST = 5;
 
         private DragMouseListener(SecoTabbedPane tp)
         {
@@ -57,34 +65,42 @@ public class SecoTabbedPane extends JTabbedPane
 
         private void initDrag(MouseEvent e)
         {
-            if (!SwingUtilities.isLeftMouseButton(e)) return;
+            if(Math.abs(lastX - e.getX()) < MIN_DIST &&
+                    Math.abs(lastY - e.getY()) < MIN_DIST) return;
             int index = tp.getTargetTabIndex(e.getPoint());
             if (index < 0) {
                 tp.dragTabHandle = null;
                 return;
             }
+            draging = true;
             System.out.println("SecoTP - initDrag: " + index);
             tp.dragTabHandle = tp.getCellGroup().getTargetAt(index);
             TransferHandler handler = tp.getTransferHandler();
-            // MouseEvent m = SwingUtilities.convertMouseEvent(button, e, c);
-            int action = ((e.getModifiers() & MouseEvent.CTRL_MASK) == 0) ? TransferHandler.MOVE
-                    : TransferHandler.COPY;
+            int action = ((e.getModifiers() & MouseEvent.CTRL_MASK) == 0) ? 
+                    TransferHandler.MOVE : TransferHandler.COPY;
             handler.exportAsDrag(tp, e, action);
-        }
-
-        public void mouseClicked(MouseEvent e)
-        {
         }
 
         public void mouseDragged(MouseEvent e)
         {
-            initDrag(e);
+            if (!SwingUtilities.isLeftMouseButton(e)) return;
+            if(!draging) initDrag(e);
         }
 
-        public void mouseMoved(MouseEvent e)
+        @Override
+        public void mouseReleased(MouseEvent e)
         {
-            // DO NOTHING
+            draging = false;
         }
+
+        @Override
+        public void mousePressed(MouseEvent e)
+        {
+            lastX = e.getX(); 
+            lastY = e.getY();
+        }
+
+       
     }
 
     public static class TPTransferHandler extends TransferHandler

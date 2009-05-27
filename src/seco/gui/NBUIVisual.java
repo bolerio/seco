@@ -68,6 +68,7 @@ public class NBUIVisual implements CellVisual
         }
         TopFrame.setCurrentRuntimeContext(ctxH);
         scrollPane.setName(TabbedPaneU.makeTabTitle(doc.getTitle()));
+        scrollPane.updateUI();
         return scrollPane;
     }
 

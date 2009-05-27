@@ -56,14 +56,8 @@ public class CellContainerVisual implements CellVisual, EventHandler
             if (CellUtils.isMinimized(element))
                 return GUIHelper.getMinimizedUI(element);
             canvas = new PiccoloCanvas(true);
-            String title = CellUtils.getName(element);
-            if(title != null){
-               TitledBorder border = BorderFactory.createTitledBorder(title);
-               border.setTitlePosition(TitledBorder.ABOVE_TOP);
-               canvas.setBorder(border);
-            }
+            GUIHelper.handleTitle(element,  canvas);
             //canvas.setBorder(new MatteBorder(1, 1, 1, 1, Color.blue));
-            // canvas.setBackground(new Color(250, 250, 255));
         }
         element.setVisualInstance(canvas);
         for (int i = 0; i < group.getArity(); i++)

@@ -142,7 +142,7 @@ public class TokenMarker
 
 main_loop:	for(pos = line.offset; pos < lineLength; pos++)
 		{
-			//{{{ check if we have to stop parsing
+			//check if we have to stop parsing
 			if(terminateChar >= 0 && pos - line.offset >= terminateChar
 				&& !terminated)
 			{
@@ -151,7 +151,7 @@ main_loop:	for(pos = line.offset; pos < lineLength; pos++)
 					.getStandardRuleSet(context.rules
 					.getDefault()),context);
 				keywords = context.rules.getKeywords();
-			} //}}}
+			} 
 
 			//{{{ check for end of delegate
 			if(context.parent != null)
@@ -251,7 +251,7 @@ main_loop:	for(pos = line.offset; pos < lineLength; pos++)
 		markKeyword(true);
 		//}}}
 
-		//{{{ Unwind any NO_LINE_BREAK parent delegates
+		//Unwind any NO_LINE_BREAK parent delegates
 unwind:		while(context.parent != null)
 		{
 			rule = context.parent.inRule;
@@ -265,7 +265,7 @@ unwind:		while(context.parent != null)
 			}
 			else
 				break unwind;
-		} //}}}
+		}
 
 		tokenHandler.handleToken(line,Token.END,
 			pos - line.offset,0,context);
@@ -334,14 +334,12 @@ unwind:		while(context.parent != null)
 	 */
 	private boolean handleRule(ParserRule checkRule, boolean end)
 	{
-		//{{{ Some rules can only match in certain locations
+		//Some rules can only match in certain locations
 		if(!end)
 		{
 			if(Character.toUpperCase(checkRule.hashChar)
 				!= Character.toUpperCase(line.array[pos]))
-			{
-				return false;
-			}
+		    	return false;
 		}
 
 		int offset = ((checkRule.action & ParserRule.MARK_PREVIOUS) != 0) ?
@@ -365,13 +363,13 @@ unwind:		while(context.parent != null)
 		{
 			if(offset != lastOffset)
 				return false;
-		} //}}}
+		} 
 
 		int matchedChars = 1;
 		CharIndexedSegment charIndexed = null;
 		REMatch match = null;
 
-		//{{{ See if the rule's start or end sequence matches here
+		//See if the rule's start or end sequence matches here
 		if(!end || (checkRule.action & ParserRule.MARK_FOLLOWING) == 0)
 		{
 			// the end cannot be a regular expression
@@ -379,7 +377,7 @@ unwind:		while(context.parent != null)
 			{
 				if(end)
 				{
-					if(context.spanEndSubst != null)
+					if(context != null && context.spanEndSubst != null)
 						pattern.array = context.spanEndSubst;
 					else
 						pattern.array = checkRule.end;
@@ -418,9 +416,9 @@ unwind:		while(context.parent != null)
 						matchedChars = 1;
 				}
 			}
-		} //}}}
+		} 
 
-		//{{{ Check for an escape sequence
+		//Check for an escape sequence
 		if((checkRule.action & ParserRule.IS_ESCAPE) == ParserRule.IS_ESCAPE)
 		{
 			if(context.inRule != null)
@@ -433,8 +431,8 @@ unwind:		while(context.parent != null)
 		{
 			escaped = false;
 			pos += pattern.count - 1;
-		} //}}}
-		//{{{ Handle start of rule
+		}
+		//Handle start of rule
 		else if(!end)
 		{
 			if(context.inRule != null)
@@ -475,8 +473,7 @@ unwind:		while(context.parent != null)
 					keywords = context.rules.getKeywords();
 				}
 				break;
-			//}}}
-			//{{{ SPAN, EOL_SPAN
+			//SPAN, EOL_SPAN
 			case ParserRule.SPAN:
 			case ParserRule.EOL_SPAN:
 				context.inRule = checkRule;
@@ -523,7 +520,6 @@ unwind:		while(context.parent != null)
 				keywords = context.rules.getKeywords();
 
 				break;
-			//}}}
 			//{{{ MARK_FOLLOWING
 			case ParserRule.MARK_FOLLOWING:
 				tokenHandler.handleToken(line,(checkRule.action

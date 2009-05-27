@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
+import javax.swing.UIManager;
 
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;

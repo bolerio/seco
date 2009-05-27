@@ -68,7 +68,6 @@ public class KeywordMap
 		map = new Keyword[mapLength];
 	} //}}}
 
-	//{{{ lookup() method
 	/**
 	 * Looks up a key.
 	 * @param text The text segment
@@ -77,7 +76,7 @@ public class KeywordMap
 	 */
 	public byte lookup(Segment text, int offset, int length)
 	{
-		if(length == 0)
+		if(length == 0 || text.array == null)
 			return Token.NULL;
 		Keyword k = map[getSegmentMapKey(text, offset, length)];
 		while(k != null)
@@ -93,7 +92,7 @@ public class KeywordMap
 			k = k.next;
 		}
 		return Token.NULL;
-	} //}}}
+	}
 
 	//{{{ add() method
 	/**

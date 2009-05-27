@@ -46,6 +46,7 @@ public class TabbedPaneVisual implements CellVisual, EventHandler
 
         CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE, groupH,
                 getHandle(), getHandle());
+        tp.updateUI();
         return tp;
     }
 

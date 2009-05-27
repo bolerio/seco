@@ -207,18 +207,16 @@ public class TabbedPaneU
                         pt = getPoint(e, f);
                     }
                     getTabPopupMenu().show(tabbedPane, pt.x, pt.y);
-                    e.consume();
                     break;
                 }
             }
             TopFrame.getInstance().repaint();
+            e.consume();
         }
         
         private Point getPoint(MouseEvent e, Frame f)
         {
-            Point pt = //SwingUtilities.convertPoint(e.getComponent(), e.getX(),
-                   // e.getY(), f);
-               new Point(e.getX(), e.getY());
+            Point pt =  new Point(e.getX(), e.getY());
             if (e.getComponent() instanceof JComponent)
                 return GUIHelper.computePoint((JComponent) e.getComponent(), pt);
             return pt;

@@ -944,6 +944,11 @@ public class GUIHelper
 
     public static void handleTitle(CellGroupMember cgm, JComponent comp)
     {
+        //minimized comps are shown without title
+        if(CellUtils.isMinimized(cgm))
+        {
+            comp.setBorder(null); return;
+        }
         String title = CellUtils.getName(cgm);
         TitledBorder border = BorderFactory.createTitledBorder(title);
         border.setTitlePosition(TitledBorder.ABOVE_TOP);
