@@ -7,10 +7,10 @@
  */
 package seco.notebook;
 
-import static seco.notebook.Actions.COPY;
-import static seco.notebook.Actions.CUT;
-import static seco.notebook.Actions.PASTE;
-import static seco.notebook.ElementType.*;
+import static seco.notebook.ElementType.cellGroupBox;
+import static seco.notebook.ElementType.commonCell;
+import static seco.notebook.ElementType.inputCellBox;
+import static seco.notebook.ElementType.outputCellBox;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -33,7 +33,12 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
 import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
@@ -54,7 +59,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.plaf.TextUI;
 import javax.swing.plaf.UIResource;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
@@ -95,7 +99,6 @@ import seco.notebook.syntax.Mode;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.TokenMarker;
 import seco.notebook.syntax.XModeHandler;
-import seco.notebook.util.IconManager;
 import seco.notebook.view.HtmlView;
 import seco.rtenv.EvaluationContext;
 import seco.things.Cell;
@@ -104,10 +107,9 @@ import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import sun.awt.AppContext;
 import bsh.BshScriptSupport;
+
 import com.microstar.xml.XmlException;
 import com.microstar.xml.XmlParser;
-
-import edu.umd.cs.piccolox.pswing.PSwing;
 
 public class NotebookUI extends JTextPane implements DocumentListener,
         AdjustmentListener, NotebookDocument.CaretMoveListener
@@ -258,11 +260,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     public static void setAntiAliasing(boolean _antiAliasing)
     {
         antiAliasing = _antiAliasing;
-        // putClientProperty(SwingUtilities2.AA_TEXT_PROPERTY_KEY, new
-        // Boolean(true));
-        // Set it system wide for the next run
-        // System.setProperty("swing.aatext", Boolean.toString(antiAliasing));
-        // //$NON-NLS-1$
     }
 
     public static boolean isAntiAliasing()
@@ -339,7 +336,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         popupMenu = (UpdatablePopupMenu) ThisNiche.hg.get(POPUP_HANDLE);
         if (popupMenu == null)
         {
-            popupMenu = new UpdatablePopupMenu();// JPopupMenu();
+            popupMenu = new UpdatablePopupMenu();
             NotebookEditorKit kit = new NotebookEditorKit();
             popupMenu
                     .add(new EnhancedMenu("Input Type", new CellLangProvider()));
@@ -407,7 +404,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     public void setCellEngine(String engine, final int offset)
     {
         final NotebookDocument doc = getDoc();
-        // doc.setCellEngine(engine, offset);
         final Element el = doc.getEnclosingCellElement(offset);
         if (el == null) return;
         CellGroupMember nb = NotebookDocument.getNBElement(el);
@@ -659,11 +655,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                     }
                     if (inner != null && inner instanceof HtmlView)
                     {
-                        // System.out.println("CustomNavigationFilter - HTML: "
-                        // + inner.getStartOffset() + ":"
-                        // + inner.getEndOffset() + ":" + dot + ":"
-                        // + doc.getLength() + ":" + up);
-                        // fb.setDot(up ? dot - 1 : dot + 1, bias);
                         lastCaretStart = -1;
                         Component c = ((HtmlView) inner).getComponent();
                         int p = up ? ((HTMLEditor) c).getDocument().getLength() - 1
@@ -989,12 +980,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                             Position.Bias.Backward, bounds);
                     Rectangle r = (shape instanceof Rectangle) ? (Rectangle) shape
                             : shape.getBounds();
-                    // System.out.println("paintLayer2: " + r + ":" + offs0 +
-                    // ":"
-                    // + offs1 + ":" +
-                    // ((InlineView)view).getGlyphPainter().getSpan(
-                    // (InlineView)view, offs0, offs1,
-                    // ((InlineView)view).getTabExpander(), 0));
                     g.fillRect(r.x, r.y, r.width, r.height);
                     return r;
                 }
@@ -1057,7 +1042,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         if (el == null)
             return getDoc().getUpperElement(getCaretPosition(), type);
 
-        // some handle is selected, check if it's of the needed type
+        // some handle is selected, check if it is of the needed type
         if (type == outputCellBox) return el;
         return NotebookDocument.getUpperElement(el, type);
     }
@@ -1102,6 +1087,5 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             super.setDot(dot, dotBias);
         }
     }
-
  
 }

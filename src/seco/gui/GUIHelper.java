@@ -7,7 +7,6 @@ import static seco.notebook.Actions.EXPORT;
 import static seco.notebook.Actions.NEW;
 import static seco.notebook.Actions.OPEN;
 import static seco.notebook.Actions.PASTE;
-import static seco.notebook.Actions.SELECT_ALL;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -19,7 +18,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,13 +30,11 @@ import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
@@ -54,14 +50,8 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.atom.HGAtomRef;
-
-import com.jgoodies.looks.plastic.PlasticLookAndFeel;
-import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
-import com.jgoodies.looks.plastic.theme.DesertBluer;
 
 import seco.ThisNiche;
-import seco.events.CellGroupChangeEvent;
 import seco.gui.layout.DRect;
 import seco.gui.layout.DValue;
 import seco.gui.layout.DefaultLayoutHandler;
@@ -88,14 +78,17 @@ import seco.notebook.gui.menu.VisPropsProvider;
 import seco.notebook.html.HTMLToolBar;
 import seco.notebook.util.FileUtil;
 import seco.notebook.util.IconManager;
-import seco.rtenv.ContextLink;
-import seco.rtenv.EvaluationContext;
 import seco.rtenv.RuntimeContext;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.IOUtils;
+
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
+import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
+import com.jgoodies.looks.plastic.theme.DesertBluer;
+
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolox.pswing.PSwing;
 
@@ -107,8 +100,13 @@ public class GUIHelper
             .makeHandle("1d3b7df9-f109-11dc-9512-073dfab2b15a");
     public static final HGPersistentHandle HTML_TOOLBAR_HANDLE = HGHandleFactory
             .makeHandle("56371f73-025d-11dd-b650-ef87b987c94a");
+    
     public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
-
+    //size of the minimized components 
+    public static Dimension MINIMIZED_COMPONENT_SIZE = new Dimension(100, 30);
+    //rectangle used for adding containers 
+    public static Rectangle CONTAINER_RECT = new Rectangle(20, 70, 300, 300);
+    
     static
     {
         PlasticLookAndFeel.setPlasticTheme(new DesertBluer());
@@ -172,11 +170,9 @@ public class GUIHelper
         return htmlToolBar;
     }
 
-    static Dimension def_min_size = new Dimension(70, 30);
-
     public static Dimension getMinimizedUISize()
     {
-        return def_min_size;
+        return MINIMIZED_COMPONENT_SIZE;
     }
 
     public static JComponent getMinimizedUI(CellGroupMember cgm)
@@ -647,8 +643,6 @@ public class GUIHelper
         return addToCellGroup(h, top, visualH, lh, r, false);
     }
 
-    public static Rectangle DEFAULT_DIM = new Rectangle(0, 0, 300, 300);
-
     public static HGHandle addContainer(HGHandle visualH)
     {
         String name = "ContainerCellGroup";
@@ -657,7 +651,7 @@ public class GUIHelper
             name = "CanvasCellGroup";
         CellGroup c = new CellGroup(name);
         HGHandle h = ThisNiche.hg.add(c);
-        return addToTopCellGroup(h, visualH, null, DEFAULT_DIM);
+        return addToTopCellGroup(h, visualH, null, CONTAINER_RECT);
     }
 
     public static HGHandle addToTopCellGroup(final Object x, final Rectangle r)

@@ -61,8 +61,6 @@ import seco.events.EventDispatcher;
 import seco.events.CellTextChangeEvent.EventType;
 import seco.events.handlers.AttributeChangeHandler;
 import seco.events.handlers.CellGroupChangeHandler;
-import seco.gui.PiccoloCanvas;
-import seco.gui.TopFrame;
 import seco.notebook.html.HTMLEditor;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.SyntaxStyle;

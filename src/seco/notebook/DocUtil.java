@@ -1,6 +1,14 @@
 package seco.notebook;
 
-import static seco.notebook.ElementType.*;
+import static seco.notebook.ElementType.cellGroup;
+import static seco.notebook.ElementType.cellGroupBox;
+import static seco.notebook.ElementType.cellHandle;
+import static seco.notebook.ElementType.commonCell;
+import static seco.notebook.ElementType.component;
+import static seco.notebook.ElementType.htmlCell;
+import static seco.notebook.ElementType.inputCellBox;
+import static seco.notebook.ElementType.insertionPoint;
+import static seco.notebook.ElementType.outputCellBox;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -34,7 +42,6 @@ import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.IOUtils;
-import seco.things.Scriptlet;
 
 abstract public class DocUtil
 {
@@ -56,7 +63,6 @@ abstract public class DocUtil
     protected static void addContent(char[] data, int offs,
             Vector<ElementSpec> vec, int start)
     {
-        // System.out.println("addContent:" + data.length + ":" + start);
         int end = data.length;
         if (start == end) return;
         for (int i = start; i < end; i++)
@@ -64,8 +70,6 @@ abstract public class DocUtil
             char c = data[i];
             if (c == NEWLINE[0])
             {
-                // System.out.println("NEW - addContent - inner1:" + (i+1 -
-                // start));
                 char[] data1 = new char[(i + 1) - start];
                 System.arraycopy(data, start, data1, 0, data1.length);
                 addSubContent(data1, 0, vec);
@@ -77,7 +81,6 @@ abstract public class DocUtil
         if (data.length == 0) return;
         char[] data1 = new char[end - start];
         System.arraycopy(data, start, data1, 0, data1.length);
-        // System.out.println("NEW - addContent - inner3:" + data1.length);
         addSubContent(data1, offs + end, vec);
     }
 
@@ -184,14 +187,7 @@ abstract public class DocUtil
         CellUtils.addMutualEventPubSub(EvalCellEvent.HANDLE, cellH, doc
                 .getHandle(), EvalCellHandler.getInstance());
         }
-// now done in a special action        
-//        if (CellUtils.isInitCell(cell))
-//        {
-//            EvalResult res = eval_result(doc, cell);
-//            createOutputCell(doc, CellUtils.createOutputCellH(cellH, res
-//                    .getText(), res.getComponent(), false), attr, vec);
-//        }
-    }
+   }
 
     static void createOutputCell(NotebookDocument doc, HGHandle cellH,
             MutableAttributeSet attr, Vector<ElementSpec> vec, boolean genInsP)

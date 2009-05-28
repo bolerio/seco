@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
+
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.Position;
@@ -22,11 +23,9 @@ import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
 import seco.notebook.view.CellHandleView;
-import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
-
 
 public class SelectionManager extends
         HashMap<Element, SelectionManager.Selection>
@@ -77,20 +76,12 @@ public class SelectionManager extends
         {
             CellGroupMember nb = NotebookDocument.getNBElement(el);
             if (!(nb instanceof CellGroup)) return false;
-            // if(nb.getParent() instanceof Notebook)
-            // {
-            // CellGroup c =(CellGroup) nb;
-            // for(int i = 0; i < c.size(); i++)
-            // if(!(c.getElement(i)instanceof CellGroup))
-            // return false;
-            // }
         }
         return true;
     }
 
     public boolean canGroup()
     {
-        // System.out.println("canGroup: " + selection.size() + ":" +selection);
         if (selection.size() < 2) return false;
         int index = -1;
         Element common_par = null;
@@ -107,8 +98,8 @@ public class SelectionManager extends
                 continue;
             }
             Element par = NotebookDocument.getContainerEl(el, false);
-            if (common_par == null) common_par = el.getDocument()
-                    .getRootElements()[0];
+            if (common_par == null)
+                common_par = el.getDocument().getRootElements()[0];
             if (!common_par.equals(par)) return false;
             int next_ind = ((CellGroup) NotebookDocument.getNBElement(par))
                     .indexOf(nb);
@@ -151,8 +142,6 @@ public class SelectionManager extends
 
     public void up(Element el, boolean select)
     {
-        // System.out.println("SelectionManager - up: " + select + ":" + el);
-        // CellGroupMember from = NotebookDocument.getNBElement(el);
         CellGroupMember to = prev_nb(el);
         common_sel(el, to, select);
         if (to == null) return;
@@ -161,8 +150,6 @@ public class SelectionManager extends
 
     public void down(Element el, boolean select)
     {
-        // System.out.println("SelectionManager - down: " + select + ":" + el);
-        // CellGroupMember from = NotebookDocument.getNBElement(el);
         CellGroupMember to = next_nb(el);
         common_sel(el, to, select);
         if (to == null) return;
@@ -189,7 +176,8 @@ public class SelectionManager extends
             {
                 removeCellSelection(el);
                 get(getElement(to)).requestFocus();
-            } else
+            }
+            else
                 select(to, true);
         }
     }
@@ -198,13 +186,14 @@ public class SelectionManager extends
     {
         // System.out.println("SelectionManager - left: " + select + ":" + el);
         CellGroupMember from = NotebookDocument.getNBElement(el);
-        if(from instanceof CellGroup && ((CellGroup)from).getArity() > 0)
+        if (from instanceof CellGroup && ((CellGroup) from).getArity() > 0)
         {
             if (!select) clearSelections();
             else
                 removeCellSelection(el);
-            select(((CellGroup)from).getElement(0), true);
-        } else
+            select(((CellGroup) from).getElement(0), true);
+        }
+        else
         {
             clearSelections();
             notebookUI.setCaretPosition(el.getStartOffset());
@@ -220,7 +209,7 @@ public class SelectionManager extends
             return;
         }
         // System.out.println("SelectionManager - right: " + select + ":" + el);
-       // CellGroupMember from = NotebookDocument.getNBElement(el);
+        // CellGroupMember from = NotebookDocument.getNBElement(el);
         // System.out.println("SelectionManager - parents: " + from.getParent()
         // + ":" + from.getNotebook());
         Element par = NotebookDocument.getContainerEl(el, false);
@@ -263,7 +252,7 @@ public class SelectionManager extends
     private boolean check_remove_nested(Element el)
     {
         boolean result = false;
-        //CellGroupMember nb = NotebookDocument.getNBElement(el);
+        // CellGroupMember nb = NotebookDocument.getNBElement(el);
         Vector<Element> removed = new Vector<Element>(selection.size());
         for (Element e : selection)
         {
@@ -309,15 +298,16 @@ public class SelectionManager extends
             for (int i = i_from; i <= i_to; i++)
                 select(parent.getElement(i));
             return;
-        } else
+        }
+        else
         {
             par_el = same_level_el(from, to);
             parent = (par_el != null) ? (CellGroup) NotebookDocument
                     .getNBElement(par_el) : (CellGroup) doc.getBook();
             if (parent != null)
             {
-                if (!nb_from.equals(parent)) addRange(getElement(parent),
-                        getElement(nb_to), false, true);
+                if (!nb_from.equals(parent))
+                    addRange(getElement(parent), getElement(nb_to), false, true);
                 parent = (CellGroup) doc.getContainer(from);
                 addRange(getElement(nb_from), getElement(parent
                         .getElement(parent.getArity() - 1)), true, true);
@@ -328,24 +318,26 @@ public class SelectionManager extends
                     .getNBElement(par_el) : (CellGroup) doc.getBook();
             if (parent != null)
             {
-                if (!nb_from.equals(parent)) addRange(getElement(nb_from),
-                        getElement(parent), true, false);
+                if (!nb_from.equals(parent))
+                    addRange(getElement(nb_from), getElement(parent), true,
+                            false);
                 addRange(getElement(parent.getElement(0)), getElement(nb_to),
                         true, true);
                 return;
             }
             // par_el = NotebookDocument.getContainerEl(from, false);
-           // addRange(from,
-           //         getElement(parent.getElement(parent.getArity() - 1)), true,
-          //          true);
-          //  addRange(getElement(next_nb(getElement(parent))), to, false, false);
+            // addRange(from,
+            // getElement(parent.getElement(parent.getArity() - 1)), true,
+            // true);
+            // addRange(getElement(next_nb(getElement(parent))), to, false,
+            // false);
         }
     }
 
     private CellGroupMember next_nb(Element el)
     {
         NotebookDocument doc = notebookUI.getDoc();
-        if(el == doc.getRootElements()[0]) return null;
+        if (el == doc.getRootElements()[0]) return null;
         Element par_el = NotebookDocument.getContainerEl(el, false);
         CellGroup parent = (par_el == null) ? (CellGroup) doc.getBook()
                 : (CellGroup) NotebookDocument.getNBElement(par_el);
@@ -359,7 +351,7 @@ public class SelectionManager extends
     private CellGroupMember prev_nb(Element el)
     {
         NotebookDocument doc = notebookUI.getDoc();
-        if(el == doc.getRootElements()[0]) return null;
+        if (el == doc.getRootElements()[0]) return null;
         Element par_el = NotebookDocument.getContainerEl(el, false);
         CellGroup parent = (par_el == null) ? (CellGroup) doc.getBook()
                 : (CellGroup) NotebookDocument.getNBElement(par_el);
@@ -400,29 +392,31 @@ public class SelectionManager extends
     {
         for (Element el : keySet())
             if (nb.equals(NotebookDocument.getNBElement(el))
-                    && get(el) instanceof CellHandleView.CustomButton) return el;
+                    && get(el) instanceof CellHandleView.CustomButton)
+                return el;
         return null;
     }
-    
+
     private Element getOutElement(CellGroupMember nb)
     {
-        List<HGHandle> list = 
-            CellUtils.getOutCellHandles(ThisNiche.handleOf(nb));
+        List<HGHandle> list = CellUtils.getOutCellHandles(ThisNiche
+                .handleOf(nb));
         List<CellGroupMember> mems = new ArrayList(list.size());
-        for(HGHandle h: list)
-          mems.add((CellGroupMember) ThisNiche.hg.get(h));
+        for (HGHandle h : list)
+            mems.add((CellGroupMember) ThisNiche.hg.get(h));
         for (Element el : keySet())
-            if (get(el) instanceof CellHandleView.CustomButton &&
-                mems.contains(NotebookDocument.getNBElement(el)))
-                    return el;
+            if (get(el) instanceof CellHandleView.CustomButton
+                    && mems.contains(NotebookDocument.getNBElement(el)))
+                return el;
         return null;
     }
-    
+
     private Element getElementH(HGHandle nb)
     {
         for (Element el : keySet())
             if (nb.equals(NotebookDocument.getNBElementH(el))
-                    && get(el) instanceof CellHandleView.CustomButton) return el;
+                    && get(el) instanceof CellHandleView.CustomButton)
+                return el;
         return null;
     }
 
@@ -431,7 +425,7 @@ public class SelectionManager extends
         Element el = getElement(nb);
         if (el == null) return;
         // System.out.println("Select: " + nb + ":" + selection.contains(el));
-        //Element outEl = getOutElement(nb);
+        // Element outEl = getOutElement(nb);
         if (!selection.contains(el))
         {
             check_remove_nested(el);
@@ -441,12 +435,13 @@ public class SelectionManager extends
             {
                 get(el).requestFocus();
             }
-            //if (outEl != null) select(NotebookDocument.getNBElement(outEl));
+            // if (outEl != null) select(NotebookDocument.getNBElement(outEl));
             return;
-        } else
+        }
+        else
         {
             removeCellSelection(el);
-            //if (outEl != null) removeCellSelection(outEl);
+            // if (outEl != null) removeCellSelection(outEl);
         }
     }
 

@@ -69,7 +69,6 @@ public class ScriptletDocument extends NotebookDocument
             DocUtil.startTag(htmlCell, attr, 0, vec);
         String text = CellUtils.getText(cell);
         if (!text.endsWith("\n")) text += "\n";
-        // System.out.println("NDOC-createCell: " + text);
         DocUtil.addContent(text.toCharArray(), 0, vec, 0);
         DocUtil.endTag(vec);
         DocUtil.endTag(vec);

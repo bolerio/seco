@@ -17,14 +17,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGSearchResult;
-import org.hypergraphdb.HGSystemFlags;
 import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.query.AtomTypeCondition;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
-import seco.U;
 import seco.gui.StandaloneFrame;
 
 

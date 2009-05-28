@@ -71,12 +71,6 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         PSmallBoundsHandle.addBoundsHandlesTo(node);
     }
 
-//    public void unselect(Collection<PNode> items)
-//    {
-//        for (PNode node : items)
-//            unselect(node);
-//    }
-
     public void unselect(PNode node)
     {
         if (!isSelected(node)) { return; }
@@ -121,8 +115,6 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     // //////////////////////////////////////////////////////
     protected void startDrag(PInputEvent e)
     {
-       // System.out.println("startDrag - redirect " + 
-       //         e.getPath().getPickedNode()); // + ":" + pc.getNodeLayer().getChildrenCount());
         super.startDrag(e);
         initializeSelection(e);
         if (!isOptionSelection(e)) 
@@ -142,7 +134,6 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     {
         super.endDrag(e);
         endStandardSelection(e);
-        //System.out.println("End drag: " + e.getPickedNode());
         e.getPickedNode().endResizeBounds();
         dragging_copy = false;
     }
@@ -165,23 +156,6 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
             else
                 pressNode = pressNode.getParent();
         }
-        
-//        if(pressNode instanceof PSwingNode &&
-//                ((PSwingNode)pressNode).getComponent() instanceof PiccoloCanvas)
-//        {
-//            PiccoloCanvas pc = (PiccoloCanvas)
-//                  ((PSwingNode)pressNode).getComponent();
-//            Point2D pt = pie.getCanvasPosition();
-//            PPickPath aPickPath = 
-//                pc.getCamera().pick(pt.getX(), pt.getY(), 1);
-//            PNode n =  aPickPath.getPickedNode();
-//            if(n != null && n instanceof PNode)
-//            {
-//               pc.selectionHandler.pressNode = n;
-//               pc.selectionHandler.select(n); 
-//               pressNode = null;
-//            }
-//        }
         
         if (pressNode != null)
         {
@@ -234,7 +208,6 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     @Override
     public void keyPressed(PInputEvent e)
     {
-       // System.out.println("ScribaSelectionHandler - keyPressed: " + e);
         switch (e.getKeyCode())
         {
            case KeyEvent.VK_DELETE:
