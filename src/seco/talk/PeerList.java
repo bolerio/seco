@@ -69,25 +69,21 @@ public class PeerList extends JPanel
                 l.contentsChanged(ev);
         }
 
-        @Override
         public void addListDataListener(ListDataListener l)
         {
             listeners.add(l);
         }
 
-        @Override
         public Object getElementAt(int index)
         {
             return thePeers.get(index);
         }
 
-        @Override
         public int getSize()
         {
             return thePeers.size();
         }
 
-        @Override
         public void removeListDataListener(ListDataListener l)
         {
             listeners.remove(l);

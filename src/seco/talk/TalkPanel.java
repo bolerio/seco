@@ -301,7 +301,6 @@ public class TalkPanel extends JPanel
     
     public static class TransferButtonListener implements ActionListener
     {
-        @Override
         public void actionPerformed(ActionEvent e)
         {
             TalkPanel talkPanel = (TalkPanel) 

@@ -75,13 +75,13 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         }
         node_menu = new JPopupMenu();
         node_menu.add(makeMenuItem("Rename",
-                "seco.gui.CommonActions.renameCellGroupMember(canvas.getSelectedPSwingNode().getHandle())"));
+                "seco.gui.CommonActions.renameCellGroupMember(seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode().getHandle())"));
         node_menu.add(makeMenuItem("Title On/Off",
-        "seco.things.CellUtils.toggleShowTitle(canvas.getSelectedPSwingNode().getHandle())"));
+        "seco.things.CellUtils.toggleShowTitle(seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode().getHandle())"));
 
         node_menu.add(makeMenuItem("Pin/Unpin",
                 "seco.gui.CommonActions.showLayoutSettingsDlg("
-                        + "canvas.getSelectedPSwingNode());"));
+                        + "seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode());"));
         node_menu.add(makeMenuItem("Store Changes",
                 "seco.gui.ContextMenuHandler.updateSelPSCell();"));
         show_menu(event, node_menu);

@@ -7,8 +7,6 @@ import seco.events.EventHandler;
 
 public class ChatHandler implements EventHandler
 {
-
-    @Override
     public void handle(HGHandle eventType, 
                        Object event, 
                        HGHandle publisher,

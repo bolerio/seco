@@ -8,34 +8,27 @@
 package bsh;
 
 import static javax.script.ScriptContext.ENGINE_SCOPE;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Hashtable;
 import java.util.Map;
-import java.util.Vector;
+
 import javax.script.ScriptContext;
-import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
 import javax.swing.JTree;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.TransferHandler;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import seco.gui.StandaloneFrame;
 import seco.notebook.NotebookUI;
 import bsh.engine.ScriptContextEngineView;
 
 public class JTreeAst extends JTree
 {
+	private static final long serialVersionUID = 1L;
+	
 	public JTreeAst()
 	{
 		super();

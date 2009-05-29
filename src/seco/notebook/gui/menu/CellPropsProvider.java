@@ -106,8 +106,8 @@ public class CellPropsProvider implements DynamicMenuProvider
         {
             final JMenuItem mi = new JMenuItem(
                     "Remove Output Cells");
-            mi.addActionListener(new ActionListener() {
-                              @Override
+            mi.addActionListener(new ActionListener() 
+            {
                 public void actionPerformed(ActionEvent e)
                 {
                     List<HGHandle> outs = 
