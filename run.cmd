@@ -1,7 +1,8 @@
 @echo off
+set JAVA_HOME=c:/java6
 set SCRIBA_HOME=%CD%
 
-set SCRIBA_CLASSPATH="%SCRIBA_HOME%/scriba.jar"
+set SCRIBA_CLASSPATH="%SCRIBA_HOME%/seco.jar"
 set SCRIBA_NATIVE=%SCRIBA_HOME%/lib/native/windows
 set JAVA_EXEC="%JAVA_HOME%/bin/java"
 
@@ -15,4 +16,4 @@ del append.bat
 del tmpList.txt
 set SCRIBA_CLASSPATH=%LIB_JARS%;%SCRIBA_CLASSPATH%
 
-%JAVA_EXEC% -cp %SCRIBA_CLASSPATH% -Djava.library.path=%SCRIBA_NATIVE% com.kobrix.scriba.boot.StartMeUp
+%JAVA_EXEC% -cp %SCRIBA_CLASSPATH% -Djava.library.path=%SCRIBA_NATIVE% seco.boot.StartMeUp

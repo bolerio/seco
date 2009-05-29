@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." name="Scriba">
-	<description>Scriba Build File</description>
+<project basedir="." name="Seco">
+	<description>Seco Build File</description>
 
 	<property name="version" value="1.0a" />
-	<property name="jar-name" value="scriba.jar"/>
+	<property name="jar-name" value="seco.jar"/>
 	
 	<!-- The directory containing library jar files -->
 	<property name="lib" value="${basedir}/lib" />
@@ -35,11 +35,11 @@
 	<target name="init" depends="timestamp">
 		<mkdir dir="${build}" />
         <mkdir dir="${build}/compile" />
-        <mkdir dir="${build}/scriba" />
+        <mkdir dir="${build}/seco" />
 		<mkdir dir="${dist}" />
 	</target>
 
-	<target name="compile" depends="init" description="compile the Scriba source">
+	<target name="compile" depends="init" description="compile the Seco source">
 		<javac source="1.5" classpathref="classpath" debug="on" destdir="${build}/compile" srcdir="${src}">
 		</javac>
 	</target>
@@ -59,18 +59,18 @@
                 <include name="**/*.scm"/>
 			</fileset>
 	    </copy>
-		<available property="manifest_generated" file="${build}/scriba.manifest" />
+		<available property="manifest_generated" file="${build}/seco.manifest" />
 	</target>
 
-	<target name="jars" depends="compile, jars-prepare, generate_manifest" description="Build Scriba Jar file.">
-		<jar basedir="${build}/compile" jarfile="${build}/scriba/${jar-name}" manifest="${build}/scriba.manifest">
+	<target name="jars" depends="compile, jars-prepare, generate_manifest" description="Build Seco Jar file.">
+		<jar basedir="${build}/compile" jarfile="${build}/seco/${jar-name}" manifest="${build}/seco.manifest">
 			<exclude name="**/*.jar" />
 			<exclude name="**/*.bak" />
 		</jar>
 	</target>
 
 	<target name="dist-prepare" depends="jars" description="Copy distribution files for zip.">
-		<copy todir="${build}/scriba">
+		<copy todir="${build}/seco">
 			<fileset dir=".">
 				<include name="lib/**" />
 				<include name="run.**" />
@@ -78,7 +78,7 @@
 				<include name="LicensingInformation" />
 			</fileset>
 		</copy>
-        <copy todir="${build}/scriba">
+        <copy todir="${build}/seco">
             <fileset dir=".">
                 <include name="examples/**"/>
             </fileset>
@@ -86,26 +86,26 @@
 	</target>
 
 	<target name="dist-win" depends="dist-prepare" description="Build Windows distribution">
-		<zip zipfile="${dist}/scriba-dist-win-${version}.zip">
+		<zip zipfile="${dist}/seco-dist-win-${version}.zip">
 			<fileset dir="${build}">
-				<include name="scriba/**" />
-				<exclude name="scriba/run.sh" />
-				<exclude name="scriba/lib/native/linux/**" />
+				<include name="seco/**" />
+				<exclude name="seco/run.sh" />
+				<exclude name="seco/lib/native/linux/**" />
 			</fileset>
 		</zip>
 	</target>
 
 	<target name="dist-linux" depends="dist-prepare" description="Build Linux distribution">
-		<tar destfile="${dist}/scriba-dist-lin-${version}.tar"
+		<tar destfile="${dist}/seco-dist-lin-${version}.tar"
 		     basedir="dist">
 			<tarfileset dir="${build}">
-				<include name="scriba/**" />
-				<exclude name="scriba/run.cmd" />
-				<exclude name="scriba/lib/native/windows/**" />
+				<include name="seco/**" />
+				<exclude name="seco/run.cmd" />
+				<exclude name="seco/lib/native/windows/**" />
 			</tarfileset>
          </tar>
-         <gzip src="${dist}/scriba-dist-lin-${version}.tar"
-               destfile="${dist}/scriba-dist-lin-${version}.tgz"/>
+         <gzip src="${dist}/seco-dist-lin-${version}.tar"
+               destfile="${dist}/seco-dist-lin-${version}.tgz"/>
 	</target>
 
 
@@ -117,22 +117,22 @@
 
 	<!-- ======================================================= -->
 	<!-- Manfiest Target                                         -->
-	<!-- Automatically creates Scriba Manifest File, based on -->
+	<!-- Automatically creates Seco Manifest File, based on -->
 	<!-- JAR Files located in lib                      -->
 	<!-- ======================================================= -->
 	<target name="generate_manifest" depends="init" unless="manifest_generated">
 		<echo>
-           Creating Scriba Manifest File
+           Creating Seco Manifest File
         </echo>
 		<mkdir dir="${build}" />
 
 		<javac destdir="${build}" srcdir="${src}" includeAntRuntime="false" nowarn="off" debug="true" source="1.5" optimize="on">
 			<classpath refid="classpath" />
-			<include name="ManifestCreator.java" />
+			<include name="seco/ManifestCreator.java" />
 		</javac>
 
-		<delete file="${build}/scriba.manifest" />
-		<java fork="true" classname="ManifestCreator" output="${build}/scriba.manifest">
+		<delete file="${build}/seco.manifest" />
+		<java fork="true" classname="seco.ManifestCreator" output="${build}/seco.manifest">
 			<classpath path="${build}" />
 			<arg value="${lib}" />
 		</java>
