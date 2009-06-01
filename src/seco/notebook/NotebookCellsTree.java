@@ -63,8 +63,11 @@ public class NotebookCellsTree extends JTree
     {
         final CellGroupMember node = (CellGroupMember) getLastSelectedPathComponent();
         TreePath selPath = getSelectionModel().getSelectionPath();
-        CellGroupMember par = (selPath != null) ?
-            (CellGroupMember) selPath.getParentPath().getLastPathComponent() : null;
+        CellGroupMember par = null;
+        if (selPath != null && selPath.getParentPath() != null)
+            par = (CellGroupMember) selPath.getParentPath().getLastPathComponent();
+        else
+            par = null;
        // final CellGroup group = (par != null && par instanceof CellGroup) ?
         //        (CellGroup) par : null;
         JPopupMenu popup = new JPopupMenu();

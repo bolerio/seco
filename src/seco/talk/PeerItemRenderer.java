@@ -33,6 +33,9 @@ class PeerItemRenderer extends JLabel implements ListCellRenderer
         if (value instanceof HGPeerIdentity)
         {
             label = ((HGPeerIdentity)value).getName();
+            int hostPart = label.lastIndexOf("/");
+            if (hostPart > -1)
+                label = label.substring(hostPart + 1);
             image = personIcon;
         }
         else if (value instanceof HostedRoom)

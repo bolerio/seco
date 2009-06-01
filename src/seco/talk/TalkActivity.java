@@ -303,7 +303,7 @@ public class TalkActivity extends FSMActivity
              getThisPeer().getGraph().getTransactionManager().transact(new Callable<WorkflowState>() {
                  public WorkflowState call() throws Exception
                  {
-                     // Store the processor atom itself locally, overwriting any previous version
+                     // Store the atom itself locally, overwriting any previous version
                      HGHandle atomHandle = SubgraphManager.writeTransferedAtom(atom, getThisPeer().getGraph());
                      if ("atom".equals(type))
                          GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, 

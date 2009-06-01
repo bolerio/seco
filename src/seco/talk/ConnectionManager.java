@@ -14,8 +14,23 @@ import org.hypergraphdb.util.ValueSetter;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
-import seco.things.CellGroup;
+import seco.gui.PiccoloCanvas;
+import seco.gui.TopFrame;
+import seco.gui.VisualAttribs;
+import seco.things.CellGroupMember;
+import seco.things.CellUtils;
 
+
+/**
+ * 
+ * <p>
+ * Static top-level methods to manage/establish network connectivity of this
+ * peer with a Seco network.
+ * </p>
+ *
+ * @author Borislav Iordanov
+ *
+ */
 public class ConnectionManager
 {
     public static ConnectionPanel openConnectionPanel(ConnectionConfig config)
@@ -31,6 +46,10 @@ public class ConnectionManager
             configHandle = ThisNiche.hg.add(config);
         
         // Hmm, it's almost easier to rewrite the following to directly use result sets.
+        // The query finds the 1 (expected) panel that is linked with the configuration
+        // by a plain link. The PipeQuery used to perform this says "all atoms of type
+        // ConnectionPanel that are form an ordered link with the configuration atom".
+        // 
         HGQuery<HGHandle> inquery = HGQuery.make(ThisNiche.hg, hg.type(ConnectionPanel.class));
         final OrderedLinkCondition cond = hg.orderedLink(hg.anyHandle(), configHandle);        
         HGQuery<HGHandle> query = new PipeQuery<HGHandle, HGHandle>
@@ -62,14 +81,22 @@ public class ConnectionManager
         else
             throw new RuntimeException("More than 1 ConnectionPanel associated with configuration " + 
                                        configHandle);
-        
+
         // Find an existing cell with that panel:
         // hmm, not sure what needs to be done here....
-        GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE,
+        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
+        int width = 200;
+        int height = 200;
+        int x = Math.max(0, canvas.getWidth() - width - width/5);
+        int y = height;
+        CellGroupMember cell = ThisNiche.hg.get( 
+            GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE,
                                 panelHandle,
                                 null, 
                                 null, 
-                                new Rectangle(800, 100, 200, 100));        
+                                new Rectangle(x, y, width, height)));
+        CellUtils.setName(cell, "Seco Network");
+        cell.setAttribute(VisualAttribs.showTitle, true);        
         ConnectionPanel panel = ThisNiche.hg.get(panelHandle);
         panel.initComponents();
         panel.connect();

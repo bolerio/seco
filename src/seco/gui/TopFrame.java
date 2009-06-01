@@ -12,7 +12,6 @@ import seco.ThisNiche;
 import seco.notebook.NotebookUI;
 import seco.notebook.util.Log;
 import seco.rtenv.RuntimeContext;
-import seco.things.CellGroup;
 
 public abstract class TopFrame extends JFrame
 {

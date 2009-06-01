@@ -34,6 +34,11 @@ import seco.ThisNiche;
 import seco.U;
 import seco.api.CallableCallback;
 import seco.gui.GUIHelper;
+import seco.gui.PiccoloCanvas;
+import seco.gui.TopFrame;
+import seco.gui.VisualAttribs;
+import seco.things.CellGroupMember;
+import seco.things.CellUtils;
 
 /**
  * <p>
@@ -241,12 +246,19 @@ public class ConnectionPanel extends JPanel
             thisPeer.getActivityManager().initiateActivity(activity);
             talks.put(friend, activity);
         }
+        
+        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();        
+        int width = 200;
+        int height = 100;
+        int x = Math.max(0, (canvas.getWidth() - width)/2);
+        int y = Math.max(0, (canvas.getHeight() - height)/2);  
         HGHandle panelHandle = ThisNiche.hg.getHandle(activity.getPanel());
-        GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, 
+        CellGroupMember cgm = ThisNiche.hg.get(GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, 
                                 panelHandle, 
                                 null, 
                                 null, 
-                                new Rectangle(500, 200, 200, 100));
+                                new Rectangle(x, y, width, height)));
+        CellUtils.setName(cgm, friend.getName());
     }
 
     public void openChatRoom(HostedRoom room)
@@ -264,14 +276,22 @@ public class ConnectionPanel extends JPanel
                 roomPanel.initComponents();
                 ThisNiche.hg.add(roomPanel);
             } 
-            roomPanel.initComponents();
+            //roomPanel.initComponents();
         }
+        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();        
+        int width = 400;
+        int height = 500;
+        int x = Math.max(0, (canvas.getWidth() - width)/2);
+        int y = Math.max(0, (canvas.getHeight() - height)/2);          
         HGHandle panelHandle = ThisNiche.hg.getHandle(roomPanel);
-        GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, 
-                                panelHandle, 
-                                null, 
-                                null, 
-                                new Rectangle(500, 200, 200, 100));
+        CellGroupMember cgm = ThisNiche.hg.get(GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, 
+                                                                       panelHandle, 
+                                                                       null, 
+                                                                       null, 
+                                                                       new Rectangle(x, y, width, height)));
+        CellUtils.setName(cgm, "Chat room " + room.getName());
+        cgm.setAttribute(VisualAttribs.showTitle, true);
+        roomPanel.initSplitterLocations();
     }
     
     public boolean isConnected()

@@ -4,9 +4,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JTextPane;
-
-import org.hypergraphdb.annotation.HGIgnore;
-
 import seco.api.Callback;
 
 public class TalkInputPane extends JTextPane

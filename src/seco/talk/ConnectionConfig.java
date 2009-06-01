@@ -2,7 +2,8 @@ package seco.talk;
 
 /**
  * <p>
- * A POJO that stores all information needed to connect to a Seco network.
+ * A POJO that stores all information needed to connect to a Seco network. This is
+ * stored in the niche as is and populates the network dialog.
  * </p>
  * 
  * @author Borislav Iordanov

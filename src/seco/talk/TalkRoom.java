@@ -29,6 +29,8 @@ public class TalkRoom extends JPanel
     private TalkInputPane inputPane;
     private PeerList peerList;
     private MultiUserChat thechat;
+    private JSplitPane peerListSplit;
+    private JSplitPane inputSplit; 
     
     private MultiUserChat getTheChat()
     {
@@ -57,7 +59,19 @@ public class TalkRoom extends JPanel
             {
                 Message msg = (Message)packet;
                 HGPeerIdentity id = new HGPeerIdentity();
-                id.setName(packet.getFrom());
+                String otherId = (String)msg.getProperty("secoPeer");
+                if (otherId == null)
+                {
+                    System.err.println("Received a room message by a non-seco peer.");
+                    return;
+                }
+                else if (otherId.equals(connectionPanel.getThisPeer().getIdentity().getId().toString()))
+                    return;
+                String from = packet.getFrom();
+                int hostPart = from.lastIndexOf("/");
+                if (hostPart > -1)
+                    from = from.substring(hostPart + 1);                
+                id.setName(from);
                 id.setId(HGHandleFactory.makeHandle());
                 chatPane.chatFrom(id, msg.getBody());
             }
@@ -92,17 +106,34 @@ public class TalkRoom extends JPanel
         inputPane.inputCallback = new ChatCallBack(this); 
            
         chatPane = new ChatPane();
-        JSplitPane split1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+        peerListSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                               new JScrollPane(chatPane), 
                                               new JScrollPane(inputPane));
-        
+        peerListSplit.setResizeWeight(1.0);
         peerList = new PeerList();
-        peerList.initComponents();        
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                                              split1, 
-                                              peerList);
-        this.add(splitPane, BorderLayout.CENTER);
-        joinRoom();
+        peerList.initComponents();    
+        inputSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                                    peerListSplit, 
+                                    peerList);
+        inputSplit.setOneTouchExpandable(true);
+        inputSplit.setResizeWeight(1.0);
+        this.add(inputSplit, BorderLayout.CENTER);
+        
+//        this.addComponentListener(new ComponentAdapter() 
+//        {            
+//            public void componentResized(ComponentEvent e) 
+//            {
+//                peerListSplit.setDividerLocation((int)(0.8*getHeight()));
+//                inputSplit.setDividerLocation((int)(0.7*getWidth()));                
+//            }    
+//        });
+        joinRoom();        
+    }
+    
+    public void initSplitterLocations()
+    {
+        peerListSplit.setDividerLocation((int)(0.8*getHeight()));
+        inputSplit.setDividerLocation((int)(0.7*getWidth()));                        
     }
     
     public String getRoomId()
@@ -138,7 +169,10 @@ public class TalkRoom extends JPanel
         {
             try
             {
-                room.getTheChat().sendMessage(msg);
+                Message xmpp = room.getTheChat().createMessage();
+                xmpp.setBody(msg);
+                xmpp.setProperty("secoPeer", room.connectionPanel.getThisPeer().getIdentity().getId().toString());
+                room.getTheChat().sendMessage(xmpp);
                 room.chatPane.chatFrom(
                         room.connectionPanel.getThisPeer().getIdentity(), msg);
             }
@@ -155,5 +189,5 @@ public class TalkRoom extends JPanel
         {
             this.room = room;
         }
-    }        
+    }       
 }
