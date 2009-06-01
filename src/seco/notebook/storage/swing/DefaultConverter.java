@@ -342,7 +342,7 @@ public class DefaultConverter // implements Converter
         for (AddOnType a : s)
             if(name.equals(a.getName()))
             {      
-                System.out.println("Remove UPPER: " + name);
+               // System.out.println("Remove UPPER: " + name);
                 s.remove(a);
             }
    }

@@ -167,8 +167,9 @@ public class CellContainerVisual implements CellVisual, EventHandler
         PSwingNode ps = canvas.getPSwingNodeForHandle(publisher);
         if (event.getName().equals(VisualAttribs.minimized))
         {
-            if (ps != null) ps.removeFromParent();
-               addChild(canvas, publisher);
+            if (ps != null) 
+                ps.removeFromParent();
+            addChild(canvas, publisher);
         }
         else if (event.getName().equals(VisualAttribs.maximized))
         {
@@ -182,7 +183,9 @@ public class CellContainerVisual implements CellVisual, EventHandler
                canvas.placeNode(ps, false);
             } 
         }else if(event.getName().equals(VisualAttribs.showTitle)
-                || event.getName().equals(VisualAttribs.name)){
+                || event.getName().equals(VisualAttribs.name))
+        {
+            if(ps == null) return;
             GUIHelper.handleTitle((CellGroupMember)
                     ThisNiche.hg.get(ps.getHandle()),
                     ps.getComponent());

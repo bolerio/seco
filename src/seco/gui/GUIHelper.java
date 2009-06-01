@@ -175,17 +175,7 @@ public class GUIHelper
         return MINIMIZED_COMPONENT_SIZE;
     }
 
-    public static JComponent getMinimizedUI(CellGroupMember cgm)
-    {
-        String text = CellUtils.getName(cgm);
-        if (text == null) text = "Untitled";
-        // JLabel l = new JLabel(text);
-        JButton l = new JButton(text);
-        l.setBackground(Color.YELLOW);
-        l.putClientProperty("tooltip", text);
-        return l;
-    }
-
+   
     // disable menuItems if no notebook presented
     // use GlobMenuItem to prevent disabling
     public static class NBMenu extends PiccoloMenu implements MenuListener
@@ -938,10 +928,10 @@ public class GUIHelper
 
     public static void handleTitle(CellGroupMember cgm, JComponent comp)
     {
-        //minimized comps are shown without title
         if(CellUtils.isMinimized(cgm))
         {
-            comp.setBorder(null); return;
+            update_minimized_UI(cgm, comp);
+            return;
         }
         String title = CellUtils.getName(cgm);
         TitledBorder border = BorderFactory.createTitledBorder(title);
@@ -959,4 +949,27 @@ public class GUIHelper
                comp.setBorder(oldB);
         }
     }
+    
+    public static JComponent getMinimizedUI(CellGroupMember cgm)
+    {
+        String text = CellUtils.getName(cgm);
+        if (text == null) text = "Untitled";
+        // JLabel l = new JLabel(text);
+        JButton l = new JButton(text);
+        l.setBackground(Color.YELLOW);
+        l.putClientProperty("tooltip", text);
+        return l;
+    }
+    
+    private static void update_minimized_UI(CellGroupMember cgm, JComponent ui)
+    {
+        String text = CellUtils.getName(cgm);
+        if (text == null) text = "Untitled";
+        JButton l = (JButton) ui;
+        //minimized comps are shown without title
+        l.setBorder(null);
+        l.setText(text);
+        l.setBackground(Color.YELLOW);
+        l.putClientProperty("tooltip", text);
+    } 
 }

@@ -337,7 +337,8 @@ unwind:		while(context.parent != null)
 		//Some rules can only match in certain locations
 		if(!end)
 		{
-			if(Character.toUpperCase(checkRule.hashChar)
+			if(line!= null && line.array != null &&
+			        Character.toUpperCase(checkRule.hashChar)
 				!= Character.toUpperCase(line.array[pos]))
 		    	return false;
 		}
