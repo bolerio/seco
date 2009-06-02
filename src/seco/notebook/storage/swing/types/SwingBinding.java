@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.EventListener;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,16 +31,19 @@ import org.hypergraphdb.IncidenceSetRef;
 import org.hypergraphdb.LazyRef;
 import org.hypergraphdb.atom.HGAtomRef;
 import org.hypergraphdb.atom.HGRelType;
+import org.hypergraphdb.type.BeanPropertyBasedProjection;
 import org.hypergraphdb.type.HGAbstractType;
 import org.hypergraphdb.type.HGAtomType;
 import org.hypergraphdb.type.HGAtomTypeBase;
+import org.hypergraphdb.type.HGCompositeType;
+import org.hypergraphdb.type.HGProjection;
 import org.hypergraphdb.type.Record;
 import org.hypergraphdb.type.Slot;
 import org.hypergraphdb.type.TypeUtils;
 
 import seco.notebook.storage.swing.DefaultConverter;
 
-public class SwingBinding extends HGAtomTypeBase
+public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
 {
     protected HGHandle typeHandle;
     protected SwingType hgType;
@@ -361,6 +365,21 @@ public class SwingBinding extends HGAtomTypeBase
             res.add(e);
         }
         return res.toArray(new EventListener[res.size()]);
+    }
+    
+    public Iterator<String> getDimensionNames() 
+    {
+        return hgType.getDimensionNames();
+    }
+
+    public HGProjection getProjection(String dimensionName) 
+    {
+        HGProjection p = hgType.getProjection(dimensionName);
+        if (p == null)
+            throw new HGException("Could not find projection for '" + dimensionName + 
+                    "' in HG type " + typeHandle + " for " + hgType.getJavaClass().getName());
+        else
+            return new BeanPropertyBasedProjection(p);
     }
 
     static class SwingRecord extends Record implements

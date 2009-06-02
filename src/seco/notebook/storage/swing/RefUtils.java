@@ -53,6 +53,14 @@ public class RefUtils
 		return "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
 	}
 
+	public static Field getField(Class<?> cls, String name)
+	{
+	    Field f = getPublicField(cls, name);
+	    if(f == null)
+	        f = getPrivateField(cls, name);
+	    return f;
+	}
+	
 	public static Field getPublicField(Class<?> cls, String name)
 	{
 		try

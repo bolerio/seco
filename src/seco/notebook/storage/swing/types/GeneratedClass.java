@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.type.Record;
-import org.hypergraphdb.type.TypeUtils;
 
 public abstract class GeneratedClass extends SwingBinding
 {

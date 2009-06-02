@@ -72,7 +72,7 @@ public class ConnectionManager
             ConnectionPanel panel = new ConnectionPanel();
 //            panel.setConnectionConfig(config);
             panelHandle = ThisNiche.hg.add(panel);           
-            ThisNiche.hg.add(new HGPlainLink(panelHandle, configHandle));            
+            ThisNiche.hg.add(new HGPlainLink(panelHandle, configHandle)); 
         }
         else if (L.size() == 1)
         {

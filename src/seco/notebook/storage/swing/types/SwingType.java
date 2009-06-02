@@ -1,9 +1,11 @@
 package seco.notebook.storage.swing.types;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.hypergraphdb.HGException;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGLink;
@@ -11,6 +13,9 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGPlainLink;
 import org.hypergraphdb.HGTypeSystem;
 import org.hypergraphdb.HGQuery.hg;
+import org.hypergraphdb.annotation.AtomReference;
+import org.hypergraphdb.atom.AtomProjection;
+import org.hypergraphdb.atom.HGAtomRef;
 import org.hypergraphdb.atom.HGRelType;
 import org.hypergraphdb.type.BonesOfBeans;
 import org.hypergraphdb.type.RecordType;
@@ -18,6 +23,7 @@ import org.hypergraphdb.type.Slot;
 
 import seco.notebook.storage.swing.DefaultConverter;
 import seco.notebook.storage.swing.MetaData;
+import seco.notebook.storage.swing.RefUtils;
 import seco.notebook.storage.swing.DefaultConverter.AddOnType;
 
 public class SwingType extends RecordType
@@ -112,12 +118,36 @@ public class SwingType extends RecordType
 			HGHandle slotHandle = 
 			    typeSystem.getJavaTypeFactory().getSlotHandle(s, valueTypeHandle);
 			addSlot(slotHandle);
-			//HGAtomRef.Mode refMode = getReferenceMode(javaClass, slot.getLabel());
-			//if (refMode != null)
-			//	typeSystem.getHyperGraph().add(
-			//			new AtomProjection(thisHandle, slot.getLabel(), slot.getValueType(), refMode));
+			HGAtomRef.Mode refMode = getReferenceMode(javaClass, s);
+			if (refMode != null)
+				typeSystem.getHyperGraph().add(
+						new AtomProjection(thisHandle, s, valueTypeHandle, refMode));
 		}
 	}
+	
+	private HGAtomRef.Mode getReferenceMode(Class<?> javaClass, String field_name)
+    {
+	    Field field = RefUtils.getField(javaClass, field_name);
+	    if(field == null) return null;
+        //
+        // Retrieve or recursively create a new type for the nested
+        // bean.
+        //
+        AtomReference ann = (AtomReference)field.getAnnotation(AtomReference.class);
+        if (ann == null)
+            return null;
+        String s = ann.value();
+        if ("hard".equals(s))
+            return HGAtomRef.Mode.hard;
+        else if ("symbolic".equals(s))
+            return HGAtomRef.Mode.symbolic;
+        else if ("floating".equals(s))
+            return HGAtomRef.Mode.floating;
+        else
+            throw new HGException("Wrong annotation value '" + s + 
+                    "' for field '" + field.getName() + "' of class '" +
+                    javaClass.getName() + "', must be one of \"hard\", \"symbolic\" or \"floating\".");
+    }
 
 	protected HGHandle createAddonsLink(DefaultConverter c)
 	{

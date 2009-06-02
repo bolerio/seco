@@ -62,6 +62,7 @@ public class TalkPanel extends JPanel
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                               outPanel, 
                                               new JScrollPane(inputPane));
+        splitPane.setResizeWeight(0.8);
         this.add(splitPane, BorderLayout.CENTER);
         transferButton = new JButton(LABEL_ACCEPT_TRANSFER);
         transferButton.setForeground(Color.blue);

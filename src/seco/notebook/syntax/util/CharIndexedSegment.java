@@ -51,7 +51,6 @@ public class CharIndexedSegment implements CharIndexed, Serializable
 		m_index = index;
 	} //}}}
 
-	//{{{ CharIndexedSegment constructor
 	/**
 	 * Creates a new <code>CharIndexedSegment</code>.
 	 * @since jEdit 4.1pre1
@@ -61,24 +60,22 @@ public class CharIndexedSegment implements CharIndexed, Serializable
 		this.seg = seg;
 		m_index = (reverse ? seg.count - 1 : 0);
 		this.reverse = reverse;
-	} //}}}
+	} 
 
-	//{{{ charAt() method
 	public char charAt(int index)
 	{
 		if(reverse)
 			index = -index;
-
+        if(seg == null || seg.array == null) return CharIndexed.OUT_OF_BOUNDS;
 		return ((m_index + index) < seg.count && m_index + index >= 0)
 			? seg.array[seg.offset + m_index + index]
 			: CharIndexed.OUT_OF_BOUNDS;
-	} //}}}
+	} 
 
-	//{{{ isValid() method
 	public boolean isValid()
 	{
 		return (m_index >=0 && m_index < seg.count);
-	} //}}}
+	} 
 
 	//{{{ reset() method
 	public void reset()

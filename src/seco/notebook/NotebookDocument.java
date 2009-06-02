@@ -773,7 +773,8 @@ public class NotebookDocument extends DefaultStyledDocument
                 insertUndo, dde);
         else if (DocumentEvent.EventType.REMOVE.equals(dde.getType()))
             cE = makeCompoundEdit(removeUndo, dde);
-        if (cE != null) super.fireUndoableEditUpdate(new UndoableEditEvent(e
+        if (cE != null) 
+            super.fireUndoableEditUpdate(new UndoableEditEvent(e
                 .getSource(), cE));
         else
             super.fireUndoableEditUpdate(e);
@@ -932,11 +933,17 @@ public class NotebookDocument extends DefaultStyledDocument
         removeEx(offset, len);
     }
 
+    int removeEx(int offset, int len) throws BadLocationException
+    {
+        return removeEx(offset, len, true);
+    }
+
     // one necessary workaround leads to another...
     // this method is used to show the correct caret pos, when we are
     // forced to make insert/remove to preserve the element structure
     // on newline deletes and not introducing dependency on NotebookUI
-    int removeEx(int offset, int len) throws BadLocationException
+    int removeEx(int offset, int len, boolean fire_event)
+            throws BadLocationException
     {
         int res = -1;
         if (isInsertionPoint(offset)) return res;
@@ -949,16 +956,20 @@ public class NotebookDocument extends DefaultStyledDocument
         if (isOutputCell(offset)) return res;
         Element cell = getUpperElement(el, commonCell);
         if (cell != null && offset + len == cell.getEndOffset()) return res;
-        setModified(true);
         if (el.getParentElement().getElementCount() == 1)
         {
-            Element el0 = this.getEnclosingCellElement(offset);
+            Element el0 = getEnclosingCellElement(offset);
             if (getNBElement(el0) instanceof Cell)
             {
-                CellTextChangeEvent e = new CellTextChangeEvent(
-                        getNBElementH(el0), EventType.REMOVE, getText(offset,
-                                len), offset - el0.getStartOffset(), len);
-                fireCellTextChanged(e);
+                if (fire_event)
+                {
+                    CellTextChangeEvent e = new CellTextChangeEvent(
+                            getNBElementH(el0), EventType.REMOVE, getText(
+                                    offset, len),
+                            offset - el0.getStartOffset(), len);
+                    fireCellTextChanged(e);
+                }else
+                    super.remove(offset, len);
             }
             else
                 // insPoint
@@ -967,11 +978,17 @@ public class NotebookDocument extends DefaultStyledDocument
         }
         try
         {
-            beginCompoundEdit("");
-            Element el0 = this.getEnclosingCellElement(offset);
-            CellTextChangeEvent e = new CellTextChangeEvent(getNBElementH(el0),
-                    EventType.REMOVE, null, offset - el0.getStartOffset(), len);
-            fireCellTextChanged(e);
+            if (fire_event) beginCompoundEdit("");
+            Element el0 = getEnclosingCellElement(offset);
+            if (fire_event)
+            {
+                CellTextChangeEvent e = new CellTextChangeEvent(
+                        getNBElementH(el0), EventType.REMOVE, getText(
+                                offset, len), offset
+                                - el0.getStartOffset(), len);
+                fireCellTextChanged(e);
+            }else
+                super.remove(offset, len);
             Element elem = getUpperElement(offset, paragraph);
             // newline was deleted, which results in two content elements
             // in the paragraph
@@ -982,15 +999,17 @@ public class NotebookDocument extends DefaultStyledDocument
                 res = elem.getElement(0).getEndOffset();
                 String s = getText(start, end - start - 1);
                 // keep last char to preserve the element structure
+                supressEvents = true;
                 super.remove(start, end - start - 1);
                 super.insertString(start, s, contentAttrSet);
+                supressEvents = false;
                 Log.Trace("remove - replace: " + start + " length: "
                         + (end - start - 1) + ":" + s);
             }
         }
         finally
         {
-            endCompoundEdit();
+            if (fire_event) endCompoundEdit();
         }
         return res;
     }
@@ -1434,7 +1453,8 @@ public class NotebookDocument extends DefaultStyledDocument
             if (e.getType() == CellTextChangeEvent.EventType.INSERT) super
                     .insertString(offset + e.getOffset(), e.getText(), null);
             else
-                super.remove(offset + +e.getOffset(), e.getLength());
+                removeEx(offset + +e.getOffset(), e.getLength(), false);
+                //super.remove(offset + +e.getOffset(), e.getLength());
         }
         catch (BadLocationException ex)
         {

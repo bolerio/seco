@@ -206,6 +206,8 @@ public class CellContainerVisual implements CellVisual, EventHandler
                 if (ps != null) ps.removeFromParent();
                 CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, removed[i],
                         getHandle(), getHandle());
+                CellUtils.removeEventPubSub(AttributeChangeEvent.HANDLE, removed[i],
+                        getHandle(), getHandle());
             }
         if (added != null && added.length > 0)
             for (int i = 0; i < added.length; i++)

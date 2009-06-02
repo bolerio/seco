@@ -20,6 +20,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -609,15 +610,25 @@ public class GUIHelper
     }
 
     public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
-            HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell)
+            HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell,
+            Map<Object, Object> addit_attribs)
     {
         HGHandle cellH = (create_cell) ? CellUtils.getCellHForRefH(h) : h;
         CellGroupMember out = ThisNiche.hg.get(cellH);
         if (r != null) out.setAttribute(VisualAttribs.rect, r);
         if (visualH != null) out.setVisual(visualH);
         if (lh != null) out.setAttribute(VisualAttribs.layoutHandler, lh);
+        if(addit_attribs != null)
+            for(Object key: addit_attribs.keySet())
+                out.setAttribute(key, addit_attribs.get(key));
         group.insert(group.getArity(), out);
         return cellH;
+    }
+    
+    public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
+            HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell)
+    {
+        return addToCellGroup(h, group, visualH, lh, r, create_cell, null);
     }
 
     public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
@@ -661,6 +672,14 @@ public class GUIHelper
             HGHandle objectHandle, HGHandle visualHandle, LayoutHandler lh,
             Rectangle r)
     {
+        return addIfNotThere(groupHandle,
+                objectHandle, visualHandle, lh, r, null);
+    }
+    
+    public static HGHandle addIfNotThere(HGHandle groupHandle,
+            HGHandle objectHandle, HGHandle visualHandle, LayoutHandler lh,
+            Rectangle r, Map<Object, Object> addit_attribs)
+    {
         CellGroup group = ThisNiche.hg.get(groupHandle);
         for (int i = 0; i < group.getArity(); i++)
         {
@@ -671,7 +690,7 @@ public class GUIHelper
         }
         Object x = ThisNiche.hg.get(objectHandle);
         return GUIHelper.addToCellGroup(objectHandle, group, null, null, r,
-                !(x instanceof CellGroupMember));
+                !(x instanceof CellGroupMember), addit_attribs);
     }
 
     public static void removeFromCellGroup(HGHandle groupH, HGHandle h)

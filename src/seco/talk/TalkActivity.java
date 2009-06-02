@@ -10,6 +10,7 @@ import static org.hypergraphdb.peer.Structs.getPart;
 import static org.hypergraphdb.peer.Structs.struct;
 
 import java.awt.Rectangle;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +36,7 @@ import org.hypergraphdb.peer.workflow.WorkflowState;
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
 import seco.gui.NBUIVisual;
+import seco.gui.VisualAttribs;
 import seco.things.Cell;
 import seco.things.CellGroup;
 
@@ -92,11 +94,16 @@ public class TalkActivity extends FSMActivity
                 ThisNiche.hg.add(talkPanel);
             }
         }
+        Map<Object, Object> attribs = new HashMap<Object, Object>();
+        //TODO: some sort of naming 
+        attribs.put(VisualAttribs.name, "Connection Panel");
+        attribs.put(VisualAttribs.showTitle, true);
         GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, 
                                 ThisNiche.hg.getHandle(talkPanel), 
                                 null, 
                                 null, 
-                                new Rectangle(500, 200, 200, 100));            
+                                new Rectangle(500, 200, 200, 100),
+                                attribs);            
     }
     
     private void initFriend(Message msg)

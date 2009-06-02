@@ -129,6 +129,17 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 
     protected static NBFocusListener nbFocusListener = new NBFocusListener();
     protected static HTMLEditor html_editor;
+    
+    //TODO: pending deadlock - 
+    //http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6195631 looks very similar 
+    //AWT - Thread:NotebookUI(Component).invalidate() line: 2721 
+    //Main -Thread:
+    //NotebookDocument(AbstractDocument).readLock() line: 1372 [local variables unavailable]   
+    //BasicTextPaneUI(BasicTextUI).getMinimumSize(JComponent) line: 930   
+    //NotebookUI(JEditorPane).getScrollableTracksViewportWidth() line: 1546   
+    //isVisible() check in invalidate() seems to solve the problem,
+    //but this is not very sure and may lead to some other regression bugs... 
+
     public static void setFocusedHTMLEditor(HTMLEditor e)
     {
         html_editor = e;
@@ -238,8 +249,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     @Override
     public void invalidate()
     {
-        // if(!isVisible())
-        super.invalidate();
+        if(!isVisible())
+           super.invalidate();
     }
 
     private static boolean antiAliasing;
