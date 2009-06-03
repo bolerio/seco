@@ -8,6 +8,7 @@ package seco.gui;
  * www.cs.umd.edu/hcil by Jesse Grosjean under the supervision of Ben Bederson. 
  * The Piccolo website is www.cs.umd.edu/hcil/piccolo 
  */
+import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -21,7 +22,9 @@ import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.PRoot;
 import edu.umd.cs.piccolo.event.PDragSequenceEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
+import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PDimension;
+import edu.umd.cs.piccolo.util.PPickPath;
 
 
 /**
@@ -35,7 +38,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     final static int NUM_STROKES = 10;
     private Map<PNode, Boolean> selection = null; // The current selection
     private PNode pressNode = null; // FNode pressed on (or null if none)
-    boolean dragging_copy = false;
+    
     /**
      * Creates a selection event handler.
      */
@@ -126,7 +129,6 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     protected void drag(PInputEvent e)
     {
         super.drag(e);
-        if(dragging_copy) return;
         dragStandardSelection(e);
     }
 
@@ -134,9 +136,36 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     {
         super.endDrag(e);
         endStandardSelection(e);
+        PNode node = e.getPickedNode();
         e.getPickedNode().endResizeBounds();
-        dragging_copy = false;
+        if(node != null && node instanceof PSwingNode)
+            adjust_bounds((PSwingNode) node );
     }
+    
+    private static void adjust_bounds(PSwingNode node)
+    {
+        PiccoloCanvas pc = node.getCanvas();
+        PBounds pcb = pc.getCamera().getViewBounds();
+        PBounds ncb = node.getFullBounds();
+        if(out(pcb.getBounds(), ncb.getBounds()))
+        {
+            //System.out.println("adjust_bounds1: " + ncb + ":" +pcb);
+            double x = 0; double y = 0;
+            if(ncb.x < pcb.x) x = pcb.x - ncb.x;
+            if(ncb.y < pcb.y) y = pcb.y - ncb.y;
+            if(ncb.x > pcb.x + pcb.width) x = pcb.x + pcb.width - (ncb.x + ncb.width);
+            if(ncb.y > pcb.y + pcb.height) y = pcb.y + pcb.height - (ncb.y + ncb.height);
+            //System.out.println("adjust_bounds2: " + x + ":" + y);
+            node.translate(x, y);
+            node.invalidatePaint();
+        }
+    }
+    
+    private static boolean out(Rectangle big, Rectangle small)
+    {
+        return((small.x + small.width < big.x || small.x > big.x + big.width)
+           || (small.y + small.height < big.y || small.y > big.y + big.height));
+    } 
 
     // //////////////////////////
     // Additional methods

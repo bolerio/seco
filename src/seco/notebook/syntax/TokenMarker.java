@@ -386,6 +386,7 @@ unwind:		while(context.parent != null)
 				else
 					pattern.array = checkRule.start;
 				pattern.offset = 0;
+				if(pattern.array == null) return false;
 				pattern.count = pattern.array.length;
 				matchedChars = pattern.count;
 
