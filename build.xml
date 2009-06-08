@@ -136,7 +136,5 @@
 			<classpath path="${build}" />
 			<arg value="${lib}" />
 		</java>
-
 	</target>
-
 </project>

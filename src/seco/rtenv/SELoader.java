@@ -25,7 +25,7 @@ public class SELoader extends ClassLoader
 	private ClassLoader parent; // this is usually the RuntimeContext class loader.
 	private Set<String> packages = new HashSet<String>(); // a list of packages for class to be explicitely defined here.
 	
-	private Class defineIt(String className)
+	private Class<?> defineIt(String className)
 	{
 		String resourceName = className.replace('.', '/') + ".class";
 		InputStream in = parent.getResourceAsStream(resourceName);
@@ -75,9 +75,9 @@ public class SELoader extends ClassLoader
 			packages.add(packageNames[i]);
 	}
 	
-	public Class loadClass(String name) throws ClassNotFoundException
+	public Class<?> loadClass(String name) throws ClassNotFoundException
 	{
-		Class result = findLoadedClass(name);
+		Class<?> result = findLoadedClass(name);
 		if (result != null)
 			return result;
 		else
@@ -95,9 +95,9 @@ public class SELoader extends ClassLoader
 			throw new ClassNotFoundException(name);
 	}
     
-    public Class loadHere(String name) throws ClassNotFoundException
+    public Class<?> loadHere(String name) throws ClassNotFoundException
     {
-        Class result = findLoadedClass(name);
+        Class<?> result = findLoadedClass(name);
         if (result != null)
             return result;
         else

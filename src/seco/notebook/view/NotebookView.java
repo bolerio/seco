@@ -100,5 +100,4 @@ public class NotebookView extends BoxView
         if(index < 0) return null;
         return super.getChildAllocation(index, a);
     }
-   
 }

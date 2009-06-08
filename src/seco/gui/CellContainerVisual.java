@@ -61,8 +61,14 @@ public class CellContainerVisual implements CellVisual, EventHandler
         }
         element.setVisualInstance(canvas);
         for (int i = 0; i < group.getArity(); i++)
-           addChild(canvas, group.getTargetAt(i));
-           
+            try
+            {
+                addChild(canvas, group.getTargetAt(i));
+            }
+            catch (Throwable t)
+            {
+                t.printStackTrace(System.err);
+            }
         if (canvas != null) canvas.relayout();
         group.setVisualInstance(canvas);
         CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE, ThisNiche

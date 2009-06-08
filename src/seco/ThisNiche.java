@@ -7,27 +7,22 @@
  */
 package seco;
 
-import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.HGSearchResult;
+import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
-import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.query.*;
+import org.hypergraphdb.HGSearchResult;
+import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.query.And;
+import org.hypergraphdb.query.AtomTypeCondition;
+import org.hypergraphdb.query.LinkCondition;
 
-import edu.emory.mathcs.backport.java.util.Collections;
-
-import seco.api.CompletionCallback;
 import seco.boot.NicheManager;
 import seco.rtenv.ContextLink;
 import seco.rtenv.EvaluationContext;
-
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public final class ThisNiche
 {
@@ -75,6 +70,13 @@ public final class ThisNiche
         hg.freeze(TOP_CONTEXT_HANDLE);
         allContexts.clear();
         topContext = getEvaluationContext(TOP_CONTEXT_HANDLE);
+        // TODO  - the following won't work with multiple contexts. This
+        // is a very though problem to solve because it's hard to 
+        // track in what context exactly code is executing, especially
+        // for global threads like the Swing dispatcher thread (well perhaps
+        // this is the only global thread with this problem, but it's causing
+        // enough headaches already).
+        hg.getTypeSystem().setClassLoader(topContext.getClassLoader());  
     }
 
     public static HGHandle getContextHandleFor(HGHandle entityHandle)
@@ -89,16 +91,14 @@ public final class ThisNiche
         return getEvaluationContext(getContextHandleFor(entityHandle));
     }
 
-    public static void setContextFor(HGHandle entityHandle,
-            HGHandle rcContextHandle)
+    public static void setContextFor(HGHandle entityHandle, HGHandle rcContextHandle)
     {
         HGHandle h = findContextLink(entityHandle);
         if (h != null) hg.remove(h);
         hg.add(new ContextLink(entityHandle, rcContextHandle));
     }
 
-    public static EvaluationContext getEvaluationContext(
-            HGHandle rcContextHandle)
+    public static EvaluationContext getEvaluationContext(HGHandle rcContextHandle)
     {
         synchronized (allContexts)
         {

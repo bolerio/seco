@@ -80,8 +80,7 @@ public class EvaluationContext
         getRuntimeContext().getBindings().put("thisContext", this);
         getRuntimeContext().getBindings().put("niche", ThisNiche.getHyperGraph());		
 	}
-	
-    @SuppressWarnings("unchecked")	
+		
 	public void onLoad()
 	{
 		HGSearchResult<HGHandle> startScripts = null;

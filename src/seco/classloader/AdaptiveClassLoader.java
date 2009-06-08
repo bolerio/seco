@@ -245,35 +245,21 @@ public class AdaptiveClassLoader extends ClassLoader
     /**
      * 
      * Creates a new class loader that will load classes from specified
-     * 
      * class repositories.
      * 
-     * 
-     * 
-     * @param classRepository
-     *            An set of File classes indicating
-     * 
+     * @param classRepository An set of File classes indicating
      * directories and/or zip/jar files. It may be empty when
-     * 
      * only system classes are loaded.
      * 
      * @param parentClassLoaderLast
      *            if set to true, classes are resolved using
-     * 
      * this classloader before attempting the parent classloader. This
-     * 
      * feature can be used for dynamic reloading of classes, however
-     * 
      * it slows down performance and requires additional memory.
-     * 
      * @throw java.lang.IllegalArgumentException if the objects contained
-     * 
      * in the vector are not a file instance or the file is not
-     * 
      * a valid directory or a zip/jar file.
-     * 
      */
-
     public AdaptiveClassLoader(Vector classRepository,
                                boolean parentClassLoaderLast)
         throws IllegalArgumentException
@@ -654,12 +640,11 @@ public class AdaptiveClassLoader extends ClassLoader
      * find a the requested class.
      * 
      */
-
-    protected synchronized Class loadClass(String name, boolean resolve)
+    protected synchronized Class<?> loadClass(String name, boolean resolve)
         throws ClassNotFoundException
     {
         // The class object that will be returned.
-        Class c = null;
+        Class<?> c = null;
         // Use the cached value, if this class is already loaded into
         // this classloader.
 
@@ -667,54 +652,36 @@ public class AdaptiveClassLoader extends ClassLoader
 
         if (entry != null)
         {
-
             // Class found in our cache
-
             c = entry.loadedClass;
-
             if (resolve)
                 resolveClass(c);
-
             return c;
-
         }
 
         if (!securityAllowsClass(name))
         {
-
             return loadSystemClass(name, resolve);
-
         }
-
+       
         if (parentClassLoaderLast == false)
-
         {
-
             // Attempt to load the class from the system
-
             try
             {
-
-                c = loadSystemClass(name, resolve);
-
+                c =  loadSystemClass(name, resolve);
                 if (c != null)
                 {
-
                     if (resolve)
                         resolveClass(c);
-
                     return c;
-
                 }
-
             }
-            catch (Exception e)
+            catch (Exception e)            
             {
 
                 c = null;
-
             }
-
         }
 
         // Try to load it from each repository
@@ -777,17 +744,12 @@ public class AdaptiveClassLoader extends ClassLoader
             }
             catch (Exception e)
             {
-
                 c = null;
-
             }
-
         }
 
         // If not found in any repository
-
         throw new ClassNotFoundException(name);
-
     }
 
     /**
@@ -795,151 +757,89 @@ public class AdaptiveClassLoader extends ClassLoader
      * 
      * @exception ClassNotFoundException
      *                if the class loader cannot
-     * 
      * find a the requested class.
-     * 
      * @exception NoClassDefFoundError
      *                if the class loader cannot
-     * 
      * find a definition for the class.
-     * 
      */
-
-    protected Class loadSystemClass(String name, boolean resolve)
-
-    throws NoClassDefFoundError, ClassNotFoundException
-
+    protected Class<?> loadSystemClass(String name, boolean resolve)
+        throws NoClassDefFoundError, ClassNotFoundException
     {
-
         if (myParentClassLoader != null)
-
             return myParentClassLoader.loadClass(name);
 
-        Class c = findSystemClass(name);
-
+        Class<?>  c = findSystemClass(name);
         // Throws if not found.
-
         // Add cache entry
 
         ClassCacheEntry cacheEntry = new ClassCacheEntry();
-
         cacheEntry.origin = null;
-
         cacheEntry.loadedClass = c;
-
         cacheEntry.lastModified = Long.MAX_VALUE;
-
         cache.put(name, cacheEntry);
-
         if (resolve)
             resolveClass(c);
-
         return c;
-
     }
 
     /**
      * 
      * Checks whether a classloader is allowed to define a given class,
-     * 
      * within the security manager restrictions.
      * 
      */
-
     // XXX: Should we perhaps also not allow classes to be dynamically
     // loaded from org.apache.jserv.*? Would it introduce security
     // problems if people could override classes here?
     // <mbp@humbug.org.au 1998-07-29>
     private boolean securityAllowsClass(String className)
     {
-
         try
         {
-
             SecurityManager security = System.getSecurityManager();
-
             if (security == null)
             {
-
                 // if there's no security manager then all classes
-
                 // are allowed to be loaded
-
                 return true;
-
             }
 
             int lastDot = className.lastIndexOf('.');
-
             // Check if we are allowed to load the class' package
-
-            security.checkPackageDefinition((lastDot > -1)
-
-            ? className.substring(0, lastDot) : "");
-
+            security.checkPackageDefinition((lastDot > -1) ? className.substring(0, lastDot) : "");
             // Throws if not allowed
-
             return true;
-
         }
         catch (SecurityException e)
         {
-
             return false;
-
         }
-
     }
 
     /**
      * 
      * Tries to load the class from a directory.
      * 
-     * 
-     * 
-     * @param dir
-     *            The directory that contains classes.
-     * 
-     * @param name
-     *            The classname
-     * 
-     * @param cache
-     *            The cache entry to set the file if successful.
-     * 
+     * @param dir The directory that contains classes.
+     * @param name The classname
+     * @param cache The cache entry to set the file if successful.
      */
-
-    private byte[] loadClassFromDirectory(File dir, String name,
-
-    ClassCacheEntry cache)
-
-    throws IOException
-
+    private byte[] loadClassFromDirectory(File dir, String name, ClassCacheEntry cache)
+        throws IOException
     {
-
         // Translate class name to file name
-
-        String classFileName =
-
-        name.replace('.', File.separatorChar) + ".class";
+        String classFileName = name.replace('.', File.separatorChar) + ".class";
 
         // Check for garbage input at beginning of file name
-
         // i.e. ../ or similar
 
         if (!Character.isJavaIdentifierStart(classFileName.charAt(0)))
         {
-
             // Find real beginning of class name
-
             int start = 1;
-
-            while (!Character.isJavaIdentifierStart(
-
-            classFileName.charAt(start++)))
+            while (!Character.isJavaIdentifierStart(classFileName.charAt(start++)))
                 ;
-
             classFileName = classFileName.substring(start);
-
         }
 
         File classFile = new File(dir, classFileName);
