@@ -28,39 +28,13 @@ public class PSwingNode extends PSwing implements Serializable
     private static final long serialVersionUID = 4732523747800268384L;
     public boolean deleteable;
     private HGHandle handle;
-//    private Runnable reshapeRun = new Runnable() {
-//        public void run()
-//        {
-//            PSwingNode.this.component.setBounds( 0, 0, component.getPreferredSize().width, component.getPreferredSize().height );
-//            setBounds( 0, 0, component.getPreferredSize().width, component.getPreferredSize().height );
-//        }
-//    };
 
     public PSwingNode(PSwingCanvas canvas, JComponent component, HGHandle handle)
     {
         super(component);
         this.handle = handle;
-        // component.putClientProperty("tooltip", CellUtils.getTitle(
-        // (CellGroupMember) ThisNiche.hg.get(handle)));
     }
-
-//    protected void reshape()
-//    {
-//        runInAWT(reshapeRun);
-//    }
-
-    private static void runInAWT(Runnable r)
-    {
-        if (SwingUtilities.isEventDispatchThread())
-        {
-            r.run();
-        }
-        else
-        {
-            SwingUtilities.invokeLater(r);
-        }
-    }
-
+    
     public PSwingNode(PSwingCanvas canvas, JComponent component)
     {
         super(component);
