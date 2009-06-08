@@ -7,6 +7,8 @@
  */
 package seco.boot;
 
+import javax.swing.SwingUtilities;
+
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.event.HGEvent;
 import org.hypergraphdb.event.HGListener;
@@ -21,15 +23,20 @@ public class NicheBootListener implements HGListener
     public Result handle(HyperGraph hg, HGEvent event)
     {
     	ThisNiche.bindNiche(hg);
-    	TopFrame s = TopFrame.getInstance();
+    	final TopFrame s = TopFrame.getInstance();
         RuntimeContext topRuntime = ThisNiche.getTopContext().getRuntimeContext(); 
         topRuntime.getBindings().put("desktop", TopFrame.getInstance());
         topRuntime.getBindings().put("canvas", TopFrame.getInstance().getCanvas());
         ThisNiche.hg.update(topRuntime);
-        CellGroup group = (CellGroup) hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-        CellVisual v = (CellVisual) hg.get(group.getVisual());
-        v.bind(group);
-        s.setVisible(true);
+        final CellGroup group = (CellGroup) hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        final CellVisual v = (CellVisual) hg.get(group.getVisual());
+        SwingUtilities.invokeLater(new Runnable(){
+            public void run()
+            {
+                v.bind(group);
+                s.setVisible(true);
+            }
+        });
         return Result.ok;
     }
 }

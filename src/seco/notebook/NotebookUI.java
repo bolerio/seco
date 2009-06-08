@@ -137,18 +137,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     //NotebookDocument(AbstractDocument).readLock() line: 1372 [local variables unavailable]   
     //BasicTextPaneUI(BasicTextUI).getMinimumSize(JComponent) line: 930   
     //NotebookUI(JEditorPane).getScrollableTracksViewportWidth() line: 1546   
-    //isVisible() check in invalidate() seems to solve the problem,
-    //but this is not very sure and may lead to some other regression bugs... 
+    //putting main UI creation in AWT thread seems to solve the problem for now...
 
-    public static void setFocusedHTMLEditor(HTMLEditor e)
-    {
-        html_editor = e;
-    }
-    public static HTMLEditor getFocusedHTMLEditor()
-    {
-        return html_editor;
-    }
-    
     public NotebookUI(HGHandle book)
     {
         this(book, ThisNiche.getContextFor(book));
@@ -242,15 +232,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         getDoc().addDocumentListener(this);
         highlighter = new CustomHighlighter();
         highlighter.install(this);
-    }
-
-    // caused a very difficult to track
-    // infinite loop in certain cases during PSwingNode creation
-    @Override
-    public void invalidate()
-    {
-        if(!isVisible())
-           super.invalidate();
     }
 
     private static boolean antiAliasing;
@@ -566,6 +547,16 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         getPopupListener().dont_change_pos = true;
         getPopupListener().mouseClicked(e);
         getPopupListener().dont_change_pos = false;
+    }
+    
+    public static void setFocusedHTMLEditor(HTMLEditor e)
+    {
+        html_editor = e;
+    }
+    
+    public static HTMLEditor getFocusedHTMLEditor()
+    {
+        return html_editor;
     }
 
     static class PopupListener extends MouseInputAdapter

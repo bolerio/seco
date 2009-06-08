@@ -227,17 +227,15 @@ abstract class CompletionLayoutPopup {
             popupBounds.height = Math.min(prefSize.height,
                     (screen.y + screen.height) - popupBounds.y);
         }
-        
-        correctBounds(popupBounds);
+        correctBounds(popupBounds, aboveOccupiedBounds);
         return popupBounds;
     }
     
-    protected void correctBounds(Rectangle r)
+    protected void correctBounds(Rectangle r, boolean aboveOccupiedBounds)
     {
         if(TopFrame.getInstance().getCanvas() == null) return;
-        //Point pt = SwingUtilities.convertPoint(getEditorComponent(), r.x,
-             //   r.y, TopFrame.getInstance());
         Point corr = GUIHelper.computePoint(getEditorComponent(), new Point(r.x, r.y));
+        //System.out.println("correctBounds: " + corr + ":" + r + ":" + aboveOccupiedBounds + ":" + this);
         r.x = corr.x; r.y = corr.y;
     }
     
@@ -248,7 +246,7 @@ abstract class CompletionLayoutPopup {
      * @param displayAboveCaret whether the popup is displayed above the anchor
      *  bounds or below them (it does not be right above them).
      */
-    private void show(Rectangle popupBounds, boolean displayAboveCaret) {
+     void show(Rectangle popupBounds, boolean displayAboveCaret) {
         // Hide the original popup if exists
         if (popup != null) {
             popup.hide();

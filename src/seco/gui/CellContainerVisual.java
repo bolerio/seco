@@ -61,7 +61,8 @@ public class CellContainerVisual implements CellVisual, EventHandler
         }
         element.setVisualInstance(canvas);
         for (int i = 0; i < group.getArity(); i++)
-            addChild(canvas, group.getTargetAt(i));
+           addChild(canvas, group.getTargetAt(i));
+           
         if (canvas != null) canvas.relayout();
         group.setVisualInstance(canvas);
         CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE, ThisNiche
@@ -100,16 +101,15 @@ public class CellContainerVisual implements CellVisual, EventHandler
         }
     }
 
-    private void addChild(PiccoloCanvas top_canvas, HGHandle childH)
+    private void addChild(final PiccoloCanvas top_canvas, HGHandle childH)
     {
-        CellGroupMember x = ThisNiche.hg.get(childH);
+        final CellGroupMember x = ThisNiche.hg.get(childH);
         if(CellUtils.isMaximized(x)) 
             maximized = childH;
         CellVisual visual = CellUtils.getVisual(x);
-        JComponent comp = visual.bind(x);
+        final JComponent comp = visual.bind(x);
         if (comp != null)
         {
-
             String title = CellUtils.getName(x);
             if(title != null) GUIHelper.handleTitle(x,  comp);
             if (comp instanceof PiccoloCanvas)
@@ -127,7 +127,8 @@ public class CellContainerVisual implements CellVisual, EventHandler
                 scroll.setTransferHandler(canvas.getTransferHandler());
             }
             else
-                top_canvas.addComponent(comp, x);
+               top_canvas.addComponent(comp, x);
+               
         }
         CellUtils.addEventPubSub(EvalCellEvent.HANDLE, childH, getHandle(),
                 getHandle());
