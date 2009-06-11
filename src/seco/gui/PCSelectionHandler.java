@@ -124,7 +124,9 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
             startStandardSelection(e);
         else
             startStandardOptionSelection(e);
-     }
+    }
+    
+    
 
     protected void drag(PInputEvent e)
     {
@@ -210,9 +212,10 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     protected void startStandardOptionSelection(PInputEvent pie)
     {
         // Option indicator is down, toggle selection
-        if (isSelected(pressNode)) unselect(pressNode);
+        if (isSelected(pressNode)) 
+            unselect(pressNode);
         else
-            select(pressNode);
+           select(pressNode);
     }
 
     protected void dragStandardSelection(PInputEvent e)
@@ -255,6 +258,28 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         }
         selection.clear();
 
+    }
+
+    @Override
+    public void mousePressed(PInputEvent e)
+    {
+        super.mousePressed(e);
+        if(isSelected(e.getPickedNode()))
+        {
+          e.getSourceSwingEvent().consume();
+          e.setHandled(true);
+        }
+    }
+
+    @Override
+    public void mouseReleased(PInputEvent e)
+    {
+        super.mouseReleased(e);
+        if(isSelected(e.getPickedNode()))
+        {
+          e.getSourceSwingEvent().consume();
+          e.setHandled(true);
+        }
     }
 
 }

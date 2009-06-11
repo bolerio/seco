@@ -49,6 +49,7 @@ import javax.swing.undo.CompoundEdit;
 import javax.swing.undo.UndoableEdit;
 
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
@@ -58,6 +59,7 @@ import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
 import seco.events.EvalResult;
 import seco.events.EventDispatcher;
+import seco.events.EventPubSub;
 import seco.events.CellTextChangeEvent.EventType;
 import seco.events.handlers.AttributeChangeHandler;
 import seco.events.handlers.CellGroupChangeHandler;
@@ -459,31 +461,22 @@ public class NotebookDocument extends DefaultStyledDocument
         // TODO: should decide the problem with output cell
         // residing in deeper levels,
         // or floating around in HG if we adopt the other approach with:
-        // create_new_output_cell = (list.isEmpty());
-        // PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         List<HGHandle> list = CellUtils.getOutCellHandles(e.getCellHandle());
-        // for (HGHandle o : list)
-        // {
-        // int off = findElementOffset(o);
-        // if (off < 0)
-        // {
-        // //visible outCell in canvas
-        // if(canvas != null && canvas.getOutCellNodeForHandle(o) != null)
-        // {
-        // create_new_output_cell = false;
-        // break;
-        // }
-        // }
-        // else //already have one in the notebook
-        // {
-        // create_new_output_cell = false;
-        // break;
-        // }
-        // }
+//        for (HGHandle o : list)
+//        {
+//            List<EventPubSub> subs = CellUtils.getEventPubSubList(
+//                    EvalCellEvent.HANDLE, o, HGHandleFactory.anyHandle,
+//                    HGHandleFactory.anyHandle);
+//            if (!subs.isEmpty())
+//            {
+//                create_new_output_cell = false;
+//                break;
+//            }
+//        }
         create_new_output_cell = (list.isEmpty());
         if (!create_new_output_cell) return;
-        HGHandle outH = CellUtils.createOutputCellH(e.getCellHandle(), e
-                .getValue());
+        //insert empty output cell, which will populate itself later 
+        HGHandle outH = CellUtils.createOutputCellH(e.getCellHandle(), "", null, false);
         Element el = getUpperElement(offset, inputCellBox);
         CellGroup gr = (CellGroup) ThisNiche.hg.get(getContainerH(el));
         // gr.insert(gr.indexOf(e.getCellHandle()) + 1, outH);
@@ -773,8 +766,7 @@ public class NotebookDocument extends DefaultStyledDocument
                 insertUndo, dde);
         else if (DocumentEvent.EventType.REMOVE.equals(dde.getType()))
             cE = makeCompoundEdit(removeUndo, dde);
-        if (cE != null) 
-            super.fireUndoableEditUpdate(new UndoableEditEvent(e
+        if (cE != null) super.fireUndoableEditUpdate(new UndoableEditEvent(e
                 .getSource(), cE));
         else
             super.fireUndoableEditUpdate(e);
@@ -968,7 +960,8 @@ public class NotebookDocument extends DefaultStyledDocument
                                     offset, len),
                             offset - el0.getStartOffset(), len);
                     fireCellTextChanged(e);
-                }else
+                }
+                else
                     super.remove(offset, len);
             }
             else
@@ -983,11 +976,11 @@ public class NotebookDocument extends DefaultStyledDocument
             if (fire_event)
             {
                 CellTextChangeEvent e = new CellTextChangeEvent(
-                        getNBElementH(el0), EventType.REMOVE, getText(
-                                offset, len), offset
-                                - el0.getStartOffset(), len);
+                        getNBElementH(el0), EventType.REMOVE, getText(offset,
+                                len), offset - el0.getStartOffset(), len);
                 fireCellTextChanged(e);
-            }else
+            }
+            else
                 super.remove(offset, len);
             Element elem = getUpperElement(offset, paragraph);
             // newline was deleted, which results in two content elements
@@ -1064,7 +1057,7 @@ public class NotebookDocument extends DefaultStyledDocument
             throws BadLocationException
     {
         CellGroupMember nb = getNBElement(nb_el);
-        nb_el = (nb instanceof Cell) ? getWholeCellElement(nb_el
+        nb_el = (nb == null || nb instanceof Cell) ? getWholeCellElement(nb_el
                 .getStartOffset()) : getUpperElement(nb_el, cellGroupBox);
         if (nb_el == null) return;
         // + the insPoint after the cell
@@ -1454,7 +1447,7 @@ public class NotebookDocument extends DefaultStyledDocument
                     .insertString(offset + e.getOffset(), e.getText(), null);
             else
                 removeEx(offset + +e.getOffset(), e.getLength(), false);
-                //super.remove(offset + +e.getOffset(), e.getLength());
+            // super.remove(offset + +e.getOffset(), e.getLength());
         }
         catch (BadLocationException ex)
         {

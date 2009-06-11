@@ -538,7 +538,7 @@ public class CellUtils
         }
         return null;
     }
-
+    
     public static void removeEventPubSub(HGHandle eventType,
             HGHandle publisher, HGHandle subscriber, HGHandle listener)
     {
@@ -646,6 +646,7 @@ public class CellUtils
     public static void removeHandlers(HGHandle masterH)
     {
         removeHandlers(masterH, HGHandleFactory.anyHandle);
+        ThisNiche.hg.remove(masterH);
     }
 
     public static void removeHandlers(HGHandle masterH, HGHandle anotherH)

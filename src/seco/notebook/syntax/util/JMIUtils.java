@@ -9,13 +9,8 @@ package seco.notebook.syntax.util;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.lang.*;
 
 
 
@@ -46,18 +41,18 @@ public class JMIUtils
         if (typ instanceof Array)
             return getTypeName(typ.getClass().getName(), displayFQN, false) + "[]"; // NOI18N
         if (typ instanceof Class)
-        	if(((Class) typ).isPrimitive())
-        		return primitiveToStrMap.get((Class) typ);
+        	if(((Class<?>) typ).isPrimitive())
+        		return primitiveToStrMap.get((Class<?>) typ);
         	else
-              return displayFQN ? ((Class)typ).getName() : ((Class)typ).getSimpleName();
+              return displayFQN ? ((Class<?>)typ).getName() : ((Class<?>)typ).getSimpleName();
         if (typ instanceof Method)
         	return ((Method) typ).getName();
         return typ != null ? typ.toString() : ""; //NOI18N
     }
     
     
-     private static final Map<Class, String> primitiveToStrMap = 
-    	 new HashMap<Class, String>(13);
+     private static final Map<Class<?>, String> primitiveToStrMap = 
+    	 new HashMap<Class<?>, String>(13);
 
      static
      {
@@ -73,11 +68,11 @@ public class JMIUtils
      }
     
     
-    public static Class getExactClass(String name, String pkgName) {
+    public static Class<?> getExactClass(String name, String pkgName) {
         return getExactClass((pkgName != null && pkgName.length() != 0) ? (pkgName + "." + name) : name); // NOI18N
     }
 
-    public static Class getExactClass(String classFullName) {
+    public static Class<?> getExactClass(String classFullName) {
         /*
     	Type cls = resolveType(classFullName);
         if (cls instanceof UnresolvedClass)
@@ -93,7 +88,7 @@ public class JMIUtils
         return null;
     }
     
-    public static boolean isAssignable(Class from, Class to) {
+    public static boolean isAssignable(Class<?> from, Class<?> to) {
         
         return from.isAssignableFrom(to) || to.isAssignableFrom(from);
     }

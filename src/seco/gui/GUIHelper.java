@@ -931,6 +931,7 @@ public class GUIHelper
         for (int i = 0; i < top.getArity(); i++)
         {
             CellGroupMember cgm = top.getElement(i);
+            if(cgm == null) continue;
             if (NBUIVisual.getHandle().equals(cgm.getVisual()))
             {
                 res.add(top.getTargetAt(i));

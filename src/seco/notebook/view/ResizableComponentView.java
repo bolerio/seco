@@ -125,7 +125,7 @@ public class ResizableComponentView extends HidableComponentView implements
                 }
             }
         });
-
+        panel.invalidate();
         return panel;
     }
 

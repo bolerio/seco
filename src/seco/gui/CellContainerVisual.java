@@ -110,6 +110,7 @@ public class CellContainerVisual implements CellVisual, EventHandler
     private void addChild(final PiccoloCanvas top_canvas, HGHandle childH)
     {
         final CellGroupMember x = ThisNiche.hg.get(childH);
+        if(x == null) return;
         if(CellUtils.isMaximized(x)) 
             maximized = childH;
         CellVisual visual = CellUtils.getVisual(x);

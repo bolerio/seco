@@ -1,6 +1,12 @@
 package seco.events;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
@@ -9,6 +15,7 @@ import javax.swing.undo.CannotUndoException;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
 import seco.things.CellGroup;
@@ -45,6 +52,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
         this.index = index;
         this.removed = removed;
         this.added = added;
+        remove_eps(removed);
     }
 
     /**
@@ -99,6 +107,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
        HGHandle[] tmp = removed;
        removed = added;
        added = tmp;
+       restore_eps();
        CellGroup gr = (CellGroup) ThisNiche.hg.get(groupH);
        gr.batchProcess(new CellGroupChangeEvent(groupH, index, added, removed));
        
@@ -113,6 +122,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
     public void undo() throws CannotUndoException
     {
         super.undo();
+        restore_eps();
         CellGroup gr = (CellGroup) ThisNiche.hg.get(groupH);
         gr.batchProcess(new CellGroupChangeEvent(groupH, index, removed, added));
         // Since this event will be reused, switch around added/removed.
@@ -165,6 +175,48 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
         if (index != other.index) return false;
         if (!Arrays.equals(removed, other.removed)) return false;
         return true;
+    }
+    
+    Map<HGHandle, Set<HGHandle>> pub_subs = new HashMap<HGHandle, Set<HGHandle>>();
+    
+    private void remove_eps(HGHandle[] removed)
+    {
+        pub_subs.clear();
+        if(removed == null) return;
+        for(HGHandle h: removed)
+        {
+            List<EventPubSub> l = hg.getAll(ThisNiche.hg, hg.and(hg
+                    .type(EventPubSub.class), hg.incident(h), hg
+                    .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
+                            HGHandleFactory.anyHandle, h, h })));;
+             if (!l.isEmpty())
+             {
+                 Set<HGHandle> set = new HashSet<HGHandle>(l.size());
+                 for(EventPubSub eps: l)
+                 {
+                    set.add(eps.getPublisher());
+                     //System.out.println("remove_eps:" + eps);
+                 }
+                 for(EventPubSub eps: l)
+                     ThisNiche.hg.remove(ThisNiche.handleOf(eps));
+                 pub_subs.put(h, set);
+             }
+         }
+    }
+    
+   
+    private void restore_eps()
+    {
+        for(HGHandle h: pub_subs.keySet())
+        {
+            Set<HGHandle> set = pub_subs.get(h);
+            for(HGHandle pub: set)
+            {
+                EventPubSub e = new EventPubSub(EvalCellEvent.HANDLE, pub, h, h);
+             // System.out.println("Adding " + e);
+                ThisNiche.hg.add(e);
+            }
+         }
     }
 
 }

@@ -35,6 +35,7 @@ import org.hypergraphdb.HGPersistentHandle;
 
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
+import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
 import seco.notebook.NotebookDocument.UpdateAction;
 import seco.notebook.gui.DialogDescriptor;
@@ -803,8 +804,8 @@ public class NotebookEditorKit extends StyledEditorKit
             try
             {
                 Rectangle rect = editor.modelToView(pos);
-                Point pt = SwingUtilities.convertPoint(editor, rect.x, rect.y,
-                        f);
+                Point pt = GUIHelper.computePoint(editor, new Point(rect.x, rect.y));
+               // SwingUtilities.convertPoint(editor, rect.x, rect.y, f);
                 Collection<JMenuItem> items = CellLangProvider
                         .getLanguages(editor);
                 JPopupMenu popupMenu = new JPopupMenu();
