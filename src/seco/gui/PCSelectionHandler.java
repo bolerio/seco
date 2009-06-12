@@ -67,6 +67,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         if (node == null) return;
         selection.put(node, Boolean.TRUE);
         decorateSelectedNode(node);
+        node.moveToFront();
     }
 
     public void decorateSelectedNode(PNode node)
