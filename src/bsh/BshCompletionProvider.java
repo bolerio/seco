@@ -125,7 +125,7 @@ public class BshCompletionProvider implements CompletionProvider
 				//System.out.println("BshCompProv - query - obj: " + obj +
 				// " cls:" + ((obj != null) ? obj.getClass(): "null") + ":" + p.evaled_or_guessed);
 				if (obj == null) {resultSet.finish(); return;}
-				Class cls = obj.getClass();
+				Class<?> cls = obj.getClass();
 				if (cls.getName().indexOf("bsh.XThis") >= 0)
 				{
 					populateXThisRef(resultSet, obj);
@@ -141,12 +141,12 @@ public class BshCompletionProvider implements CompletionProvider
 				{
 					Method method = obj.getClass().getMethod("getTargetClass",
 							(Class[]) null);
-					cls = (Class) method.invoke(obj, (Object[]) null);
+					cls = (Class<?>) method.invoke(obj, (Object[]) null);
 					mod = Modifier.STATIC;
 				}
 				if (p.isPrivateAccessAllowed()) mod |= Modifier.PRIVATE;
 				if(!p.evaled_or_guessed)
-					cls = (Class) obj;
+					cls = (Class<?>) obj;
 				populateComplPopup(resultSet, cls, mod);
 			}
 			catch (Exception ex)
@@ -175,7 +175,7 @@ public class BshCompletionProvider implements CompletionProvider
 				{
 					try
 					{
-						Class cls = Thread.currentThread()
+						Class<?> cls = Thread.currentThread()
 								.getContextClassLoader().loadClass(
 										info.getPackage() + "." + p.getName());
 						JavaResultItem item = new JavaResultItem.ClassResultItem(
@@ -210,7 +210,7 @@ public class BshCompletionProvider implements CompletionProvider
 					Object obj = ns.getClass().getMethod("getVariable",
 							new Class[] { String.class }).invoke(ns,
 							new Object[] { var_names[i] });
-					Class cls = (obj instanceof Primitive) ? ((Primitive) obj)
+					Class<?> cls = (obj instanceof Primitive) ? ((Primitive) obj)
 							.getType() : obj.getClass();
 					if (cls.getName().startsWith("jsint.")) continue;
 					// System.out.println("XThis - vars: " + var_names[i] + ":"
@@ -227,9 +227,9 @@ public class BshCompletionProvider implements CompletionProvider
 					String name = (String) ms[i].getClass()
 							.getMethod("getName").invoke(ms[i], empty);
 					if (!name.matches(REGEX)) continue;
-					Class retType = (Class) ms[i].getClass().getMethod(
+					Class<?> retType = (Class<?>) ms[i].getClass().getMethod(
 							"getReturnType").invoke(ms[i], empty);
-					Class[] params = (Class[]) ms[i].getClass().getMethod(
+					Class<?>[] params = (Class[]) ms[i].getClass().getMethod(
 							"getParameterTypes").invoke(ms[i], empty);
 					// System.out.println("XThis - methods: " + name + ":" +
 					// ((retType != null) ? retType.getName(): "null"));
@@ -247,7 +247,7 @@ public class BshCompletionProvider implements CompletionProvider
 		}
 
 		private void populateComplPopup(CompletionResultSet resultSet,
-				Class cls, int modifiers)
+				Class<?> cls, int modifiers)
 		{
 			// System.out.println("BshCompProv - populateComplPopup: " + cls);
 			 
@@ -260,10 +260,10 @@ public class BshCompletionProvider implements CompletionProvider
 				item.setSubstituteOffset(queryCaretOffset);
 				resultSet.addItem(item);
 			}
-			for (Class c: cls.getDeclaredClasses())
+			for (Class<?> c: cls.getDeclaredClasses())
 			{
 				if(Modifier.isPrivate(c.getModifiers())) continue;
-				//annonimous inner classes have empty simple name
+				//anonymous inner classes have empty simple name
 				if(c.getSimpleName().length() == 0) continue;
 				//System.out.println("BshCompl - inner classes: " + c + ":" + c.getCanonicalName());
 				JavaResultItem item = new JavaResultItem.ClassResultItem(
@@ -290,7 +290,7 @@ public class BshCompletionProvider implements CompletionProvider
 			queryResult = resultSet;
 		}
 
-		private static Collection<Method> getMethods(Class cls, int comp_mod)
+		private static Collection<Method> getMethods(Class<?> cls, int comp_mod)
 		{
 			Set<Method> set = new HashSet<Method>();
 			Method[] ms = cls.getDeclaredMethods();
@@ -302,7 +302,7 @@ public class BshCompletionProvider implements CompletionProvider
 			return set;
 		}
 
-		private static Collection<Field> getFields(Class cls, int comp_mod)
+		private static Collection<Field> getFields(Class<?> cls, int comp_mod)
 		{
 			Set<Field> set = new HashSet<Field>();
 			Field[] ms = cls.getDeclaredFields();
@@ -641,7 +641,7 @@ public class BshCompletionProvider implements CompletionProvider
 			resultSet.finish();
 		}
 
-		private void populateResult(List list, Class cls, String name,
+		private void populateResult(List list, Class<?> cls, String name,
 				int modifiers)
 		{
 			Method[] ms = cls.getMethods();

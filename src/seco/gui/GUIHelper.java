@@ -822,15 +822,11 @@ public class GUIHelper
         menu.add(new JMenuItem(man.putAction(act, KeyStroke.getKeyStroke(
                 KeyEvent.VK_V, ActionEvent.CTRL_MASK), IconManager
                 .resolveIcon("Paste16.gif"))));
-        // TODO: the selection is not visible if invoked from menu,
-        // but CTRL + A work as expected ...
-        man.putAction(act, KeyStroke.getKeyStroke(KeyEvent.VK_A,
-                ActionEvent.CTRL_MASK));
-        // menu.addSeparator();
-        // act = kit.getActionByName(DefaultEditorKit.selectAllAction);
-        // act.putValue(Action.NAME, SELECT_ALL);
-        // menu.add(new JMenuItem(man.putAction(act, KeyStroke.getKeyStroke(
-        // KeyEvent.VK_A, ActionEvent.CTRL_MASK))));
+      
+        act = kit.getActionByName(DefaultEditorKit.selectAllAction);
+        act.putValue(Action.NAME, "Select All");
+        menu.add(new JMenuItem(man.putAction(act, KeyStroke.getKeyStroke(
+        KeyEvent.VK_A, ActionEvent.CTRL_MASK))));
         menu.addSeparator();
         menu.add(new JMenuItem(man.putAction(kit
                 .getActionByName(NotebookEditorKit.findAction), KeyStroke

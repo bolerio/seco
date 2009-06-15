@@ -12,8 +12,10 @@ import static seco.notebook.ElementType.commonCell;
 import static seco.notebook.ElementType.inputCellBox;
 import static seco.notebook.ElementType.outputCellBox;
 
+import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -22,6 +24,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -81,6 +84,7 @@ import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
+import seco.gui.PiccoloCanvas;
 import seco.gui.TopFrame;
 import seco.gui.GUIHelper.CellTreeAction;
 import seco.gui.GUIHelper.ElementTreeAction;
@@ -248,6 +252,17 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         }
         super.paintComponent(g2);
     }
+    
+    
+    //in piccolo pageUp/Down scrolling won't work as expected 
+    //so this hack over the original SUN hack:)
+    public Rectangle getVisibleRect() {
+        Rectangle visibleRect = new Rectangle();
+        getBounds(visibleRect);
+        if(!TopFrame.PICCOLO)
+           computeVisibleRect(visibleRect);
+        return visibleRect;
+    }
 
     public static void setAntiAliasing(boolean _antiAliasing)
     {
@@ -293,6 +308,9 @@ public class NotebookUI extends JTextPane implements DocumentListener,
        inputMap.put(key, DefaultEditorKit.copyAction);
        key = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK);
        inputMap.put(key, DefaultEditorKit.pasteAction);
+
+       key = KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK);
+       inputMap.put(key, DefaultEditorKit.selectAllAction);
     }
 
     void restoreCaret()

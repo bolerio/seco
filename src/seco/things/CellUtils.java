@@ -643,10 +643,11 @@ public class CellUtils
                 CopyAttributeChangeHandler.getInstance());
     }
 
-    public static void removeHandlers(HGHandle masterH)
+    public static void removePendingCellGroupMembers(HGHandle masterH)
     {
-        removeHandlers(masterH, HGHandleFactory.anyHandle);
-        ThisNiche.hg.remove(masterH);
+       // TODO:
+        //removeHandlers(masterH, HGHandleFactory.anyHandle);
+        //ThisNiche.hg.remove(masterH);
     }
 
     public static void removeHandlers(HGHandle masterH, HGHandle anotherH)

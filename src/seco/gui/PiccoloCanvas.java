@@ -420,8 +420,8 @@ public class PiccoloCanvas extends PSwingCanvas
         NotebookDocument doc = ui.getDoc();
         HGHandle h = ThisNiche.handleOf(ui);
         if (h != null) ThisNiche.hg.remove(h);
-        CellUtils.removeHandlers(doc.getBookHandle());
-        CellUtils.removeHandlers(doc.getHandle());
+        CellUtils.removePendingCellGroupMembers(doc.getBookHandle());
+        CellUtils.removePendingCellGroupMembers(doc.getHandle());
         ThisNiche.hg.remove(doc.getHandle());
     }
 

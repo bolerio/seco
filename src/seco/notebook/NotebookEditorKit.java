@@ -26,6 +26,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -121,7 +122,8 @@ public class NotebookEditorKit extends StyledEditorKit
             new ResetCellNumAction(), new JavaDocManagerAction(),
             new CtxInspectorAction(), new FindReplaceAction(true),
             new FindReplaceAction(false), new RemoveTabAction(),
-            new MergeCellsAction(), new SelectWordAction(), new SelectAllAction()};
+            new MergeCellsAction(), new SelectWordAction(), new SelectAllAction(),
+              };
     private static HashMap<String, Action> actions;
 
     /** Creates a new instance of NotebookEditorKit */
@@ -239,7 +241,8 @@ public class NotebookEditorKit extends StyledEditorKit
             return base.create(elem);
         }
     }
-
+    
+   
     public static class EvalAction extends BaseAction
     {
         private static final long serialVersionUID = -1024678440877335429L;
@@ -958,6 +961,7 @@ public class NotebookEditorKit extends StyledEditorKit
         }
     }
     
+    //selects the content of the cell which currently contain the cursor
     public static class SelectAllAction extends BaseAction
     {
         public SelectAllAction() {

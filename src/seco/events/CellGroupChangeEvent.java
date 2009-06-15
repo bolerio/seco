@@ -138,7 +138,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
        for(int i = 0; i < removed.length; i++)
        {
            System.out.println("CellGroupChangeEvent - die: " + removed[i]);
-           CellUtils.removeHandlers(removed[i]);
+           CellUtils.removePendingCellGroupMembers(removed[i]);
        }
     }
 
