@@ -645,9 +645,10 @@ public class CellUtils
 
     public static void removePendingCellGroupMembers(HGHandle masterH)
     {
-       // TODO:
-        //removeHandlers(masterH, HGHandleFactory.anyHandle);
-        //ThisNiche.hg.remove(masterH);
+       // TODO: more elaborate cleanup with some sort of "backup" cells
+        //for example
+       removeHandlers(masterH, HGHandleFactory.anyHandle);
+       //ThisNiche.hg.remove(masterH);
     }
 
     public static void removeHandlers(HGHandle masterH, HGHandle anotherH)
