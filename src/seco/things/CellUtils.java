@@ -742,10 +742,10 @@ public class CellUtils
         HGHandle pubs = link.getPubs();
         HGHandle subs = link.getSubs();
         ThisNiche.hg.remove(linkH, true);
-        if(cell_too)
-            ThisNiche.hg.remove(cellH, true);
-        ThisNiche.hg.remove(pubs, true);
-        ThisNiche.hg.remove(subs, true);
+        //if(cell_too)
+       //     ThisNiche.hg.remove(cellH, true);
+       // ThisNiche.hg.remove(pubs, true);
+       // ThisNiche.hg.remove(subs, true);
    }
     
     private static BackupLink createBackupLink(HGHandle cell)

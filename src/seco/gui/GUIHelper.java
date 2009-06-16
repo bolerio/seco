@@ -693,10 +693,10 @@ public class GUIHelper
                 !(x instanceof CellGroupMember), addit_attribs);
     }
 
-    public static void removeFromCellGroup(HGHandle groupH, HGHandle h)
+    public static void removeFromCellGroup(HGHandle groupH, HGHandle h, boolean backup)
     {
         CellGroup top = ThisNiche.hg.get(groupH);
-        top.remove((CellGroupMember) ThisNiche.hg.get(h));
+        top.remove((CellGroupMember) ThisNiche.hg.get(h), backup);
     }
 
     public static PSwingNode getPSwingNode(JComponent c)

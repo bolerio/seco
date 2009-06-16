@@ -164,6 +164,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         NotebookDocument doc = null;
         if (o instanceof CellGroupMember)
         {
+            if(CellUtils.isBackuped(book))
+                CellUtils.restoreCell(book);
             if (o instanceof CellGroup)
             {
                 doc = getDocForHandle(NotebookDocument.class, book);

@@ -101,7 +101,7 @@ public class PiccoloTransferHandler extends TransferHandler
                    if(old == null) return true;
                    PSwingNode canvN = GUIHelper.getPSwingNode(old.getCanvas());
                    HGHandle groupH = (canvN != null) ? canvN.getHandle() : canvas.getGroupH();
-                   GUIHelper.removeFromCellGroup(groupH, old.getHandle());
+                   GUIHelper.removeFromCellGroup(groupH, old.getHandle(), false);
                    return true;
                }
            }
@@ -122,7 +122,7 @@ public class PiccoloTransferHandler extends TransferHandler
         if (move)
         {
             add_to_top_group(top, data, pt);
-            old_group.remove((CellGroupMember)ThisNiche.hg.get(data));
+            old_group.remove((CellGroupMember)ThisNiche.hg.get(data), false);
         }else
             add_to_top_group(top, CellUtils.makeCopy(data), pt);
         return true;

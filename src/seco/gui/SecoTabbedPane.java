@@ -16,7 +16,11 @@ import javax.swing.TransferHandler;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
+import seco.events.AttributeChangeEvent;
+import seco.events.CellGroupChangeEvent;
+import seco.events.EvalCellEvent;
 import seco.things.CellGroup;
+import seco.things.CellUtils;
 
 public class SecoTabbedPane extends JTabbedPane
 {
@@ -138,9 +142,29 @@ public class SecoTabbedPane extends JTabbedPane
             {
                 int i = tp.getCellGroup().indexOf(tp.dragTabHandle);
                 if(i > -1)
-                   TabbedPaneU.closeAt(tp, i);
+                  closeAt(tp, i);
             }
                 
+        }
+        
+        public static void closeAt(JTabbedPane tp, int i)
+        {
+            if(i < 0 || i >= tp.getTabCount()) return;
+            HGHandle h = TabbedPaneU.getHandleAt(tp, i);
+            ThisNiche.hg.unfreeze(h);
+            CellGroup top = CellUtils.getParentGroup(h);
+            top.remove(i);
+           
+            HGHandle visH = CellContainerVisual.getHandle();
+            CellUtils.removeEventPubSub(CellGroupChangeEvent.HANDLE, h, visH, visH);
+            CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, h, visH, visH);
+            CellUtils.removeEventPubSub(AttributeChangeEvent.HANDLE, h, visH, visH);
+           
+            if (tp.getTabCount() == 0) 
+                TopFrame.getInstance().setTitle("Seco");
+            else
+                GUIHelper.updateFrameTitle(
+                        TabbedPaneU.getHandleAt(tp, tp.getSelectedIndex()));
         }
 
         public boolean importData(TransferSupport support)
@@ -149,7 +173,7 @@ public class SecoTabbedPane extends JTabbedPane
             Transferable t = support.getTransferable();
             System.out.println("TPTransferHandler: " + comp + ":" + tp);
             // Don't drop on myself.
-            if (comp == tp) return true;
+            if (comp == tp) return false;
             DataFlavor fl = getImportFlavor(t.getTransferDataFlavors(), comp);
             if (fl == null) return false;
             try

@@ -145,8 +145,13 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
 
     public void remove(int i)
     {
+        remove(i, true);
+    }
+    
+    public void remove(int i, boolean backup)
+    {
         CellGroupMember c = getElement(i);
-        remove(c);
+        remove(c, backup);
     }
 
     public void batchProcess(CellGroupChangeEvent e)
@@ -178,6 +183,10 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
 
     public void remove(CellGroupMember x)
     {
+        remove(x, true);
+    }
+    public void remove(CellGroupMember x, boolean backup)
+    {
         int i = indexOf(x);
         if (i >= 0)
         {
@@ -187,7 +196,8 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
             HGHandle grH = ThisNiche.handleOf(this);
             if (grH  == null)
                 throw new NullPointerException("Group with NULL handle: " + this);
-            CellUtils.backupCell(rem);
+            if(backup)
+              CellUtils.backupCell(rem);
             fireCellGroupChanged(new CellGroupChangeEvent(grH, i, new HGHandle[0], new HGHandle[] { rem }));
         }
     }

@@ -66,13 +66,13 @@ public class TabbedPaneU
         return -1;
     }
     
-    public static void closeAt(JTabbedPane tp, int i)
+    private static void closeAt(JTabbedPane tp, int i)
     {
         if(i < 0 || i >= tp.getTabCount()) return;
         HGHandle h = getHandleAt(tp, i);
         ThisNiche.hg.unfreeze(h);
         CellGroup top = CellUtils.getParentGroup(h);
-        top.remove(i);
+        top.remove(i, false);
        
         HGHandle visH = CellContainerVisual.getHandle();
         CellUtils.removeEventPubSub(CellGroupChangeEvent.HANDLE, h, visH, visH);
