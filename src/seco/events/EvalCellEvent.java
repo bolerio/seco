@@ -71,11 +71,11 @@ public class EvalCellEvent extends AbstractUndoableEdit
     public void die()
     {
        super.die();
-       if(oldValue instanceof HGHandle)
-       {
-           System.out.println("EvalCelEvent - die: " + oldValue);
-          CellUtils.removePendingCellGroupMembers((HGHandle)oldValue);
-       }
+       //if(oldValue instanceof HGHandle)
+      // {
+      //     System.out.println("EvalCelEvent - die: " + oldValue);
+      //    CellUtils.removePendingCellGroupMembers((HGHandle)oldValue);
+      // }
     }
 
     @Override

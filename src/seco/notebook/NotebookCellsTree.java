@@ -278,7 +278,7 @@ public class NotebookCellsTree extends JTree
                 for (int i = 0; i < removed.length; i++)
                 {
                     // EventPubSub gr = (EventPubSub) removed[i];
-                    ThisNiche.hg.remove(ThisNiche.handleOf(removed[i]));
+                    ThisNiche.hg.remove(ThisNiche.handleOf(removed[i]), true);
                     docs.remove(removed[i]);
                 }
                 list.setListData(docs.toArray());

@@ -364,9 +364,9 @@ public class NotebookTransferHandler extends TransferHandler
             {
                 try
                 {
-                    HGHandle nbH = NotebookDocument.getNBElementH(e);
+                    //HGHandle nbH = NotebookDocument.getNBElementH(e);
                     doc.removeCellBoxElement(e);
-                    CellUtils.removeHandlers(nbH, c.getDoc().getHandle());
+                    //CellUtils.removeHandlers(nbH, c.getDoc().getHandle());
                 }
                 catch (BadLocationException ex)
                 {

@@ -52,7 +52,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
         this.index = index;
         this.removed = removed;
         this.added = added;
-        remove_eps(removed);
+        //remove_eps(removed);
     }
 
     /**
@@ -107,7 +107,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
        HGHandle[] tmp = removed;
        removed = added;
        added = tmp;
-       restore_eps();
+       //restore_eps();
        CellGroup gr = (CellGroup) ThisNiche.hg.get(groupH);
        gr.batchProcess(new CellGroupChangeEvent(groupH, index, added, removed));
        
@@ -122,7 +122,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
     public void undo() throws CannotUndoException
     {
         super.undo();
-        restore_eps();
+        //restore_eps();
         CellGroup gr = (CellGroup) ThisNiche.hg.get(groupH);
         gr.batchProcess(new CellGroupChangeEvent(groupH, index, removed, added));
         // Since this event will be reused, switch around added/removed.
@@ -135,11 +135,11 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
     public void die()
     {
        super.die();
-       for(int i = 0; i < removed.length; i++)
-       {
-           System.out.println("CellGroupChangeEvent - die: " + removed[i]);
-           CellUtils.removePendingCellGroupMembers(removed[i]);
-       }
+//       for(int i = 0; i < removed.length; i++)
+//       {
+//           System.out.println("CellGroupChangeEvent - die: " + removed[i]);
+//           CellUtils.removePendingCellGroupMembers(removed[i]);
+//       }
     }
 
     @Override
@@ -188,7 +188,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
             List<EventPubSub> l = hg.getAll(ThisNiche.hg, hg.and(hg
                     .type(EventPubSub.class), hg.incident(h), hg
                     .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
-                            HGHandleFactory.anyHandle, h, h })));;
+                            HGHandleFactory.anyHandle, h, h })));
              if (!l.isEmpty())
              {
                  Set<HGHandle> set = new HashSet<HGHandle>(l.size());

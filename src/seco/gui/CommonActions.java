@@ -97,9 +97,9 @@ public class CommonActions
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         canvas.getCamera().removeAllChildren();
         canvas.getNodeLayer().removeAllChildren();
-        ThisNiche.hg.remove(GUIHelper.MENUBAR_HANDLE);
-        ThisNiche.hg.remove(GUIHelper.TOOLBAR_HANDLE);
-        ThisNiche.hg.remove(GUIHelper.HTML_TOOLBAR_HANDLE);
+        ThisNiche.hg.remove(GUIHelper.MENUBAR_HANDLE, true);
+        ThisNiche.hg.remove(GUIHelper.TOOLBAR_HANDLE, true);
+        ThisNiche.hg.remove(GUIHelper.HTML_TOOLBAR_HANDLE, true);
         GUIHelper.makeTopCellGroup(ThisNiche.hg);
         CellGroup group = (CellGroup) ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         CellVisual v = (CellVisual) ThisNiche.hg.get(group.getVisual());

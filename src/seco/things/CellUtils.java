@@ -25,6 +25,7 @@ import org.hypergraphdb.query.HGQueryCondition;
 
 import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
+import seco.events.BackupLink;
 import seco.events.CellGroupChangeEvent;
 import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
@@ -32,6 +33,7 @@ import seco.events.EvalResult;
 import seco.events.EventDispatcher;
 import seco.events.EventHandler;
 import seco.events.EventPubSub;
+import seco.events.BackupLink.EventPubSubInfo;
 import seco.events.handlers.CopyAttributeChangeHandler;
 import seco.events.handlers.CopyCellGroupChangeHandler;
 import seco.events.handlers.CopyCellTextChangeHandler;
@@ -439,7 +441,7 @@ public class CellUtils
                 EvalCellEvent.HANDLE, HGHandleFactory.anyHandle, cell_handle,
                 HGHandleFactory.anyHandle })));
         for (HGHandle s : set)
-            if (s != null) ThisNiche.hg.remove(s);
+            if (s != null) ThisNiche.hg.remove(s, true);
 
     }
 
@@ -545,7 +547,7 @@ public class CellUtils
         List<HGHandle> subscriptions = getEventPubSubListH(eventType,
                 publisher, subscriber, listener);
         for (HGHandle s : subscriptions)
-            ThisNiche.hg.remove(s);
+            ThisNiche.hg.remove(s, true);
     }
 
     public static void addEventPubSub(HGHandle eventType, HGHandle pub,
@@ -643,50 +645,128 @@ public class CellUtils
                 CopyAttributeChangeHandler.getInstance());
     }
 
-    public static void removePendingCellGroupMembers(HGHandle masterH)
-    {
-       // TODO: more elaborate cleanup with some sort of "backup" cells
-        //for example
-       removeHandlers(masterH, HGHandleFactory.anyHandle);
-       //ThisNiche.hg.remove(masterH);
-    }
-
-    public static void removeHandlers(HGHandle masterH, HGHandle anotherH)
+     public static void removeHandlers(HGHandle masterH)
     {
         if (masterH == null) return;
         Object master = ThisNiche.hg.get(masterH);
-        if (master instanceof CellGroup) removeCellGroupHandlers(masterH,
-                anotherH);
+        if (master instanceof CellGroup) 
+            removeCellGroupHandlers(masterH);
         else
-            remove_event_handlers(masterH, anotherH);
+            remove_event_handlers(masterH);
     }
 
-    private static void removeCellGroupHandlers(HGHandle masterH,
-            HGHandle anotherH)
+    private static void removeCellGroupHandlers(HGHandle masterH)
     {
         CellGroup master = (CellGroup) ThisNiche.hg.get(masterH);
-        remove_event_handlers(masterH, anotherH);
+        remove_event_handlers(masterH);
 
         for (int i = 0; i < master.getArity(); i++)
-            if (master.getElement(i) instanceof CellGroup) removeCellGroupHandlers(
-                    master.getTargetAt(i), anotherH);
+            if (master.getElement(i) instanceof CellGroup) 
+                removeCellGroupHandlers(master.getTargetAt(i));
             else
-                remove_event_handlers(master.getTargetAt(i), anotherH);
+                remove_event_handlers(master.getTargetAt(i));
     }
 
-    private static void remove_event_handlers(HGHandle masterH,
-            HGHandle anotherH)
+    private static void remove_event_handlers(HGHandle masterH)
     {
         List<HGHandle> subs = getListForPubOrSub(HGHandleFactory.anyHandle,
-                masterH, anotherH, HGHandleFactory.anyHandle);
+                masterH, HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
         for (HGHandle s : subs)
-            ThisNiche.hg.remove(s);
-        subs = getListForPubOrSub(HGHandleFactory.anyHandle, anotherH, masterH,
+            ThisNiche.hg.remove(s, true);
+        subs = getListForPubOrSub(HGHandleFactory.anyHandle, HGHandleFactory.anyHandle, masterH,
                 HGHandleFactory.anyHandle);
         for (HGHandle s : subs)
-            ThisNiche.hg.remove(s);
+            ThisNiche.hg.remove(s, true);
     }
+    
+    public static void backupCell(HGHandle cell)
+    {
+        CellGroupMember cgm = ThisNiche.hg.get(cell);
+        if(cgm == null) return;
+        if(cgm instanceof CellGroup)
+            for(int i = 0; i < ((CellGroup) cgm).getArity() ;i++)
+                ThisNiche.hg.add(
+                        createBackupLink(((CellGroup) cgm).getTargetAt(i)));
+        else
+            ThisNiche.hg.add(createBackupLink(cell));
+        CellUtils.removeHandlers(cell);
+    }
+    
+    public static boolean isBackuped(HGHandle cell)
+    {
+        return getBackupLink(cell) != null;
 
+    }
+    
+    private static BackupLink getBackupLink(HGHandle cell)
+    {
+       HGHandle h = hg.findOne(ThisNiche.hg, hg.and(hg
+                .type(BackupLink.class), hg.incident(cell)));
+       return h != null ? (BackupLink) ThisNiche.hg.get(h) : null;
+    }
+    
+    public static void restoreCell(HGHandle cell)
+    {
+        BackupLink link = getBackupLink(cell);
+        if(link == null) return;
+        
+        CellGroupMember cgm = ThisNiche.hg.get(link.getCell());
+        if(cgm instanceof CellGroup)
+            for(int i = 0; i < ((CellGroup) cgm).getArity() ;i++)
+               restoreCell(((CellGroup) cgm).getTargetAt(i));
+        else
+        {
+            List<EventPubSubInfo> pubs = ThisNiche.hg.get(link.getPubs());
+            for(EventPubSubInfo inf: pubs)
+                ThisNiche.hg.add(new EventPubSub(inf.getEventType(),
+                        link.getCell(), inf.getPubOrSub(), inf.getEventHandler()));
+            List<EventPubSubInfo> subs = ThisNiche.hg.get(link.getSubs());
+            for(EventPubSubInfo inf: subs)
+                ThisNiche.hg.add(new EventPubSub(inf.getEventType(),
+                        inf.getPubOrSub(), link.getCell(), inf.getEventHandler()));
+        }
+        removeBackupLink(link, false);
+    }
+    
+    public static void removeBackupedCells()
+    {
+       List<BackupLink> res = hg.getAll(ThisNiche.hg, hg.type(BackupLink.class));
+       for(BackupLink link: res)
+            removeBackupLink(link, true);
+    }
+    
+    private static void removeBackupLink(BackupLink link, boolean cell_too)
+    {
+        HGHandle linkH = ThisNiche.handleOf(link);
+        HGHandle cellH = link.getCell();
+        HGHandle pubs = link.getPubs();
+        HGHandle subs = link.getSubs();
+        ThisNiche.hg.remove(linkH, true);
+        if(cell_too)
+            ThisNiche.hg.remove(cellH, true);
+        ThisNiche.hg.remove(pubs, true);
+        ThisNiche.hg.remove(subs, true);
+   }
+    
+    private static BackupLink createBackupLink(HGHandle cell)
+    {
+        List<EventPubSub> pubs = hg.getAll(ThisNiche.hg, hg.and(hg
+                .type(EventPubSub.class), hg.incident(cell), hg
+                .orderedLink(new HGHandle[] { 
+                        HGHandleFactory.anyHandle, cell, HGHandleFactory.anyHandle, HGHandleFactory.anyHandle })));
+       List<EventPubSubInfo> pubs_out = new ArrayList<EventPubSubInfo>(pubs.size()); 
+       for(EventPubSub eps : pubs)
+           pubs_out.add(new EventPubSubInfo(eps.getEventType(), eps.getSubscriber(), eps.getEventHandler()));
+       List<EventPubSub> subs = hg.getAll(ThisNiche.hg, hg.and(hg
+               .type(EventPubSub.class), hg.incident(cell), hg
+               .orderedLink(new HGHandle[] { 
+                       HGHandleFactory.anyHandle, HGHandleFactory.anyHandle, cell, HGHandleFactory.anyHandle })));
+      List<EventPubSubInfo> subs_out = new ArrayList<EventPubSubInfo>(pubs.size()); 
+      for(EventPubSub eps : subs)
+          subs_out.add(new EventPubSubInfo(eps.getEventType(), eps.getPublisher(), eps.getEventHandler()));
+      return new BackupLink(cell, pubs_out, subs_out);
+    }
+    
     static List<HGHandle> getListForPubOrSub(HGHandle eventType,
             HGHandle publisher, HGHandle subscriber, HGHandle listener)
     {

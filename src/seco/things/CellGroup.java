@@ -64,8 +64,6 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
     public void setTargetAt(int i, HGHandle h)
     {
         outgoingSet.add(i, h);
-        //ThisNiche.hg.update(this);
-        // System.out.println("CG-setTargetAt: " + elements.get(i));
     }
 
     public void notifyTargetHandleUpdate(int i, HGHandle handle)
@@ -116,17 +114,7 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
      */
     public void insert(int ind, CellGroupMember cell)
     {
-        HGHandle h = ThisNiche.handleOf(cell);
-        if (h == null)
-            throw new NullPointerException("Attempt to add " + cell
-                    + " with Null handle in: " + this);
-        HGHandle grH = ThisNiche.handleOf(this);
-        if (grH  == null)
-            throw new NullPointerException("Group with NULL handle: " + this);
-        outgoingSet.add(ind, h);
-        ThisNiche.hg.update(this);
-        fireCellGroupChanged(new CellGroupChangeEvent(grH, ind,
-                new HGHandle[] { h }, new HGHandle[0]));
+        insert(ind, ThisNiche.handleOf(cell));
     }
 
     public void append(HGHandle h)
@@ -147,6 +135,8 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
         HGHandle grH = ThisNiche.handleOf(this);
         if (grH  == null)
             throw new NullPointerException("Group with NULL handle: " + this);
+        if(CellUtils.isBackuped(h))
+            CellUtils.restoreCell(h);
         outgoingSet.add(ind, h);
         ThisNiche.hg.update(this);
         fireCellGroupChanged(new CellGroupChangeEvent(grH, ind,
@@ -170,12 +160,17 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
             for (int i = 0; i < removed.length; i++)
             {
                 outgoingSet.remove(removed[i]);
+                CellUtils.backupCell(removed[i]);
             }
         }
         if (added != null && added.length > 0)
         {
             for (int i = 0; i < added.length; i++)
+            {
                 outgoingSet.add(index, added[i]);
+                if(CellUtils.isBackuped(added[i]))
+                    CellUtils.restoreCell(added[i]);
+            }
         }
         ThisNiche.hg.update(this);
         fireCellGroupChanged(e);
@@ -192,6 +187,7 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
             HGHandle grH = ThisNiche.handleOf(this);
             if (grH  == null)
                 throw new NullPointerException("Group with NULL handle: " + this);
+            CellUtils.backupCell(rem);
             fireCellGroupChanged(new CellGroupChangeEvent(grH, i, new HGHandle[0], new HGHandle[] { rem }));
         }
     }
@@ -202,6 +198,8 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
         if (grH  == null)
             throw new NullPointerException("Group with NULL handle: " + this);
         HGHandle[] rem = outgoingSet.toArray(new HGHandle[getArity()]);
+        for(HGHandle h: rem)
+            CellUtils.backupCell(h);
         outgoingSet.clear();
         fireCellGroupChanged(new CellGroupChangeEvent(
                 grH, 0, new HGHandle[0], rem));
