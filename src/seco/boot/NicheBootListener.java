@@ -13,6 +13,7 @@ import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.event.HGEvent;
 import org.hypergraphdb.event.HGListener;
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
 import seco.rtenv.RuntimeContext;
 import seco.things.CellGroup;
@@ -28,6 +29,11 @@ public class NicheBootListener implements HGListener
         topRuntime.getBindings().put("desktop", TopFrame.getInstance());
         topRuntime.getBindings().put("canvas", TopFrame.getInstance().getCanvas());
         ThisNiche.hg.update(topRuntime);
+        
+        // We need to make sure that we have a TOP_CELL_GROUP, no matter what, even if
+        // it was deleted by mistake.
+        if (hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE) == null)
+            GUIHelper.makeTopCellGroup(hg);
         final CellGroup group = (CellGroup) hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         final CellVisual v = (CellVisual) hg.get(group.getVisual());
         SwingUtilities.invokeLater(new Runnable(){

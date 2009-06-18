@@ -21,10 +21,10 @@ import seco.ThisNiche;
 import seco.things.CellGroup;
 import seco.things.CellUtils;
 
-
-
 public class CellGroupChangeEvent extends AbstractUndoableEdit 
 {
+    private static final long serialVersionUID = 3782634173927905183L;
+
     public static final HGPersistentHandle HANDLE = HGHandleFactory.makeHandle("45e6d93f-cddf-11dc-a205-83ce1a342d9c");
     
     private HGHandle groupH;
