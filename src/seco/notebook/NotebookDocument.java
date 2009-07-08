@@ -1068,6 +1068,11 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public void removeCellBoxElement(Element el) throws BadLocationException
     {
+        removeCellBoxElement(el, true);
+    }
+    
+    public void removeCellBoxElement(Element el, boolean backup) throws BadLocationException
+    {
         HGHandle nb = getNBElementH(el);
         Element nb_el = getEnclosingCellElement(el);
         Element gr_el = getContainerEl(nb_el, false);
@@ -1080,10 +1085,14 @@ public class NotebookDocument extends DefaultStyledDocument
             gr_el = getContainerEl(gr_el, false);
         }
         CellGroup gr = (CellGroup) getNBElement(gr_el);
-        fireCellGroupChanged(new CellGroupChangeEvent(getNBElementH(gr_el), gr
+        if(backup)
+           fireCellGroupChanged(new CellGroupChangeEvent(getNBElementH(gr_el), gr
                 .indexOf(nb), new HGHandle[0], new HGHandle[] { nb }));
+        else
+            gr.remove(gr.indexOf(nb), false);
+        updateElement(getRootElements()[0]); 
     }
-
+    
     private EvalCellEvent create_eval_event(HGHandle cellH, EvalResult value)
     {
         HGHandle oldH = CellUtils.getOutCellHandle(cellH);

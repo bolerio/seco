@@ -854,8 +854,6 @@ public class GUIHelper
         // menu.add(new JSeparator());
         // menu.add(new JMenuItem(man.putAction(new ExitAction(), KeyStroke
         // .getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK))));
-        // TODO: Just for testing purposes, would be removed
-
         return menu;
     }
 

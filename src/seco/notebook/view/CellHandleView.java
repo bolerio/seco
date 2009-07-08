@@ -399,7 +399,7 @@ public class CellHandleView extends HidableComponentView
 
 		public void mouseDragged(MouseEvent e)
 		{
-			if (button.drawInsertionLine)
+			if (!SwingUtilities.isRightMouseButton(e) && button.drawInsertionLine )
 			{
 				initDrag(e);
 				e.consume();
