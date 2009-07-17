@@ -5,15 +5,18 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
+import javax.swing.ImageIcon;
+
 import seco.ThisNiche;
 import seco.gui.PSwingNode;
+import seco.notebook.util.IconManager;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import edu.umd.cs.piccolo.event.PInputEvent;
 
 public class MinimizeHandle extends PSmallBoundsHandle
 {
-    private int PREF_DIM = 10;
+    private int PREF_DIM = 16;
     protected PSwingNode node;
     
     public MinimizeHandle(PSwingNode node, int side, Point offsetP)
@@ -24,14 +27,18 @@ public class MinimizeHandle extends PSmallBoundsHandle
         
         setWidth(PREF_DIM);
         setHeight(PREF_DIM);
-        this.setShape(PNodeEx.ELLIPSE);
+        //this.setShape(PNodeEx.ELLIPSE);
         this.setToolTip("Minimize");
+        
+        this.setShape(PNodeEx.RECTANGLE);
+        //http://www.kansas.gov/index.php
+        ImageIcon ic = IconManager.resolveIcon("Minimize.gif");
+        setImage(ic.getImage());
     }
     
     public void endHandleDrag(Point2D aLocalPoint, PInputEvent aEvent)
     {
         relocateHandle();
-        //setPaint(Color.yellow);
         CellGroupMember cgm = ThisNiche.hg.get(node.getHandle());
         CellUtils.toggleMinimized(cgm);
     }

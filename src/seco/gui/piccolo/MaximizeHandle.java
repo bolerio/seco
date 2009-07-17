@@ -5,15 +5,18 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
+import javax.swing.ImageIcon;
+
 import seco.ThisNiche;
 import seco.gui.PSwingNode;
+import seco.notebook.util.IconManager;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import edu.umd.cs.piccolo.event.PInputEvent;
 
 public class MaximizeHandle extends PSmallBoundsHandle
 {
-    private int PREF_DIM = 10;
+    private int PREF_DIM = 16;
     protected PSwingNode node;
     
     public MaximizeHandle(PSwingNode node, int side, Point offsetP)
@@ -26,6 +29,8 @@ public class MaximizeHandle extends PSmallBoundsHandle
         setHeight(PREF_DIM);
         this.setShape(PNodeEx.RECTANGLE);
         this.setToolTip("Maximize");
+        ImageIcon ic = IconManager.resolveIcon("Maximize.gif");
+        setImage(ic.getImage());
     }
     
     public void endHandleDrag(Point2D aLocalPoint, PInputEvent aEvent)

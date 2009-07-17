@@ -3,6 +3,8 @@ package seco.gui.piccolo;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Paint;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
@@ -44,6 +46,8 @@ public class PNodeEx extends PPath
      * after a layout
      */
     protected boolean sandboxed;
+    
+    protected Image image;
     
     int NODE_SHAPE = ELLIPSE;
     Paint NODE_PAINT = Color.WHITE;
@@ -377,7 +381,37 @@ public class PNodeEx extends PPath
      */
     protected void paint(PPaintContext paintContext)
     {
-        super.paint(paintContext);
+        if(image != null)
+          paintImage(paintContext);
+        else
+          super.paint(paintContext);
+    }
+    
+    
+    protected void paintImage(PPaintContext paintContext) {
+        if (getImage() != null) {
+            
+            double iw = image.getWidth(null);
+            double ih = image.getHeight(null);
+            PBounds b = getBoundsReference();
+            Graphics2D g2 = paintContext.getGraphics();
+            Paint p = getPaint();
+            if (p != null) {
+                g2.setPaint(p);
+                g2.fill(getPathReference());
+            }
+
+            if (b.x != 0 || b.y != 0 || b.width != iw || b.height != ih) {
+                g2.translate(b.x, b.y);
+                g2.scale(b.width / iw, b.height / ih);
+                g2.drawImage(image, 0, 0, null);
+                g2.scale(iw / b.width, ih / b.height);
+                g2.translate(-b.x, -b.y);
+            }
+            else {
+                g2.drawImage(image, 0, 0, null);
+            }
+        }
     }
 
     /**
@@ -548,6 +582,16 @@ public class PNodeEx extends PPath
     public String getLabelText()
     {
         return label.getText();
+    }
+
+    public Image getImage()
+    {
+        return image;
+    }
+
+    public void setImage(Image image)
+    {
+        this.image = image;
     }
 } // class PNodeEx
 

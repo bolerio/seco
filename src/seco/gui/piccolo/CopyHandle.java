@@ -2,13 +2,16 @@ package seco.gui.piccolo;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Paint;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 
+import javax.swing.ImageIcon;
 import javax.swing.TransferHandler;
 
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
+import seco.notebook.util.IconManager;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
@@ -18,18 +21,24 @@ import edu.umd.cs.piccolox.util.PBoundsLocator;
 
 public class CopyHandle extends PSmallBoundsHandle
 {
-    private int PREF_DIM = 10;
+    private int PREF_DIM = 16;
     private boolean dragStarted = false;
     protected PSwingNode node;
+    protected Paint orig_bg = Color.white; //Color.yellow
+    protected Paint sel_bg = Color.green;
     public CopyHandle(PSwingNode node, int side, Point offsetP)
     {
         super(new OffsetPBoundsLocator(node, side, offsetP));
         this.node = node;
-        setPaint(Color.yellow);
+        setPaint(orig_bg);
         
         setWidth(PREF_DIM);
         setHeight(PREF_DIM);
         this.setToolTip("Move");
+        
+        ImageIcon ic = IconManager.resolveIcon("move.gif");
+        setImage(ic.getImage());
+        this.setShape(PNodeEx.RECTANGLE);
     }
     
     public Cursor getCursorFor(int side)
@@ -40,7 +49,7 @@ public class CopyHandle extends PSmallBoundsHandle
     public void startHandleDrag(Point2D aLocalPoint, PInputEvent e)
     {
         dragStarted = true;
-        setPaint(Color.green);
+        setPaint(sel_bg);
         PiccoloCanvas canvas = (PiccoloCanvas) node.getCanvas();
         System.out.println("CopyHandle - startHandleDrag: " + canvas);
         canvas.getTransferHandler().exportAsDrag(
@@ -57,7 +66,7 @@ public class CopyHandle extends PSmallBoundsHandle
     {
         dragStarted = false;
         relocateHandle();
-        setPaint(Color.yellow);
+        setPaint(orig_bg);
        // System.out.println("CopyHandle - endHandleDrag");
         //PBoundsLocator l = (PBoundsLocator) getLocator();
         //l.getNode().endResizeBounds();

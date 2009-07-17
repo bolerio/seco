@@ -70,6 +70,7 @@ public class ConnectionManager
         if (L.isEmpty())
         {
             ConnectionPanel panel = new ConnectionPanel();
+            panel.initComponents();
 //            panel.setConnectionConfig(config);
             panelHandle = ThisNiche.hg.add(panel);           
             ThisNiche.hg.add(new HGPlainLink(panelHandle, configHandle)); 
@@ -98,7 +99,6 @@ public class ConnectionManager
         CellUtils.setName(cell, "Seco Network");
         cell.setAttribute(VisualAttribs.showTitle, true);        
         ConnectionPanel panel = ThisNiche.hg.get(panelHandle);
-        panel.initComponents();
         panel.connect();
         return panel;
     }
