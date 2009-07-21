@@ -16,12 +16,7 @@ import java.util.Iterator;
 
 import javax.swing.SwingConstants;
 
-import seco.ThisNiche;
 import seco.gui.PSwingNode;
-import seco.gui.TabbedPaneVisual;
-import seco.gui.TopFrame;
-import seco.things.CellGroupMember;
-
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
@@ -65,58 +60,6 @@ public class PSmallBoundsHandle extends PSmallHandle
                 .createSouthEastLocator(node)));
         node.addChild(new PSmallBoundsHandle(PBoundsLocator
                 .createSouthWestLocator(node)));
-
-        if (node instanceof PSwingNode)
-        {
-            // TODO: temp check
-            CellGroupMember cgm = ThisNiche.hg.get(((PSwingNode) node).getHandle());
-            if (!TabbedPaneVisual.getHandle().equals(cgm.getVisual()))
-                node.addChild(new CopyHandle((PSwingNode) node,
-                        SwingConstants.NORTH_EAST, new Point(-10, 0)));
-            node.addChild(new MinimizeHandle((PSwingNode) node,
-                    SwingConstants.NORTH_EAST, new Point(-25, 0)));
-            node.addChild(new MaximizeHandle((PSwingNode) node,
-                    SwingConstants.NORTH_EAST, new Point(-40, 0)));
-        }
-    }
-
-    public static void addBoundsHandlesTo(PNode aNode, boolean only_quadrants)
-    {
-        if (only_quadrants)
-        {
-            aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
-                    .createNorthEastLocator(aNode)));
-            aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
-                    .createNorthWestLocator(aNode)));
-            aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
-                    .createSouthEastLocator(aNode)));
-            aNode.addChild(new PSmallBoundsHandle(PBoundsLocator
-                    .createSouthWestLocator(aNode)));
-        }
-        else
-        {
-            addBoundsHandlesTo(aNode);
-        }
-    }
-
-    public static void addStickyBoundsHandlesTo(PNode aNode, PCamera camera)
-    {
-        camera.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createEastLocator(aNode)));
-        camera.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createWestLocator(aNode)));
-        camera.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createNorthLocator(aNode)));
-        camera.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createSouthLocator(aNode)));
-        camera.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createNorthEastLocator(aNode)));
-        camera.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createNorthWestLocator(aNode)));
-        camera.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createSouthEastLocator(aNode)));
-        camera.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createSouthWestLocator(aNode)));
     }
 
     public static void removeBoundsHandlesFrom(PNode aNode)

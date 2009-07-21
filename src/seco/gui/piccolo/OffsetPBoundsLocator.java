@@ -5,6 +5,12 @@ import java.awt.Point;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolox.util.PBoundsLocator;
 
+/*
+ * Simple locator which place the given handle according the specified
+ * offset from given side. For example: 
+ * <code> new Point(-10, 0), SwingConstants.NORTH_EAST </code>
+ * will place the handle at 10 pixels west from the top right corner 
+ */
 public class OffsetPBoundsLocator extends PBoundsLocator
 {
     protected Point offsetP;

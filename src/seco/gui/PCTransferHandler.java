@@ -21,14 +21,16 @@ import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
-public class PiccoloTransferHandler extends TransferHandler
+/*
+ * PiccoloCanvas's TransferHandler.
+ */
+public class PCTransferHandler extends TransferHandler
 {
     private PiccoloCanvas canvas;
     
-    public PiccoloTransferHandler(PiccoloCanvas canvas)
+    public PCTransferHandler(PiccoloCanvas canvas)
     {
-        super();
-        this.canvas = canvas;
+       this.canvas = canvas;
     }
 
     @Override
@@ -37,10 +39,9 @@ public class PiccoloTransferHandler extends TransferHandler
         Transferable t = support.getTransferable();
         if (!hasFlavor(t.getTransferDataFlavors())) return false;
         Point pt = support.getDropLocation().getDropPoint();
-        System.out.println("PicTrH-importData: " + support + ":" + pt +
-                ":" + support.getComponent());
         try
         {
+            if(is_nested(support)) return false;
             if(check_and_handle_in_nodes(support)) return true;
             if (support.isDataFlavorSupported(SecoTransferable.FLAVOR))
                 return handleSecoTransfer(support);
@@ -86,11 +87,8 @@ public class PiccoloTransferHandler extends TransferHandler
         {
            if(!(o instanceof PSwingNode)) continue;
            PSwingNode node = (PSwingNode) o;
-           //System.out.println("handleSecoTransfer" + pt + ":" + node.getFullBounds());
            if(node.getFullBounds().contains(pt))
            {
-               //System.out.println("handleSecoTransfer - inner" +
-               //        node.getComponent() + ":" + node.getComponent().getTransferHandler());
                TransferHandler handler = node.getComponent().getTransferHandler();
                if(handler != null && handler.importData(support))
                {
@@ -107,6 +105,25 @@ public class PiccoloTransferHandler extends TransferHandler
            }
         }
         return false;
+    }
+    
+    //can't copy some group inside itself
+    private boolean is_nested(TransferSupport support)
+         throws UnsupportedFlavorException, IOException
+    {
+        HGHandle data = 
+            (HGHandle) support.getTransferable().getTransferData(SecoTransferable.FLAVOR);
+        CellGroupMember cgm = ThisNiche.hg.get(data);
+        if(!(cgm instanceof CellGroup)) return false;
+        CellGroup group = (CellGroup) cgm;
+        CellGroup top = ThisNiche.hg.get(canvas.getGroupH());
+        while(top != null)
+        {
+            if(group == top) return true; 
+            top = CellUtils.getParentGroup(
+                    ThisNiche.handleOf(top));
+        }
+        return false; 
     }
     
     public boolean handleSecoTransfer(TransferSupport support)
@@ -158,9 +175,7 @@ public class PiccoloTransferHandler extends TransferHandler
     
     public int getSourceActions(JComponent c)
     {
-        int //actions = COPY;
-          actions = COPY_OR_MOVE;
-        return actions;
+        return COPY_OR_MOVE;
     }
     
     protected Transferable createTransferable(JComponent comp)

@@ -90,7 +90,7 @@ public class PiccoloCanvas extends PSwingCanvas
     // Set<PSwingNode> inner_canvases = new HashSet<PSwingNode>();
     private void init()
     {
-        setTransferHandler(new PiccoloTransferHandler(this));
+        setTransferHandler(new PCTransferHandler(this));
         nodeLayer = new PLayer() {
             public void addChild(int index, PNode child)
             {

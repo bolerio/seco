@@ -8,6 +8,7 @@ package seco.gui;
  * www.cs.umd.edu/hcil by Jesse Grosjean under the supervision of Ben Bederson. 
  * The Piccolo website is www.cs.umd.edu/hcil/piccolo 
  */
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -16,6 +17,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.SwingConstants;
+
+import seco.gui.piccolo.CopyHandle;
+import seco.gui.piccolo.MaximizeHandle;
+import seco.gui.piccolo.MinimizeHandle;
 import seco.gui.piccolo.PSmallBoundsHandle;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
@@ -24,7 +30,6 @@ import edu.umd.cs.piccolo.event.PDragSequenceEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PDimension;
-import edu.umd.cs.piccolo.util.PPickPath;
 
 
 /**
@@ -70,9 +75,24 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         node.moveToFront();
     }
 
+    //TODO: provide some means to add/register additional handles
     public void decorateSelectedNode(PNode node)
     {
         PSmallBoundsHandle.addBoundsHandlesTo(node);
+        
+        if (node instanceof PSwingNode)
+        {
+            //temp check
+            // CellGroupMember cgm = ThisNiche.hg.get(((PSwingNode)
+            // node).getHandle());
+            // if (!TabbedPaneVisual.getHandle().equals(cgm.getVisual()))
+            node.addChild(new CopyHandle((PSwingNode) node,
+                    SwingConstants.NORTH_EAST, new Point(-10, 0)));
+            node.addChild(new MinimizeHandle((PSwingNode) node,
+                    SwingConstants.NORTH_EAST, new Point(-25, 0)));
+            node.addChild(new MaximizeHandle((PSwingNode) node,
+                    SwingConstants.NORTH_EAST, new Point(-40, 0)));
+        }
     }
 
     public void unselect(PNode node)
@@ -126,9 +146,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         else
             startStandardOptionSelection(e);
     }
-    
-    
-
+ 
     protected void drag(PInputEvent e)
     {
         super.drag(e);
@@ -250,7 +268,6 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
 
     public void deleteSelection(PInputEvent e)
     {
-        // System.out.println("TSH - deleteSelection:" + e.getComponent());
         for (PNode node : selection.keySet())
         {
             //if (node instanceof PSwingNode
