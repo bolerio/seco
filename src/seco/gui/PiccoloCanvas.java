@@ -1,25 +1,13 @@
 package seco.gui;
 
-import java.awt.BasicStroke;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Stroke;
 import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 
 import org.hypergraphdb.HGHandle;
 
@@ -28,7 +16,6 @@ import seco.gui.layout.LayoutHandler;
 import seco.gui.piccolo.PToolTipHandler;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
-import seco.things.Cell;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import edu.umd.cs.piccolo.PCamera;
@@ -42,14 +29,18 @@ import edu.umd.cs.piccolo.util.PNodeFilter;
 import edu.umd.cs.piccolo.util.PPaintContext;
 import edu.umd.cs.piccolox.pswing.PSwingCanvas;
 import edu.umd.cs.piccolox.pswing.PSwingEventHandler;
-import edu.umd.cs.piccolox.swing.PScrollPane;
 
+/*
+ * Main Piccolo container.
+ */
 public class PiccoloCanvas extends PSwingCanvas
 {
     private static final long serialVersionUID = 8650227944556777541L;
+    private static PSwingNodeFilter ps_filter= new PSwingNodeFilter();
 
     PLayer nodeLayer;
     PCSelectionHandler selectionHandler;
+    ContextMenuHandler ctxMenuHandler;
     boolean nested;
 
     public PiccoloCanvas()
@@ -87,7 +78,6 @@ public class PiccoloCanvas extends PSwingCanvas
         getCamera().addInputEventListener(new PToolTipHandler(getCamera()));
     }
 
-    // Set<PSwingNode> inner_canvases = new HashSet<PSwingNode>();
     private void init()
     {
         setTransferHandler(new PCTransferHandler(this));
@@ -102,10 +92,6 @@ public class PiccoloCanvas extends PSwingCanvas
                 invalidateFullBounds();
                 firePropertyChange(0, PROPERTY_CHILDREN, null,
                         getChildrenReference());
-                // if(child instanceof PSwingNode &&
-                // ((PSwingNode)child).getComponent() instanceof
-                // PiccoloCanvas)
-                // inner_canvases.add((PSwingNode)child);
             }
         };
 
@@ -129,7 +115,7 @@ public class PiccoloCanvas extends PSwingCanvas
         }
         setZoomEventHandler(zoomer);
 
-        ContextMenuHandler ctxMenuHandler = new ContextMenuHandler();
+        ctxMenuHandler = new ContextMenuHandler();
         ctxMenuHandler.setEventFilter(new PInputEventFilter(
                 InputEvent.BUTTON3_MASK));
         addInputEventListener(ctxMenuHandler);
@@ -156,17 +142,9 @@ public class PiccoloCanvas extends PSwingCanvas
             if (!(o instanceof PSwingNode)) continue;
             LayoutHandler vh = GUIHelper.getLayoutHandler((PSwingNode) o);
             if (vh != null) vh.layout(PiccoloCanvas.this, (PSwingNode) o);
-            // else
-            // placeNode((PSwingNode) o);
         }
 
-        // for (int i = 0; i < getNodeLayer().getChildrenCount(); i++)
-        // {
-        // PNode o = getNodeLayer().getChild(i);
-        // if (!(o instanceof PSwingNode)) continue;
-        // placeNode((PSwingNode) o);
-        // }
-    }
+   }
 
     public HGHandle getGroupH()
     {
@@ -269,36 +247,34 @@ public class PiccoloCanvas extends PSwingCanvas
 
     public PSwingNode getPSwingNodeForHandle(HGHandle h)
     {
-        for (Object p : getNodeLayer().getAllNodes())
-            if (p instanceof PSwingNode
-                    && (h.equals(((PSwingNode) p).getHandle())))
-                return (PSwingNode) p;
-        for (Object p : getCamera().getAllNodes())
-            if (p instanceof PSwingNode
-                    && (h.equals(((PSwingNode) p).getHandle())))
-                return (PSwingNode) p;
+        for (PSwingNode n : getNodes())
+            if ((h.equals(n.getHandle())))
+                return n;
+        for (PSwingNode n : getFixedNodes())
+            if (h.equals(n.getHandle()))
+                return n;
         return null;
     }
 
-    public PSwingNode getOutCellNodeForHandle(HGHandle h)
-    {
-        for (Object p : getNodeLayer().getAllNodes())
-            if (p instanceof PSwingNode && check_is_output((PSwingNode) p, h))
-                return (PSwingNode) p;
-        for (Object p : getCamera().getAllNodes())
-            if (p instanceof PSwingNode && check_is_output((PSwingNode) p, h))
-                return (PSwingNode) p;
-        return null;
-    }
+//    public PSwingNode getOutCellNodeForHandle(HGHandle h)
+//    {
+//        for (Object p : getNodeLayer().getAllNodes())
+//            if (p instanceof PSwingNode && check_is_output((PSwingNode) p, h))
+//                return (PSwingNode) p;
+//        for (Object p : getCamera().getAllNodes())
+//            if (p instanceof PSwingNode && check_is_output((PSwingNode) p, h))
+//                return (PSwingNode) p;
+//        return null;
+//    }
 
-    private boolean check_is_output(PSwingNode p, HGHandle h)
-    {
-        if (h.equals(p.getHandle())) return true;
-        CellGroupMember cgm = ThisNiche.hg.get(p.getHandle());
-        if (cgm instanceof Cell && ((Cell) cgm).getAtomHandle().equals(h))
-            return true;
-        return false;
-    }
+//    private boolean check_is_output(PSwingNode p, HGHandle h)
+//    {
+//        if (h.equals(p.getHandle())) return true;
+//        CellGroupMember cgm = ThisNiche.hg.get(p.getHandle());
+//        if (cgm instanceof Cell && ((Cell) cgm).getAtomHandle().equals(h))
+//            return true;
+//        return false;
+//    }
 
     public void maximize(PSwingNode n)
     {
@@ -429,8 +405,20 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         return nodeLayer;
     }
+    
+    public Collection<PSwingNode> getNodes()
+    {
+        return (Collection<PSwingNode>) 
+          nodeLayer.getAllNodes(ps_filter, null);
+    }
+    
+    public Collection<PSwingNode> getFixedNodes()
+    {
+        return (Collection<PSwingNode>) 
+          getCamera().getAllNodes(ps_filter, null);
+    }
 
-    private static class PSwingFilter implements PNodeFilter
+    private static class PSwingNodeFilter implements PNodeFilter
     {
 
         public boolean accept(PNode node)
@@ -442,5 +430,10 @@ public class PiccoloCanvas extends PSwingCanvas
         {
             return true;
         }
+    }
+
+    public ContextMenuHandler getContextMenuHandler()
+    {
+        return ctxMenuHandler;
     }
 }

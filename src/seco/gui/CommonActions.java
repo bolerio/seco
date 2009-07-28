@@ -1,6 +1,5 @@
 package seco.gui;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.File;
@@ -11,15 +10,12 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HyperGraph;
 
 import seco.ThisNiche;
 import seco.boot.NicheManager;
-import seco.gui.layout.LayoutHandler;
 import seco.gui.layout.LayoutSettingsPanel;
 import seco.notebook.AppConfig;
 import seco.notebook.gui.DialogDisplayer;
-import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.NotifyDescriptor;
 import seco.things.Cell;
 import seco.things.CellGroup;
@@ -30,6 +26,9 @@ import seco.things.IOUtils;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.PLayer;
 
+/*
+ * Collection of utility method used in context menu actions
+ */
 public class CommonActions
 {
     public static void showLayoutSettingsDlg(PSwingNode node)
@@ -132,4 +131,14 @@ public class CommonActions
         }
         return false;
     } 
+    
+    public static void updateSelectedPSwingCellComponentValue()
+    {
+        PSwingNode ps = TopFrame.getInstance().getCanvas()
+                .getSelectedPSwingNode();
+        CellGroupMember cell = ThisNiche.hg.get(ps.getHandle());
+        if (cell instanceof Cell
+                && ((Cell) cell).getValue() instanceof JComponent)
+            CellUtils.updateCellValue((Cell) cell, ps.getComponent());
+    }
 }

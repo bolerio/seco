@@ -1,41 +1,67 @@
 package seco.gui;
 
 import java.awt.event.InputEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
+import javax.swing.Action;
 import javax.swing.JPopupMenu;
 
-import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGHandleFactory;
+import org.hypergraphdb.HGPersistentHandle;
 
 import seco.ThisNiche;
 import seco.notebook.ScriptletAction;
-import seco.things.Cell;
-import seco.things.CellGroupMember;
-import seco.things.CellUtils;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 
+/*
+ * Class responsible for managing the menus shown in canvas. 
+ */
 public class ContextMenuHandler extends PBasicInputEventHandler
 {
-    JPopupMenu global_menu;
-    JPopupMenu node_menu;
-    
+    public static final HGPersistentHandle GLOBAL_ACTION_SET_HANDLE = HGHandleFactory
+            .makeHandle("12231b80-7b7e-11de-8a39-0800200c9a66");
+    public static final HGPersistentHandle NODE_ACTION_SET_HANDLE = HGHandleFactory
+            .makeHandle("1cfd4670-7b7e-11de-8a39-0800200c9a66");
+
+    protected JPopupMenu global_menu;
+    protected JPopupMenu node_menu;
+    protected List<ScriptletAction> global_actions;
+    protected List<ScriptletAction> node_actions;
+
     public ContextMenuHandler()
     {
     }
 
+    public void addGlobalMenuAction(ScriptletAction a)
+    {
+        getGlobalActions().add(a);
+        ThisNiche.hg.update(getGlobalActions());
+        global_menu = null;
+    }
+
+    public void addNodeMenuAction(ScriptletAction a)
+    {
+        getNodeActions().add(a);
+        ThisNiche.hg.update(getNodeActions());
+        node_menu = null;
+    }
+
     public void mousePressed(PInputEvent event)
     {
+        if (event == null) return;
         if (event.getPickedNode() instanceof PCamera
-                && (event.getPickedNode().equals(TopFrame.getInstance().getCanvas().getCamera())))
+                && (event.getPickedNode().equals(TopFrame.getInstance()
+                        .getCanvas().getCamera())))
         {
-            //System.out.println("ContextMenuHandler - showMenu: " + event.getPickedNode());
+            // System.out.println("ContextMenuHandler - showMenu: " +
+            // event.getPickedNode());
             int m = InputEvent.CTRL_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
-            if ((event.getModifiersEx() & m) == m) 
-                showGlobMenu(event);
+            if ((event.getModifiersEx() & m) == m) showGlobMenu(event);
             return;
         }
         else if (((PiccoloCanvas) event.getComponent()).getSelectedPSwingNode() == null)
@@ -45,69 +71,104 @@ public class ContextMenuHandler extends PBasicInputEventHandler
     }
 
     /**
-     * Creates and shows the global JMenu 
+     * Creates and shows the global JMenu
      */
-    public void showGlobMenu(PInputEvent event)
+    protected void showGlobMenu(PInputEvent event)
     {
-        if(global_menu != null) {
-            show_menu(event, global_menu); return;
-        }
-        global_menu = new JPopupMenu();
-        global_menu.add(makeMenuItem("Restore Default GUI",
-                "seco.gui.CommonActions.restoreDefaultGUI();"));
-        global_menu.add(makeMenuItem("BirdsEyeView",
-                "seco.gui.CommonActions.birdsEyeView();"));
-        global_menu.add(makeMenuItem("Reset Zoom",
-                "canvas.getCamera().setViewScale(1.0);"));
-        global_menu.add(makeMenuItem("Backup", "seco.gui.CommonActions.backup();"));
-       //global_menu.add(makeMenuItem("Test Embedded Container", "seco.gui.CommonActions.testEmbededContainer();"));
+        if (global_menu == null)
+            global_menu = makeJPopupMenu(getGlobalActions());
         show_menu(event, global_menu);
-        
     }
 
     /**
      * Creates and shows the appropriate JMenu for selected node
      */
-    public void showNodeMenu(PInputEvent event)
+    protected void showNodeMenu(PInputEvent event)
     {
-        if(node_menu != null) {
-            show_menu(event, node_menu); return;
-        }
-        node_menu = new JPopupMenu();
-        node_menu.add(makeMenuItem("Rename",
-                "seco.gui.CommonActions.renameCellGroupMember(seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode().getHandle())"));
-        node_menu.add(makeMenuItem("Title On/Off",
-        "seco.things.CellUtils.toggleShowTitle(seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode().getHandle())"));
-
-        node_menu.add(makeMenuItem("Pin/Unpin",
-                "seco.gui.CommonActions.showLayoutSettingsDlg("
-                        + "seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode());"));
-        node_menu.add(makeMenuItem("Store Changes",
-                "seco.gui.ContextMenuHandler.updateSelPSCell();"));
+        if (node_menu == null) node_menu = makeJPopupMenu(getNodeActions());
         show_menu(event, node_menu);
     }
 
-    public static void updateSelPSCell()
-    {
-        PSwingNode ps = TopFrame.getInstance().getCanvas().getSelectedPSwingNode();
-        CellGroupMember cell = ThisNiche.hg.get(ps.getHandle());
-        if(cell instanceof Cell && ((Cell) cell).getValue() instanceof JComponent)
-           CellUtils.updateCellValue((Cell) cell, ps.getComponent());
-    }
-    
     private void show_menu(PInputEvent event, JPopupMenu menu)
     {
-        
         menu.show((PCanvas) event.getComponent(), (int) event
                 .getCanvasPosition().getX(), (int) event.getCanvasPosition()
                 .getY());
     }
 
-    private static JMenuItem makeMenuItem(String label, String code)
+    private static ScriptletAction makeScriptletAction(String label, String code)
     {
-        JMenuItem mi = new JMenuItem(new ScriptletAction("beanshell", code));
-        mi.setText(label);
-        return mi;
+        ScriptletAction a = new ScriptletAction("beanshell", code);
+        a.putValue(Action.NAME, label);
+        // return new JMenuItem(a);
+        return a;
+    }
+
+    private static JPopupMenu makeJPopupMenu(Collection<ScriptletAction> set)
+    {
+        JPopupMenu menu = new JPopupMenu();
+        for (ScriptletAction a : set)
+            menu.add(a);
+        return menu;
+    }
+
+    public List<ScriptletAction> getGlobalActions()
+    {
+        global_actions = ThisNiche.hg.get(GLOBAL_ACTION_SET_HANDLE);
+        if (global_actions == null)
+        {
+            global_actions = new ArrayList<ScriptletAction>();
+            init_global_actions();
+            ThisNiche.hg.define(GLOBAL_ACTION_SET_HANDLE, global_actions);
+        }
+        return global_actions;
+    }
+
+    protected void init_global_actions()
+    {
+        global_actions.add(makeScriptletAction("Restore Default GUI",
+                "seco.gui.CommonActions.restoreDefaultGUI();"));
+        global_actions.add(makeScriptletAction("BirdsEyeView",
+                "seco.gui.CommonActions.birdsEyeView();"));
+        global_actions.add(makeScriptletAction("Reset Zoom",
+                "canvas.getCamera().setViewScale(1.0);"));
+        global_actions.add(makeScriptletAction("Backup",
+                "seco.gui.CommonActions.backup();"));
+        // global_menu.add(makeMenuItem("Test Embedded Container",
+        // "seco.gui.CommonActions.testEmbededContainer();"));
+    }
+
+    public List<ScriptletAction> getNodeActions()
+    {
+        node_actions = ThisNiche.hg.get(GLOBAL_ACTION_SET_HANDLE);
+        if (node_actions == null)
+        {
+            node_actions = new ArrayList<ScriptletAction>();
+            init_node_actions();
+            ThisNiche.hg.define(NODE_ACTION_SET_HANDLE, node_actions);
+        }
+        return node_actions;
+    }
+
+    protected void init_node_actions()
+    {
+        node_actions
+                .add(makeScriptletAction(
+                        "Rename",
+                        "seco.gui.CommonActions.renameCellGroupMember(seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode().getHandle())"));
+        node_actions
+                .add(makeScriptletAction(
+                        "Title On/Off",
+                        "seco.things.CellUtils.toggleShowTitle(seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode().getHandle())"));
+
+        node_actions
+                .add(makeScriptletAction(
+                        "Pin/Unpin",
+                        "seco.gui.CommonActions.showLayoutSettingsDlg("
+                                + "seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode());"));
+        node_actions
+                .add(makeScriptletAction("Store Changes",
+                        "seco.gui.CommonActions.updateSelectedPSwingCellComponentValue();"));
     }
 
 }
