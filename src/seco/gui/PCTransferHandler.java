@@ -43,11 +43,12 @@ public class PCTransferHandler extends TransferHandler
         try
         {
             if (is_nested(support)) return false;
-            Pair<Boolean, Boolean> pair = check_and_handle_in_nodes(support);
-            if (pair.getFirst()) return pair.getSecond();
             if (support.isDataFlavorSupported(SecoTransferable.FLAVOR))
+            {
+                Pair<Boolean, Boolean> pair = check_and_handle_in_nodes(support);
+                if (pair.getFirst()) return pair.getSecond();
                 return handle_seco_transfer(support);
-
+            }
             // Notebook Elements transferable
             Vector<Element> els = (Vector<Element>) t
                     .getTransferData(NotebookTransferHandler.FLAVOR);
@@ -81,12 +82,12 @@ public class PCTransferHandler extends TransferHandler
             IOException
     {
         Point pt = support.getDropLocation().getDropPoint();
+        HGHandle data = (HGHandle) support.getTransferable().getTransferData(
+                SecoTransferable.FLAVOR);
         for (PSwingNode node : canvas.getNodes())
         {
             if (node.getFullBounds().contains(pt))
             {
-                HGHandle data = (HGHandle) support.getTransferable()
-                        .getTransferData(SecoTransferable.FLAVOR);
                 if (data.equals(node.getHandle()))
                     return new Pair<Boolean, Boolean>(true, false);
                 TransferHandler handler = node.getComponent()
@@ -115,17 +116,10 @@ public class PCTransferHandler extends TransferHandler
     }
 
     // can't copy some group inside itself
-    private boolean is_nested(TransferSupport support)
-            throws IOException
+    private boolean is_nested(TransferSupport support) throws IOException, UnsupportedFlavorException
     {
-        HGHandle data;
-        try{
-        data = (HGHandle) support.getTransferable().getTransferData(
-                SecoTransferable.FLAVOR);
-        }catch(UnsupportedFlavorException ex)
-        {
-            return false;
-        }
+        HGHandle data = (HGHandle) support.getTransferable().getTransferData(
+                    SecoTransferable.FLAVOR);
         CellGroupMember cgm = ThisNiche.hg.get(data);
         if (!(cgm instanceof CellGroup)) return false;
         CellGroup group = (CellGroup) cgm;
