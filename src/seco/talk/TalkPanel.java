@@ -53,8 +53,11 @@ public class TalkPanel extends JPanel
     {
         setLayout(new BorderLayout());
         inputPane = new TalkInputPane();
+        inputPane.initComponents();
         inputPane.inputCallback = new ChatCallback(this);
         chatPane = new ChatPane();
+        chatPane.initComponents();
+        chatPane.setMe(this.talkActivity.getThisPeer().getIdentity());
         JPanel outPanel = new JPanel();
         outPanel.setLayout(new BorderLayout());
         outPanel.add(new JScrollPane(chatPane), BorderLayout.CENTER);
@@ -81,8 +84,8 @@ public class TalkPanel extends JPanel
     public TalkPanel(TalkActivity talkActivity)
     {
         this();
+        this.talkActivity = talkActivity;        
         initComponents();
-        this.talkActivity = talkActivity;
     }
 
     public HGPeerIdentity getFriend()

@@ -12,9 +12,13 @@ public class TalkInputPane extends JTextPane
    
     Callback<String> inputCallback;
     
-    public TalkInputPane()
+    public void initComponents()
     {
-        addKeyListener(new KeyListener());        
+        addKeyListener(new KeyListener());
+    }
+    
+    public TalkInputPane()
+    {        
     }
      
     public static class KeyListener extends KeyAdapter

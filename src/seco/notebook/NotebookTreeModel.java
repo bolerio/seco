@@ -32,8 +32,8 @@ public class NotebookTreeModel implements TreeModel
 
     public Object getChild(Object parent, int index)
     {
-        if (parent instanceof CellGroup) return ((CellGroup) parent)
-                .getElement(index);
+        if (parent instanceof CellGroup) 
+            return ((CellGroup) parent).getElement(index);
         else if (parent instanceof Cell)
         {
             List<Cell> list = CellUtils.getOutCells(ThisNiche.handleOf(parent));

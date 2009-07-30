@@ -179,44 +179,44 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
     
     Map<HGHandle, Set<HGHandle>> pub_subs = new HashMap<HGHandle, Set<HGHandle>>();
     
-    private void remove_eps(HGHandle[] removed)
-    {
-        pub_subs.clear();
-        if(removed == null) return;
-        for(HGHandle h: removed)
-        {
-            List<EventPubSub> l = hg.getAll(ThisNiche.hg, hg.and(hg
-                    .type(EventPubSub.class), hg.incident(h), hg
-                    .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
-                            HGHandleFactory.anyHandle, h, h })));
-             if (!l.isEmpty())
-             {
-                 Set<HGHandle> set = new HashSet<HGHandle>(l.size());
-                 for(EventPubSub eps: l)
-                 {
-                    set.add(eps.getPublisher());
-                     //System.out.println("remove_eps:" + eps);
-                 }
-                 for(EventPubSub eps: l)
-                     ThisNiche.hg.remove(ThisNiche.handleOf(eps));
-                 pub_subs.put(h, set);
-             }
-         }
-    }
-    
+//    private void remove_eps(HGHandle[] removed)
+//    {
+//        pub_subs.clear();
+//        if(removed == null) return;
+//        for(HGHandle h: removed)
+//        {
+//            List<EventPubSub> l = hg.getAll(ThisNiche.hg, hg.and(hg
+//                    .type(EventPubSub.class), hg.incident(h), hg
+//                    .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
+//                            HGHandleFactory.anyHandle, h, h })));
+//             if (!l.isEmpty())
+//             {
+//                 Set<HGHandle> set = new HashSet<HGHandle>(l.size());
+//                 for(EventPubSub eps: l)
+//                 {
+//                    set.add(eps.getPublisher());
+//                     //System.out.println("remove_eps:" + eps);
+//                 }
+//                 for(EventPubSub eps: l)
+//                     ThisNiche.hg.remove(ThisNiche.handleOf(eps));
+//                 pub_subs.put(h, set);
+//             }
+//         }
+//    }
+//    
    
-    private void restore_eps()
-    {
-        for(HGHandle h: pub_subs.keySet())
-        {
-            Set<HGHandle> set = pub_subs.get(h);
-            for(HGHandle pub: set)
-            {
-                EventPubSub e = new EventPubSub(EvalCellEvent.HANDLE, pub, h, h);
-             // System.out.println("Adding " + e);
-                ThisNiche.hg.add(e);
-            }
-         }
-    }
+//    private void restore_eps()
+//    {
+//        for(HGHandle h: pub_subs.keySet())
+//        {
+//            Set<HGHandle> set = pub_subs.get(h);
+//            for(HGHandle pub: set)
+//            {
+//                EventPubSub e = new EventPubSub(EvalCellEvent.HANDLE, pub, h, h);
+//             // System.out.println("Adding " + e);
+//                ThisNiche.hg.add(e);
+//            }
+//         }
+//    }
 
 }

@@ -103,9 +103,11 @@ public class TalkRoom extends JPanel
         
         setLayout(new BorderLayout());  
         inputPane = new TalkInputPane();
+        inputPane.initComponents();
         inputPane.inputCallback = new ChatCallBack(this); 
            
         chatPane = new ChatPane();
+        chatPane.initComponents();
         peerListSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                                               new JScrollPane(chatPane), 
                                               new JScrollPane(inputPane));

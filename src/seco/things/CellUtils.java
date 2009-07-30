@@ -547,8 +547,10 @@ public class CellUtils
             ThisNiche.hg.remove(s, true);
     }
 
-    public static void addEventPubSub(HGHandle eventType, HGHandle pub,
-            HGHandle sub, HGHandle handler)
+    public static void addEventPubSub(HGHandle eventType, 
+                                      HGHandle pub,
+                                      HGHandle sub, 
+                                      HGHandle handler)
     {
         if (!containsEventPubSub(eventType, pub, sub, handler))
         {

@@ -71,6 +71,20 @@ public class NotebookCellsTree extends JTree
        // final CellGroup group = (par != null && par instanceof CellGroup) ?
         //        (CellGroup) par : null;
         JPopupMenu popup = new JPopupMenu();
+        if (node instanceof Cell)
+        {
+            JMenuItem item = new JMenuItem("Print Atom");
+            item.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e)
+                {
+                    Cell cell = (Cell)node;
+                    System.out.println("Cell handle=" + ThisNiche.hg.getHandle(cell));
+                    System.out.println("Cell atom handle=" + cell.getAtomHandle());
+                    System.out.println("Cell atom " + cell.getValue());
+                }                
+            });
+            popup.add(item);
+        }
         JMenuItem menuItem = new JMenuItem("Publisher");
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)

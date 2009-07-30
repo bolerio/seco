@@ -36,13 +36,28 @@ public class ChatPane extends JTextPane
     Map<Integer, List<Runnable>> actions = 
         Collections.synchronizedMap(new HashMap<Integer, List<Runnable>>());
     
-    public ChatPane()
+    public void initComponents()
     {
         setEditorKit(htmlEditorKit);
         setEditable(false);
         addHyperlinkListener(new LinkActionListener(this));        
     }
     
+    public ChatPane()
+    {
+    }
+        
+    public HGPeerIdentity getMe()
+    {
+        return me;
+    }
+
+
+    public void setMe(HGPeerIdentity me)
+    {
+        this.me = me;
+    }
+
     public void chatFrom(HGPeerIdentity from, String text)
     {
         String s = "(" + sdf.format(new Date()) + ") ";

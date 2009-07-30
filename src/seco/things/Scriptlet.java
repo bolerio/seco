@@ -19,7 +19,9 @@ import java.io.Serializable;
  */
 public class Scriptlet implements Serializable
 {
-	private String language;
+    private static final long serialVersionUID = -8635998249472782879L;
+    
+    private String language;
 	private String code;
 	
 	public Scriptlet()
@@ -50,5 +52,10 @@ public class Scriptlet implements Serializable
 	public final void setLanguage(String language)
 	{
 		this.language = language;
-	}	
+	}
+	
+	public final String toString()
+	{
+	    return "Scriptlet[[" + language + ", " + code + "]]";
+	}
 }

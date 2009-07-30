@@ -12,6 +12,7 @@ import static org.hypergraphdb.peer.Structs.struct;
 import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -34,6 +35,8 @@ import org.hypergraphdb.peer.workflow.OnMessage;
 import org.hypergraphdb.peer.workflow.WorkflowState;
 
 import seco.ThisNiche;
+import seco.events.EvalCellEvent;
+import seco.events.EventPubSub;
 import seco.gui.GUIHelper;
 import seco.gui.NBUIVisual;
 import seco.gui.VisualAttribs;
@@ -60,22 +63,41 @@ public class TalkActivity extends FSMActivity
     {
         if (done.contains(atom))
             return;
+        done.add(atom);
         Object x = ThisNiche.hg.get(atom);
         if (x instanceof Cell)
+        {
             transferAtom(msg, ((Cell)x).getAtomHandle(), done, false);
+            List<HGHandle> events = hg.findAll(ThisNiche.hg, 
+                                               hg.and(hg.type(EventPubSub.class),
+                                               hg.orderedLink(EvalCellEvent.HANDLE, 
+                                                              atom,
+                                                              hg.anyHandle(),
+                                                              hg.anyHandle())));
+            for (HGHandle ev : events)
+            {
+                EventPubSub pubsub = ThisNiche.hg.get(ev);
+                // Transfer only output cells, not the notebook or anybody else.
+                if (ThisNiche.hg.get(pubsub.getSubscriber()) instanceof Cell)
+                {
+                    transferAtom(msg, ev, done, false);
+                    transferAtom(msg, pubsub.getTargetAt(2), done, false);
+                    transferAtom(msg, pubsub.getTargetAt(3), done, false);
+                }
+            }
+        }
         else if (x instanceof CellGroup)
         {
             CellGroup group = (CellGroup)x;
             for (int i = 0; i < group.getArity(); i++)
                 transferAtom(msg, group.getTargetAt(i), done, false);
-        }        
+        }
         Message reply = getReply(msg, Performative.InformRef);
         combine(reply, struct(CONTENT, 
                          struct("type", mainAtom ? "atom" : "auxiliary-atom", 
                                 "atom", SubgraphManager.getTransferAtomRepresentation(getThisPeer().getGraph(), 
                                                                                       atom))));
         post(getSender(msg), reply);
-        done.add(atom);
     }
     
     void openPanel()
@@ -94,6 +116,7 @@ public class TalkActivity extends FSMActivity
                 ThisNiche.hg.add(talkPanel);
             }
         }
+        talkPanel.setTalkActivity(this);
         Map<Object, Object> attribs = new HashMap<Object, Object>();
         //TODO: some sort of naming 
         attribs.put(VisualAttribs.name, "Connection Panel");
@@ -224,7 +247,7 @@ public class TalkActivity extends FSMActivity
                 "Reject", new Runnable() {
                     public void run()
                     {
-                        System.out.println("Rejcting atom " + atomHandle);
+                        System.out.println("Rejecting atom " + atomHandle);
                         reply(msg, Performative.RejectProposal, atomHandle);
                     }
                 }
