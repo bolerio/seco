@@ -13,6 +13,7 @@ import javax.swing.TransferHandler;
 import javax.swing.text.Element;
 
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.util.Pair;
 
 import seco.ThisNiche;
@@ -42,13 +43,16 @@ public class PCTransferHandler extends TransferHandler
         Point pt = support.getDropLocation().getDropPoint();
         try
         {
-            if (is_nested(support)) return false;
             if (support.isDataFlavorSupported(SecoTransferable.FLAVOR))
             {
-                Pair<Boolean, Boolean> pair = check_and_handle_in_nodes(support);
-                if (pair.getFirst()) return pair.getSecond();
-                return handle_seco_transfer(support);
+                if (is_nested(support)) return false;
             }
+            
+            Pair<Boolean, Boolean> pair = check_and_handle_in_nodes(support);
+            if (pair.getFirst()) 
+                return pair.getSecond();
+            if (support.isDataFlavorSupported(SecoTransferable.FLAVOR))
+                return handle_seco_transfer(support);
             // Notebook Elements transferable
             Vector<Element> els = (Vector<Element>) t
                     .getTransferData(NotebookTransferHandler.FLAVOR);
@@ -75,6 +79,18 @@ public class PCTransferHandler extends TransferHandler
         }
         return false;
     }
+    
+    private HGHandle getTransferedHandle(TransferSupport support)
+    {
+        try
+        {
+            return (HGHandle) support.getTransferable().getTransferData(
+                    SecoTransferable.FLAVOR);
+        }catch(Exception ex)
+        {
+            return HGHandleFactory.nullHandle();
+        }
+    }
 
     // Pair /handled, result/
     private Pair<Boolean, Boolean> check_and_handle_in_nodes(
@@ -82,8 +98,9 @@ public class PCTransferHandler extends TransferHandler
             IOException
     {
         Point pt = support.getDropLocation().getDropPoint();
-        HGHandle data = (HGHandle) support.getTransferable().getTransferData(
-                SecoTransferable.FLAVOR);
+        HGHandle data = getTransferedHandle(support);
+        HGHandle parent_group = (data.equals(HGHandleFactory.nullHandle())) ? null :
+            ThisNiche.handleOf(CellUtils.getParentGroup(data));
         for (PSwingNode node : canvas.getNodes())
         {
             if (node.getFullBounds().contains(pt))
@@ -98,18 +115,13 @@ public class PCTransferHandler extends TransferHandler
                     System.out.println("PCTransferHandler - inner done: " + res
                             + ":" + node.getComponent() + ":"
                             + support.getComponent());
-                    if (res)
+                    if (res && parent_group != null)
                     {
-                        PSwingNode old = canvas.getSelectedPSwingNode();
-                        PSwingNode canvN = GUIHelper.getPSwingNode(old
-                                .getCanvas());
-                        HGHandle groupH = (canvN != null) ? canvN.getHandle()
-                                : canvas.getGroupH();
-                        GUIHelper.removeFromCellGroup(groupH, old.getHandle(),
-                                false);
+                         GUIHelper.removeFromCellGroup(parent_group, data, false);
                     }
                     return new Pair<Boolean, Boolean>(true, res);
-                }
+                }else //no handler, do nothing
+                    return new Pair<Boolean, Boolean>(true, false);
             }
         }
         return new Pair<Boolean, Boolean>(false, false);
@@ -118,8 +130,7 @@ public class PCTransferHandler extends TransferHandler
     // can't copy some group inside itself
     private boolean is_nested(TransferSupport support) throws IOException, UnsupportedFlavorException
     {
-        HGHandle data = (HGHandle) support.getTransferable().getTransferData(
-                    SecoTransferable.FLAVOR);
+        HGHandle data = getTransferedHandle(support);
         CellGroupMember cgm = ThisNiche.hg.get(data);
         if (!(cgm instanceof CellGroup)) return false;
         CellGroup group = (CellGroup) cgm;

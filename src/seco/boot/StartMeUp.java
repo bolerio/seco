@@ -19,7 +19,7 @@ public class StartMeUp
     	System.out.println("java.library.path: " + System.getProperty("java.library.path"));
     	ClassRepository.getInstance();
     	Map<String, File> niches = NicheManager.readNiches();
-        NicheSelectDialog dlg = new NicheSelectDialog(null, true);
+        NicheSelectDialog dlg = new NicheSelectDialog();
         dlg.setNiches(niches);
         dlg.setVisible(true);
         if (dlg.getSucceeded())

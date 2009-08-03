@@ -8,17 +8,20 @@
 package seco.boot;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
 
 import seco.U;
+import seco.gui.GUIHelper;
 
 import java.util.*;
 import java.io.File;
@@ -43,8 +46,13 @@ public class NicheSelectDialog extends javax.swing.JDialog
         handleListSelection(null);
     }
     
-    public NicheSelectDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public NicheSelectDialog() 
+    {
+        //to show icon in task bar
+        super(null, Dialog.ModalityType.TOOLKIT_MODAL);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(
+                getClass().getResource(GUIHelper.LOGO_IMAGE_RESOURCE)));
+        setTitle("SECO");
         initComponents();
     }
 

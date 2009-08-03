@@ -53,13 +53,12 @@ public class ContextMenuHandler extends PBasicInputEventHandler
 
     public void mousePressed(PInputEvent event)
     {
+        //System.out.println("ContextMenuHandler - showMenu: " +
+        //         event.getPickedNode() + ":" + event.getComponent());
         if (event == null) return;
-        if (event.getPickedNode() instanceof PCamera
-                && (event.getPickedNode().equals(TopFrame.getInstance()
+        if ((event.getPickedNode().equals(TopFrame.getInstance()
                         .getCanvas().getCamera())))
         {
-            // System.out.println("ContextMenuHandler - showMenu: " +
-            // event.getPickedNode());
             int m = InputEvent.CTRL_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
             if ((event.getModifiersEx() & m) == m) showGlobMenu(event);
             return;

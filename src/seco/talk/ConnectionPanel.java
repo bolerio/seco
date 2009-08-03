@@ -12,9 +12,11 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.swing.JButton;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.TitledBorder;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
@@ -114,6 +116,7 @@ public class ConnectionPanel extends JPanel
                 peerList.peers.thePeers.add(room);
                 peerList.peers.fireChangeEvent();
             }
+            peerList.setList(new JList(peerList.peers));
         }
         catch (XMPPException e)
         {
@@ -268,7 +271,7 @@ public class ConnectionPanel extends JPanel
         {
             roomPanel = hg.getOne(ThisNiche.hg, hg.and(hg.type(TalkRoom.class), 
                                                        hg.eq("roomId", room.getJid())));
-            if (roomPanel == null)
+            if (true)//roomPanel == null)
             {
                 roomPanel = new TalkRoom();
                 roomPanel.setRoomId(room.getJid());

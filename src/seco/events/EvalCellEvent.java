@@ -8,6 +8,8 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 
+import seco.ThisNiche;
+
 public class EvalCellEvent extends AbstractUndoableEdit
 {
     private static final long serialVersionUID = 2691447526014196768L;
@@ -25,6 +27,10 @@ public class EvalCellEvent extends AbstractUndoableEdit
         this.cellH = owner;
         this.value = value;
         this.oldValue = old_value;
+        if(ThisNiche.hg.get(HANDLE) == null)
+        {
+            ThisNiche.hg.define(HANDLE, "" + HANDLE);
+        }
     }
 
     public HGHandle getCellHandle()

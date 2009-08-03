@@ -156,6 +156,11 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
 
     public void batchProcess(CellGroupChangeEvent e)
     {
+        batchProcess(e, true);
+    }
+    
+    public void batchProcess(CellGroupChangeEvent e, boolean backup)
+    {
         HGHandle[] added = e.getChildrenAdded();
         HGHandle[] removed = e.getChildrenRemoved();
         int index = e.getIndex();
@@ -165,7 +170,8 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
             for (int i = 0; i < removed.length; i++)
             {
                 outgoingSet.remove(removed[i]);
-                CellUtils.backupCell(removed[i]);
+                if(backup)
+                  CellUtils.backupCell(removed[i]);
             }
         }
         if (added != null && added.length > 0)

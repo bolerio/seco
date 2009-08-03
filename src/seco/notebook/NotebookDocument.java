@@ -1024,8 +1024,10 @@ public class NotebookDocument extends DefaultStyledDocument
             removed[i] = getNBElementH(el);
             i++;
         }
-        fireCellGroupChanged(new CellGroupChangeEvent(ThisNiche.handleOf(par),
-                index, new HGHandle[] { gr_h }, removed));
+        //fireCellGroupChanged(new CellGroupChangeEvent(ThisNiche.handleOf(par),
+        //        index, new HGHandle[] { gr_h }, removed));
+        par.batchProcess(new CellGroupChangeEvent(ThisNiche.handleOf(par),
+                        index, new HGHandle[] { gr_h }, removed), false);
     }
 
     void ungroup(Element el) throws BadLocationException
@@ -1064,6 +1066,7 @@ public class NotebookDocument extends DefaultStyledDocument
         super.remove(nb_el.getStartOffset(), (nb_el.getEndOffset() - nb_el
                 .getStartOffset()) + 1);
         setModified(true);
+        fireCaretMoved(nb_el.getStartOffset()-1);
     }
 
     public void removeCellBoxElement(Element el) throws BadLocationException

@@ -67,7 +67,7 @@ public class ConnectionManager
         query.setHyperGraph(ThisNiche.hg);
         List<HGHandle> L = hg.findAll(query);
         HGHandle panelHandle = null;
-        if (L.isEmpty())
+        if (true)//L.isEmpty())
         {
             ConnectionPanel panel = new ConnectionPanel();
             panel.initComponents();

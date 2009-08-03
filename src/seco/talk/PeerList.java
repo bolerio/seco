@@ -36,12 +36,12 @@ public class PeerList extends JPanel
             {
                 if (e.getClickCount() == 2)
                 {
-                    int index = list.locationToIndex(e.getPoint());
+                    int index = getList().locationToIndex(e.getPoint());
                     Object x = peers.thePeers.get(index);
-                    if (x instanceof HGPeerIdentity) connectionPanel
+                    if (x instanceof HGPeerIdentity) getConnectionPanel()
                             .openTalkPanel((HGPeerIdentity) x);
                     else
-                        connectionPanel.openChatRoom((HostedRoom) x);
+                        getConnectionPanel().openChatRoom((HostedRoom) x);
                 }
             }
         };
@@ -53,10 +53,9 @@ public class PeerList extends JPanel
         setBorder(new BevelBorder(BevelBorder.RAISED));
         setList(new JList(peers));
         add(list, BorderLayout.CENTER);
-      
     }
 
-    static class PeerListModel implements ListModel
+    public static class PeerListModel implements ListModel
     {
         private ArrayList<ListDataListener> listeners = new ArrayList<ListDataListener>();
         ArrayList<Object> thePeers = new ArrayList<Object>();

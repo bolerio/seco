@@ -21,6 +21,7 @@ import java.util.concurrent.Callable;
 import javax.swing.JOptionPane;
 
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.peer.HGPeerIdentity;
@@ -42,73 +43,95 @@ import seco.gui.NBUIVisual;
 import seco.gui.VisualAttribs;
 import seco.things.Cell;
 import seco.things.CellGroup;
-
+import seco.things.CellUtils;
 
 /**
  * <p>
- * This activity handles communication through a chat window b/w two people. 
+ * This activity handles communication through a chat window b/w two people.
  * </p>
  * 
  * @author Borislav Iordanov
- *
+ * 
  */
 public class TalkActivity extends FSMActivity
 {
     public static final String TYPENAME = "seco-talk";
-    
+
     private HGPeerIdentity friend;
     private TalkPanel talkPanel;
-    
-    private void transferAtom(Message msg, HGHandle atom, Set<HGHandle> done, boolean mainAtom)
+
+    private void transferAtom(Message msg, HGHandle atom, Set<HGHandle> done,
+            boolean mainAtom)
     {
-        if (done.contains(atom))
-            return;
+        if (done.contains(atom)) return;
+        System.out.println("");
         done.add(atom);
         Object x = ThisNiche.hg.get(atom);
         if (x instanceof Cell)
         {
-            transferAtom(msg, ((Cell)x).getAtomHandle(), done, false);
-            List<HGHandle> events = hg.findAll(ThisNiche.hg, 
-                                               hg.and(hg.type(EventPubSub.class),
-                                               hg.orderedLink(EvalCellEvent.HANDLE, 
-                                                              atom,
-                                                              hg.anyHandle(),
-                                                              hg.anyHandle())));
-            for (HGHandle ev : events)
+            transferAtom(msg, ((Cell) x).getAtomHandle(), done, false);
+            // List<HGHandle> events = hg.findAll(ThisNiche.hg,
+            // hg.and(hg.type(EventPubSub.class),
+            // hg.orderedLink(EvalCellEvent.HANDLE,
+            // atom,
+            // hg.anyHandle(),
+            // hg.anyHandle())));
+            // for (HGHandle ev : events)
+            // {
+            // EventPubSub pubsub = ThisNiche.hg.get(ev);
+            // // Transfer only output cells, not the notebook or anybody else.
+            // if (pubsub.getSubscriber().equals(pubsub.getEventHandler()) &&
+            // ThisNiche.hg.get(pubsub.getSubscriber()) instanceof Cell)
+            // {
+            // transferAtom(msg, ev, done, false);
+            // transferAtom(msg, pubsub.getSubscriber(), done, false);
+            // //transferAtom(msg, pubsub.getEventHandler(), done, false);
+            // }
+            // }
+            List<EventPubSub> subscriptions = hg.getAll(ThisNiche.hg, hg.and(hg
+                    .type(EventPubSub.class),
+                    hg.incident(EvalCellEvent.HANDLE), hg.incident(atom), hg
+                            .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
+                                    atom, HGHandleFactory.anyHandle,
+                                    HGHandleFactory.anyHandle })));
+            for (EventPubSub s : subscriptions)
             {
-                EventPubSub pubsub = ThisNiche.hg.get(ev);
-                // Transfer only output cells, not the notebook or anybody else.
-                if (ThisNiche.hg.get(pubsub.getSubscriber()) instanceof Cell)
+                Object handler = ThisNiche.hg.get(s.getEventHandler());
+                if (s.getEventHandler().equals(s.getSubscriber())
+                        && handler instanceof Cell)
                 {
-                    transferAtom(msg, ev, done, false);
-                    transferAtom(msg, pubsub.getTargetAt(2), done, false);
-                    transferAtom(msg, pubsub.getTargetAt(3), done, false);
+                    // System.out.println("Tranfering EventPubSub: " + s);
+                    transferAtom(msg, s.getSubscriber(), done, false);
+                    transferAtom(msg, ThisNiche.handleOf(s), done, false);
                 }
             }
         }
         else if (x instanceof CellGroup)
         {
-            CellGroup group = (CellGroup)x;
+            CellGroup group = (CellGroup) x;
             for (int i = 0; i < group.getArity(); i++)
                 transferAtom(msg, group.getTargetAt(i), done, false);
+
         }
         Message reply = getReply(msg, Performative.InformRef);
-        combine(reply, struct(CONTENT, 
-                         struct("type", mainAtom ? "atom" : "auxiliary-atom", 
-                                "atom", SubgraphManager.getTransferAtomRepresentation(getThisPeer().getGraph(), 
-                                                                                      atom))));
+        combine(reply,
+                struct(CONTENT, struct("type", mainAtom ? "atom"
+                        : "auxiliary-atom", "atom", SubgraphManager
+                        .getTransferAtomRepresentation(
+                                getThisPeer().getGraph(), atom))));
         post(getSender(msg), reply);
     }
-    
+
     void openPanel()
     {
-        ConnectionPanel connectionPanel = 
-            (ConnectionPanel)getThisPeer().getObjectContext().get(ConnectionPanel.class.getName());
+        ConnectionPanel connectionPanel = (ConnectionPanel) getThisPeer()
+                .getObjectContext().get(ConnectionPanel.class.getName());
         if (!connectionPanel.talks.containsKey(friend))
             connectionPanel.talks.put(friend, this);
         if (talkPanel == null)
         {
-            talkPanel = hg.getOne(ThisNiche.hg, hg.and(hg.type(TalkPanel.class), hg.eq("friend", friend)));
+            talkPanel = hg.getOne(ThisNiche.hg, hg.and(
+                    hg.type(TalkPanel.class), hg.eq("friend", friend)));
             if (talkPanel == null)
             {
                 talkPanel = new TalkPanel(this);
@@ -118,17 +141,14 @@ public class TalkActivity extends FSMActivity
         }
         talkPanel.setTalkActivity(this);
         Map<Object, Object> attribs = new HashMap<Object, Object>();
-        //TODO: some sort of naming 
+        // TODO: some sort of naming
         attribs.put(VisualAttribs.name, "Connection Panel");
         attribs.put(VisualAttribs.showTitle, true);
-        GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, 
-                                ThisNiche.hg.getHandle(talkPanel), 
-                                null, 
-                                null, 
-                                new Rectangle(500, 200, 200, 100),
-                                attribs);            
+        GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, ThisNiche.hg
+                .getHandle(talkPanel), null, null, new Rectangle(500, 200, 200,
+                100), attribs);
     }
-    
+
     private void initFriend(Message msg)
     {
         HGPeerIdentity id = getThisPeer().getIdentity(getSender(msg));
@@ -140,13 +160,15 @@ public class TalkActivity extends FSMActivity
                 openPanel();
             }
             else
-                throw new RuntimeException("Unknown peer " + getSender(msg) + " attempting to talk.");
+                throw new RuntimeException("Unknown peer " + getSender(msg)
+                        + " attempting to talk.");
         }
         else if (!friend.equals(id))
-            throw new RuntimeException("Wrong activity for Talk msg, received from " + 
-                                       id + ", but expecting " + friend);
+            throw new RuntimeException(
+                    "Wrong activity for Talk msg, received from " + id
+                            + ", but expecting " + friend);
     }
-    
+
     public TalkActivity(HyperGraphPeer thisPeer)
     {
         super(thisPeer);
@@ -158,7 +180,7 @@ public class TalkActivity extends FSMActivity
         this.friend = friend;
         openPanel();
     }
-    
+
     public TalkActivity(HyperGraphPeer thisPeer, UUID id)
     {
         super(thisPeer, id);
@@ -175,33 +197,34 @@ public class TalkActivity extends FSMActivity
     {
         return talkPanel;
     }
-    
+
     public void chat(String text)
     {
-        assert friend == null : new RuntimeException("No destination for TalkActivity.");
+        assert friend == null : new RuntimeException(
+                "No destination for TalkActivity.");
         final Message msg = makeReply(this, Performative.Inform, null);
-        combine(msg, struct(Messages.CONTENT, 
-          struct("type", "chat", "text", text)));
+        combine(msg, struct(Messages.CONTENT, struct("type", "chat", "text",
+                text)));
         post(friend, msg);
     }
-    
+
     public void sendAtom(HGHandle atom)
     {
-        assert friend == null : new RuntimeException("No destination for TalkActivity.");
+        assert friend == null : new RuntimeException(
+                "No destination for TalkActivity.");
         Message msg = makeReply(this, Performative.InformRef, null);
-        combine(msg, struct(Messages.CONTENT, 
-                            struct("type", "atom", "atom", atom)));
+        combine(msg, struct(Messages.CONTENT, struct("type", "atom", "atom",
+                atom)));
         post(friend, msg);
     }
-    
+
     public void offerAtom(HGHandle atom, String label)
     {
-        assert friend == null : new RuntimeException("No destination for TalkActivity.");
+        assert friend == null : new RuntimeException(
+                "No destination for TalkActivity.");
         Message msg = createMessage(Performative.Propose, TalkActivity.this);
-        combine(msg, struct(Messages.CONTENT,
-                             struct("type", "atom", 
-                                    "label", label,
-                                    "atom", atom)));        
+        combine(msg, struct(Messages.CONTENT, struct("type", "atom", "label",
+                label, "atom", atom)));
         post(friend, msg);
     }
 
@@ -209,160 +232,184 @@ public class TalkActivity extends FSMActivity
     {
         getState().assign(WorkflowState.Completed);
     }
-    
+
     protected void onPeerFailure(Message msg)
     {
         JOptionPane.showMessageDialog(talkPanel, getPart(msg, CONTENT));
     }
-    
+
     @FromState("Started")
-    @OnMessage(performative="Propose")
+    @OnMessage(performative = "Propose")
     public WorkflowState onPropose(final Message msg)
     {
         initFriend(msg);
         Map<String, Object> content = getPart(msg, CONTENT);
-        String type = (String)content.get("type");
-        assert type != null : new RuntimeException("No type in TalkActivity content.");
+        String type = (String) content.get("type");
+        assert type != null : new RuntimeException(
+                "No type in TalkActivity content.");
         if ("start-chat".equals(type))
         {
             Message reply = getReply(msg, Performative.AcceptProposal);
-            send(friend, reply);            
-        }       
+            send(friend, reply);
+        }
         else if ("atom".equals(type))
         {
             final HGPersistentHandle atomHandle = getPart(content, "atom");
             if (msg.getPerformative() == Performative.Propose)
             {
-                talkPanel.getChatPane().actionableChatFrom(friend, (String)getPart(content, "label"), 
-                "Accept", new Runnable() {
-                    public void run()
-                    {
-                        System.out.println("Accepting atom " + atomHandle);
-                        Message msg = makeReply(TalkActivity.this, Performative.QueryRef, null);
-                        combine(msg, struct(CONTENT, 
-                                            struct("type", "atom", "atom", atomHandle)));
-                        post(friend, msg);                        
-                    }
-                },
-                "Reject", new Runnable() {
-                    public void run()
-                    {
-                        System.out.println("Rejecting atom " + atomHandle);
-                        reply(msg, Performative.RejectProposal, atomHandle);
-                    }
-                }
-                );
-            }            
+                talkPanel.getChatPane().actionableChatFrom(friend,
+                        (String) getPart(content, "label"), "Accept",
+                        new Runnable() {
+                            public void run()
+                            {
+                                System.out.println("Accepting atom "
+                                        + atomHandle);
+                                Message msg = makeReply(TalkActivity.this,
+                                        Performative.QueryRef, null);
+                                combine(msg, struct(CONTENT, struct("type",
+                                        "atom", "atom", atomHandle)));
+                                post(friend, msg);
+                            }
+                        }, "Reject", new Runnable() {
+                            public void run()
+                            {
+                                System.out.println("Rejecting atom "
+                                        + atomHandle);
+                                reply(msg, Performative.RejectProposal,
+                                        atomHandle);
+                            }
+                        });
+            }
         }
         return null;
     }
 
     @FromState("Started")
-    @OnMessage(performative="AcceptProposal")
+    @OnMessage(performative = "AcceptProposal")
     public WorkflowState onAcceptProposal(final Message msg)
     {
         return null;
     }
 
     @FromState("Started")
-    @OnMessage(performative="RejectProposal")
+    @OnMessage(performative = "RejectProposal")
     public WorkflowState onRejectProposal(final Message msg)
     {
-        talkPanel.getChatPane().chatFrom(friend, "Content " + getPart(msg, CONTENT) + " rejected.");
+        talkPanel.getChatPane().chatFrom(friend,
+                "Content " + getPart(msg, CONTENT) + " rejected.");
         return null;
     }
-    
+
     @FromState("Started")
-    @OnMessage(performative="Inform")
+    @OnMessage(performative = "Inform")
     public WorkflowState onInform(final Message msg)
     {
         initFriend(msg);
         Map<String, Object> content = getPart(msg, CONTENT);
-        String type = (String)content.get("type");
-        assert type != null : new RuntimeException("No type in TalkActivity content.");
+        String type = (String) content.get("type");
+        assert type != null : new RuntimeException(
+                "No type in TalkActivity content.");
         if ("chat".equals(type))
         {
             String text = getPart(content, "text");
-            assert text != null : new RuntimeException("No text in TalkActivity chat.");            
-//            EventDispatcher.dispatch(U.hgType(ChatEvent.class), 
-//                                     friend.getId(), 
-//                                     new ChatEvent(friend, text));
+            assert text != null : new RuntimeException(
+                    "No text in TalkActivity chat.");
+            // EventDispatcher.dispatch(U.hgType(ChatEvent.class),
+            // friend.getId(),
+            // new ChatEvent(friend, text));
             talkPanel.getChatPane().chatFrom(friend, text);
-        }        
+        }
         return null;
     }
 
     @FromState("Started")
-    @OnMessage(performative="QueryRef")
+    @OnMessage(performative = "QueryRef")
     public WorkflowState onQueryRef(final Message msg)
     {
         try
         {
-        initFriend(msg);
-        Map<String, Object> content = getPart(msg, CONTENT);
-        String type = (String)content.get("type");
-        assert type != null : new RuntimeException("No type in TalkActivity content.");
-        if ("atom".equals(type))
-        {
-            HGPersistentHandle atomHandle = getPart(content, "atom");
-            transferAtom(msg, atomHandle, new HashSet<HGHandle>(), true);
+            initFriend(msg);
+            Map<String, Object> content = getPart(msg, CONTENT);
+            String type = (String) content.get("type");
+            assert type != null : new RuntimeException(
+                    "No type in TalkActivity content.");
+            if ("atom".equals(type))
+            {
+                HGPersistentHandle atomHandle = getPart(content, "atom");
+                transferAtom(msg, atomHandle, new HashSet<HGHandle>(), true);
+            }
         }
-        }catch (Throwable t) { t.printStackTrace(); }
-        return null;        
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+        }
+        return null;
     }
-    
+
     @FromState("Started")
-    @OnMessage(performative="InformRef")
+    @OnMessage(performative = "InformRef")
     public WorkflowState onInformRef(final Message msg)
     {
         try
         {
-        initFriend(msg);
-        Map<String, Object> content = getPart(msg, CONTENT);
-        final String type = (String)content.get("type");
-        assert type != null : new RuntimeException("No type in TalkActivity content.");
-        if ("atom".equals(type) || "auxiliary-atom".equals(type))
-        {
-            final Object atom = getPart(msg, CONTENT, "atom");
-            if (atom == null)
+            initFriend(msg);
+            Map<String, Object> content = getPart(msg, CONTENT);
+            final String type = (String) content.get("type");
+            assert type != null : new RuntimeException(
+                    "No type in TalkActivity content.");
+            if ("atom".equals(type) || "auxiliary-atom".equals(type))
             {
-                reply(msg, Performative.Failure, "missing atom data");
-                return null;
+                final Object atom = getPart(msg, CONTENT, "atom");
+                if (atom == null)
+                {
+                    reply(msg, Performative.Failure, "missing atom data");
+                    return null;
+                }
+                else
+                    return getThisPeer().getGraph().getTransactionManager()
+                            .transact(new Callable<WorkflowState>() {
+                                public WorkflowState call() throws Exception
+                                {
+                                    // Store the atom itself locally,
+                                    // overwriting any previous version
+                                    HGHandle atomHandle = SubgraphManager
+                                            .writeTransferedGraph(atom,
+                                                    getThisPeer().getGraph())
+                                            .iterator().next();
+                                    if ("atom".equals(type))
+                                        GUIHelper
+                                                .addIfNotThere(
+                                                        ThisNiche.TOP_CELL_GROUP_HANDLE,
+                                                        atomHandle, NBUIVisual
+                                                                .getHandle(),
+                                                        null, new Rectangle(
+                                                                300, 200, 200,
+                                                                150));
+                                    return null;
+                                }
+                            });
             }
-            else return
-             getThisPeer().getGraph().getTransactionManager().transact(new Callable<WorkflowState>() {
-                 public WorkflowState call() throws Exception
-                 {
-                     // Store the atom itself locally, overwriting any previous version
-                     HGHandle atomHandle = SubgraphManager.writeTransferedGraph(
-                                   atom, 
-                                   getThisPeer().getGraph()).iterator().next();
-                     if ("atom".equals(type))
-                         GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, 
-                                                 atomHandle, 
-                                                 NBUIVisual.getHandle(), 
-                                                 null, 
-                                                 new Rectangle(300, 200, 100, 100));
-                     return null;
-                 }
-             });            
         }
-        }catch (Throwable t) { t.printStackTrace(); }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+        }
         return null;
-    }    
+    }
 
     @Override
     public void initiate()
     {
-        assert friend == null : new RuntimeException("No destination for TalkActivity.");
+        assert friend == null : new RuntimeException(
+                "No destination for TalkActivity.");
         Message msg = createMessage(Performative.Propose, TalkActivity.this);
         combine(msg, struct(Messages.CONTENT, struct("type", "start-chat")));
         post(friend, msg);
     }
-     
+
     @Override
     public String getType()
     {
         return TYPENAME;
-    }    
+    }
 }
