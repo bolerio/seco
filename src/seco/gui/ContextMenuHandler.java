@@ -13,7 +13,6 @@ import org.hypergraphdb.HGPersistentHandle;
 
 import seco.ThisNiche;
 import seco.notebook.ScriptletAction;
-import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
@@ -53,7 +52,7 @@ public class ContextMenuHandler extends PBasicInputEventHandler
 
     public void mousePressed(PInputEvent event)
     {
-        //System.out.println("ContextMenuHandler - showMenu: " +
+       // System.out.println("ContextMenuHandler - showMenu: " +
         //         event.getPickedNode() + ":" + event.getComponent());
         if (event == null) return;
         if ((event.getPickedNode().equals(TopFrame.getInstance()
@@ -139,7 +138,7 @@ public class ContextMenuHandler extends PBasicInputEventHandler
 
     public List<ScriptletAction> getNodeActions()
     {
-        node_actions = ThisNiche.hg.get(GLOBAL_ACTION_SET_HANDLE);
+        node_actions = ThisNiche.hg.get(NODE_ACTION_SET_HANDLE);
         if (node_actions == null)
         {
             node_actions = new ArrayList<ScriptletAction>();

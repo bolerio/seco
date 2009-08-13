@@ -31,6 +31,7 @@ import seco.api.Callback;
 import seco.gui.SecoTransferable;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookTransferHandler;
+import seco.things.CellUtils;
 
 public class TalkPanel extends JPanel
 {
@@ -276,8 +277,11 @@ public class TalkPanel extends JPanel
                     Vector<Element> els = (Vector<Element>) t.getTransferData(fl);
                     data = NotebookDocument.getNBElementH(els.get(0));
                 }
+                
                 if(data != null)
                 {
+                    if(support.getDropAction() == COPY)
+                       data = CellUtils.makeCopy(data);
                     talkPanel.acceptTransfer(data);
                     return true;
                 }

@@ -115,7 +115,11 @@ public class PCTransferHandler extends TransferHandler
                     System.out.println("PCTransferHandler - inner done: " + res
                             + ":" + node.getComponent() + ":"
                             + support.getComponent());
-                    if (res && parent_group != null)
+                    //PCTransferHandler removes itself the moved handle
+                    //this hacky approach is due to the fact that importDone()
+                    //is protected
+                    if (res && parent_group != null &&
+                            !(handler instanceof PCTransferHandler))
                     {
                          GUIHelper.removeFromCellGroup(parent_group, data, false);
                     }

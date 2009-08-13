@@ -67,7 +67,8 @@ public class TabbedPaneVisual implements CellVisual, EventHandler
         JComponent comp = visual.bind(cell);
         if(comp == null) return;
         comp.putClientProperty(TabbedPaneU.CHILD_HANDLE_KEY, childH);
-        String title = (comp.getName() != null) ? comp.getName(): "Untitled";
+        String title = (CellUtils.getName(cell) != null) ? 
+                CellUtils.getName(cell): "Untitled";
         tp.addTab(title, comp);
     }
 

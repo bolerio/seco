@@ -89,8 +89,7 @@ public class TabbedPaneU
     private static int promptAndSaveDoc()
     {
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-        if (ui == null) return -1;
-        ui.close();
+        if (ui != null) ui.close();
         return JOptionPane.OK_OPTION;
     }
 
