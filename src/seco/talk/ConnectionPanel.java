@@ -116,7 +116,6 @@ public class ConnectionPanel extends JPanel
                 peerList.peers.thePeers.add(room);
                 peerList.peers.fireChangeEvent();
             }
-            peerList.setList(new JList(peerList.peers));
         }
         catch (XMPPException e)
         {

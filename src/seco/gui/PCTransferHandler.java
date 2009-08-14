@@ -119,7 +119,8 @@ public class PCTransferHandler extends TransferHandler
                     //this hacky approach is due to the fact that importDone()
                     //is protected
                     if (res && parent_group != null &&
-                            !(handler instanceof PCTransferHandler))
+                            !(handler instanceof PCTransferHandler) &&
+                            support.getDropAction() == MOVE)
                     {
                          GUIHelper.removeFromCellGroup(parent_group, data, false);
                     }

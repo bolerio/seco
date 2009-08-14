@@ -355,7 +355,7 @@ abstract public class DocUtil
         }
     }
 
-    static Component maybe_clone(Component c)
+    public static Component maybe_clone(Component c)
     {
         if (c.getParent() != null)
         {

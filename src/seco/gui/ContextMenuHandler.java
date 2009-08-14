@@ -129,7 +129,7 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         global_actions.add(makeScriptletAction("BirdsEyeView",
                 "seco.gui.CommonActions.birdsEyeView();"));
         global_actions.add(makeScriptletAction("Reset Zoom",
-                "canvas.getCamera().setViewScale(1.0);"));
+                "desktop.getCanvas().getCamera().setViewScale(1.0);"));
         global_actions.add(makeScriptletAction("Backup",
                 "seco.gui.CommonActions.backup();"));
         // global_menu.add(makeMenuItem("Test Embedded Container",

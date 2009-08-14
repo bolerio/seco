@@ -40,6 +40,7 @@ import seco.gui.NBUIVisual;
 import seco.gui.TabbedPaneVisual;
 import seco.gui.VisualAttribs;
 import seco.gui.VisualsManager;
+import seco.notebook.DocUtil;
 import seco.notebook.NBStyle;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
@@ -445,14 +446,14 @@ public class CellUtils
     public static HGHandle makeCopy(HGHandle in_h)
     {
         CellGroupMember in = (CellGroupMember) ThisNiche.hg.get(in_h);
-        if (in instanceof CellGroup) return fullCellGroupCopy(in_h);
+        if (in instanceof CellGroup) return cellGroupCopy(in_h);
         else if (isInputCell(in)) return inputCellCopy(in_h);
         else
             return outputCellCopy(in_h);
     }
 
     // full copy
-    static HGHandle fullCellGroupCopy(HGHandle in_h)
+    static HGHandle cellGroupCopy(HGHandle in_h)
     {
         CellGroup in = (CellGroup) ThisNiche.hg.get(in_h);
         Map<HGHandle, HGHandle> cells = new HashMap<HGHandle, HGHandle>();
@@ -489,7 +490,7 @@ public class CellUtils
             else
             {
                 copyH = outputCellCopy(in.getTargetAt(i));
-                HGHandle par = getOutCellParent(in.getTargetAt(i));
+                HGHandle par = getOutCellInput(in.getTargetAt(i));
                 if (par != null && cells.containsKey(par))
                     addEventPubSub(EvalCellEvent.HANDLE, cells.get(par), copyH,
                             copyH);
@@ -518,13 +519,15 @@ public class CellUtils
         Cell c = (Cell) ThisNiche.hg.get(in);
         boolean error = isError(c);
         Object value = c.getValue();
+        if(value instanceof Component)
+            value = DocUtil.maybe_clone((Component) value);
         HGHandle h = addSerializable(value);
         HGHandle res = CellUtils.getCellHForRefH(h);
         if (error) setError(h, error);
         return res;
     }
 
-    public static HGHandle getOutCellParent(HGHandle h)
+    public static HGHandle getOutCellInput(HGHandle h)
     {
        List<EventPubSub> subs = hg.getAll(ThisNiche.hg, hg.and(hg
                 .type(EventPubSub.class), hg.incident(h), hg
