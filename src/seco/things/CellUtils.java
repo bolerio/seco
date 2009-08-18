@@ -519,8 +519,9 @@ public class CellUtils
         Cell c = (Cell) ThisNiche.hg.get(in);
         boolean error = isError(c);
         Object value = c.getValue();
-        if(value instanceof Component)
-            value = DocUtil.maybe_clone((Component) value);
+        //TODO: not very clear when to clone 
+       // if(value instanceof Component)
+       //     value = DocUtil.maybe_clone((Component) value);
         HGHandle h = addSerializable(value);
         HGHandle res = CellUtils.getCellHForRefH(h);
         if (error) setError(h, error);

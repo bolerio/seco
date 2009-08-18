@@ -119,7 +119,17 @@ public class TalkActivity extends FSMActivity
                         : "auxiliary-atom", "atom", SubgraphManager
                         .getTransferAtomRepresentation(
                                 getThisPeer().getGraph(), atom))));
-        post(getSender(msg), reply);
+        
+        // should block on posting to retain the order and send the main
+        // atom last
+        try
+        {
+            post(getSender(msg), reply).get();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     void openPanel()
@@ -380,8 +390,7 @@ public class TalkActivity extends FSMActivity
                                         GUIHelper
                                                 .addIfNotThere(
                                                         ThisNiche.TOP_CELL_GROUP_HANDLE,
-                                                        atomHandle, NBUIVisual
-                                                                .getHandle(),
+                                                        atomHandle, null, // NBUIVisual.getHandle(),
                                                         null, new Rectangle(
                                                                 300, 200, 200,
                                                                 150));

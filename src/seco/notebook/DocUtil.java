@@ -233,7 +233,7 @@ abstract public class DocUtil
         startTag(commonCell, attr, 0, vec);
         Object val = (e != null) ? e.getValue().getComponent() : c.getValue();
         String text = (e != null) ? e.getValue().getText() : "";
-        if (text == null) text = "";
+        if (text == null) text = "null";
         Component comp = null;
         if (val != null)
         {
@@ -242,7 +242,7 @@ abstract public class DocUtil
                 comp = (Component) val;
         }
 
-        if (text.length() > 0)
+        if (comp == null)//text.length() > 0)
         {
             if (!text.endsWith("\n")) text += "\n";
             addContent(text.toCharArray(), 0, vec, 0);

@@ -9,7 +9,7 @@ import seco.events.EventDispatcher;
 
 public class BaseCellGroupMember implements CellGroupMember
 {
-    private static final String VISUAL_HANDLE_KEY = "VISUAL_HANDLE_KEY";
+    public static final String VISUAL_HANDLE_KEY = "VISUAL_HANDLE_KEY";
     
     protected Object visualInstance;
     protected Map<Object, Object> attributes = new HashMap<Object, Object>(7);

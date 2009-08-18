@@ -21,6 +21,7 @@ import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EvalCellEvent;
 import seco.events.EventHandler;
+import seco.things.BaseCellGroupMember;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
@@ -173,7 +174,8 @@ public class CellContainerVisual implements CellVisual, EventHandler
         if(group == null) return;
         PiccoloCanvas canvas = getCanvas(group);
         PSwingNode ps = canvas.getPSwingNodeForHandle(publisher);
-        if (event.getName().equals(VisualAttribs.minimized))
+        if (event.getName().equals(VisualAttribs.minimized)
+                || event.getName().equals(BaseCellGroupMember.VISUAL_HANDLE_KEY))
         {
             if (ps != null) 
                 ps.removeFromParent();
