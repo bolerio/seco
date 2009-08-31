@@ -16,6 +16,8 @@ import seco.things.Scriptlet;
 
 public class ScriptletAction extends AbstractAction
 {
+    public static final String ACTION_EVENT_VAR_NAME = "ACTION_EVENT_VAR_NAME";
+    
     private Scriptlet scriptlet;
     public ScriptletAction()
     {
@@ -41,6 +43,8 @@ public class ScriptletAction extends AbstractAction
         EvaluationContext evalContext = ThisNiche.getTopContext();
         if(evalContext == null)
            evalContext = ThisNiche.getEvaluationContext(ThisNiche.TOP_CONTEXT_HANDLE);
+        evalContext.getRuntimeContext().getBindings().put(ACTION_EVENT_VAR_NAME, 
+                e);
         try{
         Object o = evalContext.eval(scriptlet.getLanguage(), scriptlet.getCode());
         }

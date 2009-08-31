@@ -15,14 +15,20 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.SwingConstants;
 
+import seco.ThisNiche;
 import seco.gui.piccolo.CopyHandle;
+import seco.gui.piccolo.TitlePaneNode;
 import seco.gui.piccolo.MaximizeHandle;
 import seco.gui.piccolo.MinimizeHandle;
+import seco.gui.piccolo.OffsetPBoundsLocator;
 import seco.gui.piccolo.PSmallBoundsHandle;
+import seco.things.CellGroupMember;
+import seco.things.CellUtils;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.PRoot;
@@ -30,6 +36,7 @@ import edu.umd.cs.piccolo.event.PDragSequenceEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PDimension;
+import edu.umd.cs.piccolox.util.PBoundsLocator;
 
 
 /**
@@ -75,36 +82,74 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         node.moveToFront();
     }
 
+    
     //TODO: provide some means to add/register additional handles
-    public void decorateSelectedNode(PNode node)
+    public static void decorateSelectedNode(PNode node)
     {
-        PSmallBoundsHandle.addBoundsHandlesTo(node);
+        node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                .createEastLocator(node)));
+        node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                .createWestLocator(node)));
+        node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                .createSouthLocator(node)));
+        node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                .createSouthEastLocator(node)));
+        node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                .createSouthWestLocator(node)));
+        
+        node.addChild(new PSmallBoundsHandle(
+                new OffsetPBoundsLocator(node, 
+                        SwingConstants.NORTH, new Point(0, -TitlePaneNode.HEIGHT))));
+        node.addChild(new PSmallBoundsHandle(new OffsetPBoundsLocator(node, 
+                SwingConstants.NORTH_EAST, new Point(0, -TitlePaneNode.HEIGHT))));
+        node.addChild(new PSmallBoundsHandle(new OffsetPBoundsLocator(node, 
+                SwingConstants.NORTH_WEST, new Point(0, -TitlePaneNode.HEIGHT))));
         
         if (node instanceof PSwingNode)
         {
-            //temp check
-            // CellGroupMember cgm = ThisNiche.hg.get(((PSwingNode)
-            // node).getHandle());
-            // if (!TabbedPaneVisual.getHandle().equals(cgm.getVisual()))
-            node.addChild(new CopyHandle((PSwingNode) node,
-                    SwingConstants.NORTH_EAST, new Point(-10, 0)));
-            node.addChild(new MinimizeHandle((PSwingNode) node,
-                    SwingConstants.NORTH_EAST, new Point(-25, 0)));
-            node.addChild(new MaximizeHandle((PSwingNode) node,
-                    SwingConstants.NORTH_EAST, new Point(-40, 0)));
+            CellGroupMember cgm = ThisNiche.hg.get(((PSwingNode) node).getHandle());
+            if(CellUtils.isShowTitle(cgm))
+            {
+               node.addChild(new TitlePaneNode((PSwingNode) node));
+            }
+            else
+            {
+                TitlePaneNode.addActionHandles((PSwingNode)node, node);
+            }
+//            node.addChild(new CopyHandle((PSwingNode) node,
+//                    SwingConstants.NORTH_EAST, new Point(-10, 0)));
+//            node.addChild(new MinimizeHandle((PSwingNode) node,
+//                    SwingConstants.NORTH_EAST, new Point(-25, 0)));
+//            node.addChild(new MaximizeHandle((PSwingNode) node,
+//                    SwingConstants.NORTH_EAST, new Point(-40, 0)));
+//            
         }
     }
 
     public void unselect(PNode node)
     {
         if (!isSelected(node)) { return; }
-        undecorateSelectedNode(node);
+        CellGroupMember cgm = ThisNiche.hg.get(((PSwingNode) node).getHandle());
+        undecorateSelectedNode(node, !CellUtils.isShowTitle(cgm));
         selection.remove(node);
     }
 
-    public void undecorateSelectedNode(PNode node)
+    public static void undecorateSelectedNode(PNode node, boolean remove_title)
     {
-        PSmallBoundsHandle.removeBoundsHandlesFrom(node);
+        ArrayList<PNode> handles = new ArrayList<PNode>();
+        Iterator i = node.getChildrenIterator();
+        while (i.hasNext())
+        {
+            PNode each = (PNode) i.next();
+            if (each instanceof PSmallBoundsHandle)
+            {
+                if(each instanceof TitlePaneNode && !remove_title)
+                    ;
+                else
+                   handles.add(each);
+            }
+        }
+        node.removeChildren(handles);
     }
 
     public void unselectAll()

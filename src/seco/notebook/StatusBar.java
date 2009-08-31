@@ -7,30 +7,54 @@
  */
 package seco.notebook;
 
-import javax.script.ScriptEngineFactory;
-import javax.swing.border.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
+import java.awt.geom.Rectangle2D;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Iterator;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.Timer;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.text.Element;
-import javax.swing.*;
 
 import seco.gui.StandaloneFrame;
 import seco.notebook.syntax.ScriptSupport;
 import seco.things.Cell;
 import seco.things.CellUtils;
-
-
-import java.awt.event.*;
-import java.awt.font.*;
-import java.awt.geom.*;
-import java.awt.*;
-import java.text.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The status bar used to display various information to the user. 

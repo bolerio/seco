@@ -57,7 +57,7 @@ public class CellContainerVisual implements CellVisual, EventHandler
             if (CellUtils.isMinimized(element))
                 return GUIHelper.getMinimizedUI(element);
             canvas = new PiccoloCanvas(true);
-            GUIHelper.handleTitle(element,  canvas);
+            //GUIHelper.handleTitle(element,  canvas);
             //canvas.setBorder(new MatteBorder(1, 1, 1, 1, Color.blue));
         }
         element.setVisualInstance(canvas);
@@ -119,7 +119,6 @@ public class CellContainerVisual implements CellVisual, EventHandler
         if (comp != null)
         {
             String title = CellUtils.getName(x);
-            if(title != null) GUIHelper.handleTitle(x,  comp);
             if (comp instanceof PiccoloCanvas)
             {
                 PiccoloCanvas canvas = (PiccoloCanvas) comp;
@@ -136,6 +135,7 @@ public class CellContainerVisual implements CellVisual, EventHandler
             }
             else
                top_canvas.addComponent(comp, x);
+            if(title != null) GUIHelper.handleTitle(x,  comp);
                
         }
         CellUtils.addEventPubSub(EvalCellEvent.HANDLE, childH, getHandle(),

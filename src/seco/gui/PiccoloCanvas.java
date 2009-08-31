@@ -1,5 +1,6 @@
 package seco.gui;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
@@ -29,6 +30,7 @@ import edu.umd.cs.piccolo.util.PNodeFilter;
 import edu.umd.cs.piccolo.util.PPaintContext;
 import edu.umd.cs.piccolox.pswing.PSwingCanvas;
 import edu.umd.cs.piccolox.pswing.PSwingEventHandler;
+import edu.umd.cs.piccolox.swing.PScrollPane;
 
 /*
  * Main Piccolo container.
@@ -36,7 +38,7 @@ import edu.umd.cs.piccolox.pswing.PSwingEventHandler;
 public class PiccoloCanvas extends PSwingCanvas
 {
     private static final long serialVersionUID = 8650227944556777541L;
-    private static PSwingNodeFilter ps_filter= new PSwingNodeFilter();
+    private static PSwingNodeFilter ps_filter = new PSwingNodeFilter();
 
     PLayer nodeLayer;
     PCSelectionHandler selectionHandler;
@@ -144,7 +146,7 @@ public class PiccoloCanvas extends PSwingCanvas
             if (vh != null) vh.layout(PiccoloCanvas.this, (PSwingNode) o);
         }
 
-   }
+    }
 
     public HGHandle getGroupH()
     {
@@ -248,33 +250,51 @@ public class PiccoloCanvas extends PSwingCanvas
     public PSwingNode getPSwingNodeForHandle(HGHandle h)
     {
         for (PSwingNode n : getNodes())
-            if ((h.equals(n.getHandle())))
-                return n;
+        {
+            if ((h.equals(n.getHandle()))) return n;
+            PSwingNode inner = check_inner_canvas(n, h);
+            if (inner != null) return inner;
+        }
         for (PSwingNode n : getFixedNodes())
-            if (h.equals(n.getHandle()))
-                return n;
+        {
+            if (h.equals(n.getHandle())) return n;
+            PSwingNode inner = check_inner_canvas(n, h);
+            if (inner != null) return inner;
+        }
         return null;
     }
 
-//    public PSwingNode getOutCellNodeForHandle(HGHandle h)
-//    {
-//        for (Object p : getNodeLayer().getAllNodes())
-//            if (p instanceof PSwingNode && check_is_output((PSwingNode) p, h))
-//                return (PSwingNode) p;
-//        for (Object p : getCamera().getAllNodes())
-//            if (p instanceof PSwingNode && check_is_output((PSwingNode) p, h))
-//                return (PSwingNode) p;
-//        return null;
-//    }
+    public PSwingNode check_inner_canvas(PSwingNode n, HGHandle h)
+    {
+        if (n.getComponent() instanceof PScrollPane)
+        {
+            Component c = ((PScrollPane) n.getComponent()).getViewport()
+                    .getView();
+            if (c instanceof PiccoloCanvas)
+                return ((PiccoloCanvas) c).getPSwingNodeForHandle(h);
+        }
+        return null;
+    }
 
-//    private boolean check_is_output(PSwingNode p, HGHandle h)
-//    {
-//        if (h.equals(p.getHandle())) return true;
-//        CellGroupMember cgm = ThisNiche.hg.get(p.getHandle());
-//        if (cgm instanceof Cell && ((Cell) cgm).getAtomHandle().equals(h))
-//            return true;
-//        return false;
-//    }
+    // public PSwingNode getOutCellNodeForHandle(HGHandle h)
+    // {
+    // for (Object p : getNodeLayer().getAllNodes())
+    // if (p instanceof PSwingNode && check_is_output((PSwingNode) p, h))
+    // return (PSwingNode) p;
+    // for (Object p : getCamera().getAllNodes())
+    // if (p instanceof PSwingNode && check_is_output((PSwingNode) p, h))
+    // return (PSwingNode) p;
+    // return null;
+    // }
+
+    // private boolean check_is_output(PSwingNode p, HGHandle h)
+    // {
+    // if (h.equals(p.getHandle())) return true;
+    // CellGroupMember cgm = ThisNiche.hg.get(p.getHandle());
+    // if (cgm instanceof Cell && ((Cell) cgm).getAtomHandle().equals(h))
+    // return true;
+    // return false;
+    // }
 
     public void maximize(PSwingNode n)
     {
@@ -405,17 +425,16 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         return nodeLayer;
     }
-    
+
     public Collection<PSwingNode> getNodes()
     {
-        return (Collection<PSwingNode>) 
-          nodeLayer.getAllNodes(ps_filter, null);
+        return (Collection<PSwingNode>) nodeLayer.getAllNodes(ps_filter, null);
     }
-    
+
     public Collection<PSwingNode> getFixedNodes()
     {
-        return (Collection<PSwingNode>) 
-          getCamera().getAllNodes(ps_filter, null);
+        return (Collection<PSwingNode>) getCamera()
+                .getAllNodes(ps_filter, null);
     }
 
     private static class PSwingNodeFilter implements PNodeFilter

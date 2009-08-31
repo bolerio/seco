@@ -241,7 +241,7 @@ public class TalkPanel extends JPanel
       
         public int getSourceActions(JComponent c)
         {
-            return COPY_OR_MOVE;
+            return COPY;//_OR_MOVE;
         }
 
         protected Transferable createTransferable(JComponent comp)

@@ -19,7 +19,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -27,7 +29,9 @@ import java.util.concurrent.Callable;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -39,6 +43,7 @@ import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.TransferHandler;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -101,10 +106,12 @@ public class GUIHelper
             .makeHandle("1d3b7df9-f109-11dc-9512-073dfab2b15a");
     public static final HGPersistentHandle HTML_TOOLBAR_HANDLE = HGHandleFactory
             .makeHandle("56371f73-025d-11dd-b650-ef87b987c94a");
+    public static final HGPersistentHandle WIN_ACTIONS_HANDLE = HGHandleFactory
+    .makeHandle("8724b420-963b-11de-8a39-0800200c9a66");
     
     public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
     //size of the minimized components 
-    public static Dimension MINIMIZED_COMPONENT_SIZE = new Dimension(100, 30);
+    public static Dimension MINIMIZED_COMPONENT_SIZE = new Dimension(65, 65);
     //rectangle used for adding containers 
     public static Rectangle CONTAINER_RECT = new Rectangle(20, 70, 300, 300);
     
@@ -118,6 +125,32 @@ public class GUIHelper
         catch (Exception e)
         {
         }
+    }
+    
+    public static List<Action> getWinTitleActions()
+    {
+        List<Action> actions = (List<Action>)ThisNiche.hg.get(WIN_ACTIONS_HANDLE);
+        if(actions != null) return actions;
+        actions = new ArrayList<Action>();
+        //maximize
+        Action a = new ScriptletAction(
+                "node = seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode();"+
+                "cgm = seco.ThisNiche.hg.get(node.getHandle());" +
+                "if(seco.things.CellUtils.isMinimized(cgm))" +
+                "seco.things.CellUtils.toggleMinimized(cgm);" +
+                "seco.things.CellUtils.toggleMaximized(cgm);");
+        a.putValue(Action.SMALL_ICON, IconManager.resolveIcon("Maximize.gif"));
+        a.putValue(Action.SHORT_DESCRIPTION, "Maximize/Restore");
+        actions.add(a);
+       //minimize
+        a = new ScriptletAction("node = seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode();"+
+        "seco.things.CellUtils.toggleMinimized(seco.ThisNiche.hg.get(node.getHandle()))");
+        a.putValue(Action.SMALL_ICON, IconManager.resolveIcon("Minimize.gif"));
+        a.putValue(Action.SHORT_DESCRIPTION, "Minimize/Restore");
+        actions.add(a);
+        
+        ThisNiche.hg.define(WIN_ACTIONS_HANDLE, actions);
+        return actions;
     }
 
     public static JToolBar getMainToolBar()
@@ -942,25 +975,31 @@ public class GUIHelper
 
     public static void handleTitle(CellGroupMember cgm, JComponent comp)
     {
-        if(CellUtils.isMinimized(cgm))
-        {
-            update_minimized_UI(cgm, comp);
-            return;
-        }
+//        if(CellUtils.isMinimized(cgm))
+//        {
+//            update_minimized_UI(cgm, comp);
+//            return;
+//        }
         String title = CellUtils.getName(cgm);
-        TitledBorder border = BorderFactory.createTitledBorder(title);
-        border.setTitlePosition(TitledBorder.ABOVE_TOP);
+//        TitledBorder border = BorderFactory.createTitledBorder(title);
+//        border.setTitlePosition(TitledBorder.ABOVE_TOP);
+        PSwingNode node = TopFrame.getInstance().getCanvas().getPSwingNodeForHandle(
+                ThisNiche.handleOf(cgm));
         if (CellUtils.isShowTitle(cgm) && title != null)
         {
-            if(!(comp.getBorder() instanceof TitledBorder))
-               comp.putClientProperty(BORDER_PROP, comp.getBorder());
-            comp.setBorder(border);
+            //if(!(comp.getBorder() instanceof TitledBorder))
+           //    comp.putClientProperty(BORDER_PROP, comp.getBorder());
+            //comp.setBorder(border);
+            if(node != null)
+               PCSelectionHandler.decorateSelectedNode(node);
         }
         else if (!CellUtils.isShowTitle(cgm))
         {
-            Border oldB = (Border) comp.getClientProperty(BORDER_PROP);
-            if(!border.equals(oldB))
-               comp.setBorder(oldB);
+            if(node != null)
+              PCSelectionHandler.undecorateSelectedNode(node, true);
+//            Border oldB = (Border) comp.getClientProperty(BORDER_PROP);
+//            if(!border.equals(oldB))
+//               comp.setBorder(oldB);
         }
     }
     
@@ -968,9 +1007,10 @@ public class GUIHelper
     {
         String text = CellUtils.getName(cgm);
         if (text == null) text = "Untitled";
-        // JLabel l = new JLabel(text);
-        JButton l = new JButton(text);
-        l.setBackground(Color.YELLOW);
+        // JLabel l = new JLabel(IconManager.resolveIcon("notebook.png"));
+        JButton l = new JButton(IconManager.resolveIcon("notebook.png"));
+        l.setBackground(Color.white);
+        //l.setBackground(Color.YELLOW);
         l.putClientProperty("tooltip", text);
         return l;
     }
@@ -981,9 +1021,9 @@ public class GUIHelper
         if (text == null) text = "Untitled";
         JButton l = (JButton) ui;
         //minimized comps are shown without title
-        l.setBorder(null);
-        l.setText(text);
-        l.setBackground(Color.YELLOW);
+        //l.setBorder(null);
+        //l.setText(text);
+        //l.setBackground(Color.YELLOW);
         l.putClientProperty("tooltip", text);
     } 
 }
