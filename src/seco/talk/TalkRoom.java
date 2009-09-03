@@ -79,7 +79,7 @@ public class TalkRoom extends JPanel
         getTheChat().addParticipantListener(new PacketListener() {
             public void processPacket(Packet packet)
             {
-                peerList.peers.thePeers.clear();
+                peerList.getListModel().removeAllElements();
                 for (Iterator<String> i = getTheChat().getOccupants(); i.hasNext(); )
                 {
                     String occ = i.next();
@@ -88,10 +88,10 @@ public class TalkRoom extends JPanel
                         HGPeerIdentity id = new HGPeerIdentity();
                         id.setName(occ);
                         id.setId(HGHandleFactory.makeHandle());
-                        peerList.peers.thePeers.add(id);
+                        peerList.getListModel().addElement(id);
                     }
                 }
-                peerList.peers.fireChangeEvent();
+                //peerList.peers.fireChangeEvent();
             }
         });
     }

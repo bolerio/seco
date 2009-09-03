@@ -88,8 +88,8 @@ public class AddOnFactory
         {
             Vector value1 = (Vector) getLinkValue(hg, link, record);
             if (value1 == null) return;
-            System.out.println("AddonF - ADD_EL:" + instance + ":"
-                    + value1.get(0));
+          //  System.out.println("AddonF - ADD_EL:" + instance + ":"
+          //          + value1.get(0));
             Object[] value = new Object[value1.size()];
             value1.copyInto(value);
             boolean combo = instance instanceof DefaultComboBoxModel;

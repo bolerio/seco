@@ -57,6 +57,7 @@ public class CommandHandle extends PSmallBoundsHandle
     public void endHandleDrag(Point2D aLocalPoint, PInputEvent aEvent)
     {
         relocateHandle();
+        node.getCanvas().getSelectionHandler().select(node);
         performAction(aLocalPoint, aEvent);
     }
     

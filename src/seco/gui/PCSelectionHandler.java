@@ -38,10 +38,9 @@ import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PDimension;
 import edu.umd.cs.piccolox.util.PBoundsLocator;
 
-
 /**
  * <code>PCSelectionHandler</code> provides standard interaction for selection.
- * Alt - clicking selects the object under the cursor. 
+ * Alt - clicking selects the object under the cursor.
  */
 public class PCSelectionHandler extends PDragSequenceEventHandler
 {
@@ -50,7 +49,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     final static int NUM_STROKES = 10;
     private Map<PNode, Boolean> selection = null; // The current selection
     private PNode pressNode = null; // FNode pressed on (or null if none)
-    
+
     /**
      * Creates a selection event handler.
      */
@@ -75,54 +74,59 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
 
     public void select(PNode node)
     {
-        if (isSelected(node)) { return; }
-        if (node == null) return;
+        if (node == null || isSelected(node)) return;
+        unselectAll();
+        if (node instanceof TitlePaneNode)
+        {
+            System.out.println("PCSelectionHandler - select: " + node);
+            select(node.getParent());
+            return;
+        }
         selection.put(node, Boolean.TRUE);
-        decorateSelectedNode(node);
+        decorateSelectedNode(node, true);
         node.moveToFront();
     }
 
-    
-    //TODO: provide some means to add/register additional handles
-    public static void decorateSelectedNode(PNode node)
+    // TODO: provide some means to add/register additional handles
+    public static void decorateSelectedNode(PNode node,
+            boolean show_resize_handles)
     {
-        node.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createEastLocator(node)));
-        node.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createWestLocator(node)));
-        node.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createSouthLocator(node)));
-        node.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createSouthEastLocator(node)));
-        node.addChild(new PSmallBoundsHandle(PBoundsLocator
-                .createSouthWestLocator(node)));
-        
-        node.addChild(new PSmallBoundsHandle(
-                new OffsetPBoundsLocator(node, 
-                        SwingConstants.NORTH, new Point(0, -TitlePaneNode.HEIGHT))));
-        node.addChild(new PSmallBoundsHandle(new OffsetPBoundsLocator(node, 
-                SwingConstants.NORTH_EAST, new Point(0, -TitlePaneNode.HEIGHT))));
-        node.addChild(new PSmallBoundsHandle(new OffsetPBoundsLocator(node, 
-                SwingConstants.NORTH_WEST, new Point(0, -TitlePaneNode.HEIGHT))));
-        
+        if (show_resize_handles)
+        {
+            node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                    .createEastLocator(node)));
+            node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                    .createWestLocator(node)));
+            node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                    .createSouthLocator(node)));
+            node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                    .createSouthEastLocator(node)));
+            node.addChild(new PSmallBoundsHandle(PBoundsLocator
+                    .createSouthWestLocator(node)));
+
+            node
+                    .addChild(new PSmallBoundsHandle(new OffsetPBoundsLocator(
+                            node, SwingConstants.NORTH, new Point(0,
+                                    -TitlePaneNode.HEIGHT))));
+            node.addChild(new PSmallBoundsHandle(new OffsetPBoundsLocator(node,
+                    SwingConstants.NORTH_EAST, new Point(0,
+                            -TitlePaneNode.HEIGHT))));
+            node.addChild(new PSmallBoundsHandle(new OffsetPBoundsLocator(node,
+                    SwingConstants.NORTH_WEST, new Point(0,
+                            -TitlePaneNode.HEIGHT))));
+        }
         if (node instanceof PSwingNode)
         {
-            CellGroupMember cgm = ThisNiche.hg.get(((PSwingNode) node).getHandle());
-            if(CellUtils.isShowTitle(cgm))
+            CellGroupMember cgm = ThisNiche.hg.get(((PSwingNode) node)
+                    .getHandle());
+            if (CellUtils.isShowTitle(cgm))
             {
-               node.addChild(new TitlePaneNode((PSwingNode) node));
+                node.addChild(new TitlePaneNode((PSwingNode) node));
             }
             else
             {
-                TitlePaneNode.addActionHandles((PSwingNode)node, node);
+                TitlePaneNode.addActionHandles((PSwingNode) node, node);
             }
-//            node.addChild(new CopyHandle((PSwingNode) node,
-//                    SwingConstants.NORTH_EAST, new Point(-10, 0)));
-//            node.addChild(new MinimizeHandle((PSwingNode) node,
-//                    SwingConstants.NORTH_EAST, new Point(-25, 0)));
-//            node.addChild(new MaximizeHandle((PSwingNode) node,
-//                    SwingConstants.NORTH_EAST, new Point(-40, 0)));
-//            
         }
     }
 
@@ -143,10 +147,9 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
             PNode each = (PNode) i.next();
             if (each instanceof PSmallBoundsHandle)
             {
-                if(each instanceof TitlePaneNode && !remove_title)
-                    ;
+                if (each instanceof TitlePaneNode && !remove_title) ;
                 else
-                   handles.add(each);
+                    handles.add(each);
             }
         }
         node.removeChildren(handles);
@@ -154,7 +157,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
 
     public void unselectAll()
     {
-        for (PNode node : selection.keySet())
+        for (PNode node : getSelection())
             unselect(node);
         selection.clear();
     }
@@ -166,15 +169,12 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
 
     public Collection<PNode> getSelection()
     {
-        ArrayList<PNode> sel = new ArrayList<PNode>();
-        for (PNode node : selection.keySet())
-            sel.add(node);
-        return sel;
+        return new ArrayList<PNode>(selection.keySet());
     }
-    
+
     public PSwingNode getSelectedPSwingNode()
     {
-        if(selection.isEmpty()) return null;
+        if (selection.isEmpty()) return null;
         PNode node = selection.keySet().iterator().next();
         return (node instanceof PSwingNode) ? (PSwingNode) node : null;
     }
@@ -186,12 +186,11 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     {
         super.startDrag(e);
         initializeSelection(e);
-        if (!isOptionSelection(e)) 
-            startStandardSelection(e);
+        if (!isOptionSelection(e)) startStandardSelection(e);
         else
             startStandardOptionSelection(e);
     }
- 
+
     protected void drag(PInputEvent e)
     {
         super.drag(e);
@@ -204,34 +203,37 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         endStandardSelection(e);
         PNode node = e.getPickedNode();
         e.getPickedNode().endResizeBounds();
-        if(node != null && node instanceof PSwingNode)
-            adjust_bounds((PSwingNode) node );
+        if (node != null && node instanceof PSwingNode)
+            adjust_bounds((PSwingNode) node);
     }
-    
+
     private static void adjust_bounds(PSwingNode node)
     {
         PiccoloCanvas pc = node.getCanvas();
         PBounds pcb = pc.getCamera().getViewBounds();
         PBounds ncb = node.getFullBounds();
-        if(out(pcb.getBounds(), ncb.getBounds()))
+        if (out(pcb.getBounds(), ncb.getBounds()))
         {
-            //System.out.println("adjust_bounds1: " + ncb + ":" +pcb);
-            double x = 0; double y = 0;
-            if(ncb.x < pcb.x) x = pcb.x - ncb.x;
-            if(ncb.y < pcb.y) y = pcb.y - ncb.y;
-            if(ncb.x > pcb.x + pcb.width) x = pcb.x + pcb.width - (ncb.x + ncb.width);
-            if(ncb.y > pcb.y + pcb.height) y = pcb.y + pcb.height - (ncb.y + ncb.height);
-            //System.out.println("adjust_bounds2: " + x + ":" + y);
+            // System.out.println("adjust_bounds1: " + ncb + ":" +pcb);
+            double x = 0;
+            double y = 0;
+            if (ncb.x < pcb.x) x = pcb.x - ncb.x;
+            if (ncb.y < pcb.y) y = pcb.y - ncb.y;
+            if (ncb.x > pcb.x + pcb.width)
+                x = pcb.x + pcb.width - (ncb.x + ncb.width);
+            if (ncb.y > pcb.y + pcb.height)
+                y = pcb.y + pcb.height - (ncb.y + ncb.height);
+            // System.out.println("adjust_bounds2: " + x + ":" + y);
             node.translate(x, y);
             node.invalidatePaint();
         }
     }
-    
+
     private static boolean out(Rectangle big, Rectangle small)
     {
-        return((small.x + small.width < big.x || small.x > big.x + big.width)
-           || (small.y + small.height < big.y || small.y > big.y + big.height));
-    } 
+        return ((small.x + small.width < big.x || small.x > big.x + big.width) || (small.y
+                + small.height < big.y || small.y > big.y + big.height));
+    }
 
     // //////////////////////////
     // Additional methods
@@ -246,22 +248,20 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         pressNode = pie.getPath().getPickedNode();
         if (pressNode instanceof PCamera)
         {
-            if (pressNode.getParent() instanceof PRoot) 
-                pressNode = null;
+            if (pressNode.getParent() instanceof PRoot) pressNode = null;
             else
                 pressNode = pressNode.getParent();
         }
-        
+
         if (pressNode != null)
         {
             int onmask = InputEvent.ALT_DOWN_MASK
                     | InputEvent.BUTTON1_DOWN_MASK;
             int ctrlmask = InputEvent.CTRL_DOWN_MASK;
             if (!((pie.getModifiersEx() & (onmask | ctrlmask)) == onmask))
-               pressNode = null;
+                pressNode = null;
         }
     }
-    
 
     protected void startStandardSelection(PInputEvent pie)
     {
@@ -276,10 +276,9 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     protected void startStandardOptionSelection(PInputEvent pie)
     {
         // Option indicator is down, toggle selection
-        if (isSelected(pressNode)) 
-            unselect(pressNode);
+        if (isSelected(pressNode)) unselect(pressNode);
         else
-           select(pressNode);
+            select(pressNode);
     }
 
     protected void dragStandardSelection(PInputEvent e)
@@ -306,8 +305,8 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     {
         switch (e.getKeyCode())
         {
-           case KeyEvent.VK_DELETE:
-               TopFrame.getInstance().getCanvas().deleteSelection();
+        case KeyEvent.VK_DELETE:
+            TopFrame.getInstance().getCanvas().deleteSelection();
         }
     }
 
@@ -315,8 +314,8 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     {
         for (PNode node : selection.keySet())
         {
-            //if (node instanceof PSwingNode
-            //        && !((PSwingNode) node).isDeleteable()) continue;
+            // if (node instanceof PSwingNode
+            // && !((PSwingNode) node).isDeleteable()) continue;
             node.removeFromParent();
         }
         selection.clear();
@@ -327,10 +326,10 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     public void mousePressed(PInputEvent e)
     {
         super.mousePressed(e);
-        if(isSelected(e.getPickedNode()))
+        if (isSelected(e.getPickedNode()))
         {
-          e.getSourceSwingEvent().consume();
-          e.setHandled(true);
+            e.getSourceSwingEvent().consume();
+            e.setHandled(true);
         }
     }
 
@@ -338,10 +337,10 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     public void mouseReleased(PInputEvent e)
     {
         super.mouseReleased(e);
-        if(isSelected(e.getPickedNode()))
+        if (isSelected(e.getPickedNode()))
         {
-          e.getSourceSwingEvent().consume();
-          e.setHandled(true);
+            e.getSourceSwingEvent().consume();
+            e.setHandled(true);
         }
     }
 

@@ -118,7 +118,7 @@ public class CellContainerVisual implements CellVisual, EventHandler
         final JComponent comp = visual.bind(x);
         if (comp != null)
         {
-            String title = CellUtils.getName(x);
+           // String title = CellUtils.getName(x);
             if (comp instanceof PiccoloCanvas)
             {
                 PiccoloCanvas canvas = (PiccoloCanvas) comp;
@@ -135,7 +135,7 @@ public class CellContainerVisual implements CellVisual, EventHandler
             }
             else
                top_canvas.addComponent(comp, x);
-            if(title != null) GUIHelper.handleTitle(x,  comp);
+           // if(title != null) GUIHelper.handleTitle(x,  comp);
                
         }
         CellUtils.addEventPubSub(EvalCellEvent.HANDLE, childH, getHandle(),
@@ -146,9 +146,9 @@ public class CellContainerVisual implements CellVisual, EventHandler
 
     private void rebind(EvalCellEvent event, HGHandle publisher)
     {
-        HGHandle h = publisher;// event.getCellHandle();
+        HGHandle h = publisher;
         CellGroup group = CellUtils.getParentGroup(h);
-        System.out.println("rebind: " + h + ":" + group);
+        //System.out.println("rebind: " + h + ":" + group);
         PiccoloCanvas canvas = getCanvas(group);
         PSwingNode ps = canvas.getPSwingNodeForHandle(h);
         if (ps != null) ps.removeFromParent();
@@ -196,9 +196,7 @@ public class CellContainerVisual implements CellVisual, EventHandler
                 || event.getName().equals(VisualAttribs.name))
         {
             if(ps == null) return;
-            GUIHelper.handleTitle((CellGroupMember)
-                    ThisNiche.hg.get(ps.getHandle()),
-                    ps.getComponent());
+            GUIHelper.handleTitle(ps);
         }
     }
 

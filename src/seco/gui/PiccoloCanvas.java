@@ -352,6 +352,7 @@ public class PiccoloCanvas extends PSwingCanvas
             getNodeLayer().addChild(p);
             placeNode(p, true);
         }
+        GUIHelper.handleTitle(p);
         comp.revalidate();
         return p;
     }
@@ -454,5 +455,10 @@ public class PiccoloCanvas extends PSwingCanvas
     public ContextMenuHandler getContextMenuHandler()
     {
         return ctxMenuHandler;
+    }
+
+    public PCSelectionHandler getSelectionHandler()
+    {
+        return selectionHandler;
     }
 }

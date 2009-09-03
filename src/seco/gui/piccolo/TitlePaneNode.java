@@ -2,6 +2,7 @@ package seco.gui.piccolo;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.List;
 
 import javax.swing.Action;
@@ -13,6 +14,8 @@ import seco.gui.PSwingNode;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.event.PInputEvent;
+import edu.umd.cs.piccolo.util.PDimension;
 import edu.umd.cs.piccolox.util.PNodeLocator;
 
 public class TitlePaneNode extends CommandHandle
@@ -23,14 +26,13 @@ public class TitlePaneNode extends CommandHandle
     {
         super(new OffsetPBoundsLocator(node, SwingConstants.NORTH, new Point(0,
                 -HEIGHT / 2)));
-        this.setLabelText(CellUtils.getName((CellGroupMember) ThisNiche.hg
+        setLabelText(CellUtils.getName((CellGroupMember) ThisNiche.hg
                 .get(node.getHandle())));
-        this.setHeight(PREF_DIM + 2);
-        this.setWidth(node.getWidth());// - 50);
-        this.setPaint(new Color(77, 117, 154));
-        this.getLabel().setTextPaint(Color.white);
+        setHeight(PREF_DIM + 2);
+        setWidth(node.getWidth());// - 50);
+        setPaint(new Color(77, 117, 154));
+        getLabel().setTextPaint(Color.white);
         // this.getLabel().setLabelLocation(SwingConstants.NORTH);
-
         addActionHandles(node, this);
     }
 
@@ -52,6 +54,21 @@ public class TitlePaneNode extends CommandHandle
 
     public void parentBoundsChanged()
     {
-        setWidth(((PNodeLocator) getLocator()).getNode().getWidth());// - 50);
+        setWidth(((PNodeLocator) getLocator()).getNode().getWidth());
+    }
+    
+    public void dragHandle(PDimension aLocalDimension, PInputEvent e)
+    {
+        node.getCanvas().getSelectionHandler().unselectAll();
+        PDimension d = e.getCanvasDelta();
+        e.getTopCamera().localToView(d);
+        PNode node = ((PNodeLocator) getLocator()).getNode();
+        node.getParent().globalToLocal(d);
+        node.offset(d.getWidth(), d.getHeight());
+    }
+    
+    public void endHandleDrag(Point2D aLocalPoint, PInputEvent aEvent)
+    {
+        relocateHandle();
     }
 }

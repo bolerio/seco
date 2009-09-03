@@ -973,33 +973,17 @@ public class GUIHelper
 
     private static String BORDER_PROP = "border_prop";
 
-    public static void handleTitle(CellGroupMember cgm, JComponent comp)
+    public static void handleTitle(PSwingNode node)
     {
-//        if(CellUtils.isMinimized(cgm))
-//        {
-//            update_minimized_UI(cgm, comp);
-//            return;
-//        }
+        CellGroupMember cgm = ThisNiche.hg.get(node.getHandle());
         String title = CellUtils.getName(cgm);
-//        TitledBorder border = BorderFactory.createTitledBorder(title);
-//        border.setTitlePosition(TitledBorder.ABOVE_TOP);
-        PSwingNode node = TopFrame.getInstance().getCanvas().getPSwingNodeForHandle(
-                ThisNiche.handleOf(cgm));
         if (CellUtils.isShowTitle(cgm) && title != null)
         {
-            //if(!(comp.getBorder() instanceof TitledBorder))
-           //    comp.putClientProperty(BORDER_PROP, comp.getBorder());
-            //comp.setBorder(border);
-            if(node != null)
-               PCSelectionHandler.decorateSelectedNode(node);
+            PCSelectionHandler.decorateSelectedNode(node, false);
         }
         else if (!CellUtils.isShowTitle(cgm))
         {
-            if(node != null)
-              PCSelectionHandler.undecorateSelectedNode(node, true);
-//            Border oldB = (Border) comp.getClientProperty(BORDER_PROP);
-//            if(!border.equals(oldB))
-//               comp.setBorder(oldB);
+            PCSelectionHandler.undecorateSelectedNode(node, true);
         }
     }
     

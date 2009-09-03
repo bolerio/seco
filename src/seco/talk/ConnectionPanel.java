@@ -89,14 +89,12 @@ public class ConnectionPanel extends JPanel
         thisPeer.addPeerPresenceListener(new PeerPresenceListener() {
             public void peerJoined(HGPeerIdentity target)
             {
-                peerList.peers.thePeers.add(target);
-                peerList.peers.fireChangeEvent();
+                peerList.getListModel().addElement(target);
             }
 
             public void peerLeft(HGPeerIdentity target)
             {
-                peerList.peers.thePeers.remove(target);
-                peerList.peers.fireChangeEvent();
+                peerList.getListModel().removeElement(target);
             }
         });
         return f;
@@ -113,8 +111,7 @@ public class ConnectionPanel extends JPanel
             for (HostedRoom room : MultiUserChat.getHostedRooms(
                                      peerInterface.getConnection(), "conference." + server))
             {
-                peerList.peers.thePeers.add(room);
-                peerList.peers.fireChangeEvent();
+                peerList.getListModel().addElement(room);
             }
         }
         catch (XMPPException e)
@@ -188,9 +185,8 @@ public class ConnectionPanel extends JPanel
             {
                 if (t == null && result)
                 {
-                    peerList.peers.thePeers.clear();
-                    peerList.peers.fireChangeEvent();
-//                    JOptionPane.showMessageDialog(ConnectionPanel.this, 
+                    peerList.getListModel().removeAllElements();
+ //                    JOptionPane.showMessageDialog(ConnectionPanel.this, 
 //                                                  "Successfully disconnect from network.");
                     connectButton.setText("Connect");
                 }
@@ -224,7 +220,8 @@ public class ConnectionPanel extends JPanel
     }
     
     public ConnectionPanel()
-    {                
+    {               
+        
     }
 
     public void openTalkPanel(HGPeerIdentity friend)
@@ -353,6 +350,7 @@ public class ConnectionPanel extends JPanel
     public void setPeerList(PeerList peerList)
     {
         this.peerList = peerList;
+        peerList.setConnectionPanel(this);
     }
  
 }
