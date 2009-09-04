@@ -71,7 +71,7 @@ public class ContextMenuHandler extends PBasicInputEventHandler
     /**
      * Creates and shows the global JMenu
      */
-    protected void showGlobMenu(PInputEvent event)
+    public void showGlobMenu(PInputEvent event)
     {
         if (global_menu == null)
             global_menu = makeJPopupMenu(getGlobalActions());
@@ -81,7 +81,7 @@ public class ContextMenuHandler extends PBasicInputEventHandler
     /**
      * Creates and shows the appropriate JMenu for selected node
      */
-    protected void showNodeMenu(PInputEvent event)
+    public void showNodeMenu(PInputEvent event)
     {
         if (node_menu == null) node_menu = makeJPopupMenu(getNodeActions());
         show_menu(event, node_menu);

@@ -121,6 +121,16 @@ public class PSmallBoundsHandle extends PSmallHandle
                     cursorPushed = false;
                 }
             }
+            
+            @Override
+            public void mouseClicked(PInputEvent e)
+            {
+                System.out.println("PSmallBoundsHandle - mouseClicked: " +
+                        e.isRightMouseButton() + ":" + e);
+                super.mouseClicked(e);
+                if(e.isRightMouseButton())
+                    rightClick(e);
+           }
         };
         addInputEventListener(handleCursorHandler);
     }

@@ -32,7 +32,8 @@ public class CopyHandle extends CommandHandle
     {
         dragStarted = true;
         setPaint(sel_bg);
-        PiccoloCanvas canvas = (PiccoloCanvas) node.getCanvas();
+        PiccoloCanvas canvas = node.getCanvas();
+        canvas.getSelectionHandler().select(node);
         canvas.getTransferHandler().exportAsDrag(
            canvas, e.getSourceSwingEvent(), TransferHandler.MOVE);
     }

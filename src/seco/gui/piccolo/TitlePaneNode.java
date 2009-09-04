@@ -67,8 +67,16 @@ public class TitlePaneNode extends CommandHandle
         node.offset(d.getWidth(), d.getHeight());
     }
     
-    public void endHandleDrag(Point2D aLocalPoint, PInputEvent aEvent)
+    
+    public void endHandleDrag(Point2D aLocalPoint, PInputEvent e)
     {
         relocateHandle();
+    }
+
+    @Override
+    public void rightClick(PInputEvent e)
+    {
+        node.getCanvas().getSelectionHandler().select(node);
+        node.getCanvas().getContextMenuHandler().showNodeMenu(e);
     }
 }

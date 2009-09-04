@@ -11,6 +11,7 @@ package seco.gui.piccolo;
 import java.awt.Color;
 import java.awt.Paint;
 import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -61,6 +62,11 @@ public class PSmallHandle extends PNodeEx
         installHandleEventHandlers();
     }
 
+    public void rightClick(PInputEvent e)
+    {
+        
+    }
+    
     protected void installHandleEventHandlers()
     {
         handleDragger = new PDragSequenceEventHandler()

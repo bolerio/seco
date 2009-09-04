@@ -18,6 +18,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -976,6 +978,10 @@ public class GUIHelper
     public static void handleTitle(PSwingNode node)
     {
         CellGroupMember cgm = ThisNiche.hg.get(node.getHandle());
+        if(CellUtils.isMinimized(cgm)){
+            update_minimized_UI(node, cgm);
+            return;
+        }
         String title = CellUtils.getName(cgm);
         if (CellUtils.isShowTitle(cgm) && title != null)
         {
@@ -987,27 +993,30 @@ public class GUIHelper
         }
     }
     
-    public static JComponent getMinimizedUI(CellGroupMember cgm)
+    public static JComponent getMinimizedUI(final CellGroupMember cgm)
     {
         String text = CellUtils.getName(cgm);
         if (text == null) text = "Untitled";
         // JLabel l = new JLabel(IconManager.resolveIcon("notebook.png"));
         JButton l = new JButton(IconManager.resolveIcon("notebook.png"));
         l.setBackground(Color.white);
-        //l.setBackground(Color.YELLOW);
         l.putClientProperty("tooltip", text);
+        l.addMouseListener(new MouseAdapter(){
+
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if(e.getClickCount() == 2)
+                    CellUtils.toggleMinimized(cgm);
+            }});
         return l;
     }
     
-    private static void update_minimized_UI(CellGroupMember cgm, JComponent ui)
+    private static void update_minimized_UI(PSwingNode node, CellGroupMember cgm)
     {
         String text = CellUtils.getName(cgm);
         if (text == null) text = "Untitled";
-        JButton l = (JButton) ui;
-        //minimized comps are shown without title
-        //l.setBorder(null);
-        //l.setText(text);
-        //l.setBackground(Color.YELLOW);
+        JButton l = (JButton) node.getComponent();
         l.putClientProperty("tooltip", text);
     } 
 }
