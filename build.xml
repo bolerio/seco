@@ -57,6 +57,7 @@
 				<include name="**/*.dtd" />
 				<include name="**/.txt" />
                 <include name="**/*.scm"/>
+                <include name="**/*.json"/>
 			</fileset>
 	    </copy>
 		<available property="manifest_generated" file="${build}/seco.manifest" />
