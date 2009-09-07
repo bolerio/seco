@@ -122,7 +122,7 @@ public class NotebookEditorKit extends StyledEditorKit
             new ResetCellNumAction(), new JavaDocManagerAction(),
             new CtxInspectorAction(), new FindReplaceAction(true),
             new FindReplaceAction(false), new RemoveTabAction(),
-            new MergeCellsAction(), new SelectWordAction(), new SelectAllAction(),
+            new MergeCellsAction(), new SelectWordAction(), new SelectLineAction(), new SelectAllAction(),
               };
     private static HashMap<String, Action> actions;
 
@@ -956,7 +956,35 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             final int s = Utilities.getWordStart(ui, ui.getCaretPosition());
             final int e = Utilities.getWordEnd(ui, ui.getCaretPosition());
-            // System.out.println("SelectWordAction: " + s + ":" + e);
+            //System.out.println("SelectWordAction: " +
+             //       ui.getCaretPosition() + ":" + s + ":" + e + ":" + ui);
+            ui.select(s, e);
+        }
+    }
+    
+    /*
+     * Select the line around the caret
+     * @see DefaultEditorKit#endAction
+     * @see DefaultEditorKit#getActions
+     */
+    public static class SelectLineAction extends BaseAction {
+
+        /** 
+         * Create this action with the appropriate identifier. 
+         * @param nm  the name of the action, Action.NAME.
+         * @param select whether to extend the selection when
+         *  changing the caret position.
+         */
+        public SelectLineAction() {
+            super(selectLineAction);
+        }
+
+        protected void action(final NotebookUI ui) throws Exception
+        {
+            int offs = ui.getCaretPosition();
+            int s = javax.swing.text.Utilities.getRowStart(ui, offs);
+            int e = javax.swing.text.Utilities.getRowEnd(ui, offs);
+            //System.out.println("SelectLineAction: " + offs + ":" + s + ":" + e + ":" + ui);
             ui.select(s, e);
         }
     }

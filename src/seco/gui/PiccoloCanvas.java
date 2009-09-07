@@ -276,26 +276,6 @@ public class PiccoloCanvas extends PSwingCanvas
         return null;
     }
 
-    // public PSwingNode getOutCellNodeForHandle(HGHandle h)
-    // {
-    // for (Object p : getNodeLayer().getAllNodes())
-    // if (p instanceof PSwingNode && check_is_output((PSwingNode) p, h))
-    // return (PSwingNode) p;
-    // for (Object p : getCamera().getAllNodes())
-    // if (p instanceof PSwingNode && check_is_output((PSwingNode) p, h))
-    // return (PSwingNode) p;
-    // return null;
-    // }
-
-    // private boolean check_is_output(PSwingNode p, HGHandle h)
-    // {
-    // if (h.equals(p.getHandle())) return true;
-    // CellGroupMember cgm = ThisNiche.hg.get(p.getHandle());
-    // if (cgm instanceof Cell && ((Cell) cgm).getAtomHandle().equals(h))
-    // return true;
-    // return false;
-    // }
-
     public void maximize(PSwingNode n)
     {
         if (n == null) return;

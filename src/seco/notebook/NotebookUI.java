@@ -551,6 +551,14 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         }
         return super.getToolTipText(e);
     }
+    
+    @Override
+    public Point getToolTipLocation(MouseEvent e)
+    {
+        return (TopFrame.PICCOLO) ? 
+                GUIHelper.computePoint(this, e.getPoint()):
+                super.getToolTipLocation(e);
+    }
 
     public static UpdatablePopupMenu getPopupMenu()
     {
@@ -1020,6 +1028,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     @Override
     public void setCaretPosition(int position)
     {
+        //System.out.println("NotebookUI - setCaretPosition: " + position);
         Document doc = getDocument();
         if (doc != null)
         {
@@ -1027,7 +1036,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             // throw new IllegalArgumentException("bad position: " + position);
             getCaret().setDot(position);
         }
-        // super.setCaretPosition(position);
+        //super.setCaretPosition(position);
         lastCaretStart = getCaretPosition();
     }
 

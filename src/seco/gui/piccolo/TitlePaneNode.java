@@ -11,6 +11,7 @@ import javax.swing.SwingConstants;
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
 import seco.gui.PSwingNode;
+import seco.gui.TopFrame;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import edu.umd.cs.piccolo.PNode;
@@ -76,7 +77,7 @@ public class TitlePaneNode extends CommandHandle
     @Override
     public void rightClick(PInputEvent e)
     {
-        node.getCanvas().getSelectionHandler().select(node);
-        node.getCanvas().getContextMenuHandler().showNodeMenu(e);
+        TopFrame.getInstance().getCanvas().getSelectionHandler().select(node, false);
+        TopFrame.getInstance().getCanvas().getContextMenuHandler().showNodeMenu(e);
     }
 }

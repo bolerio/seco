@@ -10,6 +10,7 @@ import javax.swing.TransferHandler;
 
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
+import seco.gui.TopFrame;
 import seco.notebook.util.IconManager;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.util.PDimension;
@@ -33,7 +34,7 @@ public class CopyHandle extends CommandHandle
         dragStarted = true;
         setPaint(sel_bg);
         PiccoloCanvas canvas = node.getCanvas();
-        canvas.getSelectionHandler().select(node);
+        TopFrame.getInstance().getCanvas().getSelectionHandler().select(node, false);
         canvas.getTransferHandler().exportAsDrag(
            canvas, e.getSourceSwingEvent(), TransferHandler.MOVE);
     }

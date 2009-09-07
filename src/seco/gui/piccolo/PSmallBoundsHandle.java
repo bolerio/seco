@@ -125,8 +125,6 @@ public class PSmallBoundsHandle extends PSmallHandle
             @Override
             public void mouseClicked(PInputEvent e)
             {
-                System.out.println("PSmallBoundsHandle - mouseClicked: " +
-                        e.isRightMouseButton() + ":" + e);
                 super.mouseClicked(e);
                 if(e.isRightMouseButton())
                     rightClick(e);

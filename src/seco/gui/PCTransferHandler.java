@@ -160,8 +160,8 @@ public class PCTransferHandler extends TransferHandler
         if (old_group == top) return false;
         if (move)
         {
-            add_to_top_group(top, data, pt);
             old_group.remove((CellGroupMember) ThisNiche.hg.get(data), false);
+            add_to_top_group(top, data, pt);
         }
         else
             add_to_top_group(top, CellUtils.makeCopy(data), pt);

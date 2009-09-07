@@ -755,7 +755,7 @@ public class GUIHelper
         if (par == null)
             return new Point((int) (pt.x + r.x), (int) (pt.y + r.y));
         PBounds r1 = par.getFullBounds();
-        return new Point((int) (r.x + r1.x + pt.x), (int) (r.y + r.y + pt.y));
+        return new Point((int) (r.x + r1.x + pt.x), (int) (r.y + r1.y + pt.y));
     }
 
     public static void openNotebook(HGHandle bookH)

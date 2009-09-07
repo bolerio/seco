@@ -8,6 +8,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import seco.gui.PSwingNode;
+import seco.gui.TopFrame;
 import seco.notebook.util.IconManager;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolox.util.PBoundsLocator;
@@ -57,7 +58,7 @@ public class CommandHandle extends PSmallBoundsHandle
     public void endHandleDrag(Point2D aLocalPoint, PInputEvent aEvent)
     {
         relocateHandle();
-        node.getCanvas().getSelectionHandler().select(node);
+        TopFrame.getInstance().getCanvas().getSelectionHandler().select(node, false);
         performAction(aLocalPoint, aEvent);
     }
     

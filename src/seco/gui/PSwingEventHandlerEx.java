@@ -200,7 +200,10 @@ public class PSwingEventHandlerEx implements PInputEventListener {
                 comp = //(inner) ?  swing.getComponent() :
                     findShowingComponentAt(swing.getComponent(), (int) pt
                         .getX(), (int) pt.getY());
-
+                //if(pSwingMouseEvent.getID() != MouseEvent.MOUSE_MOVED)
+               //    System.out.println("PSwingEventhandlerEx: " + inner +
+               //         ":" + (comp != null && comp != swing.getComponent()) +
+               //         ":" + pSwingMouseEvent + ":" + comp + ":" + currentNode); 
                 // We found the right component - but we need to
                 // get the offset to put the event in the component's
                 // coordinates
@@ -221,8 +224,8 @@ public class PSwingEventHandlerEx implements PInputEventListener {
                 {
                     if (SwingUtilities.isLeftMouseButton(mEvent))
                     {
-                        leftButtonData.setState(swing, pickedNode, comp, offX,
-                                offY);
+                        leftButtonData.setState(swing, pickedNode, comp, 
+                                    offX, offY);
                     }
                     else if (SwingUtilities.isMiddleMouseButton(mEvent))
                     {
@@ -376,8 +379,10 @@ public class PSwingEventHandlerEx implements PInputEventListener {
         if (true)//buttonData.getPNode().isDescendentOf(canvas.getRoot()))
         {
             pt = new Point2D.Double(m1.getX(), m1.getY());
+            boolean inner = ! buttonData.getPNode().isDescendentOf(canvas.getRoot());
             cameraToLocal(e1.getPath().getTopCamera(), pt, buttonData
                     .getPNode());
+            if(inner) pt = innerPt((PSwingNode)buttonData.getPNode(),pt);
             // todo this probably won't handle viewing through multiple cameras.
             MouseEvent e_temp = new MouseEvent(
                     buttonData.getFocusedComponent(), e1.getID(), m1.getWhen(),

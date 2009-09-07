@@ -74,16 +74,22 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
 
     public void select(PNode node)
     {
+        select(node, true);
+    }
+    
+    public void select(PNode node, boolean show_handles)
+    {
         if (node == null || isSelected(node)) return;
         unselectAll();
         if (node instanceof TitlePaneNode)
         {
             System.out.println("PCSelectionHandler - select: " + node);
-            select(node.getParent());
+            select(node.getParent(), show_handles);
             return;
         }
         selection.put(node, Boolean.TRUE);
-        decorateSelectedNode(node, true);
+        if(show_handles)
+          decorateSelectedNode(node, true);
         node.moveToFront();
     }
 
