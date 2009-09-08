@@ -112,8 +112,6 @@ public class GUIHelper
     .makeHandle("8724b420-963b-11de-8a39-0800200c9a66");
     
     public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
-    //size of the minimized components 
-    public static Dimension MINIMIZED_COMPONENT_SIZE = new Dimension(65, 65);
     //rectangle used for adding containers 
     public static Rectangle CONTAINER_RECT = new Rectangle(20, 70, 300, 300);
     
@@ -206,12 +204,6 @@ public class GUIHelper
         return htmlToolBar;
     }
 
-    public static Dimension getMinimizedUISize()
-    {
-        return MINIMIZED_COMPONENT_SIZE;
-    }
-
-   
     // disable menuItems if no notebook presented
     // use GlobMenuItem to prevent disabling
     public static class NBMenu extends PiccoloMenu implements MenuListener
@@ -768,10 +760,13 @@ public class GUIHelper
     {
         CellGroup group = ThisNiche.hg.get(TopFrame.getInstance()
                 .getFocusedContainerHandle());
+        if(CellUtils.isBackuped(h))
+            CellUtils.restoreCell(h);
         CellGroupMember child = ThisNiche.hg.get(h);
         child.setVisual(NBUIVisual.getHandle());
         child.setAttribute(VisualAttribs.rect, new Rectangle(50, 50, 300, 200));
-        CellUtils.toggleShowTitle(child);
+        if(!CellUtils.isShowTitle(child))
+           CellUtils.toggleShowTitle(child);
         group.insert(group.getArity(), h);
     }
 
@@ -973,8 +968,6 @@ public class GUIHelper
         }
     }
 
-    private static String BORDER_PROP = "border_prop";
-
     public static void handleTitle(PSwingNode node)
     {
         CellGroupMember cgm = ThisNiche.hg.get(node.getHandle());
@@ -993,30 +986,25 @@ public class GUIHelper
         }
     }
     
-    public static JComponent getMinimizedUI(final CellGroupMember cgm)
-    {
-        String text = CellUtils.getName(cgm);
-        if (text == null) text = "Untitled";
-        // JLabel l = new JLabel(IconManager.resolveIcon("notebook.png"));
-        JButton l = new JButton(IconManager.resolveIcon("notebook.png"));
-        l.setBackground(Color.white);
-        l.putClientProperty("tooltip", text);
-        l.addMouseListener(new MouseAdapter(){
+    //size of the minimized components 
+    static Dimension MINIMIZED_COMPONENT_SIZE = new Dimension(65, 83);
 
-            @Override
-            public void mouseClicked(MouseEvent e)
-            {
-                if(e.getClickCount() == 2)
-                    CellUtils.toggleMinimized(cgm);
-            }});
-        return l;
+    static JComponent getMinimizedUI(final CellGroupMember cgm)
+    {
+        return new MinimizedUI(cgm); 
+    }
+    
+    static Dimension getMinimizedUISize()
+    {
+        return MINIMIZED_COMPONENT_SIZE;
     }
     
     private static void update_minimized_UI(PSwingNode node, CellGroupMember cgm)
     {
         String text = CellUtils.getName(cgm);
         if (text == null) text = "Untitled";
-        JButton l = (JButton) node.getComponent();
-        l.putClientProperty("tooltip", text);
+        MinimizedUI ui = (MinimizedUI) node.getComponent();
+        ui.putClientProperty("tooltip", text);
+        ui.setTitle(text);
     } 
 }

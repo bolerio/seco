@@ -12,11 +12,9 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.swing.JButton;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.TitledBorder;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;

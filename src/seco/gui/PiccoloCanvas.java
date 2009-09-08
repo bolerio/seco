@@ -163,11 +163,21 @@ public class PiccoloCanvas extends PSwingCanvas
                     .getCanvas());
             HGHandle groupH = (outer != null) ? outer.getHandle() : getGroupH();
             GUIHelper.removeFromCellGroup(groupH, ((PSwingNode) node)
-                    .getHandle(), true);
-            Object ui = ((PSwingNode) node).getComponent();
-            if (ui instanceof NotebookUI) remove_and_clean((NotebookUI) ui);
+                    .getHandle(), false);
+            //Object ui = ((PSwingNode) node).getComponent();
+            //if (ui instanceof NotebookUI) remove_and_clean((NotebookUI) ui);
             node.removeFromParent();
         }
+    }
+    
+    private void remove_and_clean(NotebookUI ui)
+    {
+        NotebookDocument doc = ui.getDoc();
+        HGHandle h = ThisNiche.handleOf(ui);
+        if (h != null) ThisNiche.hg.remove(h, true);
+        //CellUtils.removeHandlers(doc.getBookHandle());
+        CellUtils.removeHandlers(doc.getHandle());
+        ThisNiche.hg.remove(doc.getHandle(), true);
     }
 
     public Collection<PNode> getSelection()
@@ -392,17 +402,7 @@ public class PiccoloCanvas extends PSwingCanvas
         // System.out.println("normalize2: " + r);
     }
 
-    private void remove_and_clean(NotebookUI ui)
-    {
-        NotebookDocument doc = ui.getDoc();
-        HGHandle h = ThisNiche.handleOf(ui);
-        if (h != null) ThisNiche.hg.remove(h, true);
-        CellUtils.removeHandlers(doc.getBookHandle());
-        CellUtils.removeHandlers(doc.getHandle());
-        ThisNiche.hg.remove(doc.getHandle(), true);
-    }
-
-    public PLayer getNodeLayer()
+       public PLayer getNodeLayer()
     {
         return nodeLayer;
     }

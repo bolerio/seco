@@ -280,8 +280,9 @@ public class TalkPanel extends JPanel
                 
                 if(data != null)
                 {
-                    if(support.getDropAction() == COPY)
-                       data = CellUtils.makeCopy(data);
+                    //if(support.getDropAction() == COPY)
+                    data = CellUtils.makeCopy(data);
+                    support.setDropAction(COPY);
                     talkPanel.acceptTransfer(data);
                     return true;
                 }
