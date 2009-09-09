@@ -169,7 +169,7 @@ public class PSmallBoundsHandle extends PSmallHandle
 
         //if(l.getSide() == SwingConstants.SOUTH_WEST
         //        || l.getSide() == SwingConstants.WEST)
-        //  System.out.println("dragHandle:" + l.getSide() + ":" + dx + ":" + dy + ":" + b);
+        //System.out.println("dragHandle:" + l.getSide() + ":" + dx + ":" + dy + ":" + b);
         switch (l.getSide())
         {
         case SwingConstants.NORTH:
@@ -230,10 +230,12 @@ public class PSmallBoundsHandle extends PSmallHandle
         n.setBounds(b);
         if (l.getSide() == SwingConstants.NORTH
                 || l.getSide() == SwingConstants.WEST
-                || l.getSide() == SwingConstants.NORTH_WEST
-                || l.getSide() == SwingConstants.SOUTH_WEST)
-                //|| l.getSide() == SwingConstants.NORTH_EAST)
+                || l.getSide() == SwingConstants.NORTH_WEST)
             n.translate(dx, dy);
+        else if(l.getSide() == SwingConstants.NORTH_EAST)
+            n.translate(0, dy);
+        else if(l.getSide() == SwingConstants.SOUTH_WEST)
+            n.translate(dx, 0);
     }
 
     public void endHandleDrag(Point2D aLocalPoint, PInputEvent aEvent)

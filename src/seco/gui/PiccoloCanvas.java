@@ -2,6 +2,7 @@ package seco.gui;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.beans.PropertyChangeEvent;
@@ -367,10 +368,15 @@ public class PiccoloCanvas extends PSwingCanvas
             {
                 p.setHeight(dim.getHeight());
                 p.setWidth(dim.getWidth());
+                Point pt = (Point) cell.getAttribute(VisualAttribs.minPt);
+                if(pt == null) pt = new Point(r.x, r.y);
+                p.translate(pt.x, pt.y);
             }
             else
+            {
                 p.setBounds(0, 0, r.width, r.height);
-            p.translate(r.x, r.y);
+                p.translate(r.x, r.y);
+            }
         }
         else
             p.setBounds(new Rectangle(0, 0, dim.width, dim.height));

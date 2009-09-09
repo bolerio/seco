@@ -10,6 +10,7 @@ import javax.swing.SwingConstants;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
+import seco.gui.PCSelectionHandler;
 import seco.gui.PSwingNode;
 import seco.gui.TopFrame;
 import seco.things.CellGroupMember;
@@ -72,6 +73,12 @@ public class TitlePaneNode extends CommandHandle
     public void endHandleDrag(Point2D aLocalPoint, PInputEvent e)
     {
         relocateHandle();
+        PCSelectionHandler handler = 
+            TopFrame.getInstance().getCanvas().getSelectionHandler();
+        if(!handler.isSelected(node))
+            handler.select(node, true);
+        else
+            handler.unselect(node);
     }
 
     @Override

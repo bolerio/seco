@@ -125,7 +125,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         {
             CellGroupMember cgm = ThisNiche.hg.get(((PSwingNode) node)
                     .getHandle());
-            if (CellUtils.isShowTitle(cgm))
+            if (CellUtils.isShowTitle(cgm) && !CellUtils.isMinimized(cgm))
             {
                 node.addChild(new TitlePaneNode((PSwingNode) node));
             }
@@ -264,9 +264,17 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
             int onmask = InputEvent.ALT_DOWN_MASK
                     | InputEvent.BUTTON1_DOWN_MASK;
             int ctrlmask = InputEvent.CTRL_DOWN_MASK;
-            if (!((pie.getModifiersEx() & (onmask | ctrlmask)) == onmask))
+            if (!((pie.getModifiersEx() & (onmask | ctrlmask)) == onmask)
+                    && !minimized())
                 pressNode = null;
         }
+    }
+    
+    private boolean minimized()
+    {
+        return pressNode instanceof PSwingNode &&
+        CellUtils.isMinimized( (CellGroupMember)
+                ThisNiche.hg.get(((PSwingNode)pressNode).getHandle()));
     }
 
     protected void startStandardSelection(PInputEvent pie)

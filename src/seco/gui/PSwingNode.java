@@ -4,6 +4,7 @@
 package seco.gui;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -68,14 +69,16 @@ public class PSwingNode extends PSwing implements Serializable
         if (CellUtils.isMaximized(cm)) return;
         if (cm != null)
         {
-            Rectangle old = (Rectangle) cm.getAttribute(VisualAttribs.rect);
-            if (r.equals(old)) return;
             if (CellUtils.isMinimized(cm))
             {
-                old.x = r.x;
-                old.y = r.y;
-                r = old;
+                Point pt = (Point) cm.getAttribute(VisualAttribs.minPt);
+                if(pt == null) pt = new Point();
+                pt.x = r.x;  pt.y = r.y;
+                cm.setAttribute(VisualAttribs.minPt, pt);
+                return;
             }
+            Rectangle old = (Rectangle) cm.getAttribute(VisualAttribs.rect);
+            if (r.equals(old)) return;
             cm.setAttribute(VisualAttribs.rect, r);
         }
     }
@@ -119,7 +122,7 @@ public class PSwingNode extends PSwing implements Serializable
     @Override
     public String toString()
     {
-        return "PSwing0: " + getComponent();
+        return "PSwingNode: " + getComponent();
     }
 
     PiccoloCanvas canv = null;

@@ -987,7 +987,7 @@ public class GUIHelper
     }
     
     //size of the minimized components 
-    static Dimension MINIMIZED_COMPONENT_SIZE = new Dimension(65, 83);
+    static Dimension MINIMIZED_COMPONENT_SIZE = new Dimension(64, 64);
 
     static JComponent getMinimizedUI(final CellGroupMember cgm)
     {
@@ -1004,7 +1004,6 @@ public class GUIHelper
         String text = CellUtils.getName(cgm);
         if (text == null) text = "Untitled";
         MinimizedUI ui = (MinimizedUI) node.getComponent();
-        ui.putClientProperty("tooltip", text);
         ui.setTitle(text);
     } 
 }
