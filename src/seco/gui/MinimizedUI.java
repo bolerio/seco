@@ -18,8 +18,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -32,7 +30,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import seco.notebook.syntax.ScriptSupport;
+import seco.notebook.util.IconManager;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
@@ -42,16 +40,24 @@ import seco.things.CellUtils;
 public class MinimizedUI extends JPanel
 {
 
-    private static ImageIcon icon = new ImageIcon(MinimizedUI.class
-            .getResource("/seco/notebook/images/notebook.png"));
-
+    private static ImageIcon nb_icon = IconManager.resolveIcon("notebook.png");
+    private static ImageIcon container_icon = IconManager.resolveIcon("container.png");
+    private static ImageIcon tabbed_icon = IconManager.resolveIcon("container1.png");
+    
     private JTextArea textArea;
     private CellGroupMember cgm;
+    private ImageIcon icon;
 
     public MinimizedUI(final CellGroupMember cgm)
     {
         this.cgm = cgm;
         initComponents();
+        if(CellContainerVisual.getHandle().equals(cgm.getVisual()))
+            icon = container_icon;
+        else if(TabbedPaneVisual.getHandle().equals(cgm.getVisual()))
+            icon = tabbed_icon;
+        else 
+            icon= nb_icon;
         String text = CellUtils.getName(cgm);
         if (text == null) text = "Untitled";
         setTitle(text);
@@ -94,6 +100,15 @@ public class MinimizedUI extends JPanel
             }
         };
         textArea.addMouseListener(listener);
+    }
+    
+    /*
+     * Returns the underlying JTextArea that actually displays the text.
+     * Use it to change font, foreground color, etc. 
+     */
+    public JTextArea getTextArea()
+    {
+        return textArea;
     }
 
     public void paintComponent(Graphics g)

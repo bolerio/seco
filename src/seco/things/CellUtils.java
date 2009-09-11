@@ -2,6 +2,7 @@ package seco.things;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -298,6 +299,26 @@ public class CellUtils
     public static void setEngine(CellGroupMember c, String s)
     {
         c.setAttribute(XMLConstants.ATTR_ENGINE, s);
+    }
+    
+    public static void setRect(CellGroupMember c, Rectangle r)
+    {
+        c.setAttribute(VisualAttribs.rect, r);
+    }
+    
+    public static Rectangle getRect(CellGroupMember c)
+    {
+        return (Rectangle) c.getAttribute(VisualAttribs.rect);
+    }
+    
+    public static void setMinRect(CellGroupMember c, Rectangle r)
+    {
+        c.setAttribute(VisualAttribs.minRect, r); 
+    }
+    
+    public static Rectangle getMinRect(CellGroupMember c)
+    {
+        return (Rectangle) c.getAttribute(VisualAttribs.minRect);
     }
 
     public static NBStyle getStyle(CellGroupMember c, StyleType type)

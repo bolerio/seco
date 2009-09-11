@@ -69,18 +69,18 @@ public class PSwingNode extends PSwing implements Serializable
         if (CellUtils.isMaximized(cm)) return;
         if (cm != null)
         {
-            if (CellUtils.isMinimized(cm))
-            {
-                Point pt = (Point) cm.getAttribute(VisualAttribs.minPt);
-                if(pt == null) pt = new Point();
-                pt.x = r.x;  pt.y = r.y;
-                cm.setAttribute(VisualAttribs.minPt, pt);
-                return;
-            }
-            Rectangle old = (Rectangle) cm.getAttribute(VisualAttribs.rect);
+            boolean min = CellUtils.isMinimized(cm);
+            System.out.println("storeBounds: " + min + ":" + r);
+            Rectangle old = (min) ? CellUtils.getMinRect(cm) :
+                CellUtils.getRect(cm);
             if (r.equals(old)) return;
-            cm.setAttribute(VisualAttribs.rect, r);
+            if(min)
+                CellUtils.setMinRect(cm, r);
+            else
+                CellUtils.setRect(cm, r);
+            //setBounds(r);
         }
+        
     }
 
     private Rectangle last_bounds;

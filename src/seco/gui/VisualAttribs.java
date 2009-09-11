@@ -9,7 +9,7 @@ package seco.gui;
 //    layoutHandler,
 //    minimized,
 //    maximized
-//    minPt
+//    minRect
 //}
 
 public class VisualAttribs
@@ -25,5 +25,5 @@ public class VisualAttribs
     public static final String layoutHandler = "layoutHandler";
     public static final String minimized = "minimized";
     public static final String maximized = "maximized";
-    public static final String minPt = "minPt";
+    public static final String minRect = "minRect";
 }

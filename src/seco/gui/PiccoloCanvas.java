@@ -350,36 +350,39 @@ public class PiccoloCanvas extends PSwingCanvas
 
     void placeNode(PSwingNode p, boolean newly_added)
     {
-        if (!newly_added)
-        {
-            Rectangle b = p.getFullBounds().getBounds();
-            p.translate(-b.x, -b.y);
-        }
         CellGroupMember cell = ThisNiche.hg.get(p.getHandle());
         boolean minim = (CellUtils.isMinimized(cell));
-        Rectangle r = (Rectangle) cell.getAttribute(VisualAttribs.rect);
+        if (!newly_added)
+        {
+            Rectangle b = (minim) ? CellUtils.getMinRect(cell):
+                CellUtils.getRect(cell);//p.getFullBounds().getBounds();
+            p.setBounds(b.x, b.y, b.width, b.height);
+            p.translate(-b.x, -b.y);
+            return;
+        }
+        Rectangle r = (minim)? CellUtils.getMinRect(cell) :
+            CellUtils.getRect(cell);
         Dimension dim = (minim) ? GUIHelper.getMinimizedUISize() : p
                 .getComponent().getPreferredSize();
         if (r != null)
         {
             normalize(r);
             adjust_bounds(r);
-            if (minim)
+            p.setBounds(0, 0, r.width, r.height);
+            p.translate(r.x, r.y);
+            if(minim)
             {
-                p.setHeight(dim.getHeight());
-                p.setWidth(dim.getWidth());
-                Point pt = (Point) cell.getAttribute(VisualAttribs.minPt);
-                if(pt == null) pt = new Point(r.x, r.y);
-                p.translate(pt.x, pt.y);
-            }
-            else
-            {
-                p.setBounds(0, 0, r.width, r.height);
-                p.translate(r.x, r.y);
-            }
+                CellUtils.setMinRect(cell, r);
+            }else
+                CellUtils.setRect(cell, r);
         }
         else
-            p.setBounds(new Rectangle(0, 0, dim.width, dim.height));
+        {
+            if(minim && CellUtils.getRect(cell) != null)
+               p.setBounds(new Rectangle(CellUtils.getRect(cell).x, CellUtils.getRect(cell).y, dim.width, dim.height));
+            else   
+                p.setBounds(new Rectangle(50, 100, dim.width, dim.height));
+        }
     }
 
     private void adjust_bounds(Rectangle r)
