@@ -139,11 +139,15 @@ public class PiccoloCanvas extends PSwingCanvas
 
     public void relayout()
     {
+        // System.out.println("PicCanvas - relayout(): " +
+        // getCamera().getChildrenCount() +
+        // ":" + this);
         for (int i = 0; i < getCamera().getChildrenCount(); i++)
         {
             PNode o = getCamera().getChild(i);
             if (!(o instanceof PSwingNode)) continue;
-            LayoutHandler vh = GUIHelper.getLayoutHandler((PSwingNode) o);
+            LayoutHandler vh = CellUtils.getLayoutHandler(((PSwingNode) o)
+                    .getHandle());
             if (vh != null) vh.layout(PiccoloCanvas.this, (PSwingNode) o);
         }
 
@@ -165,18 +169,18 @@ public class PiccoloCanvas extends PSwingCanvas
             HGHandle groupH = (outer != null) ? outer.getHandle() : getGroupH();
             GUIHelper.removeFromCellGroup(groupH, ((PSwingNode) node)
                     .getHandle(), false);
-            //Object ui = ((PSwingNode) node).getComponent();
-            //if (ui instanceof NotebookUI) remove_and_clean((NotebookUI) ui);
+            // Object ui = ((PSwingNode) node).getComponent();
+            // if (ui instanceof NotebookUI) remove_and_clean((NotebookUI) ui);
             node.removeFromParent();
         }
     }
-    
+
     private void remove_and_clean(NotebookUI ui)
     {
         NotebookDocument doc = ui.getDoc();
         HGHandle h = ThisNiche.handleOf(ui);
         if (h != null) ThisNiche.hg.remove(h, true);
-        //CellUtils.removeHandlers(doc.getBookHandle());
+        // CellUtils.removeHandlers(doc.getBookHandle());
         CellUtils.removeHandlers(doc.getHandle());
         ThisNiche.hg.remove(doc.getHandle(), true);
     }
@@ -345,73 +349,64 @@ public class PiccoloCanvas extends PSwingCanvas
         }
         GUIHelper.handleTitle(p);
         comp.revalidate();
+        // force the appearance of scroll bars if necessary
+        if (nested) revalidate();
         return p;
     }
 
     void placeNode(PSwingNode p, boolean newly_added)
     {
-        CellGroupMember cell = ThisNiche.hg.get(p.getHandle());
-        boolean minim = (CellUtils.isMinimized(cell));
+        CellGroupMember cgm = ThisNiche.hg.get(p.getHandle());
+        boolean minim = (CellUtils.isMinimized(cgm));
+        Rectangle r = CellUtils.getAppropriateBounds(cgm);
         if (!newly_added)
         {
-            Rectangle b = (minim) ? CellUtils.getMinRect(cell):
-                CellUtils.getRect(cell);//p.getFullBounds().getBounds();
-            p.setBounds(b.x, b.y, b.width, b.height);
-            p.translate(-b.x, -b.y);
+            p.setBounds(0, 0, r.width, r.height);
+            p.translate(r.x, r.y);
             return;
         }
-        Rectangle r = (minim)? CellUtils.getMinRect(cell) :
-            CellUtils.getRect(cell);
-        Dimension dim = (minim) ? GUIHelper.getMinimizedUISize() : p
-                .getComponent().getPreferredSize();
+
         if (r != null)
         {
             normalize(r);
-            adjust_bounds(r);
             p.setBounds(0, 0, r.width, r.height);
             p.translate(r.x, r.y);
-            if(minim)
-            {
-                CellUtils.setMinRect(cell, r);
-            }else
-                CellUtils.setRect(cell, r);
+            p.storeBounds(r);
+            return;
+        }
+
+        Dimension dim = (minim) ? GUIHelper.getMinimizedUISize() : p
+                .getComponent().getPreferredSize();
+        if (minim && CellUtils.getBounds(cgm) != null)
+        {
+            p.setBounds(new Rectangle(0, 0, dim.width, dim.height));
+            p.translate(CellUtils.getBounds(cgm).x, CellUtils.getBounds(cgm).y);
         }
         else
         {
-            if(minim && CellUtils.getRect(cell) != null)
-               p.setBounds(new Rectangle(CellUtils.getRect(cell).x, CellUtils.getRect(cell).y, dim.width, dim.height));
-            else   
-                p.setBounds(new Rectangle(50, 100, dim.width, dim.height));
+            p.setBounds(0, 0, dim.width, dim.height);
+            p.translate(100, 100);
         }
-    }
-
-    private void adjust_bounds(Rectangle r)
-    {
-        if (!nested) return;
-        PSwingNode canv_node = GUIHelper.getPSwingNode(this);
-        if (canv_node == null) return;
-        PBounds fb = canv_node.getFullBounds();
-        // System.out.println("dispatchEvent0: " + pt + ":" + fb);
-        r.x = (int) (r.x - fb.x);
-        r.y = (int) (r.y - fb.y);
     }
 
     // TODO: temp solution during testing
     private void normalize(Rectangle r)
     {
         // System.out.println("normalize1: " + r);
-        if (r.x < 0) r.x = 0;
+        // if(r.height == 18)
+        // Thread.currentThread().dumpStack();
+        if (r.x < 0) r.x = 60;
         if (r.x > 1000) r.x = 1000;
-        if (r.y < 0) r.y = 0;
+        if (r.y < 0) r.y = 60;
         if (r.y > 1000) r.y = 1000;
-        if (r.width > 1000) r.width = 1000;
+        if (r.width > 2000) r.width = 2000;
         if (r.width <= 0) r.width = 50;
         if (r.height > 1000) r.height = 1000;
         if (r.height <= 0) r.height = 50;
         // System.out.println("normalize2: " + r);
     }
 
-       public PLayer getNodeLayer()
+    public PLayer getNodeLayer()
     {
         return nodeLayer;
     }

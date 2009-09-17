@@ -41,7 +41,7 @@ public class MinimizedUI extends JPanel
 {
 
     private static ImageIcon nb_icon = IconManager.resolveIcon("notebook.png");
-    private static ImageIcon container_icon = IconManager.resolveIcon("container.png");
+    private static ImageIcon container_icon = IconManager.resolveIcon("window.png");//container.png");
     private static ImageIcon tabbed_icon = IconManager.resolveIcon("container1.png");
     
     private JTextArea textArea;

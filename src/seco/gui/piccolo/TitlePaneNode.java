@@ -2,6 +2,7 @@ package seco.gui.piccolo;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class TitlePaneNode extends CommandHandle
         node.getCanvas().getSelectionHandler().unselectAll();
         PDimension d = e.getCanvasDelta();
         e.getTopCamera().localToView(d);
-        PNode node = ((PNodeLocator) getLocator()).getNode();
+        //PNode node = ((PNodeLocator) getLocator()).getNode();
         node.getParent().globalToLocal(d);
         node.offset(d.getWidth(), d.getHeight());
     }
@@ -79,6 +80,7 @@ public class TitlePaneNode extends CommandHandle
             handler.select(node, true);
         else
             handler.unselect(node);
+        node.storeBounds(node.getFullBounds().getBounds());
     }
 
     @Override

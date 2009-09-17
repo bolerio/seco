@@ -129,7 +129,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
             {
                 node.addChild(new TitlePaneNode((PSwingNode) node));
             }
-            else
+            else //if(!CellUtils.isMinimized(cgm))
             {
                 TitlePaneNode.addActionHandles((PSwingNode) node, node);
             }
@@ -148,17 +148,24 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     {
         ArrayList<PNode> handles = new ArrayList<PNode>();
         Iterator i = node.getChildrenIterator();
+        //boolean compensate = false;
         while (i.hasNext())
         {
             PNode each = (PNode) i.next();
             if (each instanceof PSmallBoundsHandle)
             {
-                if (each instanceof TitlePaneNode && !remove_title) ;
+                if (each instanceof TitlePaneNode && !remove_title) 
+                    ;//compensate = true;
                 else
                     handles.add(each);
             }
         }
         node.removeChildren(handles);
+//        if(compensate){
+//            Rectangle r = node.getFullBounds().getBounds();
+//            ((PSwingNode)node).storeBounds(
+//                    new Rectangle(r.x, r.y, r.width, r.height - TitlePaneNode.HEIGHT));
+//        }
     }
 
     public void unselectAll()
@@ -206,11 +213,11 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     protected void endDrag(PInputEvent e)
     {
         super.endDrag(e);
-        endStandardSelection(e);
-        PNode node = e.getPickedNode();
-        e.getPickedNode().endResizeBounds();
+        PNode node = pressNode != null ? pressNode : e.getPickedNode();
+        node.endResizeBounds();
         if (node != null && node instanceof PSwingNode)
             adjust_bounds((PSwingNode) node);
+        endStandardSelection(e);
     }
 
     private static void adjust_bounds(PSwingNode node)
@@ -220,7 +227,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         PBounds ncb = node.getFullBounds();
         if (out(pcb.getBounds(), ncb.getBounds()))
         {
-            // System.out.println("adjust_bounds1: " + ncb + ":" +pcb);
+            System.out.println("adjust_bounds1: " + ncb + ":" +pcb);
             double x = 0;
             double y = 0;
             if (ncb.x < pcb.x) x = pcb.x - ncb.x;
@@ -229,7 +236,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
                 x = pcb.x + pcb.width - (ncb.x + ncb.width);
             if (ncb.y > pcb.y + pcb.height)
                 y = pcb.y + pcb.height - (ncb.y + ncb.height);
-            // System.out.println("adjust_bounds2: " + x + ":" + y);
+            System.out.println("adjust_bounds2: " + x + ":" + y);
             node.translate(x, y);
             node.invalidatePaint();
         }

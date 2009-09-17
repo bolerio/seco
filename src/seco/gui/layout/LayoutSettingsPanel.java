@@ -13,12 +13,12 @@ package seco.gui.layout;
 
 import edu.umd.cs.piccolo.util.PBounds;
 import seco.ThisNiche;
-import seco.gui.GUIHelper;
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
 import seco.gui.TopFrame;
 import seco.gui.VisualAttribs;
 import seco.things.CellGroupMember;
+import seco.things.CellUtils;
 
 /**
  *
@@ -39,7 +39,7 @@ public class LayoutSettingsPanel extends javax.swing.JPanel {
     public LayoutSettingsPanel(PSwingNode node) {
         this();
         this.node = node;
-        LayoutHandler vh = GUIHelper.getLayoutHandler(node);
+        LayoutHandler vh = CellUtils.getLayoutHandler(node.getHandle());
         if(vh != null)
         {
           populate(vh.getBounds(), vh.getRefPoint());
@@ -240,7 +240,7 @@ public class LayoutSettingsPanel extends javax.swing.JPanel {
     private void butChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butChangeActionPerformed
        if(pinned)
        {
-           LayoutHandler vh = GUIHelper.getLayoutHandler(node);
+           LayoutHandler vh = CellUtils.getLayoutHandler(node.getHandle());
            //oldRect = vh.getBounds();
            //oldRefP = vh.getRefPoint(); 
            vh.setBounds(getDRect());

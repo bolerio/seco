@@ -38,9 +38,11 @@ import seco.events.handlers.CopyCellTextChangeHandler;
 import seco.events.handlers.CopyEvalCellHandler;
 import seco.gui.JComponentVisual;
 import seco.gui.NBUIVisual;
+import seco.gui.PSwingNode;
 import seco.gui.TabbedPaneVisual;
 import seco.gui.VisualAttribs;
 import seco.gui.VisualsManager;
+import seco.gui.layout.LayoutHandler;
 import seco.notebook.DocUtil;
 import seco.notebook.NBStyle;
 import seco.notebook.NotebookDocument;
@@ -301,24 +303,50 @@ public class CellUtils
         c.setAttribute(XMLConstants.ATTR_ENGINE, s);
     }
     
-    public static void setRect(CellGroupMember c, Rectangle r)
+    public static void setBounds(CellGroupMember c, Rectangle r)
     {
         c.setAttribute(VisualAttribs.rect, r);
     }
     
-    public static Rectangle getRect(CellGroupMember c)
+    public static Rectangle getBounds(CellGroupMember c)
     {
         return (Rectangle) c.getAttribute(VisualAttribs.rect);
     }
     
-    public static void setMinRect(CellGroupMember c, Rectangle r)
+    public static void setMinBounds(CellGroupMember c, Rectangle r)
     {
         c.setAttribute(VisualAttribs.minRect, r); 
     }
     
-    public static Rectangle getMinRect(CellGroupMember c)
+    public static Rectangle getMinBounds(CellGroupMember c)
     {
         return (Rectangle) c.getAttribute(VisualAttribs.minRect);
+    }
+    
+    public static Rectangle getAppropriateBounds(CellGroupMember c)
+    {
+        return isMinimized(c) ? getMinBounds(c) : getBounds(c);
+    }
+    
+    public static void setAppropriateBounds(CellGroupMember c, Rectangle r)
+    {
+        setAppropriateBounds(c, r, false);
+    }
+    
+    public static void setAppropriateBounds(CellGroupMember c, Rectangle r,
+            boolean remove_other_bounds)
+    {
+        if(isMinimized(c))
+        {
+            setMinBounds(c, r);
+            if(remove_other_bounds)
+                c.getAttributes().remove(VisualAttribs.rect);
+        }else
+        {
+            setBounds(c, r);
+            if(remove_other_bounds)
+                c.getAttributes().remove(VisualAttribs.minRect);
+        }
     }
 
     public static NBStyle getStyle(CellGroupMember c, StyleType type)
@@ -871,5 +899,18 @@ public class CellUtils
         assert (HL.size() == S.size()) : new RuntimeException(
                 "Duplicate results while looking for: " + condition);
         return S;
+    }
+
+    static void setLayoutHandler(HGHandle cellH, LayoutHandler lh)
+    {
+        CellGroupMember cell = ThisNiche.hg.get(cellH);
+        cell.setAttribute(VisualAttribs.layoutHandler, lh);
+        ThisNiche.hg.update(cell);
+    }
+
+    public static LayoutHandler getLayoutHandler(HGHandle cellH)
+    {
+        CellGroupMember m = ThisNiche.hg.get(cellH);
+        return (LayoutHandler) m.getAttribute(VisualAttribs.layoutHandler);
     }
 }

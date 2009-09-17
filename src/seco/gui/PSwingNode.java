@@ -57,32 +57,27 @@ public class PSwingNode extends PSwing implements Serializable
 
     public void endResizeBounds()
     {
-        // System.out.println("PSwingNode: endResizeBounds");
+        Rectangle fb = getFullBounds().getBounds();
+        Rectangle b = getBounds().getBounds();
+        storeBounds(new Rectangle(fb.x, fb.y, b.width, b.height));
         getComponent().revalidate();
-        storeBounds(getFullBounds().getBounds());
     }
 
-    protected void storeBounds(Rectangle r)
+    public void storeBounds(Rectangle r)
     {
         if (handle == null || ThisNiche.hg == null) return;
-        CellGroupMember cm = (CellGroupMember) ThisNiche.hg.get(getHandle());
-        if (CellUtils.isMaximized(cm)) return;
-        if (cm != null)
+        CellGroupMember cgm = ThisNiche.hg.get(getHandle());
+        if (CellUtils.isMaximized(cgm)) return;
+        if (cgm != null)
         {
-            boolean min = CellUtils.isMinimized(cm);
-            System.out.println("storeBounds: " + min + ":" + r);
-            Rectangle old = (min) ? CellUtils.getMinRect(cm) :
-                CellUtils.getRect(cm);
+            //boolean min = CellUtils.isMinimized(cgm);
+            //System.out.println("storeBounds: " + min + ":" + r + ":" + getHandle());
+            Rectangle old = CellUtils.getAppropriateBounds(cgm);
             if (r.equals(old)) return;
-            if(min)
-                CellUtils.setMinRect(cm, r);
-            else
-                CellUtils.setRect(cm, r);
-            //setBounds(r);
+            CellUtils.setAppropriateBounds(cgm, r);
         }
-        
     }
-
+    
     private Rectangle last_bounds;
     private boolean last_enabled;
 

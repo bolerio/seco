@@ -180,8 +180,8 @@ public class SecoTabbedPane extends JTabbedPane
                 if (fl.equals(SecoTransferable.FLAVOR))
                 {
                     HGHandle data = (HGHandle) t.getTransferData(fl);
-                    System.out.println("TPTransferHandler1: " + tp.groupH + ":"
-                            + data);
+                   // System.out.println("TPTransferHandler1: " + tp.groupH + ":"
+                   //         + data);
                     if (tp.getCellGroup().indexOf(data) >= 0) return false;
                     tp.getCellGroup()
                             .insert(tp.getCellGroup().getArity(), data);

@@ -623,19 +623,6 @@ public class GUIHelper
         // group.insert(group.getArity(), ThisNiche.TABBED_PANE_GROUP_HANDLE);
     }
 
-    static void setLayoutHandler(HGHandle cellH, LayoutHandler lh)
-    {
-        CellGroupMember cell = ThisNiche.hg.get(cellH);
-        cell.setAttribute(VisualAttribs.layoutHandler, lh);
-        ThisNiche.hg.update(cell);
-    }
-
-    public static LayoutHandler getLayoutHandler(PSwingNode ps)
-    {
-        CellGroupMember m = ThisNiche.hg.get(ps.getHandle());
-        return (LayoutHandler) m.getAttribute(VisualAttribs.layoutHandler);
-    }
-
     public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
             HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell,
             Map<Object, Object> addit_attribs)

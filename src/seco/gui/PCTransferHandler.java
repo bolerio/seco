@@ -9,12 +9,15 @@ import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.text.Element;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.util.Pair;
+
+import edu.umd.cs.piccolo.util.PBounds;
 
 import seco.ThisNiche;
 import seco.notebook.NotebookDocument;
@@ -171,14 +174,27 @@ public class PCTransferHandler extends TransferHandler
     private void add_to_top_group(CellGroup top, HGHandle h, Point pt)
     {
         CellGroupMember cgm = ThisNiche.hg.get(h);
-        Rectangle r = (Rectangle) cgm.getAttribute(VisualAttribs.rect);
-        if (r == null) r = new Rectangle(pt.x, pt.y, 300, 200);
+        Rectangle r = CellUtils.getAppropriateBounds(cgm);
+        if (r == null) 
+            r = new Rectangle(pt.x, pt.y, 300, 200);
         else
         {
-            r.x = pt.x;
-            r.y = pt.y;
+            //the point is given in main canvas coords
+            //so we should transform it... 
+            if(canvas.nested && GUIHelper.getPSwingNode(canvas) != null)
+            {
+                PSwingNode canv_node = GUIHelper.getPSwingNode(canvas);
+                PBounds fb = canv_node.getFullBounds();
+                System.out.println("adjust_bounds: " + r + ":" + fb);
+                r.x = (int) (pt.x - fb.x);
+                r.y = (int) (pt.y - fb.y);
+            }else
+            {
+                r.x = pt.x;
+                r.y = pt.y;
+            }
         }
-        cgm.setAttribute(VisualAttribs.rect, r);
+        CellUtils.setAppropriateBounds(cgm, r, true);
         top.insert(top.getArity(), h);
     }
 
