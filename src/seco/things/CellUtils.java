@@ -186,6 +186,9 @@ public class CellUtils
     public static void toggleMinimized(CellGroupMember cgm)
     {
         boolean b = isMinimized(cgm);
+        //first render in normal state the maximized cell, then minimize
+        if(!b && isMaximized(cgm))
+            toggleMaximized(cgm);
         cgm.setAttribute(VisualAttribs.minimized, !b);
     }
     
@@ -198,6 +201,9 @@ public class CellUtils
     public static void toggleMaximized(CellGroupMember cgm)
     {
         boolean b = isMaximized(cgm);
+        //first render in normal state the minimized cell, then maximize
+        if(!b && isMinimized(cgm))
+            toggleMinimized(cgm);
         cgm.setAttribute(VisualAttribs.maximized, !b);
     }
     

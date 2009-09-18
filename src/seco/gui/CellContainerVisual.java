@@ -83,7 +83,6 @@ public class CellContainerVisual implements CellVisual, EventHandler
                     canvas.maximize(ps);
                 }
             });
-            
         }
         return canvas;
     }
@@ -189,8 +188,7 @@ public class CellContainerVisual implements CellVisual, EventHandler
             }
             else
             {
-               canvas.showAllNodes();
-               canvas.placeNode(ps, false);
+               canvas.unmaximize(ps); 
             } 
         }else if(event.getName().equals(VisualAttribs.showTitle)
                 || event.getName().equals(VisualAttribs.name))

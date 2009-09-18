@@ -20,6 +20,8 @@ import seco.gui.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookEditorKit;
 import seco.things.CellGroup;
+import seco.things.CellGroupMember;
+import seco.things.CellUtils;
 
 
 
@@ -116,10 +118,15 @@ public class OpenBookPanel extends JPanel
         else
         {
             Object[] removed = list.getSelectedValues();
-            for(int i=0; i < removed.length; i++)
+            for(int i = 0; i < removed.length; i++)
             {
-               NotebookDocument gr = (NotebookDocument) removed[i];
-               ThisNiche.hg.remove(ThisNiche.handleOf(gr), true);
+               NotebookDocument nb = (NotebookDocument) removed[i];
+               //remove the book from its parent,e.g. from canvas if it's opened there  
+               CellGroup gr = CellUtils.getParentGroup(nb.getBookHandle());
+               if(gr != null)
+                 gr.remove((CellGroupMember) ThisNiche.hg.get(nb.getBookHandle()));
+               
+               ThisNiche.hg.remove(ThisNiche.handleOf(nb), true);
                docs.remove(removed[i]);
             }
             list.setListData(docs.toArray());

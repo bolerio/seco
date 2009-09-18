@@ -45,7 +45,8 @@ public class PiccoloCanvas extends PSwingCanvas
     PCSelectionHandler selectionHandler;
     ContextMenuHandler ctxMenuHandler;
     boolean nested;
-
+    boolean maximizedState;
+    
     public PiccoloCanvas()
     {
         this(false);
@@ -142,6 +143,7 @@ public class PiccoloCanvas extends PSwingCanvas
         // System.out.println("PicCanvas - relayout(): " +
         // getCamera().getChildrenCount() +
         // ":" + this);
+        if(maximizedState) return;
         for (int i = 0; i < getCamera().getChildrenCount(); i++)
         {
             PNode o = getCamera().getChild(i);
@@ -294,12 +296,21 @@ public class PiccoloCanvas extends PSwingCanvas
     public void maximize(PSwingNode n)
     {
         if (n == null) return;
+        if(n.getCanvas() != this)
+        {
+            n.getCanvas().maximize(n); return;
+        }
+        if(maximizedState) return;
+        maximizedState = true;
         for (int i = 0; i < getNodeLayer().getChildrenCount(); i++)
         {
             PNode o = getNodeLayer().getChild(i);
             if (!o.equals(n)) o.setVisible(false);
         }
-        for (int i = 0; i < getCamera().getChildrenCount(); i++)
+        //System.out.println("maximize: " + nested + ":" +
+        //        (n.getCanvas() == TopFrame.getInstance().getCanvas()));
+        if (!nested)
+            for (int i = 0; i < getCamera().getChildrenCount(); i++)
         {
             PNode o = getCamera().getChild(i);
             if (!o.equals(n)) o.setVisible(false);
@@ -309,6 +320,19 @@ public class PiccoloCanvas extends PSwingCanvas
         n.setBounds(0, 0, getWidth() - 60, getHeight() - 60);
         PBounds b = n.getFullBounds();
         n.translate(-b.x + 20, -b.y + 20);
+        n.getComponent().revalidate();
+    }
+    
+    public void unmaximize(PSwingNode n)
+    {
+        if(n.getCanvas() != this)
+        {
+            n.getCanvas().unmaximize(n); return;
+        }
+        if(!maximizedState) return;
+        maximizedState = false;
+        showAllNodes();
+        placeNode(n, false);
     }
 
     public void showAllNodes()
@@ -384,8 +408,17 @@ public class PiccoloCanvas extends PSwingCanvas
         }
         else
         {
+            // on some components getPreferredSize() return weird stuff so...
+            // at least show something rather well visible, that user could
+            // resize later
+            if (dim.width < 60 || dim.width > 1000) dim.width = 60;
+            if (dim.height < 60 || dim.height > 800) dim.height = 60;
+
             p.setBounds(0, 0, dim.width, dim.height);
-            p.translate(100, 100);
+            if(nested)
+               p.translate(30, 30);
+            else
+               p.translate(100, 100);
         }
     }
 

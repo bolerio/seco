@@ -127,6 +127,7 @@ public class GUIHelper
         }
     }
     
+   // public static final String ANOTHER_ICON = "ANOTHER_ICON";
     public static List<Action> getWinTitleActions()
     {
         List<Action> actions = (List<Action>)ThisNiche.hg.get(WIN_ACTIONS_HANDLE);
@@ -140,12 +141,14 @@ public class GUIHelper
                 "seco.things.CellUtils.toggleMinimized(cgm);" +
                 "seco.things.CellUtils.toggleMaximized(cgm);");
         a.putValue(Action.SMALL_ICON, IconManager.resolveIcon("Maximize.gif"));
+        //a.putValue(ANOTHER_ICON, IconManager.resolveIcon("Restore.png"));
         a.putValue(Action.SHORT_DESCRIPTION, "Maximize/Restore");
         actions.add(a);
        //minimize
         a = new ScriptletAction("node = seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode();"+
         "seco.things.CellUtils.toggleMinimized(seco.ThisNiche.hg.get(node.getHandle()))");
         a.putValue(Action.SMALL_ICON, IconManager.resolveIcon("Minimize.gif"));
+       // a.putValue(ANOTHER_ICON, IconManager.resolveIcon("Restore.png"));
         a.putValue(Action.SHORT_DESCRIPTION, "Minimize/Restore");
         actions.add(a);
         
@@ -751,7 +754,7 @@ public class GUIHelper
             CellUtils.restoreCell(h);
         CellGroupMember child = ThisNiche.hg.get(h);
         child.setVisual(NBUIVisual.getHandle());
-        child.setAttribute(VisualAttribs.rect, new Rectangle(50, 50, 300, 200));
+        child.setAttribute(VisualAttribs.rect, new Rectangle(100, 100, 300, 200));
         if(!CellUtils.isShowTitle(child))
            CellUtils.toggleShowTitle(child);
         group.insert(group.getArity(), h);
