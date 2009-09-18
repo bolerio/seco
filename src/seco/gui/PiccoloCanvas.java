@@ -411,12 +411,12 @@ public class PiccoloCanvas extends PSwingCanvas
             // on some components getPreferredSize() return weird stuff so...
             // at least show something rather well visible, that user could
             // resize later
-            if (dim.width < 60 || dim.width > 1000) dim.width = 60;
-            if (dim.height < 60 || dim.height > 800) dim.height = 60;
+            if (dim.width < 100 || dim.width > 1000) dim.width = 100;
+            if (dim.height < 100 || dim.height > 800) dim.height = 100;
 
             p.setBounds(0, 0, dim.width, dim.height);
             if(nested)
-               p.translate(30, 30);
+              p.translate(20, 20);
             else
                p.translate(100, 100);
         }
