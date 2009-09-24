@@ -50,9 +50,8 @@ public class JTreeASTModel implements TreeModel {
         if (parent == null) {
             return null;
         }
-		//int i = 0;
 		SimpleNode p = (SimpleNode)parent;
-		if(true)
+		if(index >= 0 && index < p.children.length)
 			return p.getChild(index);
 		
 		throw new ArrayIndexOutOfBoundsException("node has no such child");

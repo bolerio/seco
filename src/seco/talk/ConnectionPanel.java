@@ -265,7 +265,7 @@ public class ConnectionPanel extends JPanel
         {
             roomPanel = hg.getOne(ThisNiche.hg, hg.and(hg.type(TalkRoom.class), 
                                                        hg.eq("roomId", room.getJid())));
-            if (true)//roomPanel == null)
+            if (roomPanel == null)
             {
                 roomPanel = new TalkRoom();
                 roomPanel.setRoomId(room.getJid());
@@ -289,6 +289,7 @@ public class ConnectionPanel extends JPanel
         CellUtils.setName(cgm, "Chat room " + room.getName());
         cgm.setAttribute(VisualAttribs.showTitle, true);
         roomPanel.initSplitterLocations();
+        ThisNiche.hg.update(roomPanel);
     }
     
     public boolean isConnected()

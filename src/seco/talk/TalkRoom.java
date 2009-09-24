@@ -1,6 +1,8 @@
 package seco.talk;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
 import java.util.Iterator;
 
 import javax.swing.JPanel;
@@ -73,13 +75,13 @@ public class TalkRoom extends JPanel
                     from = from.substring(hostPart + 1);                
                 id.setName(from);
                 id.setId(HGHandleFactory.makeHandle());
-                chatPane.chatFrom(id, msg.getBody());
+                getChatPane().chatFrom(id, msg.getBody());
             }
         });
         getTheChat().addParticipantListener(new PacketListener() {
             public void processPacket(Packet packet)
             {
-                peerList.getListModel().removeAllElements();
+                getPeerList().getListModel().removeAllElements();
                 for (Iterator<String> i = getTheChat().getOccupants(); i.hasNext(); )
                 {
                     String occ = i.next();
@@ -88,7 +90,7 @@ public class TalkRoom extends JPanel
                         HGPeerIdentity id = new HGPeerIdentity();
                         id.setName(occ);
                         id.setId(HGHandleFactory.makeHandle());
-                        peerList.getListModel().addElement(id);
+                        getPeerList().getListModel().addElement(id);
                     }
                 }
                 //peerList.peers.fireChangeEvent();
@@ -112,11 +114,13 @@ public class TalkRoom extends JPanel
                                               new JScrollPane(chatPane), 
                                               new JScrollPane(inputPane));
         peerListSplit.setResizeWeight(1.0);
+        peerListSplit.setName("peerListSplit");
         peerList = new PeerList();
         peerList.initComponents();    
         inputSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                     peerListSplit, 
                                     peerList);
+        inputSplit.setName("inputSplit");
         inputSplit.setOneTouchExpandable(true);
         inputSplit.setResizeWeight(1.0);
         this.add(inputSplit, BorderLayout.CENTER);
@@ -134,8 +138,17 @@ public class TalkRoom extends JPanel
     
     public void initSplitterLocations()
     {
-        peerListSplit.setDividerLocation((int)(0.8*getHeight()));
-        inputSplit.setDividerLocation((int)(0.7*getWidth()));                        
+        getPeerList().getListModel().removeAllElements();
+        get_split(get_split(this,"inputSplit"), "peerListSplit").setDividerLocation((int)(0.8*getHeight()));
+        get_split(this,"inputSplit").setDividerLocation((int)(0.7*getWidth()));  
+    }
+    
+    private JSplitPane get_split(Container cont, String name)
+    {
+        for(Component c: cont.getComponents())
+            if(name.equals(c.getName()))
+                return (JSplitPane) c;
+        return null;
     }
     
     public String getRoomId()
@@ -191,5 +204,35 @@ public class TalkRoom extends JPanel
         {
             this.room = room;
         }
+    }
+
+    public PeerList getPeerList()
+    {
+        return peerList;
+    }
+
+    public void setPeerList(PeerList peerList)
+    {
+        this.peerList = peerList;
+    }
+
+    public ChatPane getChatPane()
+    {
+        return chatPane;
+    }
+
+    public void setChatPane(ChatPane chatPane)
+    {
+        this.chatPane = chatPane;
+    }
+
+    public TalkInputPane getInputPane()
+    {
+        return inputPane;
+    }
+
+    public void setInputPane(TalkInputPane inputPane)
+    {
+        this.inputPane = inputPane;
     }       
 }

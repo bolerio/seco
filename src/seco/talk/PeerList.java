@@ -31,6 +31,8 @@ public class PeerList extends JPanel
                 if (e.getClickCount() == 2)
                 {
                     int index = getList().locationToIndex(e.getPoint());
+                    if(index < 0 || index >= getList().getModel().getSize())
+                        return;
                     Object x = getList().getModel().getElementAt(index);
                     if (x instanceof HGPeerIdentity) getConnectionPanel()
                             .openTalkPanel((HGPeerIdentity) x);
