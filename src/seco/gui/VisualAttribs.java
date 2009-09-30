@@ -10,6 +10,7 @@ package seco.gui;
 //    minimized,
 //    maximized
 //    minRect
+//    zoom
 //}
 
 public class VisualAttribs
@@ -26,4 +27,5 @@ public class VisualAttribs
     public static final String minimized = "minimized";
     public static final String maximized = "maximized";
     public static final String minRect = "minRect";
+    public static final String zoom = "zoom";
 }

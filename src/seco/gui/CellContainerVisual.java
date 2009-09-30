@@ -42,6 +42,7 @@ public class CellContainerVisual implements CellVisual, EventHandler
     public JComponent bind(CellGroupMember element)
     {
         CellGroup group = (CellGroup) element;
+        HGHandle elementH = ThisNiche.handleOf(element);
         final PiccoloCanvas canvas;
         // container canvas....
         if (isTopContainer(element))
@@ -72,8 +73,7 @@ public class CellContainerVisual implements CellVisual, EventHandler
             }
         if (canvas != null) canvas.relayout();
         group.setVisualInstance(canvas);
-        CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE, ThisNiche
-                .handleOf(element), getHandle(), getHandle());
+        CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE, elementH, getHandle(), getHandle());
         if(isTopContainer(element) && maximized != null)
         {
             final PSwingNode ps = canvas.getPSwingNodeForHandle(maximized);
@@ -84,6 +84,9 @@ public class CellContainerVisual implements CellVisual, EventHandler
                 }
             });
         }
+        
+        if(CellUtils.getZoom(elementH) != null)
+            canvas.getCamera().setViewTransform(CellUtils.getZoom(elementH));
         return canvas;
     }
 

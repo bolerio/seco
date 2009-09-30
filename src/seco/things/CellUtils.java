@@ -22,6 +22,8 @@ import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.atom.HGAtomRef;
 import org.hypergraphdb.query.HGQueryCondition;
 
+import edu.umd.cs.piccolo.util.PAffineTransform;
+
 import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
 import seco.events.BackupLink;
@@ -911,12 +913,23 @@ public class CellUtils
     {
         CellGroupMember cell = ThisNiche.hg.get(cellH);
         cell.setAttribute(VisualAttribs.layoutHandler, lh);
-        ThisNiche.hg.update(cell);
     }
 
     public static LayoutHandler getLayoutHandler(HGHandle cellH)
     {
         CellGroupMember m = ThisNiche.hg.get(cellH);
         return (LayoutHandler) m.getAttribute(VisualAttribs.layoutHandler);
+    }
+    
+    public static void setZoom(HGHandle cellH, PAffineTransform tr)
+    {
+        CellGroupMember cell = ThisNiche.hg.get(cellH);
+        cell.setAttribute(VisualAttribs.zoom, tr);
+    }
+    
+    public static PAffineTransform getZoom(HGHandle cellH)
+    {
+        CellGroupMember m = ThisNiche.hg.get(cellH);
+        return (PAffineTransform) m.getAttribute(VisualAttribs.zoom);
     }
 }

@@ -26,6 +26,7 @@ import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.event.PZoomEventHandler;
+import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PNodeFilter;
 import edu.umd.cs.piccolo.util.PPaintContext;
@@ -104,7 +105,6 @@ public class PiccoloCanvas extends PSwingCanvas
         setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
         setDefaultRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
         selectionHandler = new PCSelectionHandler();
-        // getLayer(), getNodeLayer(), getCamera());
         selectionHandler.setEventFilter(new PInputEventFilter(
                 InputEvent.BUTTON1_MASK));
         addInputEventListener(selectionHandler);
@@ -123,6 +123,19 @@ public class PiccoloCanvas extends PSwingCanvas
         ctxMenuHandler.setEventFilter(new PInputEventFilter(
                 InputEvent.BUTTON3_MASK));
         addInputEventListener(ctxMenuHandler);
+        
+        getCamera().addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM, 
+                new PropertyChangeListener()
+        {
+            public void propertyChange(PropertyChangeEvent evt)
+            {
+                PAffineTransform tr = (PAffineTransform) evt.getNewValue();
+                HGHandle h = PiccoloCanvas.this.getGroupH();
+                System.out.println("PROPERTY_CODE_VIEW_TRANSFORM: " + evt.getNewValue() + ":" + h);
+                if(h != null)
+                    CellUtils.setZoom(h, tr);
+            }
+        });
     }
 
     void removePSwingEventHandler()
