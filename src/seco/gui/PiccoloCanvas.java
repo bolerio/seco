@@ -15,6 +15,7 @@ import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
 import seco.gui.layout.LayoutHandler;
+import seco.gui.piccolo.AffineTransformEx;
 import seco.gui.piccolo.PToolTipHandler;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
@@ -129,11 +130,15 @@ public class PiccoloCanvas extends PSwingCanvas
         {
             public void propertyChange(PropertyChangeEvent evt)
             {
-                PAffineTransform tr = (PAffineTransform) evt.getNewValue();
+                PAffineTransform tr = getCamera().getViewTransform();
                 HGHandle h = PiccoloCanvas.this.getGroupH();
-                System.out.println("PROPERTY_CODE_VIEW_TRANSFORM: " + evt.getNewValue() + ":" + h);
                 if(h != null)
+                {
+                    AffineTransformEx old = CellUtils.getZoom(h);
+                    if(tr != null && tr.equals(old)) return;
+                   // System.out.println("PROPERTY_CODE_VIEW_TRANSFORM: " + tr + ":" + h);
                     CellUtils.setZoom(h, tr);
+                }
             }
         });
     }

@@ -14,6 +14,7 @@ import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 
 import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolox.swing.PScrollPane;
 
 import seco.ThisNiche;
@@ -21,6 +22,7 @@ import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EvalCellEvent;
 import seco.events.EventHandler;
+import seco.gui.piccolo.AffineTransformEx;
 import seco.things.BaseCellGroupMember;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -86,7 +88,10 @@ public class CellContainerVisual implements CellVisual, EventHandler
         }
         
         if(CellUtils.getZoom(elementH) != null)
-            canvas.getCamera().setViewTransform(CellUtils.getZoom(elementH));
+        {
+            AffineTransformEx tr = CellUtils.getZoom(elementH);
+            canvas.getCamera().setViewTransform(tr.getTransform());
+        }
         return canvas;
     }
 

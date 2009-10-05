@@ -45,6 +45,7 @@ import seco.gui.TabbedPaneVisual;
 import seco.gui.VisualAttribs;
 import seco.gui.VisualsManager;
 import seco.gui.layout.LayoutHandler;
+import seco.gui.piccolo.AffineTransformEx;
 import seco.notebook.DocUtil;
 import seco.notebook.NBStyle;
 import seco.notebook.NotebookDocument;
@@ -924,12 +925,23 @@ public class CellUtils
     public static void setZoom(HGHandle cellH, PAffineTransform tr)
     {
         CellGroupMember cell = ThisNiche.hg.get(cellH);
-        cell.setAttribute(VisualAttribs.zoom, tr);
+        //System.out.println("setZoom: " + tr + ":" + cellH);
+        cell.setAttribute(VisualAttribs.zoom, new AffineTransformEx(tr));
     }
     
-    public static PAffineTransform getZoom(HGHandle cellH)
+    public static AffineTransformEx getZoom(HGHandle cellH)
     {
         CellGroupMember m = ThisNiche.hg.get(cellH);
-        return (PAffineTransform) m.getAttribute(VisualAttribs.zoom);
+        Object o = m.getAttribute(VisualAttribs.zoom);
+        //legacy cleanup
+        if(o instanceof AffineTransformEx)
+           return (AffineTransformEx) o;
+        else if(o instanceof PAffineTransform)
+        {
+            AffineTransformEx tr = new AffineTransformEx((PAffineTransform) o); 
+            m.setAttribute(VisualAttribs.zoom, tr);
+            return tr;
+        }
+        return null;
     }
 }
