@@ -193,7 +193,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
         String selected = (String)lstNiches.getSelectedValue();
         if (!niches.containsKey(selected))
         {
-            JOptionPane.showMessageDialog(null, 
+            JOptionPane.showMessageDialog(this, 
                                           "Ooops, this is a bug: could not find niche location.",
                                           "Niche Edit Error",
                                           JOptionPane.ERROR_MESSAGE);  
@@ -223,7 +223,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
         String selected = (String)lstNiches.getSelectedValue();
         if (!niches.containsKey(selected))
         {
-            JOptionPane.showMessageDialog(null, 
+            JOptionPane.showMessageDialog(this, 
                                           "Ooops, this is a bug: could not find niche location.",
                                           "Niche Remove Error",
                                           JOptionPane.ERROR_MESSAGE);            
@@ -233,7 +233,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
             File location = niches.get(selected);
             if (location.exists())
             {
-                if (JOptionPane.showConfirmDialog(null, 
+                if (JOptionPane.showConfirmDialog(this, 
                                                   "Do you want to also delete the niche location directory? All data will be lost!", 
                                                   "Niche Removal",
                                                   JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
@@ -277,7 +277,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
             
             if (dlg.getNicheName() == null || dlg.getNicheName().length() == 0)
             {
-                JOptionPane.showMessageDialog(null, 
+                JOptionPane.showMessageDialog(this, 
                                               "Please specify a niche name before proceeding.",
                                               "Wrong Niche Name Error",
                                               JOptionPane.ERROR_MESSAGE);
@@ -286,7 +286,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
             
             if (niches.get(dlg.getNicheName()) != null)
             {
-                JOptionPane.showMessageDialog(null, 
+                JOptionPane.showMessageDialog(this, 
                                               "Niche name already refers to an existing niche.",
                                               "Wrong Niche Name Error",
                                               JOptionPane.ERROR_MESSAGE);
@@ -299,13 +299,13 @@ public class NicheSelectDialog extends javax.swing.JDialog
             {
                 if (NicheManager.isNicheLocation(location))
                 {
-                    if (JOptionPane.showConfirmDialog(null, 
+                    if (JOptionPane.showConfirmDialog(this, 
                           "There is an existing HyperGraph Database at that location. Use it as the new niche?", 
                           "New Niche",
                           JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
                     	continue;
                 }
-                else if (JOptionPane.showConfirmDialog(null, 
+                else if (JOptionPane.showConfirmDialog(this, 
                           "Create a " + dlg.getNicheName() + " sub-directory under " + location.getAbsolutePath() + "?",
                           "New Niche",
                           JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)

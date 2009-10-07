@@ -17,7 +17,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-//import org.openide.ErrorManager;
+
 
 /** Request processor that is capable to execute requests in dedicated threads.
  * You can create your own instance or use the shared one.

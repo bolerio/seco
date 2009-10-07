@@ -37,7 +37,7 @@ public class JavaDocPanel extends PropertySheetPanel
 			MyProperty prop = new MyProperty(info, map.get(info));
 			data.add(prop);
 		}
-		data.add(0, new RtProperty(ClassRepository.getInstance().getRtDocInfo()));
+		data.add(0, new RtProperty(ClassRepository.getInstance().getJavaDocPath()));
 		table.setModel(new MyTableModel(data));
 		setTable(table);
 		setDescriptionVisible(true);
@@ -146,7 +146,7 @@ public class JavaDocPanel extends PropertySheetPanel
 		} 
 
 		@Override
-		public Class getType()
+		public Class<?> getType()
 		{
 			return File.class;
 		}
@@ -156,7 +156,7 @@ public class JavaDocPanel extends PropertySheetPanel
 		{
 			if(val == null) return;
 			doc = new RtDocInfo(((File)val).getAbsolutePath());
-			ClassRepository.getInstance().setRtJavaDoc(doc.getName());
+			ClassRepository.getInstance().setJavaDocPath(doc.getName());
 		}
 	}
 }

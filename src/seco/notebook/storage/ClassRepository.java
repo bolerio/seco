@@ -23,10 +23,12 @@ import java.util.jar.JarFile;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGIndex;
+import org.hypergraphdb.HGIndexManager;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery;
 import org.hypergraphdb.HGRandomAccessResult;
 import org.hypergraphdb.HGSearchResult;
+import org.hypergraphdb.HGTypeSystem;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.IncidenceSet;
 import org.hypergraphdb.indexing.ByPartIndexer;
@@ -36,18 +38,17 @@ import seco.U;
 import seco.notebook.AppConfig;
 import seco.notebook.util.RequestProcessor;
 
-
-
 public class ClassRepository
 {
-    // private static final String PATH = AppForm.getConfigDirectory()
-    // .getAbsolutePath()
-    // + "/.notebook/repository";
     public static final String REPOSITORY_NAME = ".secoRepository";
     static String repositoryPath = new File(new File(U.findUserHome()),
             REPOSITORY_NAME).getAbsolutePath();
-    static final HGPersistentHandle JARS_MAP_HANDLE = HGHandleFactory
+    
+    private static final HGPersistentHandle JARS_MAP_HANDLE = HGHandleFactory
             .makeHandle("1d3b7df9-f109-11dc-9512-073dfab2b15a");
+    private static final HGPersistentHandle JAVADOC_HANDLE = HGHandleFactory
+    .makeHandle("b12ecac6-d6d8-4de1-9924-88326993e4e2");
+    
     private static final String PCK_INDEX = "PackageInfo";
     private static final String PCK_NAME_PROP = "name";
     private static final String PCK_FULL_NAME_PROP = "fullName";
@@ -63,24 +64,24 @@ public class ClassRepository
     private ClassRepository(final HyperGraph hg)
     {
         this.hg = hg;
-//        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-//            public void run()
-//            {
-//                try
-//                {
-//                    if (isUpdateInProgress()) System.out
-//                            .println("Finishing repository creation."
-//                                    + " Please wait.");
-//                    while (isUpdateInProgress())
-//                        Thread.sleep(1000);
-//                    // hg.close();
-//                }
-//                catch (Throwable t)
-//                {
-//                    t.printStackTrace(System.err);
-//                }
-//            }
-//        }));
+        // Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+        // public void run()
+        // {
+        // try
+        // {
+        // if (isUpdateInProgress()) System.out
+        // .println("Finishing repository creation."
+        // + " Please wait.");
+        // while (isUpdateInProgress())
+        // Thread.sleep(1000);
+        // // hg.close();
+        // }
+        // catch (Throwable t)
+        // {
+        // t.printStackTrace(System.err);
+        // }
+        // }
+        // }));
         final String path = System.getProperty("java.home");
         if (path == null) return;
         Thread t = new Thread() {
@@ -95,29 +96,34 @@ public class ClassRepository
                             true);
                     addLibDir(new File(AppConfig.getConfigDirectory(), "lib")
                             .getAbsolutePath(), false);
-                    addJar(new File(AppConfig.getConfigDirectory(), "scriba.jar")
-                            .getAbsolutePath(), false);
+                    addJar(new File(AppConfig.getConfigDirectory(),
+                            "scriba.jar").getAbsolutePath(), false);
                     System.out.println("Repository creation finished.");
                 }
                 finally
                 {
                     updateInProgress = false;
+                    hg.update(getFinishedJarsMap());
                 }
             }
         };
-        RequestProcessor.getDefault().post(t);
+        RequestProcessor.getDefault().post(t, 60000);
     }
 
+    Map<JarInfo, Boolean> jarsMap;
+    
     private Map<JarInfo, Boolean> getFinishedJarsMap()
     {
-        Map<JarInfo, Boolean> map = (Map<JarInfo, Boolean>) hg
-                .get(JARS_MAP_HANDLE);
-        if (map == null)
+        if (jarsMap == null)
         {
-            map = new HashMap<JarInfo, Boolean>();
-            hg.define(JARS_MAP_HANDLE, map);
+            jarsMap = (Map<JarInfo, Boolean>) hg.get(JARS_MAP_HANDLE);
+            if(jarsMap == null)
+            {
+               jarsMap = new HashMap<JarInfo, Boolean>();
+               hg.define(JARS_MAP_HANDLE, jarsMap);
+            }
         }
-        return map;
+        return jarsMap;
     }
 
     public static void main(String[] args)
@@ -128,11 +134,13 @@ public class ClassRepository
     public void addLibDir(String dir, boolean lib)
     {
         File[] files = new File(dir).listFiles();
-        if (files != null) for (int i = 0; i < files.length; i++)
-        {
-            if (!files[i].isDirectory() && files[i].getName().endsWith(".jar")) addJar(
-                    files[i].getAbsolutePath(), lib);
-        }
+        if (files != null)
+            for (int i = 0; i < files.length; i++)
+            {
+                if (!files[i].isDirectory()
+                        && files[i].getName().endsWith(".jar"))
+                    addJar(files[i].getAbsolutePath(), lib);
+            }
     }
 
     public void removeJar(String s)
@@ -153,7 +161,7 @@ public class ClassRepository
             if (info.getDate() != f.lastModified()
                     || !getFinishedJarsMap().containsKey(info))
             {
-                ; //hg.remove(h);// TODO: remove the old jar
+                ; // hg.remove(h);// TODO: remove the old jar
             }
             return true;
         }
@@ -226,8 +234,8 @@ public class ClassRepository
             // if (info != null && (info instanceof DocInfo))
             // System.out.println("DocInfo: " + ((DocInfo) info).getName()
             // + ":" + "jar: " + ((JarInfo) hg.get(h)).getPath());
-            if (info == null || !(info instanceof RtDocInfo)) res.put(
-                    (JarInfo) hg.get(h), (DocInfo) info);
+            if (info == null || !(info instanceof RtDocInfo))
+                res.put((JarInfo) hg.get(h), (DocInfo) info);
         }
         return res;
     }
@@ -300,10 +308,9 @@ public class ClassRepository
         }
     }
 
-    public void setRtJavaDoc(String doc)
+    public void setJavaDocPath(String doc)
     {
-        HGHandle h = getRtDocHandle();
-        hg.replace(h, new RtDocInfo(doc));
+        hg.replace(JAVADOC_HANDLE, new RtDocInfo(doc));
     }
 
     private HGHandle findTopPackage(HyperGraph hg, String s)
@@ -319,7 +326,8 @@ public class ClassRepository
 
     private HGHandle[] findSubPackages(String s)
     {
-        if (s.indexOf('.') > -1) return findSubPackages(findPackageByFullName(s));
+        if (s.indexOf('.') > -1)
+            return findSubPackages(findPackageByFullName(s));
         return findSubPackages(findTopPackage(hg, s));
     }
 
@@ -338,8 +346,8 @@ public class ClassRepository
                 HGHandle par = hg.getPersistentHandle(((ParentOfLink) o)
                         .getTargetAt(1));
                 Object parObject = hg.get(par);
-                if (!par.equals(h) && parObject instanceof NamedInfo) res
-                        .add(par);
+                if (!par.equals(h) && parObject instanceof NamedInfo)
+                    res.add(par);
             }
         }
         return res.toArray(new HGHandle[res.size()]);
@@ -431,7 +439,7 @@ public class ClassRepository
             if (lib)
             {
                 hg.add(new DocLink(
-                        new HGHandle[] { jarHandle, getRtDocHandle() }));
+                        new HGHandle[] { jarHandle, JAVADOC_HANDLE }));
             }
             String urlName = "jar:file:/" + absPath;
             // to java virtual style :
@@ -453,33 +461,38 @@ public class ClassRepository
                 // remove .class ending :
                 final String classDescriptor = vname.substring(0, vname
                         .length() - 6);
-                try
-                {
-                    Class<?> thisClass = urlClassLoader
-                            .loadClass(classDescriptor);
-                    if (thisClass == null
-                            || (thisClass.getModifiers() & Modifier.PUBLIC) == 0) continue;
-                    String simple = thisClass.getCanonicalName();
-                    if (simple == null) continue;
-                    simple = thisClass.getSimpleName();
+               
+                //looks like loading of each class leads to OutOfMemoryExc
+                
+                //try
+                //{
+                    //Class<?> thisClass = urlClassLoader
+                    //        .loadClass(classDescriptor);
+                    //if (thisClass == null
+                    //        || (thisClass.getModifiers() & Modifier.PUBLIC) == 0)
+                    //    continue;
+                    //String simple = thisClass.getCanonicalName();
+                    //if (simple == null) continue;
+                    //simple = thisClass.getSimpleName();
+                    String simple = classDescriptor.substring(
+                            classDescriptor.lastIndexOf('.') + 1);
                     // System.out.println(simple);
                     HGHandle clsH = getClsHandle(simple, true);
                     hg.add(new JarLink(new HGHandle[] { jarHandle, clsH }));
-                    if (lastP != null) hg.add(new ParentOfLink(new HGHandle[] {
-                            lastP, clsH }));
-                    // else
-                    // System.out.println("TopLevel class: " +simple);
-                }
-                catch (Throwable e)
-                {
+                    if (lastP != null)
+                        hg
+                                .add(new ParentOfLink(new HGHandle[] { lastP,
+                                        clsH }));
+               // }
+               // catch (Throwable e)
+               // {
                     // e.printStackTrace();
-                }
+               // }
             }
             System.out.println("Classes: " + n_cls + "(" + jarFile.size()
                     + ") packs: " + n_pack + " time: "
                     + (System.currentTimeMillis() - time) / 1000);
             getFinishedJarsMap().put(info, true);
-            hg.update(getFinishedJarsMap());
         }
         catch (Exception ee)
         {
@@ -487,24 +500,9 @@ public class ClassRepository
         }
     }
 
-    public RtDocInfo getRtDocInfo()
+    public RtDocInfo getJavaDocPath()
     {
-        return (RtDocInfo) hg.get(getRtDocHandle());
-    }
-
-    private HGHandle getRtDocHandle()
-    {
-        HGSearchResult<HGHandle> res = null;
-        try
-        {
-            res = hg.find(new AtomTypeCondition(RtDocInfo.class));
-            if (res.hasNext()) return (HGHandle) res.next();
-            return hg.add(new RtDocInfo(""));
-        }
-        finally
-        {
-            U.closeNoException(res);
-        }
+        return (RtDocInfo) hg.get(JAVADOC_HANDLE);
     }
 
     private static Vector<Set<String>> cache = new Vector<Set<String>>();
@@ -526,11 +524,12 @@ public class ClassRepository
             set = new HashSet<String>();
             set.add(s);
             cache.add(level, set);
-        } else
+        }
+        else
             set.add(s);// , h);
     }
 
-    private static String fullName(String[] packs, int level)
+    private static String full_name(String[] packs, int level)
     {
         String res = "";
         for (int i = 0; i <= level; i++)
@@ -548,7 +547,7 @@ public class ClassRepository
         if (packs.length == 1) return null;
         String[] fpacks = new String[packs.length - 1];
         for (int j = 0; j < packs.length - 1; j++)
-            fpacks[j] = fullName(packs, j);
+            fpacks[j] = full_name(packs, j);
         int n = packs.length;
         for (int i = 0; i < n - 1; i++)
         {
@@ -669,30 +668,26 @@ public class ClassRepository
 
     private void createIndexes()
     {
-        HGPersistentHandle typeH = hg.getPersistentHandle(hg.getTypeSystem()
+        HGTypeSystem ts = hg.getTypeSystem();
+        HGIndexManager im = hg.getIndexManager();
+        HGPersistentHandle typeH = hg.getPersistentHandle(ts
                 .getTypeHandle(PackageInfo.class));
-        String[] nameArr = new String[] { PCK_NAME_PROP };
         // return if already created
-        // if (hg.getIndexManager().getIndex(new ByPartIndexer(typeH, nameArr))
-        // != null) return;
-        // TODO: getIndex() throw NPE both in the upper or lower code
-        // snippets...
-        if (!hg.getTypeSystem().findAliases(typeH).isEmpty())
-        	return;
-        hg.getTypeSystem().addAlias(typeH, PCK_INDEX);
-        hg.getIndexManager().register(new ByPartIndexer(typeH, nameArr));
-        hg.getIndexManager().register(
-                new ByPartIndexer(typeH, new String[] { PCK_FULL_NAME_PROP }));
-        typeH = hg.getPersistentHandle(hg.getTypeSystem().getTypeHandle(
-                ClassInfo.class));
-        hg.getTypeSystem().addAlias(typeH, CLS_INDEX);
-        hg.getIndexManager().register(
-                new ByPartIndexer(typeH, new String[] { CLS_NAME_PROP }));
-        typeH = hg.getPersistentHandle(hg.getTypeSystem().getTypeHandle(
-                JarInfo.class));
-        hg.getTypeSystem().addAlias(typeH, JAR_INDEX);
-        hg.getIndexManager().register(
-                new ByPartIndexer(typeH, new String[] { JAR_PATH_PROP }));
+        if (!hg.getTypeSystem().findAliases(typeH).isEmpty()) return;
+        
+        ts.addAlias(typeH, PCK_INDEX);
+        im.register(new ByPartIndexer(typeH, new String[] { PCK_NAME_PROP }));
+        im.register(new ByPartIndexer(typeH,
+                new String[] { PCK_FULL_NAME_PROP }));
+        typeH = hg.getPersistentHandle(ts.getTypeHandle(ClassInfo.class));
+        ts.addAlias(typeH, CLS_INDEX);
+        im.register(new ByPartIndexer(typeH, new String[] { CLS_NAME_PROP }));
+        typeH = hg.getPersistentHandle(ts.getTypeHandle(JarInfo.class));
+        ts.addAlias(typeH, JAR_INDEX);
+        im.register(new ByPartIndexer(typeH, new String[] { JAR_PATH_PROP }));
+        
+        if (hg.get(JAVADOC_HANDLE) == null) 
+            hg.define(JAVADOC_HANDLE, new RtDocInfo(""));
     }
 
     public synchronized boolean isUpdateInProgress()
