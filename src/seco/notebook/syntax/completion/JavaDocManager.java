@@ -48,9 +48,8 @@ public class JavaDocManager
     	    	c = HTMLJavadocParser.getJavadocText(url, pkg);
     	        doc_cache.put(content, c);
     	    }
-    	}//else
-    	 		//System.out.println("Found");
-    	return c;
+    	}
+		return c;
 	}
 	
 	private URL constructURL(Object content)
@@ -75,13 +74,13 @@ public class JavaDocManager
      {
      	String tot = "";
      	if(obj instanceof Class)
-     		return classURL((Class) obj);
+     		return classURL((Class<?>) obj);
      	if(obj instanceof Method)
      	{
      		Method m = (Method) obj;
      		tot += classURL(m.getDeclaringClass());
      		tot+= "#" + m.getName() + "(";
-     		Class[] prs = m.getParameterTypes();
+     		Class<?>[] prs = m.getParameterTypes();
      		for(int i = 0; i< prs.length; i++)
      		{
      			tot += prs[i].getName();
@@ -95,10 +94,10 @@ public class JavaDocManager
      		tot += "#" + f.getName();
      	}else if(obj instanceof Constructor)
      	{
-     		Constructor f = (Constructor)obj;
+     		Constructor<?> f = (Constructor<?>)obj;
      		tot += classURL(f.getDeclaringClass());
      		tot += "#" + f.getName() + "(";
-     		Class[] prs = f.getParameterTypes();
+     		Class<?>[] prs = f.getParameterTypes();
      		for(int i = 0; i< prs.length; i++)
      		{
      			tot += prs[i].getName();
@@ -118,14 +117,17 @@ public class JavaDocManager
     	return tot;
      }
      
-     private static String classURL(Class cls)
+     private static String classURL(Class<?> cls)
      {
      	String c = cls.getName();
      	c = c.replace(".", "/") + ".html";
+     	if(cls.getEnclosingClass() != null)
+     	{
+     	    cls = cls.getEnclosingClass();
+     	    c = c.replace('$', '.');
+     	}
      	DocInfo info = ClassRepository.getInstance().getDocInfoForClass(cls);
-     	if(info != null)
-     		return  "file:///" + info.getName() + File.separator + c;
-     	return c;
+     	return  (info != null) ? "file:///" + info.getName() + File.separator + c: c;
      }
      
      private JavaDocManager()

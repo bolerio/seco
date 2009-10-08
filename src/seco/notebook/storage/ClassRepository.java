@@ -43,12 +43,12 @@ public class ClassRepository
     public static final String REPOSITORY_NAME = ".secoRepository";
     static String repositoryPath = new File(new File(U.findUserHome()),
             REPOSITORY_NAME).getAbsolutePath();
-    
+
     private static final HGPersistentHandle JARS_MAP_HANDLE = HGHandleFactory
             .makeHandle("1d3b7df9-f109-11dc-9512-073dfab2b15a");
     private static final HGPersistentHandle JAVADOC_HANDLE = HGHandleFactory
-    .makeHandle("b12ecac6-d6d8-4de1-9924-88326993e4e2");
-    
+            .makeHandle("b12ecac6-d6d8-4de1-9924-88326993e4e2");
+
     private static final String PCK_INDEX = "PackageInfo";
     private static final String PCK_NAME_PROP = "name";
     private static final String PCK_FULL_NAME_PROP = "fullName";
@@ -111,16 +111,16 @@ public class ClassRepository
     }
 
     Map<JarInfo, Boolean> jarsMap;
-    
+
     private Map<JarInfo, Boolean> getFinishedJarsMap()
     {
         if (jarsMap == null)
         {
             jarsMap = (Map<JarInfo, Boolean>) hg.get(JARS_MAP_HANDLE);
-            if(jarsMap == null)
+            if (jarsMap == null)
             {
-               jarsMap = new HashMap<JarInfo, Boolean>();
-               hg.define(JARS_MAP_HANDLE, jarsMap);
+                jarsMap = new HashMap<JarInfo, Boolean>();
+                hg.define(JARS_MAP_HANDLE, jarsMap);
             }
         }
         return jarsMap;
@@ -220,8 +220,8 @@ public class ClassRepository
     }
 
     /**
-     * Returns a map of all jars(except J2SE ones) and corresponding javadoc
-     * dirs as defined in repository
+     * Returns a map of all jars(except J2SE ones) and corresponding JavaDoc
+     * paths as defined in repository
      */
     public Map<JarInfo, DocInfo> getJavaDocAssoiciations()
     {
@@ -400,17 +400,13 @@ public class ClassRepository
         for (HGHandle ih : set)
         {
             Object o = hg.get(ih);
-            // System.out.println(i + ":" + o);
             if (o instanceof ParentOfLink)
             {
                 HGHandle par = hg.getPersistentHandle(((ParentOfLink) o)
                         .getTargetAt(0));
                 Object parObject = hg.get(par);
                 if (!par.equals(h) && parObject instanceof PackageInfo)
-                {
-                    // System.out.println("Par:" + hg.get(par) + ":" + par);
                     res.add(par);
-                }
             }
         }
         // System.out.println(res.size());
@@ -438,15 +434,16 @@ public class ClassRepository
             HGHandle jarHandle = hg.add(info);
             if (lib)
             {
-                hg.add(new DocLink(
-                        new HGHandle[] { jarHandle, JAVADOC_HANDLE }));
+                hg
+                        .add(new DocLink(new HGHandle[] { jarHandle,
+                                JAVADOC_HANDLE }));
             }
-            String urlName = "jar:file:/" + absPath;
+            //String urlName = "jar:file:/" + absPath;
             // to java virtual style :
-            String virtualURLname = urlName += "!/";
-            URL jarFileURL = new URL(virtualURLname);
-            URL[] urlList = new URL[] { jarFileURL };
-            URLClassLoader urlClassLoader = new URLClassLoader(urlList);
+            //String virtualURLname = urlName += "!/";
+            //URL jarFileURL = new URL(virtualURLname);
+            //[] urlList = new URL[] { jarFileURL };
+            //URLClassLoader urlClassLoader = new URLClassLoader(urlList);
             Enumeration<JarEntry> jarEntries = jarFile.entries();
             jarEntries = jarFile.entries();
             while (jarEntries.hasMoreElements())
@@ -457,37 +454,16 @@ public class ClassRepository
                 if (!entryName.endsWith(".class")) continue;
                 if (entryName.indexOf('$') > 0) continue;// TODO:
                 HGHandle lastP = processPackage(jarHandle, entryName);
-                String vname = entryName.replace('/', '.');
                 // remove .class ending :
-                final String classDescriptor = vname.substring(0, vname
-                        .length() - 6);
-               
-                //looks like loading of each class leads to OutOfMemoryExc
-                
-                //try
-                //{
-                    //Class<?> thisClass = urlClassLoader
-                    //        .loadClass(classDescriptor);
-                    //if (thisClass == null
-                    //        || (thisClass.getModifiers() & Modifier.PUBLIC) == 0)
-                    //    continue;
-                    //String simple = thisClass.getCanonicalName();
-                    //if (simple == null) continue;
-                    //simple = thisClass.getSimpleName();
-                    String simple = classDescriptor.substring(
-                            classDescriptor.lastIndexOf('.') + 1);
-                    // System.out.println(simple);
-                    HGHandle clsH = getClsHandle(simple, true);
-                    hg.add(new JarLink(new HGHandle[] { jarHandle, clsH }));
-                    if (lastP != null)
-                        hg
-                                .add(new ParentOfLink(new HGHandle[] { lastP,
-                                        clsH }));
-               // }
-               // catch (Throwable e)
-               // {
-                    // e.printStackTrace();
-               // }
+                String classDes = entryName.substring(0, entryName.length() - 6);
+                // loading of each class leads to OutOfMemoryExc in some JVM
+                // versions, so take the name from file
+                String simple = classDes
+                        .substring(classDes.lastIndexOf('.') + 1);
+                HGHandle clsH = getClsHandle(simple, true);
+                hg.add(new JarLink(new HGHandle[] { jarHandle, clsH }));
+                if (lastP != null)
+                    hg.add(new ParentOfLink(new HGHandle[] { lastP, clsH }));
             }
             System.out.println("Classes: " + n_cls + "(" + jarFile.size()
                     + ") packs: " + n_pack + " time: "
@@ -674,7 +650,7 @@ public class ClassRepository
                 .getTypeHandle(PackageInfo.class));
         // return if already created
         if (!hg.getTypeSystem().findAliases(typeH).isEmpty()) return;
-        
+
         ts.addAlias(typeH, PCK_INDEX);
         im.register(new ByPartIndexer(typeH, new String[] { PCK_NAME_PROP }));
         im.register(new ByPartIndexer(typeH,
@@ -685,8 +661,8 @@ public class ClassRepository
         typeH = hg.getPersistentHandle(ts.getTypeHandle(JarInfo.class));
         ts.addAlias(typeH, JAR_INDEX);
         im.register(new ByPartIndexer(typeH, new String[] { JAR_PATH_PROP }));
-        
-        if (hg.get(JAVADOC_HANDLE) == null) 
+
+        if (hg.get(JAVADOC_HANDLE) == null)
             hg.define(JAVADOC_HANDLE, new RtDocInfo(""));
     }
 

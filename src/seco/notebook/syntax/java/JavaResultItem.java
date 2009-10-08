@@ -981,8 +981,6 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         private String name = null;
         private static JavaPaintComponent.NbInterfacePaintComponent interfaceComponent = null;
         private static JavaPaintComponent.NbClassPaintComponent classComponent = null;
-        //private static JavaPaintComponent.NbEnumPaintComponent enumComponent = null;
-        //private static JavaPaintComponent.NbAnnotationPaintComponent annotationComponent = null;
         private static final boolean autoImportDisabled = Boolean
                 .getBoolean("org.netbeans.java.editor.disableAutoImport"); // NOI18N
         private static final boolean autoGenerationDisabled = Boolean

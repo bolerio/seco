@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import javax.script.ScriptException;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JToolTip;
@@ -122,8 +121,8 @@ public class BshCompletionProvider implements CompletionProvider
 				// System.out.println("BshCompProv - query: " + s + ":" +
 				// offset);
 				Object obj = p.resolveVar(s, offset);
-				//System.out.println("BshCompProv - query - obj: " + obj +
-				// " cls:" + ((obj != null) ? obj.getClass(): "null") + ":" + p.evaled_or_guessed);
+				System.out.println("BshCompProv - query - obj: " + obj +
+				 " cls:" + ((obj != null) ? obj.getClass(): "null") + ":" + p.evaled_or_guessed);
 				if (obj == null) {resultSet.finish(); return;}
 				Class<?> cls = obj.getClass();
 				if (cls.getName().indexOf("bsh.XThis") >= 0)
