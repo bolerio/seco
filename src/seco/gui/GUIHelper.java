@@ -341,7 +341,7 @@ public class GUIHelper
         }
     }
 
-    /* public */public static class ExitAction extends AbstractAction
+    public static class ExitAction extends AbstractAction
     {
         public ExitAction()
         {
@@ -447,8 +447,7 @@ public class GUIHelper
 
     public static JMenuBar getMenuBar()
     {
-        JMenuBar menuBar = (JMenuBar) ThisNiche.hg
-                .get(GUIHelper.MENUBAR_HANDLE);
+        JMenuBar menuBar = ThisNiche.hg.get(GUIHelper.MENUBAR_HANDLE);
         if (menuBar == null)
         {
             menuBar = new JMenuBar();
@@ -586,21 +585,21 @@ public class GUIHelper
                     .defaultVisualForAtom(GUIHelper.MENUBAR_HANDLE),
                     new DefaultLayoutHandler(new DRect(new DValue(0),
                             new DValue(0), new DValue(100, true),
-                            new DValue(28)), RefPoint.TOP_LEFT), null);
+                            new DValue(28)), RefPoint.TOP_LEFT), null, 0);
         getMainToolBar();
         if (group.indexOf(GUIHelper.TOOLBAR_HANDLE) < 0)
             addToCellGroup(GUIHelper.TOOLBAR_HANDLE, group, VisualsManager
                     .defaultVisualForAtom(GUIHelper.TOOLBAR_HANDLE),
                     new DefaultLayoutHandler(new DRect(new DValue(0),
                             new DValue(28), new DValue(/* 280 */33, true),
-                            new DValue(28)), RefPoint.TOP_LEFT), null);
+                            new DValue(28)), RefPoint.TOP_LEFT), null, 1);
         getHTMLToolBar();
         if (group.indexOf(GUIHelper.HTML_TOOLBAR_HANDLE) < 0)
             addToCellGroup(GUIHelper.HTML_TOOLBAR_HANDLE, group, VisualsManager
                     .defaultVisualForAtom(GUIHelper.HTML_TOOLBAR_HANDLE),
                     new DefaultLayoutHandler(new DRect(new DValue(/* 280 */33,
                             true), new DValue(28), new DValue(67, true),
-                            new DValue(28)), RefPoint.TOP_LEFT), null);
+                            new DValue(28)), RefPoint.TOP_LEFT), null, 2);
 
         // getJTabbedPane();
         // if(group.indexOf(ThisNiche.TABBED_PANE_GROUP_HANDLE) < 0)
@@ -609,7 +608,7 @@ public class GUIHelper
 
     public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
             HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell,
-            Map<Object, Object> addit_attribs)
+            Map<Object, Object> addit_attribs, int index)
     {
         HGHandle cellH = (create_cell) ? CellUtils.getCellHForRefH(h) : h;
         CellGroupMember out = ThisNiche.hg.get(cellH);
@@ -619,20 +618,27 @@ public class GUIHelper
         if(addit_attribs != null)
             for(Object key: addit_attribs.keySet())
                 out.setAttribute(key, addit_attribs.get(key));
-        group.insert(group.getArity(), out);
+        int i = (index >= 0 && index <= group.getArity()) ? index : group.getArity();
+        group.insert(i, out);
         return cellH;
     }
     
     public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
             HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell)
     {
-        return addToCellGroup(h, group, visualH, lh, r, create_cell, null);
+        return addToCellGroup(h, group, visualH, lh, r, create_cell, null, -1);
+    }
+    
+    public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
+            HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell, int index)
+    {
+        return addToCellGroup(h, group, visualH, lh, r, create_cell, null, index);
     }
 
     public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
-            HGHandle visualH, LayoutHandler lh, Rectangle r)
+            HGHandle visualH, LayoutHandler lh, Rectangle r, int index)
     {
-        return addToCellGroup(h, group, visualH, lh, r, true);
+        return addToCellGroup(h, group, visualH, lh, r, true, index); 
     }
 
     public static HGHandle addToTopCellGroup(HGHandle h, HGHandle visualH,
@@ -688,7 +694,7 @@ public class GUIHelper
         }
         Object x = ThisNiche.hg.get(objectHandle);
         return GUIHelper.addToCellGroup(objectHandle, group, null, null, r,
-                !(x instanceof CellGroupMember), addit_attribs);
+                !(x instanceof CellGroupMember), addit_attribs, -1);
     }
 
     public static void removeFromCellGroup(HGHandle groupH, HGHandle h, boolean backup)

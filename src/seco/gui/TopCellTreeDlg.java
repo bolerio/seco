@@ -1,5 +1,6 @@
 package seco.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -19,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeModelListener;
@@ -41,7 +43,7 @@ import seco.things.Scriptlet;
 public class TopCellTreeDlg extends JDialog
 {
     protected CellGroupMember top;
-    protected JEditorPane output;
+    protected JTextArea output;
     
     public TopCellTreeDlg(CellGroupMember cell)
     {
@@ -51,8 +53,9 @@ public class TopCellTreeDlg extends JDialog
         if (name == null) name = "";
         setTitle("Cells Hierarchy: " + name);
         setSize(700, 800);
-        output = new JEditorPane();
+        output = new JTextArea();
         output.setEditable(false);
+        output.setBackground(Color.white);
         JTree tree = new NotebookCellsTree();
         JScrollPane pane = new JScrollPane(tree);
         JScrollPane output_pane = new JScrollPane(output);

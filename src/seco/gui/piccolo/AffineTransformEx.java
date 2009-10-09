@@ -40,6 +40,11 @@ public class AffineTransformEx
         
     }
     
+    public void clearTranslation()
+    {
+        this.m02 = 0;
+        this.m12 = 0;
+    }
 
     public String toString()
     {

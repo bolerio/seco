@@ -96,13 +96,25 @@ public class CommonActions
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         canvas.getCamera().removeAllChildren();
         canvas.getNodeLayer().removeAllChildren();
+        CellGroup group = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        CellVisual v = ThisNiche.hg.get(group.getVisual());
         ThisNiche.hg.remove(GUIHelper.MENUBAR_HANDLE, true);
         ThisNiche.hg.remove(GUIHelper.TOOLBAR_HANDLE, true);
         ThisNiche.hg.remove(GUIHelper.HTML_TOOLBAR_HANDLE, true);
+        
+        ContextMenuHandler.clear();
+        
         GUIHelper.makeTopCellGroup(ThisNiche.hg);
-        CellGroup group = (CellGroup) ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-        CellVisual v = (CellVisual) ThisNiche.hg.get(group.getVisual());
         v.bind(group);
+    }
+    
+    public static void resetZoom()
+    {
+        CellGroup group = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        group.getAttributes().remove(VisualAttribs.zoom);
+        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
+        canvas.getCamera().setViewScale(1.0);
+        canvas.getCamera().setViewOffset(0, 0);
     }
     
     public static void testEmbededContainer()

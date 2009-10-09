@@ -38,6 +38,7 @@ import seco.events.handlers.CopyAttributeChangeHandler;
 import seco.events.handlers.CopyCellGroupChangeHandler;
 import seco.events.handlers.CopyCellTextChangeHandler;
 import seco.events.handlers.CopyEvalCellHandler;
+import seco.gui.CellContainerVisual;
 import seco.gui.JComponentVisual;
 import seco.gui.NBUIVisual;
 import seco.gui.PSwingNode;
@@ -356,6 +357,13 @@ public class CellUtils
             if(remove_other_bounds)
                 c.getAttributes().remove(VisualAttribs.minRect);
         }
+        
+//        AffineTransformEx at = getZoom(ThisNiche.hg.getHandle(c));
+//        if(at != null)
+//        {
+//            at.clearTranslation();
+//            c.setAttribute(VisualAttribs.zoom, at);
+//        }
     }
 
     public static NBStyle getStyle(CellGroupMember c, StyleType type)

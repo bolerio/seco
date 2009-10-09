@@ -136,7 +136,6 @@ public class PiccoloCanvas extends PSwingCanvas
                 {
                     AffineTransformEx old = CellUtils.getZoom(h);
                     if(tr != null && tr.equals(old)) return;
-                   // System.out.println("PROPERTY_CODE_VIEW_TRANSFORM: " + tr + ":" + h);
                     CellUtils.setZoom(h, tr);
                 }
             }
