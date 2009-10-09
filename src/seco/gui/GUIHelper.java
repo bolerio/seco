@@ -8,7 +8,6 @@ import static seco.notebook.Actions.NEW;
 import static seco.notebook.Actions.OPEN;
 import static seco.notebook.Actions.PASTE;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -18,8 +17,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,10 +27,6 @@ import java.util.concurrent.Callable;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -45,10 +38,7 @@ import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
-import javax.swing.TransferHandler;
 import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.DefaultEditorKit;
@@ -68,9 +58,7 @@ import seco.gui.layout.RefPoint;
 import seco.notebook.ActionManager;
 import seco.notebook.Actions;
 import seco.notebook.AppConfig;
-import seco.notebook.NotebookCellsTree;
 import seco.notebook.NotebookEditorKit;
-import seco.notebook.NotebookTreeModel;
 import seco.notebook.NotebookUI;
 import seco.notebook.ScriptletAction;
 import seco.notebook.gui.DialogDisplayer;
@@ -578,15 +566,8 @@ public class GUIHelper
 
     public static void openCellTree(CellGroupMember cell)
     {
-        String title = "Cells Hierarchy: ";
-        String name = CellUtils.getName(cell);
-        if (name == null) name = "";
-        title += name;
-        JDialog dialog = new JDialog(TopFrame.getInstance(), title);
+        JDialog dialog = new TopCellTreeDlg(cell);
         dialog.setSize(500, 800);
-        JTree tree = new NotebookCellsTree(new NotebookTreeModel(cell));
-        JScrollPane pane = new JScrollPane(tree);
-        dialog.add(pane);
         dialog.setVisible(true);
     }
 
@@ -925,7 +906,7 @@ public class GUIHelper
         menu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
         menu.add(new EnhancedMenu("CellGroup", new CellGroupPropsProvider()));
         menu.add(new JSeparator());
-        JMenuItem mi = new JMenuItem("Top CellGroup Tree");
+        JMenuItem mi = new GlobMenuItem("Top CellGroup Tree");
         mi.addActionListener(new TopCellTreeAction());
         menu.add(mi);
         return menu;
