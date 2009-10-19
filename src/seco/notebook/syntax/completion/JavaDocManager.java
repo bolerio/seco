@@ -24,7 +24,6 @@ public class JavaDocManager
 	public static final boolean SHOW_DOC = true;
 	//private static final String JAVADOC =
 	//	"file:///C:/Program Files/Java/jdk1.5.0_01/docs/api/";
-		//"http://java.sun.com/j2se/1.5.0/docs/api/";
 	
 	private static JavaDocManager instance;
 	private static Map<Object, String> doc_cache = new HashMap<Object, String>();

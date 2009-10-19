@@ -22,8 +22,6 @@ import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.atom.HGAtomRef;
 import org.hypergraphdb.query.HGQueryCondition;
 
-import edu.umd.cs.piccolo.util.PAffineTransform;
-
 import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
 import seco.events.BackupLink;
@@ -38,22 +36,20 @@ import seco.events.handlers.CopyAttributeChangeHandler;
 import seco.events.handlers.CopyCellGroupChangeHandler;
 import seco.events.handlers.CopyCellTextChangeHandler;
 import seco.events.handlers.CopyEvalCellHandler;
-import seco.gui.CellContainerVisual;
 import seco.gui.JComponentVisual;
 import seco.gui.NBUIVisual;
-import seco.gui.PSwingNode;
 import seco.gui.TabbedPaneVisual;
 import seco.gui.VisualAttribs;
 import seco.gui.VisualsManager;
 import seco.gui.layout.LayoutHandler;
 import seco.gui.piccolo.AffineTransformEx;
-import seco.notebook.DocUtil;
 import seco.notebook.NBStyle;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.StyleAttribs;
 import seco.notebook.StyleType;
 import seco.notebook.XMLConstants;
+import edu.umd.cs.piccolo.util.PAffineTransform;
 
 public class CellUtils
 {

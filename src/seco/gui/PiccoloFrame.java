@@ -64,8 +64,9 @@ public class PiccoloFrame extends TopFrame
         if(ThisNiche.hg == null) System.exit(0);
         CellGroup group = (CellGroup) ThisNiche.hg.get(
                 ThisNiche.TOP_CELL_GROUP_HANDLE);
-        group.setAttribute(VisualAttribs.rect, getBounds());
-        saveDims();
+       //BIZI: 
+        //group.setAttribute(VisualAttribs.rect, getBounds());
+       // saveDims();
         super.exit();
     }
 

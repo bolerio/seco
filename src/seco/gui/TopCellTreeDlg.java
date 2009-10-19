@@ -4,16 +4,18 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -32,8 +34,10 @@ import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
+import seco.boot.NicheBootListener;
 import seco.events.EventPubSub;
 import seco.notebook.gui.GUIUtilities;
+import seco.notebook.gui.OpenBookPanel;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -44,7 +48,7 @@ public class TopCellTreeDlg extends JDialog
 {
     protected CellGroupMember top;
     protected JTextArea output;
-    
+
     public TopCellTreeDlg(CellGroupMember cell)
     {
         super(TopFrame.getInstance(), false);
@@ -64,7 +68,14 @@ public class TopCellTreeDlg extends JDialog
         split.setResizeWeight(0.6);
         add(split);
     }
-    
+
+    protected void processWindowEvent(WindowEvent e)
+    {
+        if (e.getID() == WindowEvent.WINDOW_CLOSING
+                && NicheBootListener.DEBUG_NICHE) System.exit(0);
+        super.processWindowEvent(e);
+    }
+
     private void out(String text)
     {
         output.setText(text);
@@ -74,11 +85,12 @@ public class TopCellTreeDlg extends JDialog
     {
         public Object getChild(Object parent, int index)
         {
-            if (parent instanceof CellGroup) 
-                return ((CellGroup) parent).getElement(index);
+            if (parent instanceof CellGroup) return ((CellGroup) parent)
+                    .getElement(index);
             else if (parent instanceof Cell)
             {
-                List<Cell> list = CellUtils.getOutCells(ThisNiche.handleOf(parent));
+                List<Cell> list = CellUtils.getOutCells(ThisNiche
+                        .handleOf(parent));
                 return list.get(index);
             }
             return null;
@@ -86,7 +98,8 @@ public class TopCellTreeDlg extends JDialog
 
         public int getChildCount(Object parent)
         {
-            if (parent instanceof CellGroup) return ((CellGroup) parent).getArity();
+            if (parent instanceof CellGroup) return ((CellGroup) parent)
+                    .getArity();
             else if (parent instanceof Cell) return CellUtils.getOutCells(
                     ThisNiche.handleOf(parent)).size();
             else
@@ -97,7 +110,8 @@ public class TopCellTreeDlg extends JDialog
         {
             if (!(parent instanceof CellGroup))
             {
-                List<Cell> list = CellUtils.getOutCells(ThisNiche.handleOf(parent));
+                List<Cell> list = CellUtils.getOutCells(ThisNiche
+                        .handleOf(parent));
                 for (int i = 0; i < list.size(); i++)
                     if (child.equals(list.get(i))) return i;
                 return -1;
@@ -154,7 +168,7 @@ public class TopCellTreeDlg extends JDialog
 
         private JPopupMenu makePopupMenu()
         {
-            final CellGroupMember node = (CellGroupMember) getLastSelectedPathComponent();
+            final CellGroupMember cgm = (CellGroupMember) getLastSelectedPathComponent();
             TreePath selPath = getSelectionModel().getSelectionPath();
             CellGroupMember par = null;
             if (selPath != null && selPath.getParentPath() != null) par = (CellGroupMember) selPath
@@ -162,13 +176,13 @@ public class TopCellTreeDlg extends JDialog
             else
                 par = null;
             JPopupMenu popup = new JPopupMenu();
-            if (node instanceof Cell)
+            if (cgm instanceof Cell)
             {
                 JMenuItem item = new JMenuItem("Print Atom");
                 item.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e)
                     {
-                        Cell cell = (Cell) node;
+                        Cell cell = (Cell) cgm;
                         String s = "Cell handle="
                                 + ThisNiche.hg.getHandle(cell) + "\n"
                                 + "Cell atom handle=" + cell.getAtomHandle()
@@ -188,7 +202,7 @@ public class TopCellTreeDlg extends JDialog
                                 .getFrame(NotebookCellsTree.this), "Publisher");
                         dialog.setSize(500, 800);
                         EventPubSubsPanel tree = new EventPubSubsPanel(
-                                ThisNiche.handleOf(node), true);
+                                ThisNiche.handleOf(cgm), true);
                         JScrollPane pane = new JScrollPane(tree);
                         dialog.add(pane);
                         dialog.setVisible(true);
@@ -210,7 +224,7 @@ public class TopCellTreeDlg extends JDialog
                                 .getFrame(NotebookCellsTree.this), "Subscriber");
                         dialog.setSize(500, 800);
                         EventPubSubsPanel tree = new EventPubSubsPanel(
-                                ThisNiche.handleOf(node), false);
+                                ThisNiche.handleOf(cgm), false);
                         JScrollPane pane = new JScrollPane(tree);
                         dialog.add(pane);
                         dialog.setVisible(true);
@@ -228,38 +242,49 @@ public class TopCellTreeDlg extends JDialog
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-                    HGHandle h = ThisNiche.handleOf(node);
-                    CellGroupMember c = (CellGroupMember) ThisNiche.hg.get(h);
                     String s = "Attributes: \n";
-                    for(Map.Entry<Object, Object> n : c.getAttributes().entrySet())
+                    for (Map.Entry<Object, Object> n : cgm.getAttributes()
+                            .entrySet())
                         s += "" + n.getKey() + " = " + n.getValue() + "\n";
                     out(s);
                 }
             });
             popup.add(menuItem);
+
+            menuItem = new JMenuItem("Delete Attribute"); // NOI18N
+            menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e)
+                {
+                    JDialog dialog = new JDialog(TopFrame.getInstance(),
+                            "Delete Attributes");
+                    dialog.setSize(300, 200);
+                    dialog.add(new RemoveAttribsPanel(cgm));
+                    dialog.setVisible(true);
+                }
+            });
+            popup.add(menuItem);
+
             menuItem = new JMenuItem("Value"); // NOI18N
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-                    HGHandle h = ThisNiche.handleOf(node);
-                    Cell c = (Cell) ThisNiche.hg.get(h);
+                    Cell c = (Cell) cgm;
                     Object val = c.getValue();
                     if (val instanceof Scriptlet)
                         val = ((Scriptlet) val).getCode();
-                    out("Value: " + val + ":" + ThisNiche.handleOf(node) + ":"
-                            + val.getClass());
+                    out("Value: " + val + ":" + ThisNiche.handleOf(cgm) + ":"
+                            + ((val != null) ? val.getClass() : ""));
                 }
             });
-            menuItem.setEnabled(node instanceof Cell);
+            menuItem.setEnabled(cgm instanceof Cell);
             popup.add(menuItem);
             menuItem = new JMenuItem("Remove"); // NOI18N
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-                    HGHandle h = ThisNiche.handleOf(node);
-                    CellGroupMember c = ThisNiche.hg.get(h);
+                    HGHandle h = ThisNiche.handleOf(cgm);
                     CellGroup group = CellUtils.getParentGroup(h);
-                    if (group != null) group.remove(c);
+                    if (group != null) group.remove(cgm);
 
                     // TODO: rather brutal refresh, but the remove operation
                     // is not expected to be very frequent
@@ -267,7 +292,26 @@ public class TopCellTreeDlg extends JDialog
                 }
             });
             popup.add(menuItem);
+            
+            menuItem = new JMenuItem("Get Handle In Clipboard"); // NOI18N
+            menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e)
+                {
+                    putInClipboard(ThisNiche.handleOf(cgm));
+                }
+            });
+            popup.add(menuItem);
+
             return popup;
+        }
+        
+        // This method writes a string to the system clipboard.
+        // otherwise it returns null.
+        private void putInClipboard(HGHandle h) {
+            String str = "h  = org.hypergraphdb.HGHandleFactory.makeHandle(\"" +
+            ThisNiche.hg.getPersistentHandle(h) + "\");";
+            StringSelection ss = new StringSelection(str);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
         }
     }
 
@@ -328,10 +372,12 @@ public class TopCellTreeDlg extends JDialog
                     for (int i = 0; i < removed.length; i++)
                     {
                         EventPubSub eps = (EventPubSub) removed[i];
-                        String s = "" + eps + "\n" +
-                        "Pub: " + ThisNiche.hg.get(eps.getPublisher()) + "\n" +
-                        "Sub: " + ThisNiche.hg.get(eps.getSubscriber()) + "\n" +
-                        "Handler: " + ThisNiche.hg.get(eps.getEventHandler());
+                        String s = "" + eps + "\n" + "Pub: "
+                                + ThisNiche.hg.get(eps.getPublisher()) + "\n"
+                                + "Sub: "
+                                + ThisNiche.hg.get(eps.getSubscriber()) + "\n"
+                                + "Handler: "
+                                + ThisNiche.hg.get(eps.getEventHandler());
                         TopCellTreeDlg.this.out(s);
                     }
                 }
@@ -368,6 +414,62 @@ public class TopCellTreeDlg extends JDialog
                 docs.remove(removed[i]);
             }
             list.setListData(docs.toArray());
+        }
+    }
+
+    class RemoveAttribsPanel extends JPanel
+    {
+        private JList list;
+        private CellGroupMember cgm;
+
+        public RemoveAttribsPanel(CellGroupMember cgm)
+        {
+            this.cgm = cgm;
+            initComponents();
+            list.setListData(cgm.getAttributes().keySet().toArray());
+        }
+
+        private void initComponents()
+        {
+            JScrollPane scroll = new JScrollPane();
+            list = new JList();
+            JButton btnRemove = new JButton();
+
+            setLayout(new GridBagLayout());
+
+            setMinimumSize(new Dimension(300, 100));
+            scroll.setMinimumSize(new Dimension(400, 80));
+            scroll.setPreferredSize(new Dimension(400, 300));
+            list.setMaximumSize(new Dimension(1000, 800));
+            scroll.setViewportView(list);
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridheight = 6;
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.anchor = GridBagConstraints.WEST;
+            gbc.weightx = 1.0;
+            gbc.weighty = 1.0;
+            add(scroll, gbc);
+
+            btnRemove.setText("Remove");
+            btnRemove.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt)
+                {
+                    if (list.getSelectedIndex() == -1) return;
+                    Object[] removed = list.getSelectedValues();
+                    for (int i = 0; i < removed.length; i++)
+                        cgm.getAttributes().remove(removed[i]);
+                    list.setListData(cgm.getAttributes().keySet().toArray());
+                }
+            });
+
+            gbc = new GridBagConstraints();
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.anchor = GridBagConstraints.NORTHEAST;
+            add(btnRemove, gbc);
+
         }
     }
 }

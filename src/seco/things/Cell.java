@@ -83,9 +83,15 @@ public class Cell extends BaseCellGroupMember implements EventHandler
     @Override
     public String toString()
     {
-        return "Cell: " + 
-                ThisNiche.handleOf(this) + ":" + 
-                this.getValue();
+        String s =  "Cell: "; 
+        s += (CellUtils.getName(this) != null) ?
+           CellUtils.getName(this) + ":" : " :";
+        if(getValue() != null)
+            s += getValue().getClass().getName();
+        return s;
+        //"Cell: " + CellUtils.getName(this); 
+        //ThisNiche.handleOf(this) + ":" + 
+        //        this.getValue();
     }
 
    

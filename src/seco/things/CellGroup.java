@@ -51,14 +51,13 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
 
     public HGHandle getTargetAt(int i)
     {
-        // System.out.println("CG-getTargetAt: " + outgoingSet.get(i));
         return outgoingSet.get(i);
     }
 
     @Override
     public String toString()
     {
-        return "CellGroup" + ":" + CellUtils.getName(this) + ":" + ThisNiche.handleOf(this) + ":" + getArity();
+        return "CellGroup" + ":" + CellUtils.getName(this) + /*":" + ThisNiche.handleOf(this) +*/ ":" + getArity();
     }
 
     public void setTargetAt(int i, HGHandle h)

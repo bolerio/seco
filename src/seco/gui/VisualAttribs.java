@@ -2,14 +2,14 @@ package seco.gui;
 
 //public enum VisualAttribs
 //{
-//    name,
+//    theName,
 //    showTitle,
 //    rect,
 //    pinned,
 //    layoutHandler,
 //    minimized,
-//    maximized
-//    minRect
+//    maximized,
+//    minRect,
 //    zoom
 //}
 

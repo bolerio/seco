@@ -21,7 +21,7 @@ import seco.things.CellVisual;
 
 public class NicheBootListener implements HGListener
 {
-    private static boolean DEBUG_NICHE = false;
+    public static boolean DEBUG_NICHE = false;
     public Result handle(HyperGraph hg, HGEvent event)
     {
     	ThisNiche.bindNiche(hg);
@@ -43,6 +43,7 @@ public class NicheBootListener implements HGListener
                 if(DEBUG_NICHE)
                 {
                     new GUIHelper.TopCellTreeAction().actionPerformed(null);
+                    DEBUG_NICHE = false; 
                 }else{
                    v.bind(group);
                    s.setVisible(true);

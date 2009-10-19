@@ -1,8 +1,8 @@
 package seco.notebook.gui;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -23,16 +23,13 @@ import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
-
-
 public class OpenBookPanel extends JPanel
 {
-    private JButton Add;
-    private JButton Remove;
-    private JScrollPane jScrollPane1;
+    private JButton btnAdd;
+    private JButton btnRemove;
     private JList list;
     private List<NotebookDocument> docs = null;
-   
+
     /** Creates new form AddRemoveListPanel */
     public OpenBookPanel()
     {
@@ -41,107 +38,101 @@ public class OpenBookPanel extends JPanel
         initComponents();
         list.setListData(docs.toArray());
     }
-    
+
     private void filterDocs()
     {
         docs.remove(NotebookEditorKit.getDefaultDocument());
         Set<HGHandle> opened = GUIHelper.getOpenedBooks();
-        for(NotebookDocument doc: 
-            new LinkedList<NotebookDocument>(docs))
+        for (NotebookDocument doc : new LinkedList<NotebookDocument>(docs))
         {
-            if(opened.contains(doc.getBookHandle()))
-               docs.remove(doc);
+            if (opened.contains(doc.getBookHandle())) docs.remove(doc);
         }
     }
-    
-    private void initComponents()                          
-    {
-        java.awt.GridBagConstraints gridBagConstraints;
 
-        jScrollPane1 = new JScrollPane();
+    private void initComponents()
+    {
+        JScrollPane scroll = new JScrollPane();
         list = new JList();
-        Add = new JButton();
-        Remove = new JButton();
+        btnAdd = new JButton();
+        btnRemove = new JButton();
 
         setLayout(new GridBagLayout());
 
         setMinimumSize(new Dimension(300, 100));
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(400, 80));
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(400, 300));
-        list.setMaximumSize(new java.awt.Dimension(1000, 800));
-        jScrollPane1.setViewportView(list);
+        scroll.setMinimumSize(new Dimension(400, 80));
+        scroll.setPreferredSize(new Dimension(400, 300));
+        list.setMaximumSize(new Dimension(1000, 800));
+        scroll.setViewportView(list);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridheight = 6;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        add(jScrollPane1, gridBagConstraints);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridheight = 6;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        add(scroll, gbc);
 
-        Add.setText("Open");
-        Add.addActionListener(new java.awt.event.ActionListener()
-        {
+        btnAdd.setText("Open");
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
                 open(evt);
             }
         });
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
-        add(Add, gridBagConstraints);
+        gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.SOUTHEAST;
+        add(btnAdd, gbc);
 
-        Remove.setText("Remove");
-        Remove.addActionListener(new java.awt.event.ActionListener()
-        {
+        btnRemove.setText("Remove");
+        btnRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
                 delete(evt);
             }
         });
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-        add(Remove, gridBagConstraints);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.NORTHEAST;
+        add(btnRemove, gbc);
 
     }
-    
-    protected void delete(java.awt.event.ActionEvent evt)                                       
+
+    protected void delete(java.awt.event.ActionEvent evt)
     {
-        if(list.getSelectedIndex() == -1)
-            return;
+        if (list.getSelectedIndex() == -1) return;
         else
         {
             Object[] removed = list.getSelectedValues();
-            for(int i = 0; i < removed.length; i++)
+            for (int i = 0; i < removed.length; i++)
             {
-               NotebookDocument nb = (NotebookDocument) removed[i];
-               //remove the book from its parent,e.g. from canvas if it's opened there  
-               CellGroup gr = CellUtils.getParentGroup(nb.getBookHandle());
-               if(gr != null)
-                 gr.remove((CellGroupMember) ThisNiche.hg.get(nb.getBookHandle()));
-               
-               ThisNiche.hg.remove(ThisNiche.handleOf(nb), true);
-               docs.remove(removed[i]);
+                NotebookDocument nb = (NotebookDocument) removed[i];
+                // remove the book from its parent,e.g. from canvas if it's
+                // opened there
+                CellGroup gr = CellUtils.getParentGroup(nb.getBookHandle());
+                if (gr != null)
+                    gr.remove((CellGroupMember) ThisNiche.hg.get(nb
+                            .getBookHandle()));
+
+                ThisNiche.hg.remove(ThisNiche.handleOf(nb), true);
+                docs.remove(removed[i]);
             }
             list.setListData(docs.toArray());
         }
     }
-    
+
     protected void open(java.awt.event.ActionEvent evt)
     {
-        if(list.getSelectedIndex() == -1)
-            return;
+        if (list.getSelectedIndex() == -1) return;
         Object[] removed = list.getSelectedValues();
-        for(int i=0; i < removed.length; i++)
+        for (int i = 0; i < removed.length; i++)
         {
             NotebookDocument gr = (NotebookDocument) removed[i];
             GUIHelper.openNotebook(gr.getBookHandle());
         }
-    }    
+    }
 }

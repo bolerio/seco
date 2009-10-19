@@ -123,16 +123,8 @@ public class TalkRoom extends JPanel
         inputSplit.setName("inputSplit");
         inputSplit.setOneTouchExpandable(true);
         inputSplit.setResizeWeight(1.0);
-        this.add(inputSplit, BorderLayout.CENTER);
+        add(inputSplit, BorderLayout.CENTER);
         
-//        this.addComponentListener(new ComponentAdapter() 
-//        {            
-//            public void componentResized(ComponentEvent e) 
-//            {
-//                peerListSplit.setDividerLocation((int)(0.8*getHeight()));
-//                inputSplit.setDividerLocation((int)(0.7*getWidth()));                
-//            }    
-//        });
         joinRoom();        
     }
     

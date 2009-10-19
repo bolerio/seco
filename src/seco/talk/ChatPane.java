@@ -1,6 +1,9 @@
 package seco.talk;
 
 import java.awt.Color;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.swing.Action;
 import javax.swing.JTextPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -66,7 +70,10 @@ public class ChatPane extends JTextPane
         try
         {
             getDocument().insertString(getDocument().getLength(), s, null);
-        }
+            //scroll to the end and beep
+            scrollRectToVisible(new Rectangle(0, getBounds(null).height, 1, 1));
+            Toolkit.getDefaultToolkit().beep();
+       }
         catch (BadLocationException e)
         {
             e.printStackTrace();

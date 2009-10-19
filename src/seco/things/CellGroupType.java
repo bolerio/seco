@@ -1,18 +1,14 @@
 package seco.things;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.event.EventListenerList;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.IncidenceSetRef;
 import org.hypergraphdb.LazyRef;
-import org.hypergraphdb.atom.HGRelType;
 import org.hypergraphdb.type.HGAtomType;
 import org.hypergraphdb.type.HGAtomTypeBase;
 
@@ -50,7 +46,7 @@ public class CellGroupType extends HGAtomTypeBase
 		HGAtomType mapType = graph.getTypeSystem().getAtomType(HashMap.class);		
 		CellGroup group = (CellGroup)instance;
 		HGPersistentHandle [] layout = new HGPersistentHandle[group.getArity() + 1];
-       layout[0] = mapType.store(group.attributes);
+        layout[0] = mapType.store(group.attributes);
 		for (int i = 1; i < layout.length; i++)
 		    layout[i] = graph.getPersistentHandle(
 		            group.getTargetAt(i - 1));
