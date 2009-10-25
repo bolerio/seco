@@ -12,7 +12,6 @@ import java.lang.reflect.Modifier;
 import java.util.EventListener;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractButton;
@@ -115,9 +114,7 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
 
     public HGPersistentHandle store(final Object instance)
     {
-        Map<Object, HGPersistentHandle> refMap = TypeUtils
-                .getTransactionObjectRefMap(graph);
-        HGPersistentHandle result = refMap.get(instance);
+        HGPersistentHandle result = TypeUtils.getHandleFor(graph, instance);
         if (result == null)
         {
             final Record record = new SwingRecord(typeHandle, instance);

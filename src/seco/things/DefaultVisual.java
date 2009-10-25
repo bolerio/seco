@@ -3,7 +3,7 @@ package seco.things;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPlainLink;
 
-public class DefaultVisual extends HGPlainLink
+public class DefaultVisual  extends HGPlainLink
 {
 	public DefaultVisual(HGHandle...targets)
 	{
