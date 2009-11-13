@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import seco.notebook.AppConfig;
+import seco.notebook.ruby.JRubyScriptEngine;
 import seco.notebook.syntax.Formatter;
 import seco.notebook.syntax.Mode;
 import seco.notebook.syntax.ScriptSupport;
@@ -33,6 +34,11 @@ public class BshScriptSupport extends ScriptSupport
 		 modes.add(new Mode(MODE_NAME,"/modes/java.xml"));
          modes.add(new Mode("xml","/modes/xml.xml"));
 	}
+	
+	public BshScriptSupport()
+    {
+        super();
+    }
 	
 	public Formatter getFormatter()
 	{

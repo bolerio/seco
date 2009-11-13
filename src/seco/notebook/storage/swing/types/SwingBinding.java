@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.AbstractButton;
+import javax.swing.JButton;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataListener;
@@ -77,7 +78,6 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
             //that reference this class's instance  
             boolean no_spec_ctr = hgType.getCtrHandle() == null ||
                     HGHandleFactory.nullHandle().equals(hgType.getCtrHandle());
-            //System.out.println("Make: " + hgType.getJavaClass() + ":" + no_spec_ctr);
             if (no_spec_ctr)
             {
                 bean = instantiate(hgType.getCtrHandle(), null);
@@ -89,6 +89,13 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
                 bean = instantiate(hgType.getCtrHandle(), record);
                 TypeUtils.setValueFor(graph, handle, bean);
             }
+            
+            if(bean instanceof JButton && "Connect".equals(
+                    ((JButton) bean).getText()))
+            {
+                System.out.println("SwingBinding: " + handle + ":" + bean);
+            }
+            
             if(bean == null) 
             {
                 System.err.println("Unable to create bean fo type: " + hgType.getJavaClass());
@@ -117,6 +124,11 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
         HGPersistentHandle result = TypeUtils.getHandleFor(graph, instance);
         if (result == null)
         {
+            if(instance instanceof JButton && "Connect".equals(
+                    ((JButton) instance).getText()))
+            {
+                System.out.println("SwingBinding: " + instance);
+            }
             final Record record = new SwingRecord(typeHandle, instance);
             storeBean(instance, record);
             result = hgType.store(record);

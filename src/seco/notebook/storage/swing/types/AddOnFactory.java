@@ -342,6 +342,10 @@ public class AddOnFactory
         {
             Slot slot = (Slot) hg.get(link.getTargetAt(i));
             values[i] = record.get(slot);
+           // if(values[i] instanceof Record)
+           // {
+           //     System.out.println("PROBLEM?");//
+           // }
         }
         return values;
     }

@@ -125,7 +125,7 @@ public final class ThisNiche
     static void initEvaluationContext(EvaluationContext ctx)
     {
         // Add default scripting engine
-        ctx.addLanguage("beanshell", "bsh.engine.BshScriptEngineFactory",
+        ctx.addLanguage("beanshell", "bsh.engine.BshScriptEngineFactoryEx",
                 new String[] { "bsh", "bsh.engine", "bsh.classpath",
                         "bsh.collection", "bsh.reflect", "bsh.util",
                         "bsh.commands", "bsh.reflect", "bsh.util" });

@@ -100,7 +100,7 @@ public class GUIHelper
     .makeHandle("8724b420-963b-11de-8a39-0800200c9a66");
     
     public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
-    //rectangle used for adding containers 
+    //default rectangle used for adding containers 
     public static Rectangle CONTAINER_RECT = new Rectangle(20, 70, 300, 300);
     
     static

@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 import javax.swing.event.CaretListener;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HyperGraph;
 
 import seco.ThisNiche;
 import seco.notebook.NotebookUI;
@@ -25,9 +24,7 @@ public abstract class TopFrame extends JFrame
     private static TopFrame instance;
     
     protected HGHandle focusedContainerHandle = ThisNiche.TOP_CELL_GROUP_HANDLE;
-    //handy in scripting - simple shortcut to ThisNiche.hg,
-    //but no import is needed
-    public final HyperGraph hg;
+  
     
     public static TopFrame getInstance()
     { 
@@ -38,7 +35,6 @@ public abstract class TopFrame extends JFrame
     
     public TopFrame() throws HeadlessException
     {
-        this.hg = ThisNiche.hg;
         setIconImage(Toolkit.getDefaultToolkit().getImage(
                 getClass().getResource(GUIHelper.LOGO_IMAGE_RESOURCE)));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

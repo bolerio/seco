@@ -151,6 +151,6 @@ public class CommonActions
         CellGroupMember cell = ThisNiche.hg.get(ps.getHandle());
         if (cell instanceof Cell
                 && ((Cell) cell).getValue() instanceof JComponent)
-            CellUtils.updateCellValue((Cell) cell, ps.getComponent());
+            ((Cell) cell).updateValue(ps.getComponent());
     }
 }

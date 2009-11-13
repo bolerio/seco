@@ -52,18 +52,23 @@ public class Cell extends BaseCellGroupMember implements EventHandler
         }
     }
     
-    public void updateValue(EvalCellEvent e)
+    private void updateValue(EvalCellEvent e)
     {
         //System.out.println("Cell - updateValue: " + e);
         Object val = (e.getValue().getComponent() != null) ?
                 e.getValue().getComponent() : e.getValue().getText();
         attributes.put(XMLConstants.ATTR_ERROR, e.getValue().isError());        
+        updateValue(val);
+        EventDispatcher.dispatch(EvalCellEvent.HANDLE, ThisNiche.handleOf(this), e);
+    }
+    
+    public void updateValue(Object val)
+    {
         HGHandle h = ThisNiche.handleOf(val);
         if (h == null)
             h = CellUtils.addSerializable(val);
         ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         ThisNiche.hg.update(this);
-        EventDispatcher.dispatch(EvalCellEvent.HANDLE, ThisNiche.handleOf(this), e);
     }
 
     @Override

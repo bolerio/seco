@@ -206,10 +206,11 @@ public class ConnectionPanel extends JPanel
     public void initComponents()
     {        
         if (connectButton != null)
-            return;
+           return;
         setLayout(new BorderLayout());
         setBorder(new BevelBorder(BevelBorder.RAISED));        
         setConnectButton(new JButton("Connect"));
+        connectButton.addActionListener(new ButtonListener(this));
         add(connectButton, BorderLayout.NORTH);
         peerList = new PeerList();
         peerList.setConnectionPanel(this);
@@ -330,15 +331,6 @@ public class ConnectionPanel extends JPanel
     public void setConnectButton(JButton button)
     {
         this.connectButton = button;
-        connectButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ev)
-            {
-                if (connectButton.getText().equals("Connect"))
-                    connect();
-                else if (connectButton.getText().equals("Disconnect"))
-                    disconnect();
-            }
-        });
     }
 
     public PeerList getPeerList()
@@ -350,6 +342,36 @@ public class ConnectionPanel extends JPanel
     {
         this.peerList = peerList;
         peerList.setConnectionPanel(this);
+    }
+    
+    public static class ButtonListener implements ActionListener
+    {
+        private ConnectionPanel panel;
+        
+        public ButtonListener()
+        {
+        }
+        
+        public ButtonListener(ConnectionPanel panel)
+        {
+            this.panel = panel;
+        }
+        
+        public void actionPerformed(ActionEvent ev)
+        {
+            if (panel.getConnectButton().getText().equals("Connect"))
+                panel.connect();
+            else if (panel.getConnectButton().getText().equals("Disconnect"))
+                panel.disconnect();
+        }
+        public ConnectionPanel getPanel()
+        {
+            return panel;
+        }
+        public void setPanel(ConnectionPanel panel)
+        {
+            this.panel = panel;
+        }
     }
  
 }

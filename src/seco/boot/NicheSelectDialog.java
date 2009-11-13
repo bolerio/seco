@@ -8,25 +8,36 @@
 package seco.boot;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.Window;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.SpringLayout;
+import javax.swing.border.EtchedBorder;
 
 import seco.U;
 import seco.gui.GUIHelper;
-
-import java.util.*;
-import java.io.File;
+import seco.notebook.util.RequestProcessor;
 
 /**
  * 
@@ -49,7 +60,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
 
     public NicheSelectDialog()
     {
-        // to show icon in task bar
+        // to show icon in task bar when dialog is not in front
         super(null, Dialog.ModalityType.TOOLKIT_MODAL);
         setIconImage(Toolkit.getDefaultToolkit().getImage(
                 getClass().getResource(GUIHelper.LOGO_IMAGE_RESOURCE)));
@@ -225,6 +236,10 @@ public class NicheSelectDialog extends javax.swing.JDialog
                     NicheBootListener.DEBUG_NICHE = true;
             }
         });
+
+       //needed to properly init the progressBar 
+       show_progress_bar();
+       hide_progress_bar();
     }
 
     private void cmdOpenNiche(java.util.EventObject evt)
@@ -235,6 +250,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
 
     private void cmdEditNiche(java.util.EventObject evt)
     {// GEN-FIRST:event_cmdEditNiche
+
         String selected = (String) lstNiches.getSelectedValue();
         if (!niches.containsKey(selected))
         {
@@ -310,7 +326,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
 
     private void cmdNewNiche(java.awt.event.ActionEvent evt)
     {// GEN-FIRST:event_cmdNewNiche
-        NicheEditDialog dlg = new NicheEditDialog(this, true);
+        NicheEditDialog dlg = new NicheEditDialog(this, !true);
         dlg.setDefaultDirectory(U.findUserHome());
         java.awt.Rectangle bounds = dlg.getBounds();
         bounds.x = this.getBounds().x;
@@ -320,10 +336,11 @@ public class NicheSelectDialog extends javax.swing.JDialog
         for (dlg.setSucceeded(true); dlg.getSucceeded();)
         {
             dlg.setVisible(true);
-
             if (!dlg.getSucceeded()) break;
 
-            if (dlg.getNicheName() == null || dlg.getNicheName().length() == 0)
+            final String nicheName = dlg.getNicheName();
+
+            if (nicheName == null || nicheName.length() == 0)
             {
                 JOptionPane.showMessageDialog(this,
                         "Please specify a niche name before proceeding.",
@@ -331,7 +348,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
                 continue;
             }
 
-            if (niches.get(dlg.getNicheName()) != null)
+            if (niches.get(nicheName) != null)
             {
                 JOptionPane.showMessageDialog(this,
                         "Niche name already refers to an existing niche.",
@@ -339,7 +356,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
                 continue;
             }
 
-            File location = new File(dlg.getNicheLocation(), dlg.getNicheName());
+            File location = new File(dlg.getNicheLocation(), nicheName);
 
             if (!NicheManager.isLocationOk(location))
             {
@@ -353,61 +370,92 @@ public class NicheSelectDialog extends javax.swing.JDialog
                         continue;
                 }
                 else if (JOptionPane.showConfirmDialog(this, "Create a "
-                        + dlg.getNicheName() + " sub-directory under "
+                        + nicheName + " sub-directory under "
                         + location.getAbsolutePath() + "?", "New Niche",
                         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
                 {
-                    File newDir = new File(location, dlg.getNicheName());
+                    File newDir = new File(location, nicheName);
                     newDir.mkdir();
                     location = newDir;
-                    set_busy_cursor();
-                    NicheManager.createNiche(dlg.getNicheName(), location);
+
+                    // set_busy_cursor();
+                    // NicheManager.createNiche(nicheName, location);
+
+                    create_niche(nicheName, location);
+                    break;
                 }
                 else
                     continue;
             }
             else
             {
-                set_busy_cursor();
-                NicheManager.createNiche(dlg.getNicheName(), location);
+                // set_busy_cursor();
+                // NicheManager.createNiche(nicheName, location);
+                dlg = null;
+                create_niche(nicheName, location);
+                break;
             }
             // if we reach here, it means we're done
-            niches.put(dlg.getNicheName(), location);
+            niches.put(nicheName, location);
             NicheManager.saveNiches(niches);
             updateNichesModel();
-            set_normal_cursor();
             break;
         }
     }// GEN-LAST:event_cmdNewNiche
 
-    //TODO: those two methods don't work because of:
-    //http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5079694
-    //maybe we will incorporate some progress bar in the new Seco dialog
-    private void set_busy_cursor()
+    void create_niche(final String nicheName, final File location)
     {
-        //Cursor c = new Cursor(Cursor.WAIT_CURSOR);
-       // this.setCursor(c);
-       // this.getRootPane().setCursor(c);
-        //Component glassPane = getGlassPane();
-        //glassPane.setVisible(true);
-        //glassPane.setCursor(c);
-
+        show_progress_bar();
+        RequestProcessor.getDefault().post(
+                new Runnable() {
+            public void run()
+            {
+                NicheManager.createNiche(nicheName, location);
+                niches.put(nicheName, location);
+                NicheManager.saveNiches(niches);
+                updateNichesModel();
+                hide_progress_bar();
+            }
+        }, 0, Thread.MAX_PRIORITY);
     }
 
-    private void set_normal_cursor()
+    // impossible to set wait cursor due to:
+    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5079694
+    // so will incorporate a progress bar in the dialog
+    JProgressBar progressBar;
+
+    private void show_progress_bar()
     {
-      //  Cursor c = new Cursor(Cursor.DEFAULT_CURSOR);
-      //  this.setCursor(c);
-      // Component glassPane = this.getGlassPane();
-      // glassPane.setVisible(true);
-      // glassPane.setCursor(c);
-      //  this.getRootPane().setCursor(c);
+        if (progressBar != null)
+        {
+            progressBar.setVisible(true);
+            // progressBar.setSize(100, 20);
+            progressBar.setIndeterminate(true);
+            progressBar.setEnabled(true);
+            return;
+        }
+
+        JPanel pane = (JPanel) getContentPane();
+        progressBar = new JProgressBar();
+        // progressBar.setIndeterminate(true);
+        pane.add(progressBar);
+        SpringLayout layout = (SpringLayout) pane.getLayout();
+        layout.putConstraint(SpringLayout.EAST, progressBar, -40,
+                SpringLayout.EAST, pane);
+        layout.putConstraint(SpringLayout.SOUTH, progressBar, -50,
+                SpringLayout.SOUTH, pane);
+        layout.invalidateLayout(this);
+    }
+
+    private void hide_progress_bar()
+    {
+       progressBar.setVisible(false);
     }
 
     JLabel logoLabel = new JLabel();
     JLabel copyrightLabel = new JLabel(
             "Copyright (c) 2006-2007 by Kobrix Software Inc. and others.");
-    String helpText = "<html><p><b>Welcome to Scriba!</b></p><p align='left'>If this is the first time you are running Scriba, you need to create a workspace. A workspace is called a <i>niche</i> in Scriba lingo. A niche is a dedicated directory on your computer where Scriba data will be managed. You can have many niches, but each running instance is bound to only one of them. </html>";
+    String helpText = "<html><p><b>Welcome to Seco!</b></p><p align='left'>If this is the first time you are running Seco, you need to create a workspace. A workspace is called a <i>niche</i> in Seco lingo. A niche is a dedicated directory on your computer where Seco data will be managed. You can have many niches, but each running instance is bound to only one of them. </html>";
     JLabel helpLabel = new JLabel();
     JButton btnEdit = new JButton("Edit Niche");
     JButton btnOpen = new JButton("Enter Niche");
