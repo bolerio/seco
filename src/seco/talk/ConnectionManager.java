@@ -114,17 +114,17 @@ public class ConnectionManager
     private static Map<HGPeerIdentity, ConnectionPanel> peer_panel_map = 
         new HashMap<HGPeerIdentity, ConnectionPanel>();
     
-    public static ConnectionPanel getConnectionPanel(HGPeerIdentity id)
+    static ConnectionPanel getConnectionPanel(HGPeerIdentity id)
     {
         return peer_panel_map.get(id);
     }
     
-    public static void registerConnectionPanel(HGPeerIdentity id, ConnectionPanel pan)
+    static void registerConnectionPanel(HGPeerIdentity id, ConnectionPanel pan)
     {
         peer_panel_map.put(id, pan);
     }
     
-    public static void unregisterConnectionPanel(HGPeerIdentity id)
+    static void unregisterConnectionPanel(HGPeerIdentity id)
     {
         peer_panel_map.remove(id);
     }
