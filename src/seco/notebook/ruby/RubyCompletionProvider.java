@@ -100,7 +100,7 @@ public class RubyCompletionProvider implements CompletionProvider
 			if (caretOffset >= creationCaretOffset)
 			{
 				// try {
-				if (true) // isJavaIdentifierPart(DocumentUtilities.getText(doc,
+				//if (true) // isJavaIdentifierPart(DocumentUtilities.getText(doc,
 					// creationCaretOffset, caretOffset -
 					// creationCaretOffset)))
 					return;
@@ -126,7 +126,7 @@ public class RubyCompletionProvider implements CompletionProvider
 				// offset);
 				Object obj = p.resolveVar(s, offset);
 				// if (obj != null)
-				System.out.println("RubyCompProv - query - obj: " + obj);
+				//System.out.println("RubyCompProv - query - obj: " + obj);
 				// " cls:" + ((obj != null) ? obj.getClass(): "null") + ":" +
 				// p.evaled_or_guessed);
 				if (obj == null)

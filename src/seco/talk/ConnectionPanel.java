@@ -62,6 +62,8 @@ public class ConnectionPanel extends JPanel
     String peerConfigResource = "seco/talk/xmpp1.json";
     PeerList peerList;
     
+    private HGPeerIdentity peerID;
+    
     private Future<Boolean> openPeer()
     {
         ConnectionConfig config = getConnectionConfig();
@@ -141,6 +143,7 @@ public class ConnectionPanel extends JPanel
           { 
               return startConnecting().get(); 
           }
+          
           public void onCompletion(Boolean result, Throwable t)
           {
               if (t == null && result)
@@ -153,7 +156,9 @@ public class ConnectionPanel extends JPanel
                       JOptionPane.showMessageDialog(ConnectionPanel.this, 
                       error, "Failed to get chat rooms", JOptionPane.ERROR_MESSAGE);                       
                   }
-                  connectButton.setText("Disconnect");                  
+                  connectButton.setText("Disconnect");
+                  ConnectionManager.registerConnectionPanel(thisPeer.getIdentity(), ConnectionPanel.this);
+                  peerList.setPeerID(thisPeer.getIdentity());
               }
               else
               {
@@ -163,7 +168,9 @@ public class ConnectionPanel extends JPanel
                                                 HGUtils.getRootCause(t),
                                                 "Failed to connected to network, see error console.",
                                                 JOptionPane.ERROR_MESSAGE);
-                  connectButton.setText("Connect");                          
+                  connectButton.setText("Connect");    
+                  ConnectionManager.unregisterConnectionPanel(thisPeer.getIdentity());
+                  
               }
               connectButton.setEnabled(true);                      
           }
@@ -213,7 +220,7 @@ public class ConnectionPanel extends JPanel
         connectButton.addActionListener(new ButtonListener(this));
         add(connectButton, BorderLayout.NORTH);
         peerList = new PeerList();
-        peerList.setConnectionPanel(this);
+        //peerList.setConnectionPanel(this);
         peerList.initComponents();
         add(peerList, BorderLayout.CENTER);
     }
@@ -265,15 +272,22 @@ public class ConnectionPanel extends JPanel
         if (roomPanel == null)
         {
             roomPanel = hg.getOne(ThisNiche.hg, hg.and(hg.type(TalkRoom.class), 
-                                                       hg.eq("roomId", room.getJid())));
+                         hg.eq("roomId", room.getJid()), hg.eq("peerID", thisPeer.getIdentity())));
             if (roomPanel == null)
             {
                 roomPanel = new TalkRoom();
                 roomPanel.setRoomId(room.getJid());
-                roomPanel.setConnectionPanel(this);
+                //roomPanel.setConnectionPanel(this);
+                roomPanel.setPeerID(thisPeer.getIdentity());
                 roomPanel.initComponents();
                 ThisNiche.hg.add(roomPanel);
-            } 
+            }
+            else
+            {
+                //roomPanel.setConnectionPanel(this);
+                //roomPanel.setPeerID(thisPeer.getIdentity());
+                roomPanel.joinRoom();
+            }
             //roomPanel.initComponents();
         }
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();        
@@ -341,7 +355,7 @@ public class ConnectionPanel extends JPanel
     public void setPeerList(PeerList peerList)
     {
         this.peerList = peerList;
-        peerList.setConnectionPanel(this);
+        //peerList.setConnectionPanel(this);
     }
     
     public static class ButtonListener implements ActionListener
@@ -372,6 +386,16 @@ public class ConnectionPanel extends JPanel
         {
             this.panel = panel;
         }
+    }
+
+    public HGPeerIdentity getPeerID()
+    {
+        return peerID;
+    }
+
+    public void setPeerID(HGPeerIdentity peerID)
+    {
+        this.peerID = peerID;
     }
  
 }

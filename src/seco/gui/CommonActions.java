@@ -93,9 +93,7 @@ public class CommonActions
     
     public static void restoreDefaultGUI()
     {
-        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
-        canvas.getCamera().removeAllChildren();
-        canvas.getNodeLayer().removeAllChildren();
+        TopFrame.getInstance().getCanvas().removeAllNodes();
         CellGroup group = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         CellVisual v = ThisNiche.hg.get(group.getVisual());
         ThisNiche.hg.remove(GUIHelper.MENUBAR_HANDLE, true);

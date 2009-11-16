@@ -30,16 +30,22 @@ public abstract class ScriptSupport
 	protected TokenMarker tokenMarker;
 	protected NBParser parser;
 
-	public abstract NBParser getParser();
-
-	public abstract CompletionProvider[] getCompletionProviders();
-
+	//script engine name
+    public abstract String getScriptEngineName();
+    
+	//list of Modes used for text highlighting
 	public abstract List<Mode> getModes();
 
+	//name of the main mode
 	public abstract String getModeName();
 
-	public abstract String getScriptEngineName();
+	//array of supported CompletionProviders
+    public abstract CompletionProvider[] getCompletionProviders();
+ 
+    //parser which will be called on every text change
+    public abstract NBParser getParser();
 
+	//formatter 
 	public Formatter getFormatter()
 	{
 		return null;

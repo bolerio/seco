@@ -25,8 +25,8 @@ public class TalkRoom extends JPanel
 {
     private static final long serialVersionUID = -6292689880168959513L;
     private String roomId;
-    @AtomReference("symbolic")
-    private ConnectionPanel connectionPanel;
+   // @AtomReference("symbolic")
+    //private ConnectionPanel connectionPanel;
     private ChatPane chatPane;
     private TalkInputPane inputPane;
     private PeerList peerList;
@@ -34,22 +34,25 @@ public class TalkRoom extends JPanel
     private JSplitPane peerListSplit;
     private JSplitPane inputSplit; 
     
+    private HGPeerIdentity peerID;
+    
     private MultiUserChat getTheChat()
     {
         if (thechat == null)
         {
-            XMPPPeerInterface peerInterface = (XMPPPeerInterface)connectionPanel.getThisPeer().getPeerInterface();
+            if(getConnectionPanel() == null) return null;
+            XMPPPeerInterface peerInterface = (XMPPPeerInterface)getConnectionPanel().getThisPeer().getPeerInterface();
             thechat = new MultiUserChat(peerInterface.getConnection(), roomId);            
         }
         return thechat;
     }
         
-    private void joinRoom()
+    void joinRoom()
     {
         if (!getTheChat().isJoined())
             try
             {
-                getTheChat().join(connectionPanel.getThisPeer().getIdentity().getName());
+                getTheChat().join(getConnectionPanel().getThisPeer().getIdentity().getName());
             }
             catch (XMPPException e)
             {
@@ -67,7 +70,7 @@ public class TalkRoom extends JPanel
                     System.err.println("Received a room message by a non-seco peer.");
                     return;
                 }
-                else if (otherId.equals(connectionPanel.getThisPeer().getIdentity().getId().toString()))
+                else if (otherId.equals(getConnectionPanel().getThisPeer().getIdentity().getId().toString()))
                     return;
                 String from = packet.getFrom();
                 int hostPart = from.lastIndexOf("/");
@@ -93,7 +96,6 @@ public class TalkRoom extends JPanel
                         getPeerList().getListModel().addElement(id);
                     }
                 }
-                //peerList.peers.fireChangeEvent();
             }
         });
     }
@@ -117,6 +119,8 @@ public class TalkRoom extends JPanel
         peerListSplit.setName("peerListSplit");
         peerList = new PeerList();
         peerList.initComponents();    
+        peerList.setPeerID(peerID);
+        
         inputSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                     peerListSplit, 
                                     peerList);
@@ -151,14 +155,16 @@ public class TalkRoom extends JPanel
     {
         this.roomId = roomId;
     }
+    
     public ConnectionPanel getConnectionPanel()
     {
-        return connectionPanel;
+        return ConnectionManager.getConnectionPanel(peerID);
     }
-    public void setConnectionPanel(ConnectionPanel panel)
-    {
-        this.connectionPanel = panel;
-    }    
+    
+//    public void setConnectionPanel(ConnectionPanel panel)
+//    {
+//        this.connectionPanel = panel;
+//    }    
     
     public static class ChatCallBack implements Callback<String>
     {
@@ -174,14 +180,15 @@ public class TalkRoom extends JPanel
         
         public void callback(String msg)
         {
+            if(room.getTheChat() == null) return;
             try
             {
                 Message xmpp = room.getTheChat().createMessage();
                 xmpp.setBody(msg);
-                xmpp.setProperty("secoPeer", room.connectionPanel.getThisPeer().getIdentity().getId().toString());
+                xmpp.setProperty("secoPeer", room.getConnectionPanel().getThisPeer().getIdentity().getId().toString());
                 room.getTheChat().sendMessage(xmpp);
                 room.chatPane.chatFrom(
-                        room.connectionPanel.getThisPeer().getIdentity(), msg);
+                        room.getConnectionPanel().getThisPeer().getIdentity(), msg);
             }
             catch (XMPPException e)
             {
@@ -226,5 +233,17 @@ public class TalkRoom extends JPanel
     public void setInputPane(TalkInputPane inputPane)
     {
         this.inputPane = inputPane;
+    }
+
+    public HGPeerIdentity getPeerID()
+    {
+        return peerID;
+    }
+
+    public void setPeerID(HGPeerIdentity peerID)
+    {
+        this.peerID = peerID;
+        if(peerList != null)
+           peerList.setPeerID(peerID);
     }       
 }

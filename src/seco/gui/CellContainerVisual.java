@@ -82,7 +82,7 @@ public class CellContainerVisual implements CellVisual, EventHandler
             SwingUtilities.invokeLater(new Runnable(){
                 public void run()
                 {
-                    canvas.maximize(ps);
+                    canvas.maximizeNode(ps);
                 }
             });
         }
@@ -192,11 +192,11 @@ public class CellContainerVisual implements CellVisual, EventHandler
         {
             if(((Boolean)event.getValue()).booleanValue())
             {
-               canvas.maximize(ps);
+               canvas.maximizeNode(ps);
             }
             else
             {
-               canvas.unmaximize(ps); 
+               canvas.unmaximizeNode(ps); 
             } 
         }else if(event.getName().equals(VisualAttribs.showTitle)
                 || event.getName().equals(VisualAttribs.name))

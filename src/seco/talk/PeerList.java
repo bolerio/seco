@@ -4,8 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Vector;
 
-import javax.swing.DefaultListModel;
+import javax.swing.AbstractListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
@@ -20,8 +21,9 @@ public class PeerList extends JPanel
     private transient MouseListener mouseListener;
     @HGIgnore
     private JList list;
-    @HGIgnore
-    private ConnectionPanel connectionPanel;
+   // @HGIgnore
+   //private ConnectionPanel connectionPanel;
+    private HGPeerIdentity peerID;
 
     public PeerList()
     {
@@ -31,40 +33,43 @@ public class PeerList extends JPanel
                 if (e.getClickCount() == 2)
                 {
                     int index = getList().locationToIndex(e.getPoint());
-                    if(index < 0 || index >= getList().getModel().getSize())
+                    if (index < 0 || index >= getList().getModel().getSize())
                         return;
                     Object x = getList().getModel().getElementAt(index);
-                    if (x instanceof HGPeerIdentity) getConnectionPanel()
-                            .openTalkPanel((HGPeerIdentity) x);
+                    ConnectionPanel connectionPanel = 
+                        ConnectionManager.getConnectionPanel(peerID);
+                    if(connectionPanel == null) return;
+                    if (x instanceof HGPeerIdentity) 
+                        connectionPanel.openTalkPanel((HGPeerIdentity) x);
                     else
-                        getConnectionPanel().openChatRoom((HostedRoom) x);
+                        connectionPanel.openChatRoom((HostedRoom) x);
                 }
             }
         };
     }
-    
+
     public void initComponents()
     {
         setLayout(new BorderLayout());
         setBorder(new BevelBorder(BevelBorder.RAISED));
-        setList(new JList(new DefaultListModel()));
+        setList(new JList(new PeerListModel()));
         list.setCellRenderer(new PeerItemRenderer());
         add(list, BorderLayout.CENTER);
     }
 
-    public ConnectionPanel getConnectionPanel()
-    {
-        return connectionPanel;
-    }
-
-    public void setConnectionPanel(ConnectionPanel connectionPanel)
-    {
-        this.connectionPanel = connectionPanel;
-    }
+//    public ConnectionPanel getConnectionPanel()
+//    {
+//        return connectionPanel;
+//    }
+//
+//    public void setConnectionPanel(ConnectionPanel connectionPanel)
+//    {
+//        this.connectionPanel = connectionPanel;
+//    }
 
     public JList getList()
     {
-        if(list == null)
+        if (list == null)
         {
             list = (JList) getComponent(0);
             list.setCellRenderer(new PeerItemRenderer());
@@ -72,10 +77,10 @@ public class PeerList extends JPanel
         }
         return list;
     }
-    
-    public DefaultListModel getListModel()
+
+    public PeerListModel getListModel()
     {
-        return (DefaultListModel) getList().getModel();
+        return (PeerListModel) getList().getModel();
     }
 
     public void setList(JList l)
@@ -83,55 +88,90 @@ public class PeerList extends JPanel
         this.list = l;
         list.setCellRenderer(new PeerItemRenderer());
         list.addMouseListener(mouseListener);
-        
+
     }
-    
-//    public static class PeerListModel implements ListModel
-//    {
-//        private ArrayList<ListDataListener> listeners = new ArrayList<ListDataListener>();
-//        ArrayList<Object> thePeers = new ArrayList<Object>();
-//
-//        void fireChangeEvent()
-//        {
-//            ListDataEvent ev = new ListDataEvent(this,
-//                    ListDataEvent.CONTENTS_CHANGED, 0, thePeers.size());
-//            for (ListDataListener l : listeners)
-//                l.contentsChanged(ev);
-//        }
-//
-//        public void addListDataListener(ListDataListener l)
-//        {
-//            listeners.add(l);
-//        }
-//
-//        public Object getElementAt(int index)
-//        {
-//            return thePeers.get(index);
-//        }
-//
-//        public int getSize()
-//        {
-//            return thePeers.size();
-//        }
-//
-//        public void removeListDataListener(ListDataListener l)
-//        {
-//            listeners.remove(l);
-//        }
-//        
-//        public ListDataListener[] getListDataListeners() {
-//            return listeners.toArray(
-//                    new ListDataListener[listeners.size()]);
-//        }
-//
-//        public ArrayList<Object> getThePeers()
-//        {
-//            return thePeers;
-//        }
-//
-//        public void setThePeers(ArrayList<Object> thePeers)
-//        {
-//            this.thePeers = thePeers;
-//        }
-//    }
+
+    public static class PeerListModel extends AbstractListModel
+    {
+        private Vector<Object> data = new Vector<Object>();
+
+        public int getSize()
+        {
+            return data.size();
+        }
+
+        public Object getElementAt(int index)
+        {
+            return data.elementAt(index);
+        }
+
+        public int size()
+        {
+            return data.size();
+        }
+
+        public boolean isEmpty()
+        {
+            return data.isEmpty();
+        }
+
+        public boolean contains(Object elem)
+        {
+            return data.contains(elem);
+        }
+
+        public int indexOf(Object elem)
+        {
+            return data.indexOf(elem);
+        }
+
+        public Object elementAt(int index)
+        {
+            return data.elementAt(index);
+        }
+
+        public void addElement(Object obj)
+        {
+            int index = data.size();
+            data.addElement(obj);
+            fireIntervalAdded(this, index, index);
+        }
+
+        public boolean removeElement(Object obj)
+        {
+            int index = indexOf(obj);
+            boolean rv = data.removeElement(obj);
+            if (index >= 0)
+            {
+                fireIntervalRemoved(this, index, index);
+            }
+            return rv;
+        }
+
+        public void removeAllElements()
+        {
+            int index1 = data.size() - 1;
+            data.removeAllElements();
+            if (index1 >= 0)
+            {
+                fireIntervalRemoved(this, 0, index1);
+            }
+        }
+
+        public String toString()
+        {
+            return data.toString();
+        }
+
+    }
+
+    public HGPeerIdentity getPeerID()
+    {
+        return peerID;
+    }
+
+    public void setPeerID(HGPeerIdentity peerID)
+    {
+        this.peerID = peerID;
+    }
 }

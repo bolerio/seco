@@ -213,11 +213,11 @@ public class LayoutSettingsPanel extends javax.swing.JPanel {
         butUnpin.setEnabled(true);
         butChange.setEnabled(true);
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
-        canvas.getNodeLayer().removeChild(node);
+        canvas.removeNode(node);
         CellGroupMember m = ThisNiche.hg.get(node.getHandle());
         m.setAttribute(VisualAttribs.layoutHandler, 
                 new DefaultLayoutHandler(getDRect(), getRefPoint()));
-        canvas.getCamera().addChild(node);
+        canvas.addFixedNode(node);
         canvas.relayout();
         pinned = true;
     }//GEN-LAST:event_butPinActionPerformed
@@ -228,11 +228,11 @@ public class LayoutSettingsPanel extends javax.swing.JPanel {
         butChange.setEnabled(!true);
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         PBounds b = node.getFullBounds();
-        canvas.getCamera().removeChild(node);
+        canvas.removeFixedNode(node);
         CellGroupMember m = ThisNiche.hg.get(node.getHandle());
         m.getAttributes().remove(VisualAttribs.layoutHandler);
         m.setAttribute(VisualAttribs.rect, b);
-        canvas.getNodeLayer().addChild(node);
+        canvas.addNode(node);
         canvas.relayout();
         pinned = false;
     }//GEN-LAST:event_butUnpinActionPerformed

@@ -1,12 +1,15 @@
 package seco.talk;
 
 import java.awt.Rectangle;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPlainLink;
 import org.hypergraphdb.HGQuery;
 import org.hypergraphdb.HGQuery.hg;
+import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.query.OrderedLinkCondition;
 import org.hypergraphdb.query.impl.DefaultKeyBasedQuery;
 import org.hypergraphdb.query.impl.PipeQuery;
@@ -67,9 +70,9 @@ public class ConnectionManager
         query.setHyperGraph(ThisNiche.hg);
         List<HGHandle> L = hg.findAll(query);
         
-        for(HGHandle h: L)
-            ThisNiche.hg.remove(h);
-        L.clear();
+       // for(HGHandle h: L)
+      //      ThisNiche.hg.remove(h);
+      //  L.clear();
         
         HGHandle panelHandle = null;
         if (L.isEmpty())
@@ -107,4 +110,23 @@ public class ConnectionManager
         panel.connect();
         return panel;
     }
+    
+    private static Map<HGPeerIdentity, ConnectionPanel> peer_panel_map = 
+        new HashMap<HGPeerIdentity, ConnectionPanel>();
+    
+    public static ConnectionPanel getConnectionPanel(HGPeerIdentity id)
+    {
+        return peer_panel_map.get(id);
+    }
+    
+    public static void registerConnectionPanel(HGPeerIdentity id, ConnectionPanel pan)
+    {
+        peer_panel_map.put(id, pan);
+    }
+    
+    public static void unregisterConnectionPanel(HGPeerIdentity id)
+    {
+        peer_panel_map.remove(id);
+    }
+    
 }

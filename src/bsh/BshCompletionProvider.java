@@ -96,7 +96,7 @@ public class BshCompletionProvider implements CompletionProvider
 			if (caretOffset >= creationCaretOffset)
 			{
 				// try {
-				if (true) // isJavaIdentifierPart(DocumentUtilities.getText(doc,
+				//if (true) // isJavaIdentifierPart(DocumentUtilities.getText(doc,
 							// creationCaretOffset, caretOffset -
 							// creationCaretOffset)))
 					return;
@@ -121,8 +121,8 @@ public class BshCompletionProvider implements CompletionProvider
 				// System.out.println("BshCompProv - query: " + s + ":" +
 				// offset);
 				Object obj = p.resolveVar(s, offset);
-				System.out.println("BshCompProv - query - obj: " + obj +
-				 " cls:" + ((obj != null) ? obj.getClass(): "null") + ":" + p.evaled_or_guessed);
+				//System.out.println("BshCompProv - query - obj: " + obj +
+				// " cls:" + ((obj != null) ? obj.getClass(): "null") + ":" + p.evaled_or_guessed);
 				if (obj == null) {resultSet.finish(); return;}
 				Class<?> cls = obj.getClass();
 				if (cls.getName().indexOf("bsh.XThis") >= 0)

@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import seco.notebook.AppConfig;
-import seco.notebook.ruby.JRubyScriptEngine;
 import seco.notebook.syntax.Formatter;
 import seco.notebook.syntax.Mode;
 import seco.notebook.syntax.ScriptSupport;
@@ -19,7 +18,6 @@ import seco.notebook.syntax.completion.CompletionProvider;
 import seco.notebook.syntax.completion.NBParser;
 import seco.notebook.syntax.java.JavaFormatter;
 import seco.notebook.syntax.java.JavaFormatterOptions;
-import bsh.BshAst;
 
 public class BshScriptSupport extends ScriptSupport
 {

@@ -235,51 +235,6 @@ public class PiccoloCanvas extends PSwingCanvas
         }
     }
 
-    // public void addCopyComponent(HGHandle h, HGHandle masterH, Point pt)
-    // {
-    // Object nb = ThisNiche.hg.get(h);
-    // if (nb instanceof Cell)
-    // {
-    // HGHandle par = CellUtils.getOutCellParent(masterH);
-    // if (par == null) // normal cell
-    // {
-    // par = masterH;
-    // CellUtils.addCopyListeners(h, masterH);
-    // }
-    // // TODO: should we remove the Cell from parent or not?
-    // // CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, par,
-    // // HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
-    // else
-    // {
-    // CellUtils.addEventPubSub(EvalCellEvent.HANDLE, par,
-    // ((NotebookUI) comp).getDoc().getHandle(),
-    // OutputCellDocument.CopyEvalCellHandler.getInstance());
-    // }
-    // }
-    // else
-    // {
-    // CellUtils.addCopyListeners(h, masterH);
-    // }
-    //
-    // GUIHelper.addToTopCellGroup(h,
-    // VisualsManager.defaultVisualForType(h), ps.getFullBounds()
-    // .getBounds()));
-    //        
-    // }
-
-    // public PSwingNode addComponent(HGHandle h, Point pt)
-    // {
-    // HGHandle topH = GUIHelper.addToTopCellGroup(h);
-    // Cell top = ThisNiche.hg.get(topH);
-    // CellVisual vis = CellUtils.getVisual(top);
-    // JComponent comp = vis.bind(top);
-    // PSwingNode ps = new PSwingNode(this, comp);
-    // ps.setHandle(topH);
-    // getNodeLayer().addChild(ps);
-    // ps.translate(pt.x, pt.y);
-    // return ps;
-    // }
-
     public PSwingNode getPSwingNodeForHandle(HGHandle h)
     {
         for (PSwingNode n : getNodes())
@@ -309,26 +264,26 @@ public class PiccoloCanvas extends PSwingCanvas
         return null;
     }
 
-    public void maximize(PSwingNode n)
+    public void maximizeNode(PSwingNode n)
     {
         if (n == null) return;
         if(n.getCanvas() != this)
         {
-            n.getCanvas().maximize(n); return;
+            n.getCanvas().maximizeNode(n); return;
         }
         if(maximizedState) return;
         maximizedState = true;
-        for (int i = 0; i < getNodeLayer().getChildrenCount(); i++)
+        for (int i = 0; i < getNodes().size(); i++)
         {
-            PNode o = getNodeLayer().getChild(i);
+            PNode o = getNode(i);
             if (!o.equals(n)) o.setVisible(false);
         }
         //System.out.println("maximize: " + nested + ":" +
         //        (n.getCanvas() == TopFrame.getInstance().getCanvas()));
         if (!nested)
-            for (int i = 0; i < getCamera().getChildrenCount(); i++)
+            for (int i = 0; i < getFixedNodes().size(); i++)
         {
-            PNode o = getCamera().getChild(i);
+            PNode o = getFixedNode(i);
             if (!o.equals(n)) o.setVisible(false);
         }
 
@@ -339,11 +294,11 @@ public class PiccoloCanvas extends PSwingCanvas
         n.getComponent().revalidate();
     }
     
-    public void unmaximize(PSwingNode n)
+    public void unmaximizeNode(PSwingNode n)
     {
         if(n.getCanvas() != this)
         {
-            n.getCanvas().unmaximize(n); return;
+            n.getCanvas().unmaximizeNode(n); return;
         }
         if(!maximizedState) return;
         maximizedState = false;
@@ -351,7 +306,7 @@ public class PiccoloCanvas extends PSwingCanvas
         placeNode(n, false);
     }
 
-    public void showAllNodes()
+    void showAllNodes()
     {
         for (int i = 0; i < getNodeLayer().getChildrenCount(); i++)
             getNodeLayer().getChild(i).setVisible(true);
@@ -360,7 +315,7 @@ public class PiccoloCanvas extends PSwingCanvas
         relayout();
     }
 
-    public PSwingNode addComponent(JComponent comp, CellGroupMember cell)
+    PSwingNode addComponent(JComponent comp, CellGroupMember cell)
     {
         HGHandle cellH = ThisNiche.handleOf(cell);
         PSwingNode p = null;
@@ -379,12 +334,12 @@ public class PiccoloCanvas extends PSwingCanvas
                 .getAttribute(VisualAttribs.layoutHandler);
         if (vh != null)
         {
-            getCamera().addChild(p);
+            addFixedNode(p);
             vh.layout(this, p);
         }
         else
         {
-            getNodeLayer().addChild(p);
+            addNode(p);
             placeNode(p, true);
         }
         GUIHelper.handleTitle(p);
@@ -460,6 +415,36 @@ public class PiccoloCanvas extends PSwingCanvas
         return nodeLayer;
     }
 
+    public void addNode(PNode node)
+    {
+        getNodeLayer().addChild(node);
+    }
+    
+    public void removeNode(PNode node)
+    {
+        getNodeLayer().removeChild(node);
+    }
+    
+    public PNode getNode(int i)
+    {
+       return getNodeLayer().getChild(i);
+    }
+    
+    public void addFixedNode(PNode node)
+    {
+        getCamera().addChild(node);
+    }
+    
+    public void removeFixedNode(PNode node)
+    {
+        getCamera().removeChild(node);
+    }
+    
+    public PNode getFixedNode(int i)
+    {
+       return getNodeLayer().getChild(i);
+    }
+    
     public Collection<PSwingNode> getNodes()
     {
         return (Collection<PSwingNode>) nodeLayer.getAllNodes(ps_filter, null);
@@ -469,6 +454,12 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         return (Collection<PSwingNode>) getCamera()
                 .getAllNodes(ps_filter, null);
+    }
+    
+    void removeAllNodes()
+    {
+        getCamera().removeAllChildren();
+        getNodeLayer().removeAllChildren();
     }
 
     private static class PSwingNodeFilter implements PNodeFilter

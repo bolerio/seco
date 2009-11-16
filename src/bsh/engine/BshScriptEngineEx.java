@@ -1,5 +1,7 @@
 package bsh.engine;
 
+import javax.script.ScriptException;
+
 import bsh.Interpreter;
 
 public class BshScriptEngineEx extends BshScriptEngine
@@ -17,20 +19,25 @@ public class BshScriptEngineEx extends BshScriptEngine
         return interpreter;
     }
     
-    //maybe we could load all HGm and SECO packages automatically 
+    //maybe we could load all HG and SECO packages automatically 
     protected void loadImports()
     {
         try{
-            eval("org.hypergraphdb.*");
-            eval("org.hypergraphdb.type.*");
+            importPackage("org.hypergraphdb");
+            importPackage("org.hypergraphdb.type");
             
-            eval("import seco.*;");
-            eval("import seco.things.*;");
-            eval("import seco.gui*;");
-            eval("import seco.notebook.*;");
+            importPackage("seco");
+            importPackage("seco.gui");
+            importPackage("seco.notebook");
+            importPackage("seco.things");
         }catch(Exception e)
         {
             System.err.println("loadImports: " + e);
         }
+    }
+    
+    public void importPackage(String pack) throws ScriptException
+    {
+        eval("import " + pack + ".*;");
     }
 }

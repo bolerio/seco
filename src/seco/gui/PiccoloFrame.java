@@ -54,18 +54,12 @@ public class PiccoloFrame extends TopFrame
     }
     
     
-    void saveDims()
-    {
-        canvas.saveDims();
-    }
-
     public void exit()
     {
         if(ThisNiche.hg == null) System.exit(0);
         CellGroup group = (CellGroup) ThisNiche.hg.get(
                 ThisNiche.TOP_CELL_GROUP_HANDLE);
-       //BIZI: 
-        //group.setAttribute(VisualAttribs.rect, getBounds());
+        group.setAttribute(VisualAttribs.rect, getBounds());
        // saveDims();
         super.exit();
     }
@@ -116,12 +110,12 @@ public class PiccoloFrame extends TopFrame
             
         });
         PSwingNode p = new PSwingNode(pc, b);
-        pc.getNodeLayer().addChild(p);
+        pc.addNode(p);
         p.setBounds(new Rectangle(0,0,100,30));
         p.translate(0, 0);
         
         PSwingNode p1 = new PSwingNode(pc, new JCheckBox("Check"));
-        pc.getNodeLayer().addChild(p1);
+        pc.addNode(p1);
         p1.setBounds(new Rectangle(60,66,100,30));
         p1.translate(60,66);
         
@@ -148,7 +142,7 @@ public class PiccoloFrame extends TopFrame
     private PSwingNode add_comp(JComponent c, Rectangle r)
     {
         PSwingNode p = new PSwingNode(canvas, c);
-        canvas.getNodeLayer().addChild(p);
+        canvas.addNode(p);
         p.setBounds(r);
         p.translate(r.x, r.y);
         return p;

@@ -132,7 +132,7 @@ public class TalkActivity extends FSMActivity
         }
     }
 
-    void openPanel()
+    void openPanel(String name)
     {
         ConnectionPanel connectionPanel = (ConnectionPanel) getThisPeer()
                 .getObjectContext().get(ConnectionPanel.class.getName());
@@ -152,11 +152,12 @@ public class TalkActivity extends FSMActivity
         talkPanel.setTalkActivity(this);
         Map<Object, Object> attribs = new HashMap<Object, Object>();
         // TODO: some sort of naming
-        attribs.put(VisualAttribs.name, "Connection Panel");
+        String title = (name != null) ? name : "Connection Panel";
+        attribs.put(VisualAttribs.name, title);
         attribs.put(VisualAttribs.showTitle, true);
         GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, ThisNiche.hg
-                .getHandle(talkPanel), null, null, new Rectangle(500, 200, 200,
-                100), attribs);
+                .getHandle(talkPanel), null, null, new Rectangle(500, 200, 300,
+                300), attribs);
     }
 
     private void initFriend(Message msg)
@@ -167,7 +168,7 @@ public class TalkActivity extends FSMActivity
             if (id != null)
             {
                 friend = id;
-                openPanel();
+                openPanel(friend.getName());
             }
             else
                 throw new RuntimeException("Unknown peer " + getSender(msg)
@@ -188,7 +189,7 @@ public class TalkActivity extends FSMActivity
     {
         this(thisPeer);
         this.friend = friend;
-        openPanel();
+        openPanel(friend.getName());
     }
 
     public TalkActivity(HyperGraphPeer thisPeer, UUID id)
@@ -200,7 +201,7 @@ public class TalkActivity extends FSMActivity
     {
         super(thisPeer, id);
         this.friend = friend;
-        openPanel();
+        openPanel(friend.getName());
     }
 
     public TalkPanel getPanel()
