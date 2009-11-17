@@ -122,8 +122,8 @@ public class NotebookEditorKit extends StyledEditorKit
             new ResetCellNumAction(), new JavaDocManagerAction(),
             new CtxInspectorAction(), new FindReplaceAction(true),
             new FindReplaceAction(false), new RemoveTabAction(),
-            new MergeCellsAction(), new SelectWordAction(), new SelectLineAction(), new SelectAllAction(),
-              };
+            new MergeCellsAction(), new SelectWordAction(),
+            new SelectLineAction(), new SelectAllAction(), };
     private static HashMap<String, Action> actions;
 
     /** Creates a new instance of NotebookEditorKit */
@@ -169,7 +169,7 @@ public class NotebookEditorKit extends StyledEditorKit
     {
         return getDefaultDocument();
     }
-    
+
     public static NotebookDocument getDefaultDocument()
     {
         NotebookDocument doc = (NotebookDocument) ThisNiche.hg.get(DOC_HANDLE);
@@ -241,8 +241,7 @@ public class NotebookEditorKit extends StyledEditorKit
             return base.create(elem);
         }
     }
-    
-   
+
     public static class EvalAction extends BaseAction
     {
         private static final long serialVersionUID = -1024678440877335429L;
@@ -260,18 +259,18 @@ public class NotebookEditorKit extends StyledEditorKit
             int pos = ui.getCaretPosition();
             final ScriptSupport sup = doc.getScriptSupport(pos);
             if (sup == null) return;
-            //expand the evaluated cell and it's parent 
+            // expand the evaluated cell and it's parent
             View root = ui.getUI().getRootView(ui);
-            View cellV = ViewUtils.getView(el.getEndOffset() -1, root);
+            View cellV = ViewUtils.getView(el.getEndOffset() - 1, root);
             Element containerEl = NotebookDocument.getContainerEl(el, false);
-            View containerV = ViewUtils.getView(containerEl.getEndOffset() -1, root);
-            if(cellV != null && cellV instanceof CellHandleView) 
-               ((CellHandleView) cellV).setCollapsed(false);
-            if(containerV != null && containerV instanceof CellHandleView) 
+            View containerV = ViewUtils.getView(containerEl.getEndOffset() - 1,
+                    root);
+            if (cellV != null && cellV instanceof CellHandleView)
+                ((CellHandleView) cellV).setCollapsed(false);
+            if (containerV != null && containerV instanceof CellHandleView)
                 ((CellHandleView) containerV).setCollapsed(false);
-            
-            if (doc.evalCell(el))
-                sup.unMarkErrors();
+
+            if (doc.evalCell(el)) sup.unMarkErrors();
             Utilities.adjustScrollBar(ui, pos, Position.Bias.Forward);
         }
 
@@ -491,7 +490,7 @@ public class NotebookEditorKit extends StyledEditorKit
             redo.updateRedoState(ui.getUndoManager());
         }
 
-       public void updateUndoState(UndoManager undo)
+        public void updateUndoState(UndoManager undo)
         {
             if (undo.canUndo())
             {
@@ -798,17 +797,17 @@ public class NotebookEditorKit extends StyledEditorKit
             int pos = editor.getCaretPosition();
             NotebookDocument doc = editor.getDoc();
             if (doc.isInsertionPoint(pos))
-            {    
-                editor.setCaretPosition(
-                        doc.insPointInsert(pos, ""));
+            {
+                editor.setCaretPosition(doc.insPointInsert(pos, ""));
                 return;
             }
             Frame f = GUIUtilities.getFrame(editor);
             try
             {
                 Rectangle rect = editor.modelToView(pos);
-                Point pt = GUIHelper.computePoint(editor, new Point(rect.x, rect.y));
-               // SwingUtilities.convertPoint(editor, rect.x, rect.y, f);
+                Point pt = GUIHelper.computePoint(editor, new Point(rect.x,
+                        rect.y));
+                // SwingUtilities.convertPoint(editor, rect.x, rect.y, f);
                 Collection<JMenuItem> items = CellLangProvider
                         .getLanguages(editor);
                 JPopupMenu popupMenu = new JPopupMenu();
@@ -956,26 +955,33 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             final int s = Utilities.getWordStart(ui, ui.getCaretPosition());
             final int e = Utilities.getWordEnd(ui, ui.getCaretPosition());
-            //System.out.println("SelectWordAction: " +
-             //       ui.getCaretPosition() + ":" + s + ":" + e + ":" + ui);
+            // System.out.println("SelectWordAction: " +
+            // ui.getCaretPosition() + ":" + s + ":" + e + ":" + ui);
             ui.select(s, e);
         }
     }
-    
+
     /*
      * Select the line around the caret
+     * 
      * @see DefaultEditorKit#endAction
+     * 
      * @see DefaultEditorKit#getActions
      */
-    public static class SelectLineAction extends BaseAction {
+    public static class SelectLineAction extends BaseAction
+    {
 
-        /** 
-         * Create this action with the appropriate identifier. 
-         * @param nm  the name of the action, Action.NAME.
-         * @param select whether to extend the selection when
-         *  changing the caret position.
+        /**
+         * Create this action with the appropriate identifier.
+         * 
+         * @param nm
+         *            the name of the action, Action.NAME.
+         * @param select
+         *            whether to extend the selection when changing the caret
+         *            position.
          */
-        public SelectLineAction() {
+        public SelectLineAction()
+        {
             super(selectLineAction);
         }
 
@@ -984,15 +990,17 @@ public class NotebookEditorKit extends StyledEditorKit
             int offs = ui.getCaretPosition();
             int s = javax.swing.text.Utilities.getRowStart(ui, offs);
             int e = javax.swing.text.Utilities.getRowEnd(ui, offs);
-            //System.out.println("SelectLineAction: " + offs + ":" + s + ":" + e + ":" + ui);
+            // System.out.println("SelectLineAction: " + offs + ":" + s + ":" +
+            // e + ":" + ui);
             ui.select(s, e);
         }
     }
-    
-    //selects the content of the cell which currently contain the cursor
+
+    // selects the content of the cell which currently contain the cursor
     public static class SelectAllAction extends BaseAction
     {
-        public SelectAllAction() {
+        public SelectAllAction()
+        {
             super(selectAllAction);
         }
 
@@ -1002,7 +1010,7 @@ public class NotebookEditorKit extends StyledEditorKit
             System.out.println("SelectAllAction: " + el);
             if (el == null) return;
             ui.setCaretPosition(el.getStartOffset());
-            ui.moveCaretPosition(el.getEndOffset()-1);
+            ui.moveCaretPosition(el.getEndOffset() - 1);
         }
 
     }

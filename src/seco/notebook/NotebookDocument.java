@@ -462,21 +462,22 @@ public class NotebookDocument extends DefaultStyledDocument
         // residing in deeper levels,
         // or floating around in HG if we adopt the other approach with:
         List<HGHandle> list = CellUtils.getOutCellHandles(e.getCellHandle());
-//        for (HGHandle o : list)
-//        {
-//            List<EventPubSub> subs = CellUtils.getEventPubSubList(
-//                    EvalCellEvent.HANDLE, o, HGHandleFactory.anyHandle,
-//                    HGHandleFactory.anyHandle);
-//            if (!subs.isEmpty())
-//            {
-//                create_new_output_cell = false;
-//                break;
-//            }
-//        }
+        // for (HGHandle o : list)
+        // {
+        // List<EventPubSub> subs = CellUtils.getEventPubSubList(
+        // EvalCellEvent.HANDLE, o, HGHandleFactory.anyHandle,
+        // HGHandleFactory.anyHandle);
+        // if (!subs.isEmpty())
+        // {
+        // create_new_output_cell = false;
+        // break;
+        // }
+        // }
         create_new_output_cell = (list.isEmpty());
         if (!create_new_output_cell) return;
-        //insert empty output cell, which will populate itself later 
-        HGHandle outH = CellUtils.createOutputCellH(e.getCellHandle(), "", null, false);
+        // insert empty output cell, which will populate itself later
+        HGHandle outH = CellUtils.createOutputCellH(e.getCellHandle(), "",
+                null, false);
         Element el = getUpperElement(offset, inputCellBox);
         CellGroup gr = (CellGroup) ThisNiche.hg.get(getContainerH(el));
         // gr.insert(gr.indexOf(e.getCellHandle()) + 1, outH);
@@ -1024,10 +1025,11 @@ public class NotebookDocument extends DefaultStyledDocument
             removed[i] = getNBElementH(el);
             i++;
         }
-        //fireCellGroupChanged(new CellGroupChangeEvent(ThisNiche.handleOf(par),
-        //        index, new HGHandle[] { gr_h }, removed));
+        // fireCellGroupChanged(new
+        // CellGroupChangeEvent(ThisNiche.handleOf(par),
+        // index, new HGHandle[] { gr_h }, removed));
         par.batchProcess(new CellGroupChangeEvent(ThisNiche.handleOf(par),
-                        index, new HGHandle[] { gr_h }, removed), false);
+                index, new HGHandle[] { gr_h }, removed), false);
     }
 
     void ungroup(Element el) throws BadLocationException
@@ -1066,15 +1068,16 @@ public class NotebookDocument extends DefaultStyledDocument
         super.remove(nb_el.getStartOffset(), (nb_el.getEndOffset() - nb_el
                 .getStartOffset()) + 1);
         setModified(true);
-        fireCaretMoved(nb_el.getStartOffset()-1);
+        fireCaretMoved(nb_el.getStartOffset() - 1);
     }
 
     public void removeCellBoxElement(Element el) throws BadLocationException
     {
         removeCellBoxElement(el, true);
     }
-    
-    public void removeCellBoxElement(Element el, boolean backup) throws BadLocationException
+
+    public void removeCellBoxElement(Element el, boolean backup)
+            throws BadLocationException
     {
         HGHandle nb = getNBElementH(el);
         Element nb_el = getEnclosingCellElement(el);
@@ -1088,14 +1091,14 @@ public class NotebookDocument extends DefaultStyledDocument
             gr_el = getContainerEl(gr_el, false);
         }
         CellGroup gr = (CellGroup) getNBElement(gr_el);
-        if(backup)
-           fireCellGroupChanged(new CellGroupChangeEvent(getNBElementH(gr_el), gr
-                .indexOf(nb), new HGHandle[0], new HGHandle[] { nb }));
+        if (backup) fireCellGroupChanged(new CellGroupChangeEvent(
+                getNBElementH(gr_el), gr.indexOf(nb), new HGHandle[0],
+                new HGHandle[] { nb }));
         else
             gr.remove(gr.indexOf(nb), false);
-        updateElement(getRootElements()[0]); 
+        updateElement(getRootElements()[0]);
     }
-    
+
     private EvalCellEvent create_eval_event(HGHandle cellH, EvalResult value)
     {
         HGHandle oldH = CellUtils.getOutCellHandle(cellH);
@@ -1349,6 +1352,7 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         Element el = getWholeCellElement(offset);
         if (el == null) return;
+        Cell c = (Cell) getNBElement(el);
         HGHandle cell = getNBElementH(el);
         HGHandle parH = getContainerH(el);
         CellGroup par = (CellGroup) ThisNiche.hg.get(parH);
@@ -1357,6 +1361,9 @@ public class NotebookDocument extends DefaultStyledDocument
         {
             updateCell(el, UpdateAction.syncronize);
             remove_cell_group_member(el);
+            if(!CellUtils.isHTML(c)) //without firing event
+                c.getAttributes().put(XMLConstants.ATTR_ENGINE, "html");
+                
             insert(cell, parH, ind);
         }
         catch (BadLocationException ex)
