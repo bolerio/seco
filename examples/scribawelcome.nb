@@ -37,7 +37,7 @@
   <li><span style="font-weight:bold;">JScheme</span> - This an implementation of the Scheme programming language. You can find more about it at the <a href="http://jscheme.sourceforge.net">JScheme Home Page.</a>  
   </li>
 </ul>
-<p>Other languages can be easily added for evaluation purposes. However, for syntax suppot and code completion more extensive work is required. If you'd like to incorporate your favoriate dynamic language running on the Java platform, please let us know!
+<p>Other languages can be easily added for evaluation purposes. However, for syntax support and code completion more extensive work is required. If you'd like to incorporate your favorite dynamic language running on the Java platform, please let us know!
 </p>
 ]]>            </data>
         </cell>
