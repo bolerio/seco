@@ -91,20 +91,9 @@ public class BshCompletionProvider implements CompletionProvider
 		protected void preQueryUpdate(JTextComponent component)
 		{
 			int caretOffset = component.getCaretPosition();
-			// NotebookDocument doc = (NotebookDocument)
-			// component.getDocument();
+			// NotebookDocument doc = (NotebookDocument) component.getDocument();
 			if (caretOffset >= creationCaretOffset)
-			{
-				// try {
-				//if (true) // isJavaIdentifierPart(DocumentUtilities.getText(doc,
-							// creationCaretOffset, caretOffset -
-							// creationCaretOffset)))
 					return;
-				// if(!isCommentOrLiteral(doc, creationCaretOffset))
-				// return;
-				// } catch (BadLocationException e) {
-				// }
-			}
 			Completion.get().hideCompletion();
 		}
 
@@ -445,8 +434,6 @@ public class BshCompletionProvider implements CompletionProvider
 		protected void query(CompletionResultSet resultSet,
 				NotebookDocument doc, int caretOffset)
 		{
-			// if (item == null)
-			// ??? item = JMIUtils.findItemAtCaretPos(component);
 			if (item != null && JavaDocManager.SHOW_DOC)
 			{
 				resultSet.setDocumentation(new DocItem(
@@ -467,10 +454,6 @@ public class BshCompletionProvider implements CompletionProvider
 			{
 				ret = ((JavaResultItem) item).getAssociatedObject();
 			}
-			// if (ret instanceof Feature)
-			// ret = JMIUtils.getDefintion((Feature)ret);
-			// if (ret instanceof ClassDefinition)
-			// ret = JMIUtils.getSourceElementIfExists((ClassDefinition)ret);
 			return ret;
 		}
 
@@ -516,21 +499,18 @@ public class BshCompletionProvider implements CompletionProvider
 				return item != null ? goToSource : null;
 			}
 
-			private class JavaDoc // extends NbJMICompletionJavaDoc
+			private class JavaDoc 
 			{
 				public static final String CONTENT_NOT_FOUND = "JavaDoc Not Found.";
 				private DocItem docItem;
 
 				private JavaDoc(JTextComponent component)
 				{
-					// super(component);
 				}
 
 				private void setItem(Object item)
 				{
 					showJavaDoc(JavaDocManager.getInstance().getHTML(item));
-					// RequestProcessor.getDefault().post(new
-					// MyJavaDocParser(item));
 				}
 
 				private URL getURL(Object item)
@@ -607,7 +587,7 @@ public class BshCompletionProvider implements CompletionProvider
 				return;
 			}
 			int idx = methodName.lastIndexOf(".");
-			List list = new ArrayList();
+			List<List<String>> list = new ArrayList<List<String>>();
 			try
 			{
 				if (idx > 0)
@@ -640,7 +620,7 @@ public class BshCompletionProvider implements CompletionProvider
 			resultSet.finish();
 		}
 
-		private void populateResult(List list, Class<?> cls, String name,
+		private void populateResult(List<List<String>> list, Class<?> cls, String name,
 				int modifiers)
 		{
 			Method[] ms = cls.getMethods();
@@ -649,7 +629,7 @@ public class BshCompletionProvider implements CompletionProvider
 				if (ms[i].getModifiers() != modifiers) continue;
 				if (!ms[i].getName().equals(name)) continue;
 				JavaResultItem item = new JavaResultItem.MethodResultItem(ms[i]);
-				List parms = new ArrayList();
+				List<String> parms = new ArrayList<String>();
 				parms.add(item.toString());
 				list.add(parms);
 			}

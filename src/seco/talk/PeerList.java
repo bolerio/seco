@@ -21,8 +21,6 @@ public class PeerList extends JPanel
     private transient MouseListener mouseListener;
     @HGIgnore
     private JList list;
-   // @HGIgnore
-   //private ConnectionPanel connectionPanel;
     private HGPeerIdentity peerID;
 
     public PeerList()
@@ -56,16 +54,6 @@ public class PeerList extends JPanel
         list.setCellRenderer(new PeerItemRenderer());
         add(list, BorderLayout.CENTER);
     }
-
-//    public ConnectionPanel getConnectionPanel()
-//    {
-//        return connectionPanel;
-//    }
-//
-//    public void setConnectionPanel(ConnectionPanel connectionPanel)
-//    {
-//        this.connectionPanel = connectionPanel;
-//    }
 
     public JList getList()
     {
@@ -162,7 +150,6 @@ public class PeerList extends JPanel
         {
             return data.toString();
         }
-
     }
 
     public HGPeerIdentity getPeerID()

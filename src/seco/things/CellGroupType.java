@@ -23,7 +23,7 @@ public class CellGroupType extends HGAtomTypeBase
 	{
 		HGAtomType mapType = graph.getTypeSystem().getAtomType(HashMap.class);	
 		HGPersistentHandle [] layout = graph.getStore().getLink(valueHandle);
-		System.out.println("CellGroupType-make: " + valueHandle);
+		//System.out.println("CellGroupType-make: " + valueHandle);
 		Map<Object, Object> attributes = (Map<Object, Object>)mapType.make(layout[0], null, null);
 		CellGroup group = new CellGroup();
 		group.attributes = Collections.synchronizedMap(attributes);

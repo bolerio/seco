@@ -366,7 +366,7 @@ public class PiccoloCanvas extends PSwingCanvas
             normalize(r);
             p.setBounds(0, 0, r.width, r.height);
             p.translate(r.x, r.y);
-            p.storeBounds(r);
+            //p.storeBounds(r);
             return;
         }
 

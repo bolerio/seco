@@ -10,7 +10,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 import org.hypergraphdb.HGHandleFactory;
-import org.hypergraphdb.annotation.AtomReference;
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
 import org.jivesoftware.smack.PacketListener;
@@ -25,8 +24,6 @@ public class TalkRoom extends JPanel
 {
     private static final long serialVersionUID = -6292689880168959513L;
     private String roomId;
-   // @AtomReference("symbolic")
-    //private ConnectionPanel connectionPanel;
     private ChatPane chatPane;
     private TalkInputPane inputPane;
     private PeerList peerList;
@@ -49,6 +46,8 @@ public class TalkRoom extends JPanel
         
     void joinRoom()
     {
+        if(getTheChat() == null) return;
+        
         if (!getTheChat().isJoined())
             try
             {
@@ -160,11 +159,6 @@ public class TalkRoom extends JPanel
     {
         return ConnectionManager.getConnectionPanel(peerID);
     }
-    
-//    public void setConnectionPanel(ConnectionPanel panel)
-//    {
-//        this.connectionPanel = panel;
-//    }    
     
     public static class ChatCallBack implements Callback<String>
     {

@@ -64,9 +64,9 @@ public class Cell extends BaseCellGroupMember implements EventHandler
     
     public void updateValue(Object val)
     {
-        HGHandle h = ThisNiche.handleOf(val);
-        if (h == null)
-            h = CellUtils.addSerializable(val);
+       // HGHandle h = ThisNiche.handleOf(val);
+       // if (h == null)
+        HGHandle h = CellUtils.addSerializable(val);
         ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         ThisNiche.hg.update(this);
     }

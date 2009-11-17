@@ -158,6 +158,7 @@ public class ConnectionPanel extends JPanel
                   }
                   connectButton.setText("Disconnect");
                   ConnectionManager.registerConnectionPanel(thisPeer.getIdentity(), ConnectionPanel.this);
+                  setPeerID(thisPeer.getIdentity());
                   peerList.setPeerID(thisPeer.getIdentity());
               }
               else
@@ -220,7 +221,6 @@ public class ConnectionPanel extends JPanel
         connectButton.addActionListener(new ButtonListener(this));
         add(connectButton, BorderLayout.NORTH);
         peerList = new PeerList();
-        //peerList.setConnectionPanel(this);
         peerList.initComponents();
         add(peerList, BorderLayout.CENTER);
     }
@@ -277,18 +277,14 @@ public class ConnectionPanel extends JPanel
             {
                 roomPanel = new TalkRoom();
                 roomPanel.setRoomId(room.getJid());
-                //roomPanel.setConnectionPanel(this);
                 roomPanel.setPeerID(thisPeer.getIdentity());
                 roomPanel.initComponents();
                 ThisNiche.hg.add(roomPanel);
             }
             else
             {
-                //roomPanel.setConnectionPanel(this);
-                //roomPanel.setPeerID(thisPeer.getIdentity());
                 roomPanel.joinRoom();
             }
-            //roomPanel.initComponents();
         }
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();        
         int width = 400;

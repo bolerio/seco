@@ -1,8 +1,6 @@
 package seco.notebook.ruby;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Field;
@@ -15,24 +13,20 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import javax.script.ScriptException;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.Icon;
 import javax.swing.JToolTip;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
+
 import org.jruby.RubyClass;
 import org.jruby.RubyModule;
-import org.jruby.internal.runtime.methods.DefaultMethod;
 import org.jruby.internal.runtime.methods.DynamicMethod;
 
 import seco.notebook.NotebookDocument;
-import seco.notebook.storage.ClassInfo;
-import seco.notebook.storage.NamedInfo;
-import seco.notebook.storage.PackageInfo;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.AsyncCompletionQuery;
 import seco.notebook.syntax.completion.AsyncCompletionTask;
@@ -43,10 +37,8 @@ import seco.notebook.syntax.completion.CompletionQuery;
 import seco.notebook.syntax.completion.CompletionResultSet;
 import seco.notebook.syntax.completion.CompletionTask;
 import seco.notebook.syntax.completion.JavaDocManager;
-import seco.notebook.syntax.java.JavaCompletion;
 import seco.notebook.syntax.java.JavaPaintComponent;
 import seco.notebook.syntax.java.JavaResultItem;
-import seco.notebook.syntax.java.JavaPaintComponent.CallableFeaturePaintComponent;
 import seco.notebook.syntax.util.JMIUtils;
 import seco.notebook.util.DocumentUtilities;
 
@@ -95,20 +87,8 @@ public class RubyCompletionProvider implements CompletionProvider
 		protected void preQueryUpdate(JTextComponent component)
 		{
 			int caretOffset = component.getCaretPosition();
-			// NotebookDocument doc = (NotebookDocument)
-			// component.getDocument();
 			if (caretOffset >= creationCaretOffset)
-			{
-				// try {
-				//if (true) // isJavaIdentifierPart(DocumentUtilities.getText(doc,
-					// creationCaretOffset, caretOffset -
-					// creationCaretOffset)))
 					return;
-				// if(!isCommentOrLiteral(doc, creationCaretOffset))
-				// return;
-				// } catch (BadLocationException e) {
-				// }
-			}
 			Completion.get().hideCompletion();
 		}
 
@@ -134,7 +114,7 @@ public class RubyCompletionProvider implements CompletionProvider
 					resultSet.finish();
 					return;
 				}
-				Class cls = obj.getClass();
+				Class<?> cls = obj.getClass();
 				if (obj instanceof RubyClass)
 				{
 					populateRubyClass(resultSet, (RubyClass) obj);
@@ -145,7 +125,7 @@ public class RubyCompletionProvider implements CompletionProvider
 					return;
 				}
 				int mod = Modifier.PUBLIC;
-				if (!p.evaled_or_guessed) cls = (Class) obj;
+				if (!p.evaled_or_guessed) cls = (Class<?>) obj;
 				populateComplPopup(resultSet, cls, mod);
 			}
 			catch (Exception ex)
@@ -188,7 +168,7 @@ public class RubyCompletionProvider implements CompletionProvider
 			{
 				for (Object key : t.getMethods().keySet())
 				{
-					DynamicMethod m = (DynamicMethod) t.getMethods().get(key);
+					//DynamicMethod m = (DynamicMethod) t.getMethods().get(key);
 					//if (m.getVisibility().isPublic()) continue;
 					JavaResultItem item = new RubyMethodResultItem(
 							(String) key, "void");
@@ -203,7 +183,7 @@ public class RubyCompletionProvider implements CompletionProvider
 		}
 
 		private void populateComplPopup(CompletionResultSet resultSet,
-				Class cls, int modifiers)
+				Class<?> cls, int modifiers)
 		{
 			// System.out.println("BshCompProv - populateComplPopup: " + cls);
 			resultSet.setTitle(cls.getCanonicalName());
@@ -215,10 +195,10 @@ public class RubyCompletionProvider implements CompletionProvider
 				item.setSubstituteOffset(queryCaretOffset);
 				resultSet.addItem(item);
 			}
-			for (Class c : cls.getDeclaredClasses())
+			for (Class<?> c : cls.getDeclaredClasses())
 			{
 				if (Modifier.isPrivate(c.getModifiers())) continue;
-				// annonimous inner classes have empty simple name
+				// anonymous inner classes have empty simple name
 				if (c.getSimpleName().length() == 0) continue;
 				// System.out.println("BshCompl - inner classes: " + c + ":" +
 				// c.getCanonicalName());
@@ -246,7 +226,7 @@ public class RubyCompletionProvider implements CompletionProvider
 			queryResult = resultSet;
 		}
 
-		private static Collection<Method> getMethods(Class cls, int comp_mod)
+		private static Collection<Method> getMethods(Class<?> cls, int comp_mod)
 		{
 			Set<Method> set = new HashSet<Method>();
 			Method[] ms = cls.getDeclaredMethods();
@@ -258,7 +238,7 @@ public class RubyCompletionProvider implements CompletionProvider
 			return set;
 		}
 
-		private static Collection<Field> getFields(Class cls, int comp_mod)
+		private static Collection<Field> getFields(Class<?> cls, int comp_mod)
 		{
 			Set<Field> set = new HashSet<Field>();
 			Field[] ms = cls.getDeclaredFields();
@@ -383,12 +363,8 @@ public class RubyCompletionProvider implements CompletionProvider
 		private static Action goToSource = new AbstractAction() {
 			public void actionPerformed(ActionEvent e)
 			{
-				// DocItem doc = (DocItem)e.getSource();
-				// ???JMIUtils.openElement((Element)doc.item);
 				if (e != null)
-				{
 					Completion.get().hideDocumentation();
-				}
 			}
 		};
 
@@ -400,13 +376,9 @@ public class RubyCompletionProvider implements CompletionProvider
 		protected void query(CompletionResultSet resultSet,
 				NotebookDocument doc, int caretOffset)
 		{
-			// if (item == null)
-			// ??? item = JMIUtils.findItemAtCaretPos(component);
 			if (item != null && JavaDocManager.SHOW_DOC)
-			{
 				resultSet.setDocumentation(new DocItem(
 						getAssociatedObject(item), null));
-			}
 			resultSet.finish();
 		}
 
@@ -419,13 +391,7 @@ public class RubyCompletionProvider implements CompletionProvider
 		{
 			Object ret = item;
 			if (item instanceof JavaResultItem)
-			{
 				ret = ((JavaResultItem) item).getAssociatedObject();
-			}
-			// if (ret instanceof Feature)
-			// ret = JMIUtils.getDefintion((Feature)ret);
-			// if (ret instanceof ClassDefinition)
-			// ret = JMIUtils.getSourceElementIfExists((ClassDefinition)ret);
 			return ret;
 		}
 
@@ -447,8 +413,7 @@ public class RubyCompletionProvider implements CompletionProvider
 
 			public CompletionDocumentation resolveLink(String link)
 			{
-				// ???Object item = javaDoc.parseLink(link, (Class)null);
-				return null;// item != null ? new DocItem(item, javaDoc) : null;
+				return null;
 			}
 
 			public String getText()
@@ -471,28 +436,23 @@ public class RubyCompletionProvider implements CompletionProvider
 				return item != null ? goToSource : null;
 			}
 
-			private class JavaDoc // extends NbJMICompletionJavaDoc
+			private class JavaDoc
 			{
 				public static final String CONTENT_NOT_FOUND = "JavaDoc Not Found.";
 				private DocItem docItem;
 
 				private JavaDoc(JTextComponent component)
 				{
-					// super(component);
 				}
 
 				private void setItem(Object item)
 				{
 					showJavaDoc(JavaDocManager.getInstance().getHTML(item));
-					// RequestProcessor.getDefault().post(new
-					// MyJavaDocParser(item));
 				}
 
 				private URL getURL(Object item)
 				{
-					// URL[] urls = getJMISyntaxSupport().getJavaDocURLs(item);
-					return null;// (urls == null || urls.length < 1) ? null :
-					// urls[0];
+					return null;
 				}
 
 				protected void showJavaDoc(String preparedText)
@@ -531,21 +491,6 @@ public class RubyCompletionProvider implements CompletionProvider
 			{
 				resultSet.finish();
 				return;
-			}
-		}
-
-		private void populateResult(List list, Class cls, String name,
-				int modifiers)
-		{
-			Method[] ms = cls.getMethods();
-			for (int i = 0; i < ms.length; i++)
-			{
-				if (ms[i].getModifiers() != modifiers) continue;
-				if (!ms[i].getName().equals(name)) continue;
-				JavaResultItem item = new JavaResultItem.MethodResultItem(ms[i]);
-				List parms = new ArrayList();
-				parms.add(item.toString());
-				list.add(parms);
 			}
 		}
 
