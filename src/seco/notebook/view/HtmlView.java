@@ -36,6 +36,7 @@ import seco.notebook.NotebookDocument.UpdateAction;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.html.HTMLEditor;
 import seco.things.Cell;
+import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
 
@@ -112,6 +113,9 @@ public class HtmlView extends HidableComponentView
                     ui.getSelectionManager().clearSelections();
                     NotebookUI.setFocusedHTMLEditor(editor);
                     editor = InnerHTMLEditor.this;
+                    CellGroupMember cgm = NotebookDocument.getNBElement(getElement());
+                    if(CellUtils.isReadonly(cgm))
+                        return;
                     TopFrame.getInstance().showHTMLToolBar(true);
                     // System.out.println("InnerHTMLEditor -focusGained: " + ui.getCaretPosition());
                 }
@@ -134,6 +138,8 @@ public class HtmlView extends HidableComponentView
 
                 public void caretUpdate(CaretEvent e)
                 {
+                    CellGroupMember cgm = NotebookDocument.getNBElement(getElement());
+                    if(CellUtils.isReadonly(cgm))  return;
                     GUIHelper.getHTMLToolBar().showAttributes(editor, e.getDot());
                 }
                 

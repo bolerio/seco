@@ -393,5 +393,15 @@ public class ConnectionPanel extends JPanel
     {
         this.peerID = peerID;
     }
+
+    @Override
+    public void removeNotify()
+    {
+       // System.out.println("ConnectionPanel: removeNotify()");
+       //this.disconnect();
+        super.removeNotify();
+    }
+    
+    
  
 }

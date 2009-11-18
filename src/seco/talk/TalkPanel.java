@@ -322,10 +322,12 @@ public class TalkPanel extends JPanel
     public static class ChatCallback implements Callback<String>
     {
         private TalkPanel panel;
+        
         public ChatCallback(TalkPanel panel)
         {
             this.panel = panel;
         }
+        
         public ChatCallback()
         {
         
@@ -343,6 +345,7 @@ public class TalkPanel extends JPanel
         {
             return panel;
         }
+        
         public void setPanel(TalkPanel panel)
         {
             this.panel = panel;
