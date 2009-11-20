@@ -610,7 +610,7 @@ public class GUIHelper
             HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell,
             Map<Object, Object> addit_attribs, int index)
     {
-        HGHandle cellH = (create_cell) ? CellUtils.getCellHForRefH(h) : h;
+        HGHandle cellH = (create_cell) ? CellUtils.getOrCreateCellHForRefH(h) : h;
         CellGroupMember out = ThisNiche.hg.get(cellH);
         if (r != null) out.setAttribute(VisualAttribs.rect, r);
         if (visualH != null) out.setVisual(visualH);
@@ -684,6 +684,18 @@ public class GUIHelper
             HGHandle objectHandle, HGHandle visualHandle, LayoutHandler lh,
             Rectangle r, Map<Object, Object> addit_attribs)
     {
+        HGHandle existingH = 
+            getCellHandleByValueHandle(groupHandle, objectHandle);
+        if(existingH != null) return existingH;
+        
+        CellGroup group = ThisNiche.hg.get(groupHandle);
+        Object x = ThisNiche.hg.get(objectHandle);
+        return GUIHelper.addToCellGroup(objectHandle, group, null, null, r,
+                !(x instanceof CellGroupMember), addit_attribs, -1);
+    }
+    
+    public static HGHandle getCellHandleByValueHandle(HGHandle groupHandle, HGHandle objectHandle)
+    {
         CellGroup group = ThisNiche.hg.get(groupHandle);
         for (int i = 0; i < group.getArity(); i++)
         {
@@ -692,9 +704,7 @@ public class GUIHelper
                     && ((Cell) x).getAtomHandle().equals(objectHandle))
                 return group.getTargetAt(i);
         }
-        Object x = ThisNiche.hg.get(objectHandle);
-        return GUIHelper.addToCellGroup(objectHandle, group, null, null, r,
-                !(x instanceof CellGroupMember), addit_attribs, -1);
+        return null;
     }
 
     public static void removeFromCellGroup(HGHandle groupH, HGHandle h, boolean backup)

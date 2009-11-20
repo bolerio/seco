@@ -34,16 +34,22 @@ public class PeerList extends JPanel
                     if (index < 0 || index >= getList().getModel().getSize())
                         return;
                     Object x = getList().getModel().getElementAt(index);
-                    ConnectionPanel connectionPanel = 
-                        ConnectionManager.getConnectionPanel(peerID);
-                    if(connectionPanel == null) return;
+                    ConnectionContext ctx = 
+                        ConnectionManager.getConnectionContext(getPeerID());
+                    if(ctx == null) return;
                     if (x instanceof HGPeerIdentity) 
-                        connectionPanel.openTalkPanel((HGPeerIdentity) x);
+                        ctx.openTalkPanel((HGPeerIdentity) x);
                     else
-                        connectionPanel.openChatRoom((HostedRoom) x);
+                        ctx.openChatRoom((HostedRoom) x);
                 }
             }
         };
+    }
+    
+    public PeerList(HGPeerIdentity peerID)
+    {
+        this();
+        this.peerID = peerID;
     }
 
     public void initComponents()

@@ -20,7 +20,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 
 import seco.api.Callback;
 
-public class TalkRoom extends JPanel
+public class TalkRoom extends JPanel implements  ConnectionContext.ConnectionListener
 {
     private static final long serialVersionUID = -6292689880168959513L;
     private String roomId;
@@ -33,12 +33,22 @@ public class TalkRoom extends JPanel
     
     private HGPeerIdentity peerID;
     
+    
+    public TalkRoom(HGPeerIdentity peerID)
+    {
+        this.peerID = peerID;
+    }
+
+    public TalkRoom()
+    {
+    }
+    
     private MultiUserChat getTheChat()
     {
         if (thechat == null)
         {
-            if(getConnectionPanel() == null) return null;
-            XMPPPeerInterface peerInterface = (XMPPPeerInterface)getConnectionPanel().getThisPeer().getPeerInterface();
+            if(getConnectionContext() == null) return null;
+            XMPPPeerInterface peerInterface = (XMPPPeerInterface)getConnectionContext().getPeer().getPeerInterface();
             thechat = new MultiUserChat(peerInterface.getConnection(), roomId);            
         }
         return thechat;
@@ -51,7 +61,7 @@ public class TalkRoom extends JPanel
         if (!getTheChat().isJoined())
             try
             {
-                getTheChat().join(getConnectionPanel().getThisPeer().getIdentity().getName());
+                getTheChat().join(getConnectionContext().getPeer().getIdentity().getName());
             }
             catch (XMPPException e)
             {
@@ -69,7 +79,7 @@ public class TalkRoom extends JPanel
                     System.err.println("Received a room message by a non-seco peer.");
                     return;
                 }
-                else if (otherId.equals(getConnectionPanel().getThisPeer().getIdentity().getId().toString()))
+                else if (otherId.equals(getConnectionContext().getPeer().getIdentity().getId().toString()))
                     return;
                 String from = packet.getFrom();
                 int hostPart = from.lastIndexOf("/");
@@ -83,20 +93,27 @@ public class TalkRoom extends JPanel
         getTheChat().addParticipantListener(new PacketListener() {
             public void processPacket(Packet packet)
             {
-                getPeerList().getListModel().removeAllElements();
-                for (Iterator<String> i = getTheChat().getOccupants(); i.hasNext(); )
-                {
-                    String occ = i.next();
-                    if (getTheChat().getOccupantPresence(occ).isAvailable())
-                    {
-                        HGPeerIdentity id = new HGPeerIdentity();
-                        id.setName(occ);
-                        id.setId(HGHandleFactory.makeHandle());
-                        getPeerList().getListModel().addElement(id);
-                    }
-                }
+                populatePeerList();
             }
         });
+        
+        populatePeerList();
+    }
+    
+    private void populatePeerList()
+    {
+        getPeerList().getListModel().removeAllElements();
+        for (Iterator<String> i = getTheChat().getOccupants(); i.hasNext(); )
+        {
+            String occ = i.next();
+            if (getTheChat().getOccupantPresence(occ).isAvailable())
+            {
+                HGPeerIdentity id = new HGPeerIdentity();
+                id.setName(occ);
+                id.setId(HGHandleFactory.makeHandle());
+                getPeerList().getListModel().addElement(id);
+            }
+        }
     }
     
     public void initComponents()
@@ -116,9 +133,8 @@ public class TalkRoom extends JPanel
                                               new JScrollPane(inputPane));
         peerListSplit.setResizeWeight(1.0);
         peerListSplit.setName("peerListSplit");
-        peerList = new PeerList();
+        peerList = new PeerList(peerID);
         peerList.initComponents();    
-        peerList.setPeerID(peerID);
         
         inputSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                     peerListSplit, 
@@ -155,9 +171,17 @@ public class TalkRoom extends JPanel
         this.roomId = roomId;
     }
     
-    public ConnectionPanel getConnectionPanel()
+    ConnectionContext ctx;
+    public ConnectionContext getConnectionContext()
     {
-        return ConnectionManager.getConnectionPanel(peerID);
+        if(ctx == null)
+        {
+          ctx = ConnectionManager.getConnectionContext(getPeerID());
+          if(ctx != null)
+            ctx.addConnectionListener(this);
+        }
+        return ctx;
+        
     }
     
     public static class ChatCallBack implements Callback<String>
@@ -179,10 +203,10 @@ public class TalkRoom extends JPanel
             {
                 Message xmpp = room.getTheChat().createMessage();
                 xmpp.setBody(msg);
-                xmpp.setProperty("secoPeer", room.getConnectionPanel().getThisPeer().getIdentity().getId().toString());
+                xmpp.setProperty("secoPeer", room.getConnectionContext().getPeer().getIdentity().getId().toString());
                 room.getTheChat().sendMessage(xmpp);
                 room.chatPane.chatFrom(
-                        room.getConnectionPanel().getThisPeer().getIdentity(), msg);
+                        room.getConnectionContext().getPeer().getIdentity(), msg);
             }
             catch (XMPPException e)
             {
@@ -239,5 +263,17 @@ public class TalkRoom extends JPanel
         this.peerID = peerID;
         if(peerList != null)
            peerList.setPeerID(peerID);
-    }       
+    }
+
+    @Override
+    public void connected(ConnectionContext ctx)
+    {
+        joinRoom();
+    }
+
+    @Override
+    public void disconnected(ConnectionContext ctx)
+    {
+        getPeerList().getListModel().removeAllElements();
+    }
 }

@@ -16,6 +16,7 @@ import seco.ThisNiche;
 import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
 import seco.rtenv.RuntimeContext;
+import seco.talk.ConnectionManager;
 import seco.things.CellGroup;
 import seco.things.CellVisual;
 
@@ -47,6 +48,7 @@ public class NicheBootListener implements HGListener
                 }else{
                    v.bind(group);
                    s.setVisible(true);
+                   ConnectionManager.startConnections();
                 }
             }
         });

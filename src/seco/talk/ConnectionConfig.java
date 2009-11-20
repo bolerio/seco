@@ -119,5 +119,76 @@ public class ConnectionConfig
     public void setProxyPass(String proxyPass)
     {
         this.proxyPass = proxyPass;
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((hostname == null) ? 0 : hostname.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result
+                + ((password == null) ? 0 : password.hashCode());
+        result = prime * result + port;
+        result = prime * result
+                + ((proxyHost == null) ? 0 : proxyHost.hashCode());
+        result = prime * result
+                + ((proxyPass == null) ? 0 : proxyPass.hashCode());
+        result = prime * result + proxyPort;
+        result = prime * result
+                + ((proxyUser == null) ? 0 : proxyUser.hashCode());
+        result = prime * result + (useProxy ? 1231 : 1237);
+        result = prime * result
+                + ((username == null) ? 0 : username.hashCode());
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        ConnectionConfig other = (ConnectionConfig) obj;
+        if (hostname == null)
+        {
+            if (other.hostname != null) return false;
+        }
+        else if (!hostname.equals(other.hostname)) return false;
+        if (name == null)
+        {
+            if (other.name != null) return false;
+        }
+        else if (!name.equals(other.name)) return false;
+        if (password == null)
+        {
+            if (other.password != null) return false;
+        }
+        else if (!password.equals(other.password)) return false;
+        if (port != other.port) return false;
+        if (proxyHost == null)
+        {
+            if (other.proxyHost != null) return false;
+        }
+        else if (!proxyHost.equals(other.proxyHost)) return false;
+        if (proxyPass == null)
+        {
+            if (other.proxyPass != null) return false;
+        }
+        else if (!proxyPass.equals(other.proxyPass)) return false;
+        if (proxyPort != other.proxyPort) return false;
+        if (proxyUser == null)
+        {
+            if (other.proxyUser != null) return false;
+        }
+        else if (!proxyUser.equals(other.proxyUser)) return false;
+        if (useProxy != other.useProxy) return false;
+        if (username == null)
+        {
+            if (other.username != null) return false;
+        }
+        else if (!username.equals(other.username)) return false;
+        return true;
     }    
 }

@@ -83,7 +83,7 @@ public class CellUtils
         ThisNiche.hg.update(c);
     }
 
-    public static HGHandle getCellHForRefH(HGHandle h)
+    public static HGHandle getOrCreateCellHForRefH(HGHandle h)
     {
         HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
@@ -137,7 +137,7 @@ public class CellUtils
     {
         Scriptlet s = new Scriptlet(lang, text);
         HGHandle h = ThisNiche.hg.add(s);
-        return CellUtils.getCellHForRefH(h);
+        return CellUtils.getOrCreateCellHForRefH(h);
     }
 
     public static boolean isHTML(Cell c)
@@ -459,7 +459,7 @@ public class CellUtils
         HGHandle h = (comp == null) ? ThisNiche.handleOf(text) : ThisNiche
                 .handleOf(comp);
         if (h == null) h = addSerializable(comp == null ? text : comp);
-        HGHandle res = CellUtils.getCellHForRefH(h);
+        HGHandle res = CellUtils.getOrCreateCellHForRefH(h);
         if (error) setError(res, error);
         if (par != null) addEventPubSub(EvalCellEvent.HANDLE, par, res, res);
         return res;
@@ -470,7 +470,7 @@ public class CellUtils
         Scriptlet s = new Scriptlet(doc.getDefaultEngineName(), text);
         HGHandle h = ThisNiche.handleOf(s);
         if (h == null) h = ThisNiche.hg.add(s);
-        return CellUtils.getCellHForRefH(h);
+        return CellUtils.getOrCreateCellHForRefH(h);
     }
 
     static int count = 0;
@@ -579,7 +579,7 @@ public class CellUtils
        // if(value instanceof Component)
        //     value = DocUtil.maybe_clone((Component) value);
         HGHandle h = addSerializable(value);
-        HGHandle res = CellUtils.getCellHForRefH(h);
+        HGHandle res = CellUtils.getOrCreateCellHForRefH(h);
         if (error) setError(h, error);
         return res;
     }

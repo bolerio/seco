@@ -1,336 +1,122 @@
 package seco.talk;
 
-import static org.hypergraphdb.peer.Structs.getPart;
-
 import java.awt.BorderLayout;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Future;
 
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
-import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGQuery.hg;
-import org.hypergraphdb.annotation.HGIgnore;
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;
 import org.hypergraphdb.peer.PeerPresenceListener;
-import org.hypergraphdb.peer.serializer.JSONReader;
 import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
-import org.hypergraphdb.util.CompletedFuture;
-import org.hypergraphdb.util.HGUtils;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
-import seco.ThisNiche;
-import seco.U;
-import seco.api.CallableCallback;
-import seco.gui.GUIHelper;
-import seco.gui.PiccoloCanvas;
-import seco.gui.TopFrame;
-import seco.gui.VisualAttribs;
-import seco.things.CellGroupMember;
-import seco.things.CellUtils;
-
 /**
  * <p>
- * A visual component to manage a single network connection. 
+ * A visual component to manage a single network connection.
  * </p>
  * 
  * @author Borislav Iordanov
- *
+ * 
  */
-public class ConnectionPanel extends JPanel
+public class ConnectionPanel extends JPanel implements
+        ConnectionContext.ConnectionListener, PeerPresenceListener
 {
     private static final long serialVersionUID = 9019036598512173062L;
 
-    @HGIgnore
-    HyperGraphPeer thisPeer;
-    JButton connectButton = null;
-    Map<HGPeerIdentity, TalkActivity> talks =
-        Collections.synchronizedMap(new HashMap<HGPeerIdentity, TalkActivity>());        
-    Map<String, TalkRoom> roomPanels = 
-        Collections.synchronizedMap(new HashMap<String, TalkRoom>());
-    String peerConfigResource = "seco/talk/xmpp1.json";
-    PeerList peerList;
-    
+    private JButton connectButton = null;
+    private PeerList peerList;
+
     private HGPeerIdentity peerID;
-    
-    private Future<Boolean> openPeer()
-    {
-        ConnectionConfig config = getConnectionConfig();
-        String configResource = U.getResourceContentAsString(peerConfigResource);
-        if (configResource == null)
-            throw new RuntimeException(
-                    "Unable to find default config " + peerConfigResource);
-        JSONReader reader = new JSONReader();
-        Map<String, Object> peerConfig = getPart(reader.read(configResource));
-        peerConfig.put("localDB", ThisNiche.hg.getLocation());
-        peerConfig.put("peerName", config.getUsername());
-        Map<String, Object> xmppConfig = getPart(peerConfig, "interfaceConfig");
-        xmppConfig.put("anonymous", config.isAnonymousLogin());
-        xmppConfig.put("autoRegister", config.isAutoRegister());
-        xmppConfig.put("user", config.getUsername());
-        xmppConfig.put("password", config.getPassword());
-        xmppConfig.put("serverUrl", config.getHostname());
-        xmppConfig.put("port", config.getPort());
-        thisPeer = new HyperGraphPeer(peerConfig);
-        thisPeer.getObjectContext().put(ConnectionPanel.class.getName(), this);
-        Future<Boolean> f = thisPeer.start(config.getUsername(), config.getPassword());
-        
-        thisPeer.addPeerPresenceListener(new PeerPresenceListener() {
-            public void peerJoined(HGPeerIdentity target)
-            {
-                peerList.getListModel().addElement(target);
-            }
 
-            public void peerLeft(HGPeerIdentity target)
-            {
-                peerList.getListModel().removeElement(target);
-            }
-        });
-        return f;
+    public ConnectionPanel()
+    {
     }
 
-    private void fetchRooms()
+    public ConnectionPanel(HGPeerIdentity peerID)
     {
-        XMPPPeerInterface peerInterface = (XMPPPeerInterface)thisPeer.getPeerInterface();
-        String server = peerInterface.getServerName();
-        if (server.indexOf("kobrix") > -1)
-            server = "kobrix.syspark.net";
-        try
-        {
-            for (HostedRoom room : MultiUserChat.getHostedRooms(
-                                     peerInterface.getConnection(), "conference." + server))
-            {
-                peerList.getListModel().addElement(room);
-            }
-        }
-        catch (XMPPException e)
-        {
-            e.printStackTrace();
-        }
+        this.peerID = peerID;
     }
-    
-    private Future<Boolean> startConnecting()
-    {
-        if (isConnected())
-            return new CompletedFuture<Boolean>(true);
-        else
-            return openPeer();
-    }
-    
+
     public void connect()
     {
-        if (connectButton.getText().equals("Disconnect"))
-            return;
-        else if (isConnected())
+        ConnectionContext ctx = ConnectionManager
+                .getConnectionContext(getPeerID());
+        if (ctx == null)
         {
-            connectButton.setText("Disconnect");
+            // TODO:???
         }
-        connectButton.setText("Connecting...");
-        connectButton.setEnabled(false);
-        U.run(new CallableCallback<Boolean>() {
-          public Boolean call() throws Exception 
-          { 
-              return startConnecting().get(); 
-          }
-          
-          public void onCompletion(Boolean result, Throwable t)
-          {
-              if (t == null && result)
-              {
-//                  JOptionPane.showMessageDialog(ConnectionPanel.this, 
-//                                                "Successfully connected to network.");
-                  try { fetchRooms(); }
-                  catch (Throwable error) 
-                  { 
-                      JOptionPane.showMessageDialog(ConnectionPanel.this, 
-                      error, "Failed to get chat rooms", JOptionPane.ERROR_MESSAGE);                       
-                  }
-                  connectButton.setText("Disconnect");
-                  ConnectionManager.registerConnectionPanel(thisPeer.getIdentity(), ConnectionPanel.this);
-                  setPeerID(thisPeer.getIdentity());
-                  peerList.setPeerID(thisPeer.getIdentity());
-              }
-              else
-              {
-                  if (t != null)
-                      t.printStackTrace(System.err);
-                  JOptionPane.showMessageDialog(ConnectionPanel.this, 
-                                                HGUtils.getRootCause(t),
-                                                "Failed to connected to network, see error console.",
-                                                JOptionPane.ERROR_MESSAGE);
-                  connectButton.setText("Connect");    
-                  ConnectionManager.unregisterConnectionPanel(thisPeer.getIdentity());
-                  
-              }
-              connectButton.setEnabled(true);                      
-          }
-        });        
+        else
+        {
+            if (!ctx.isConnected()) {
+                connectButton.setEnabled(false);
+                connectButton.setText("Connecting...");
+            }
+            ctx.addConnectionListener(this); 
+            ctx.connect();
+        }
     }
-    
+
     public void disconnect()
     {
-        connectButton.setText("Disconnecting...");
-        U.run(new CallableCallback<Boolean>() {
-            public Boolean call() throws Exception 
-            { 
-                thisPeer.stop();
-                return true;
-            }
-            public void onCompletion(Boolean result, Throwable t)
+        ConnectionContext ctx = ConnectionManager
+                .getConnectionContext(getPeerID());
+        if (ctx == null)
+        {
+            // TODO:???
+        }
+        else
+        {
+            if (ctx.isConnected()) 
             {
-                if (t == null && result)
-                {
-                    peerList.getListModel().removeAllElements();
- //                    JOptionPane.showMessageDialog(ConnectionPanel.this, 
-//                                                  "Successfully disconnect from network.");
-                    connectButton.setText("Connect");
-                }
-                else
-                {
-                    if (t != null)
-                        t.printStackTrace(System.err);
-                    JOptionPane.showMessageDialog(ConnectionPanel.this,
-                                                  t,
-                                                  "Failed to connected to network, see error console.",
-                                                  JOptionPane.ERROR_MESSAGE);
-                    connectButton.setText("Disconnect");                          
-                }
-                connectButton.setEnabled(true);                      
+                connectButton.setEnabled(false);
+                connectButton.setText("Disconnecting...");
             }
-          });           
+            ctx.addConnectionListener(this); 
+            ctx.disconnect();
+        }
     }
-    
+
     public void initComponents()
-    {        
-        if (connectButton != null)
-           return;
+    {
+        if (connectButton != null) return;
         setLayout(new BorderLayout());
-        setBorder(new BevelBorder(BevelBorder.RAISED));        
+        setBorder(new BevelBorder(BevelBorder.RAISED));
         setConnectButton(new JButton("Connect"));
         connectButton.addActionListener(new ButtonListener(this));
         add(connectButton, BorderLayout.NORTH);
-        peerList = new PeerList();
+        peerList = new PeerList(peerID);
         peerList.initComponents();
         add(peerList, BorderLayout.CENTER);
     }
-    
-    public ConnectionPanel()
-    {               
-        
-    }
 
-    public void openTalkPanel(HGPeerIdentity friend)
-    {
-        // Ideally,we'd want to put a TalkPanel component in the workspace and that
-        // shows up the next time the system is started.
-        
-        
-//        TalkPanel existing = U.hgetOne(hg.and(hg.type(TalkPanel.class), 
-//                                              hg.eq("friend", friend)));
-//        if (existing == null)
-//        {
-//            existing = new TalkPanel();
-//            existing.setFriend(friend);
-//            HGHandle h = ThisNiche.hg.add(existing);
-//        }
-        TalkActivity activity = talks.get(friend); 
-        if (activity == null)
-        {
-            activity = new TalkActivity(thisPeer, friend);
-            thisPeer.getActivityManager().initiateActivity(activity);
-            talks.put(friend, activity);
-        }
-        
-        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();        
-        int width = 200;
-        int height = 100;
-        int x = Math.max(0, (canvas.getWidth() - width)/2);
-        int y = Math.max(0, (canvas.getHeight() - height)/2);  
-        HGHandle panelHandle = ThisNiche.hg.getHandle(activity.getPanel());
-        CellGroupMember cgm = ThisNiche.hg.get(GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, 
-                                panelHandle, 
-                                null, 
-                                null, 
-                                new Rectangle(x, y, width, height)));
-        CellUtils.setName(cgm, friend.getName());
-    }
-
-    public void openChatRoom(HostedRoom room)
-    {
-        TalkRoom roomPanel = roomPanels.get(room.getJid());
-        if (roomPanel == null)
-        {
-            roomPanel = hg.getOne(ThisNiche.hg, hg.and(hg.type(TalkRoom.class), 
-                         hg.eq("roomId", room.getJid()), hg.eq("peerID", thisPeer.getIdentity())));
-            if (roomPanel == null)
-            {
-                roomPanel = new TalkRoom();
-                roomPanel.setRoomId(room.getJid());
-                roomPanel.setPeerID(thisPeer.getIdentity());
-                roomPanel.initComponents();
-                ThisNiche.hg.add(roomPanel);
-            }
-            else
-            {
-                roomPanel.joinRoom();
-            }
-        }
-        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();        
-        int width = 400;
-        int height = 500;
-        int x = Math.max(0, (canvas.getWidth() - width)/2);
-        int y = Math.max(0, (canvas.getHeight() - height)/2);          
-        HGHandle panelHandle = ThisNiche.hg.getHandle(roomPanel);
-        CellGroupMember cgm = ThisNiche.hg.get(GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, 
-                                                                       panelHandle, 
-                                                                       null, 
-                                                                       null, 
-                                                                       new Rectangle(x, y, width, height)));
-        CellUtils.setName(cgm, "Chat room " + room.getName());
-        cgm.setAttribute(VisualAttribs.showTitle, true);
-        roomPanel.initSplitterLocations();
-        ThisNiche.hg.update(roomPanel);
-    }
-    
     public boolean isConnected()
     {
-        return thisPeer != null && thisPeer.getPeerInterface().isConnected(); 
+        return connectButton.getText().equals("Disconnect");
+        // thisPeer != null && thisPeer.getPeerInterface().isConnected();
     }
-    
-//    public void setConnectionConfig(ConnectionConfig config)
-//    {
-//        this.config = config;
-//    }
-    
-    public ConnectionConfig getConnectionConfig()
-    {
-        ConnectionConfig config = null;
-        if (config == null)
-        {
-            config = hg.getOne(ThisNiche.hg, hg.type(ConnectionConfig.class));
-            if (config == null)
-            {
-                config = new ConnectionConfig();
-                ThisNiche.hg.add(config);
-            }
-        }
-        return config;
-    }
-    
+
     public HyperGraphPeer getThisPeer()
     {
-        return thisPeer;
+        return getConnectionContext().getPeer();
+    }
+    
+    ConnectionContext ctx;
+    public ConnectionContext getConnectionContext()
+    {
+        if(ctx == null)
+        {
+          ctx = ConnectionManager.getConnectionContext(getPeerID());
+          if(ctx != null)
+            ctx.addConnectionListener(this);
+        }
+        return ctx;
+        
     }
 
     public JButton getConnectButton()
@@ -351,37 +137,6 @@ public class ConnectionPanel extends JPanel
     public void setPeerList(PeerList peerList)
     {
         this.peerList = peerList;
-        //peerList.setConnectionPanel(this);
-    }
-    
-    public static class ButtonListener implements ActionListener
-    {
-        private ConnectionPanel panel;
-        
-        public ButtonListener()
-        {
-        }
-        
-        public ButtonListener(ConnectionPanel panel)
-        {
-            this.panel = panel;
-        }
-        
-        public void actionPerformed(ActionEvent ev)
-        {
-            if (panel.getConnectButton().getText().equals("Connect"))
-                panel.connect();
-            else if (panel.getConnectButton().getText().equals("Disconnect"))
-                panel.disconnect();
-        }
-        public ConnectionPanel getPanel()
-        {
-            return panel;
-        }
-        public void setPanel(ConnectionPanel panel)
-        {
-            this.panel = panel;
-        }
     }
 
     public HGPeerIdentity getPeerID()
@@ -392,16 +147,97 @@ public class ConnectionPanel extends JPanel
     public void setPeerID(HGPeerIdentity peerID)
     {
         this.peerID = peerID;
+        getConnectionContext();
     }
 
     @Override
-    public void removeNotify()
+    public void connected(ConnectionContext ctx)
     {
-       // System.out.println("ConnectionPanel: removeNotify()");
-       //this.disconnect();
-        super.removeNotify();
+        connectButton.setEnabled(true);
+        connectButton.setText("Disconnect");
+        populate();
     }
     
+    private void populate()
+    {
+        getPeerList().getListModel().removeAllElements();
+        fetchRooms();
+        for(HGPeerIdentity i: ctx.getPeer().getConnectedPeers())
+            getPeerList().getListModel().addElement(i);
+        getPeerList().setPeerID(peerID);
+        ctx.getPeer().addPeerPresenceListener(this);
+    }
+
+    @Override
+    public void disconnected(ConnectionContext ctx)
+    {
+        connectButton.setEnabled(true);
+        connectButton.setText("Connect");
+        getPeerList().getListModel().removeAllElements();
+    }
     
- 
+    @Override
+    public void peerJoined(HGPeerIdentity target)
+    {
+        getPeerList().getListModel().addElement(target);
+    }
+
+    @Override
+    public void peerLeft(HGPeerIdentity target)
+    {
+        getPeerList().getListModel().removeElement(target);
+    }
+
+    private void fetchRooms()
+    {
+        
+        XMPPPeerInterface peerInterface = (XMPPPeerInterface) getThisPeer()
+                .getPeerInterface();
+        String server = peerInterface.getServerName();
+        if (server.indexOf("kobrix") > -1) server = "kobrix.syspark.net";
+        try
+        {
+            for (HostedRoom room : MultiUserChat.getHostedRooms(peerInterface
+                    .getConnection(), "conference." + server))
+            {
+                peerList.getListModel().addElement(room);
+            }
+        }
+        catch (XMPPException e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    public static class ButtonListener implements ActionListener
+    {
+        private ConnectionPanel panel;
+
+        public ButtonListener()
+        {
+        }
+
+        public ButtonListener(ConnectionPanel panel)
+        {
+            this.panel = panel;
+        }
+
+        public void actionPerformed(ActionEvent ev)
+        {
+            if (panel.getConnectButton().getText().equals("Connect")) panel
+                    .connect();
+            else if (panel.getConnectButton().getText().equals("Disconnect"))
+                panel.disconnect();
+        }
+
+        public ConnectionPanel getPanel()
+        {
+            return panel;
+        }
+
+        public void setPanel(ConnectionPanel panel)
+        {
+            this.panel = panel;
+        }
+    }
 }

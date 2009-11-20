@@ -28,8 +28,8 @@ import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;
 import org.hypergraphdb.peer.Message;
 import org.hypergraphdb.peer.Messages;
-import org.hypergraphdb.peer.SubgraphManager;
 import org.hypergraphdb.peer.Performative;
+import org.hypergraphdb.peer.SubgraphManager;
 import org.hypergraphdb.peer.workflow.FSMActivity;
 import org.hypergraphdb.peer.workflow.FromState;
 import org.hypergraphdb.peer.workflow.OnMessage;
@@ -39,11 +39,9 @@ import seco.ThisNiche;
 import seco.events.EvalCellEvent;
 import seco.events.EventPubSub;
 import seco.gui.GUIHelper;
-import seco.gui.NBUIVisual;
 import seco.gui.VisualAttribs;
 import seco.things.Cell;
 import seco.things.CellGroup;
-import seco.things.CellUtils;
 
 /**
  * <p>
@@ -100,7 +98,7 @@ public class TalkActivity extends FSMActivity
                 if (s.getEventHandler().equals(s.getSubscriber())
                         && handler instanceof Cell)
                 {
-                    // System.out.println("Tranfering EventPubSub: " + s);
+                    // System.out.println("Transfering EventPubSub: " + s);
                     transferAtom(msg, s.getSubscriber(), done, false);
                     transferAtom(msg, ThisNiche.handleOf(s), done, false);
                 }
@@ -132,12 +130,14 @@ public class TalkActivity extends FSMActivity
         }
     }
 
-    void openPanel(String name)
+    void openPanel()
     {
-        ConnectionPanel connectionPanel = (ConnectionPanel) getThisPeer()
-                .getObjectContext().get(ConnectionPanel.class.getName());
-        if (!connectionPanel.talks.containsKey(friend))
-            connectionPanel.talks.put(friend, this);
+        //ConnectionPanel connectionPanel = (ConnectionPanel) getThisPeer()
+        //        .getObjectContext().get(ConnectionPanel.class.getName());
+        ConnectionContext ctx = 
+            ConnectionManager.getConnectionContext(getThisPeer().getIdentity());
+        if (!ctx.talks.containsKey(friend))
+            ctx.talks.put(friend, this);
         if (talkPanel == null)
         {
             talkPanel = hg.getOne(ThisNiche.hg, hg.and(
@@ -152,7 +152,7 @@ public class TalkActivity extends FSMActivity
         talkPanel.setTalkActivity(this);
         Map<Object, Object> attribs = new HashMap<Object, Object>();
         // TODO: some sort of naming
-        String title = (name != null) ? name : "Connection Panel";
+        String title = (friend.getName() != null) ? friend.getName() : "Connection Panel";
         attribs.put(VisualAttribs.name, title);
         attribs.put(VisualAttribs.showTitle, true);
         GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, ThisNiche.hg
@@ -168,7 +168,7 @@ public class TalkActivity extends FSMActivity
             if (id != null)
             {
                 friend = id;
-                openPanel(friend.getName());
+                openPanel();
             }
             else
                 throw new RuntimeException("Unknown peer " + getSender(msg)
@@ -189,7 +189,7 @@ public class TalkActivity extends FSMActivity
     {
         this(thisPeer);
         this.friend = friend;
-        openPanel(friend.getName());
+        openPanel();
     }
 
     public TalkActivity(HyperGraphPeer thisPeer, UUID id)
@@ -201,7 +201,7 @@ public class TalkActivity extends FSMActivity
     {
         super(thisPeer, id);
         this.friend = friend;
-        openPanel(friend.getName());
+        openPanel();
     }
 
     public TalkPanel getPanel()
