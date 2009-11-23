@@ -242,8 +242,8 @@
 )
          
 (define (netdialog-action e) 
-  (let ((config (hg:with-rs rs (type ConnectionPanel.class) 
-                  (if (.hasNext rs) (.getConnectionConfig (.get ThisNiche.hg$ (.next rs))) 
+  (let ((config (hg:with-rs rs (type ConnectionContext.class) 
+                  (if (.hasNext rs) (.getConfig (.get ThisNiche.hg$ (.next rs))) 
                       (seco.talk.ConnectionConfig.)))))
         (if (eq? #null (.getHandle ThisNiche.hg$ config))
             (.add ThisNiche.hg$ config))

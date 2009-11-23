@@ -98,7 +98,6 @@ public class ConnectionPanel extends JPanel implements
     public boolean isConnected()
     {
         return connectButton.getText().equals("Disconnect");
-        // thisPeer != null && thisPeer.getPeerInterface().isConnected();
     }
 
     public HyperGraphPeer getThisPeer()
@@ -113,7 +112,13 @@ public class ConnectionPanel extends JPanel implements
         {
           ctx = ConnectionManager.getConnectionContext(getPeerID());
           if(ctx != null)
-            ctx.addConnectionListener(this);
+          {
+             ctx.addConnectionListener(this);
+             if(ctx.isConnected() && !isConnected())
+                connected(ctx);
+             else if(!ctx.isConnected() && isConnected())
+                disconnected(ctx);
+          }
         }
         return ctx;
         

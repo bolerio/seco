@@ -24,7 +24,7 @@ import edu.umd.cs.piccolox.util.PNodeLocator;
 public class TitlePaneNode extends CommandHandle
 {
     public static int HEIGHT = 16;
-
+    public static Color BG_COLOR= new Color(77, 117, 154);
     public TitlePaneNode(PSwingNode node)
     {
         super(new OffsetPBoundsLocator(node, SwingConstants.NORTH, new Point(0,
@@ -33,7 +33,7 @@ public class TitlePaneNode extends CommandHandle
                 .get(node.getHandle())));
         setHeight(PREF_DIM + 2);
         setWidth(node.getWidth());// - 50);
-        setPaint(new Color(77, 117, 154));
+        setPaint(BG_COLOR);
         getLabel().setTextPaint(Color.white);
         // this.getLabel().setLabelLocation(SwingConstants.NORTH);
         addActionHandles(node, this);

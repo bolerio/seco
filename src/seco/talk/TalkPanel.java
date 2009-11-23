@@ -15,7 +15,6 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -33,7 +32,7 @@ import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookTransferHandler;
 import seco.things.CellUtils;
 
-public class TalkPanel extends JPanel
+public class TalkPanel extends JPanel implements ConnectionContext.ConnectionListener
 {
     private static final String LABEL_READY = "Ready";
     private static final String LABEL_ACCEPT_TRANSFER = "Accept Transfer";
@@ -49,6 +48,7 @@ public class TalkPanel extends JPanel
     private transient TalkActivity talkActivity;
     private HGHandle transfer;
 
+    private HGPeerIdentity peerID;
     
     public void initComponents()
     {
@@ -58,7 +58,7 @@ public class TalkPanel extends JPanel
         inputPane.inputCallback = new ChatCallback(this);
         chatPane = new ChatPane();
         chatPane.initComponents();
-        chatPane.setMe(this.talkActivity.getThisPeer().getIdentity());
+        chatPane.setMe(getConnectionContext().getPeer().getIdentity());
         JPanel outPanel = new JPanel();
         outPanel.setLayout(new BorderLayout());
         outPanel.add(new JScrollPane(chatPane), BorderLayout.CENTER);
@@ -82,10 +82,18 @@ public class TalkPanel extends JPanel
         this.setTransferHandler(new TPTransferHandler(this));
     }
 
-    public TalkPanel(TalkActivity talkActivity)
+//    public TalkPanel(TalkActivity talkActivity)
+//    {
+//        this();
+//        this.talkActivity = talkActivity;        
+//        initComponents();
+//    }
+    
+    public TalkPanel(HGPeerIdentity friend, HGPeerIdentity peerID)
     {
         this();
-        this.talkActivity = talkActivity;        
+        this.friend = friend;        
+        this.peerID = peerID;
         initComponents();
     }
 
@@ -139,7 +147,7 @@ public class TalkPanel extends JPanel
         String label = atom.getClass().getSimpleName() + "(" +ThisNiche.hg.getPersistentHandle(h).toString() + ")";              
             //ThisNiche.hg.getPersistentHandle(h).toString() + ":" + atom + ":" + type;
         String msg = "Offered " + label;
-        chatPane.actionableChatFrom(this.talkActivity.getThisPeer().getIdentity(), msg, "Cancel",
+        chatPane.actionableChatFrom(talkActivity.getThisPeer().getIdentity(), msg, "Cancel",
         new Runnable() {
             public void run()
             {
@@ -167,15 +175,15 @@ public class TalkPanel extends JPanel
         transferButton.setText(LABEL_READY);
     }
     
-    public static void main(String[] argv)
-    {
-        JFrame frame = new JFrame();
-        final TalkPanel talk = new TalkPanel(null);
-        frame.add(talk);
-        frame.setSize(500, 500);
-        frame.setLocation(300, 200);
-        frame.setVisible(true);
-    }
+//    public static void main(String[] argv)
+//    {
+//        JFrame frame = new JFrame();
+//        final TalkPanel talk = new TalkPanel(null);
+//        frame.add(talk);
+//        frame.setSize(500, 500);
+//        frame.setLocation(300, 200);
+//        frame.setVisible(true);
+//    }
 
     
     public JButton getTransferButton()
@@ -350,5 +358,51 @@ public class TalkPanel extends JPanel
         {
             this.panel = panel;
         }
+    }
+
+    public HGPeerIdentity getPeerID()
+    {
+        return peerID;
+    }
+
+    public void setPeerID(HGPeerIdentity peerID)
+    {
+        this.peerID = peerID;
+        getConnectionContext();
+    }
+    
+    ConnectionContext ctx;
+    public ConnectionContext getConnectionContext()
+    {
+        if(ctx == null)
+        {
+          ctx = ConnectionManager.getConnectionContext(getPeerID());
+          if(ctx != null)
+          {
+              ctx.addConnectionListener(this);
+          }
+        }
+        return ctx;
+        
+    }
+
+    @Override
+    public void connected(ConnectionContext ctx)
+    {
+        initTalkActivity(ctx);
+    }
+    
+    @Override
+    public void disconnected(ConnectionContext ctx)
+    {
+        talkActivity = null;
+    }
+    
+    public void initTalkActivity(ConnectionContext ctx)
+    {
+        if(talkActivity == null) return;
+        TalkActivity activity = new TalkActivity(ctx.getPeer(), friend);
+        ctx.getPeer().getActivityManager().initiateActivity(activity);
+        setTalkActivity(activity);
     }
 }

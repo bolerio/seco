@@ -3,6 +3,7 @@
  */
 package seco.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -11,11 +12,13 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
+import seco.gui.piccolo.TitlePaneNode;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import edu.umd.cs.piccolo.PCamera;
@@ -168,6 +171,40 @@ public class PSwingNode extends PSwing implements Serializable
         }
         return null;
     }
+    
+    void doJob(PSwingNode node, boolean b)
+    {
+             node.setVisible(!b);
+     
+    }
+    
+    public void blink()
+    {
+       do_blink(50, 25, 2);
+       moveToFront();
+       getCanvas().getSelectionHandler().select(this);
+    }
+    
+    void do_blink(final int intratime,
+            final int intertime, final int count) {
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        // flash on and off each time
+                        for(int i=0; i<count; i++) {
+                            PSwingNode.this.setVisible(false);
+                            Thread.sleep(intratime);
+                            PSwingNode.this.setVisible(true);
+                            Thread.sleep(intertime);
+                        }
+                        // turn the flash off
+                        PSwingNode.this.setVisible(true);
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
+            }}).start();
+        }
+
 
     private void writeObject(ObjectOutputStream out) throws IOException
     {

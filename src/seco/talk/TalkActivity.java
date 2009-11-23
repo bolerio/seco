@@ -56,7 +56,7 @@ public class TalkActivity extends FSMActivity
     public static final String TYPENAME = "seco-talk";
 
     private HGPeerIdentity friend;
-    private TalkPanel talkPanel;
+    //private TalkPanel talkPanel;
 
     private void transferAtom(Message msg, HGHandle atom, Set<HGHandle> done,
             boolean mainAtom)
@@ -136,28 +136,29 @@ public class TalkActivity extends FSMActivity
         //        .getObjectContext().get(ConnectionPanel.class.getName());
         ConnectionContext ctx = 
             ConnectionManager.getConnectionContext(getThisPeer().getIdentity());
-        if (!ctx.talks.containsKey(friend))
-            ctx.talks.put(friend, this);
-        if (talkPanel == null)
-        {
-            talkPanel = hg.getOne(ThisNiche.hg, hg.and(
-                    hg.type(TalkPanel.class), hg.eq("friend", friend)));
-            if (talkPanel == null)
-            {
-                talkPanel = new TalkPanel(this);
-                talkPanel.setFriend(friend);
-                ThisNiche.hg.add(talkPanel);
-            }
-        }
-        talkPanel.setTalkActivity(this);
-        Map<Object, Object> attribs = new HashMap<Object, Object>();
-        // TODO: some sort of naming
-        String title = (friend.getName() != null) ? friend.getName() : "Connection Panel";
-        attribs.put(VisualAttribs.name, title);
-        attribs.put(VisualAttribs.showTitle, true);
-        GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, ThisNiche.hg
-                .getHandle(talkPanel), null, null, new Rectangle(500, 200, 300,
-                300), attribs);
+//        if (!ctx.talks.containsKey(friend))
+//            ctx.talks.put(friend, this);
+//        if (talkPanel == null)
+//        {
+//            talkPanel = hg.getOne(ThisNiche.hg, hg.and(
+//                    hg.type(TalkPanel.class), hg.eq("friend", friend)));
+//            if (talkPanel == null)
+//            {
+//                talkPanel = new TalkPanel(this);
+//                talkPanel.setFriend(friend);
+//                ThisNiche.hg.add(talkPanel);
+//            }
+//        }
+//        talkPanel.setTalkActivity(this);
+//        Map<Object, Object> attribs = new HashMap<Object, Object>();
+//        // TODO: some sort of naming
+//        String title = (friend.getName() != null) ? friend.getName() : "Connection Panel";
+//        attribs.put(VisualAttribs.name, title);
+//        attribs.put(VisualAttribs.showTitle, true);
+//        GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, ThisNiche.hg
+//                .getHandle(talkPanel), null, null, new Rectangle(500, 200, 300,
+//                300), attribs);
+        ctx.openTalkPanel(friend);
     }
 
     private void initFriend(Message msg)
@@ -189,7 +190,7 @@ public class TalkActivity extends FSMActivity
     {
         this(thisPeer);
         this.friend = friend;
-        openPanel();
+        //openPanel();
     }
 
     public TalkActivity(HyperGraphPeer thisPeer, UUID id)
@@ -201,12 +202,12 @@ public class TalkActivity extends FSMActivity
     {
         super(thisPeer, id);
         this.friend = friend;
-        openPanel();
+        //openPanel();
     }
 
     public TalkPanel getPanel()
     {
-        return talkPanel;
+        return getConnectionContext().getTalkPanel(friend);
     }
 
     public void chat(String text)
@@ -246,7 +247,7 @@ public class TalkActivity extends FSMActivity
 
     protected void onPeerFailure(Message msg)
     {
-        JOptionPane.showMessageDialog(talkPanel, getPart(msg, CONTENT));
+        JOptionPane.showMessageDialog(getPanel(), getPart(msg, CONTENT));
     }
 
     @FromState("Started")
@@ -268,7 +269,7 @@ public class TalkActivity extends FSMActivity
             final HGPersistentHandle atomHandle = getPart(content, "atom");
             if (msg.getPerformative() == Performative.Propose)
             {
-                talkPanel.getChatPane().actionableChatFrom(friend,
+                getPanel().getChatPane().actionableChatFrom(friend,
                         (String) getPart(content, "label"), "Accept",
                         new Runnable() {
                             public void run()
@@ -306,7 +307,7 @@ public class TalkActivity extends FSMActivity
     @OnMessage(performative = "RejectProposal")
     public WorkflowState onRejectProposal(final Message msg)
     {
-        talkPanel.getChatPane().chatFrom(friend,
+        getPanel().getChatPane().chatFrom(friend,
                 "Content " + getPart(msg, CONTENT) + " rejected.");
         return null;
     }
@@ -328,7 +329,7 @@ public class TalkActivity extends FSMActivity
             // EventDispatcher.dispatch(U.hgType(ChatEvent.class),
             // friend.getId(),
             // new ChatEvent(friend, text));
-            talkPanel.getChatPane().chatFrom(friend, text);
+            getPanel().getChatPane().chatFrom(friend, text);
         }
         return null;
     }
@@ -421,5 +422,18 @@ public class TalkActivity extends FSMActivity
     public String getType()
     {
         return TYPENAME;
+    }
+    
+    ConnectionContext ctx;
+    public ConnectionContext getConnectionContext()
+    {
+        if(ctx == null)
+        {
+          ctx = ConnectionManager.getConnectionContext(getThisPeer().getIdentity());
+          //if(ctx != null)
+          //  ctx.addConnectionListener(this);
+        }
+        return ctx;
+        
     }
 }

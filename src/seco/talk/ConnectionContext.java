@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -24,6 +25,7 @@ import seco.ThisNiche;
 import seco.U;
 import seco.api.CallableCallback;
 import seco.gui.GUIHelper;
+import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
 import seco.gui.TopFrame;
 import seco.gui.VisualAttribs;
@@ -39,8 +41,8 @@ public class ConnectionContext
     private boolean inProgress;
     private HyperGraphPeer thisPeer;
     private Set<ConnectionListener> listeners = new HashSet<ConnectionListener>();
-    Map<HGPeerIdentity, TalkActivity> talks = Collections
-            .synchronizedMap(new HashMap<HGPeerIdentity, TalkActivity>());
+    //Map<HGPeerIdentity, TalkActivity> talks = Collections
+    //        .synchronizedMap(new HashMap<HGPeerIdentity, TalkActivity>());
 
     // Map<String, TalkRoom> roomPanels = Collections
     // .synchronizedMap(new HashMap<String, TalkRoom>());
@@ -205,8 +207,13 @@ public class ConnectionContext
         // Find an existing cell with that panel:
         HGHandle existingH = GUIHelper.getCellHandleByValueHandle(
                 ThisNiche.TOP_CELL_GROUP_HANDLE, panelHandle);
-        if (existingH != null) return panel;
-
+        if (existingH != null)
+        {
+            PSwingNode n = TopFrame.getInstance().getCanvas()
+                    .getPSwingNodeForHandle(existingH);
+            n.blink();
+            return panel;
+        }
         // Create new panel
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         int width = 200;
@@ -224,71 +231,108 @@ public class ConnectionContext
         return panel;
     }
 
+    public TalkPanel getTalkPanel(HGPeerIdentity friend)
+    {
+        //TODO: strange HG exception - missing "peerID" dimension
+       // TalkPanel panel = null;//hg.getOne(ThisNiche.hg, hg.and(hg.type(TalkPanel.class),
+        //   hg.eq("friend", friend), hg.eq("peerID", getPeer().getIdentity())));
+        List<TalkPanel> list = hg.getAll(ThisNiche.hg, hg.and(hg.type(TalkPanel.class),
+                hg.eq("friend", friend)));
+        for(TalkPanel tp : list)
+            if(getPeer().getIdentity().equals(tp.getPeerID()))
+               return tp;
+        return null;
+    }
+    
     public void openTalkPanel(HGPeerIdentity friend)
     {
         // Ideally,we'd want to put a TalkPanel component in the workspace and
         // that
         // shows up the next time the system is started.
-
-        // TalkPanel existing = U.hgetOne(hg.and(hg.type(TalkPanel.class),
-        // hg.eq("friend", friend)));
-        // if (existing == null)
-        // {
-        // existing = new TalkPanel();
-        // existing.setFriend(friend);
-        // HGHandle h = ThisNiche.hg.add(existing);
-        // }
-        TalkActivity activity = talks.get(friend);
-        if (activity == null)
+        TalkPanel panel = getTalkPanel(friend);
+        
+        HGHandle panelH = null;
+         if (panel == null)
+         {
+            panel = new TalkPanel(friend, getPeer().getIdentity());
+            panelH = ThisNiche.hg.add(panel);
+        }else
+            panelH = ThisNiche.handleOf(panel);
+         
+               
+        //if (panel.getTalkActivity() == null)
+       // {
+            //TalkActivity activity = new TalkActivity(thisPeer, friend);
+            //thisPeer.getActivityManager().initiateActivity(activity);
+            //panel.setTalkActivity(activity);
+            panel.initTalkActivity(this);
+      //  }
+        
+        // Find an existing cell with that panel:
+        HGHandle existingH = GUIHelper.getCellHandleByValueHandle(
+                ThisNiche.TOP_CELL_GROUP_HANDLE, panelH);
+        if (existingH != null)
         {
-            activity = new TalkActivity(thisPeer, friend);
-            thisPeer.getActivityManager().initiateActivity(activity);
-            talks.put(friend, activity);
-        }
+            PSwingNode n = TopFrame.getInstance().getCanvas()
+                    .getPSwingNodeForHandle(existingH);
+            n.blink();
+            return;
+        } 
 
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         int width = 200;
         int height = 100;
         int x = Math.max(0, (canvas.getWidth() - width) / 2);
         int y = Math.max(0, (canvas.getHeight() - height) / 2);
-        HGHandle panelHandle = ThisNiche.hg.getHandle(activity.getPanel());
-        CellGroupMember cgm = ThisNiche.hg.get(GUIHelper.addIfNotThere(
-                ThisNiche.TOP_CELL_GROUP_HANDLE, panelHandle, null, null,
-                new Rectangle(x, y, width, height)));
+        CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        CellGroupMember cgm = ThisNiche.hg.get(GUIHelper.addToCellGroup(panelH,
+                top, null, null, new Rectangle(x, y, width, height), true));
         CellUtils.setName(cgm, friend.getName());
+        cgm.setAttribute(VisualAttribs.showTitle, true);
     }
 
     public void openChatRoom(HostedRoom room)
     {
-        TalkRoom roomPanel = hg.getOne(ThisNiche.hg, hg.and(hg.type(TalkRoom.class), hg
-                .eq("roomId", room.getJid()), hg.eq("peerID", thisPeer
-                .getIdentity())));
-        if (roomPanel == null)
+        TalkRoom panel = hg.getOne(ThisNiche.hg, hg.and(
+                hg.type(TalkRoom.class), hg.eq("roomId", room.getJid()), hg.eq(
+                        "peerID", thisPeer.getIdentity())));
+        HGHandle panelH;
+        if (panel == null)
         {
-            roomPanel = new TalkRoom(thisPeer.getIdentity());
-            roomPanel.setRoomId(room.getJid());
-            roomPanel.initComponents();
-            ThisNiche.hg.add(roomPanel);
-            addConnectionListener(roomPanel);
+            panel = new TalkRoom(thisPeer.getIdentity());
+            panel.setRoomId(room.getJid());
+            panel.initComponents();
+            panelH = ThisNiche.hg.add(panel);
+            addConnectionListener(panel);
         }
-        // else
-        // {
-        roomPanel.joinRoom();
-        // }
+        else
+            panelH = ThisNiche.handleOf(panel);
+
+        panel.joinRoom();
+
+        // Find an existing cell with that panel:
+        HGHandle existingH = GUIHelper.getCellHandleByValueHandle(
+                ThisNiche.TOP_CELL_GROUP_HANDLE, panelH);
+        if (existingH != null)
+        {
+            PSwingNode n = TopFrame.getInstance().getCanvas()
+                    .getPSwingNodeForHandle(existingH);
+            n.blink();
+            return;
+        }
 
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         int width = 400;
         int height = 500;
         int x = Math.max(0, (canvas.getWidth() - width) / 2);
         int y = Math.max(0, (canvas.getHeight() - height) / 2);
-        HGHandle panelHandle = ThisNiche.hg.getHandle(roomPanel);
-        CellGroupMember cgm = ThisNiche.hg.get(GUIHelper.addIfNotThere(
-                ThisNiche.TOP_CELL_GROUP_HANDLE, panelHandle, null, null,
-                new Rectangle(x, y, width, height)));
+        CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        CellGroupMember cgm = ThisNiche.hg.get(GUIHelper.addToCellGroup(panelH,
+                top, null, null, new Rectangle(x, y, width, height), true));
         CellUtils.setName(cgm, "Chat room " + room.getName());
         cgm.setAttribute(VisualAttribs.showTitle, true);
-        roomPanel.initSplitterLocations();
-        ThisNiche.hg.update(roomPanel);
+        panel.initSplitterLocations();
+        ThisNiche.hg.update(panel);
     }
 
     public ConnectionConfig getConfig()
