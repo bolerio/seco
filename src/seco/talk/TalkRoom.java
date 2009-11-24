@@ -20,8 +20,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 
 import seco.api.Callback;
 
-public class TalkRoom extends JPanel implements
-        ConnectionContext.ConnectionListener
+public class TalkRoom extends BaseChatPanel 
 {
     private static final long serialVersionUID = -6292689880168959513L;
     private String roomId;
@@ -32,12 +31,11 @@ public class TalkRoom extends JPanel implements
     private JSplitPane peerListSplit;
     private JSplitPane inputSplit;
 
-    private HGPeerIdentity peerID;
     private boolean roomJoined;
 
     public TalkRoom(HGPeerIdentity peerID)
     {
-        this.peerID = peerID;
+        super(peerID);
     }
 
     public TalkRoom()
@@ -135,7 +133,7 @@ public class TalkRoom extends JPanel implements
                 new JScrollPane(chatPane), new JScrollPane(inputPane));
         peerListSplit.setResizeWeight(1.0);
         peerListSplit.setName("peerListSplit");
-        peerList = new PeerList(peerID);
+        peerList = new PeerList(getPeerID());
         peerList.initComponents();
 
         inputSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, peerListSplit,
@@ -172,19 +170,6 @@ public class TalkRoom extends JPanel implements
     public void setRoomId(String roomId)
     {
         this.roomId = roomId;
-    }
-
-    ConnectionContext ctx;
-
-    public ConnectionContext getConnectionContext()
-    {
-        if (ctx == null)
-        {
-            ctx = ConnectionManager.getConnectionContext(getPeerID());
-            if (ctx != null) ctx.addConnectionListener(this);
-        }
-        return ctx;
-
     }
 
     public static class ChatCallBack implements Callback<String>
@@ -260,17 +245,11 @@ public class TalkRoom extends JPanel implements
         this.inputPane = inputPane;
     }
 
-    public HGPeerIdentity getPeerID()
-    {
-        return peerID;
-    }
-
     public void setPeerID(HGPeerIdentity peerID)
     {
-        this.peerID = peerID;
         if (peerList != null) 
             peerList.setPeerID(peerID);
-        getConnectionContext();
+        super.setPeerID(peerID);
     }
 
     @Override
@@ -283,5 +262,11 @@ public class TalkRoom extends JPanel implements
     public void disconnected(ConnectionContext ctx)
     {
         getPeerList().getListModel().removeAllElements();
+    }
+
+    @Override
+    public boolean isConnected()
+    {
+       return roomJoined;
     }
 }

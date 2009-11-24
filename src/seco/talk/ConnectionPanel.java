@@ -24,15 +24,13 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
  * @author Borislav Iordanov
  * 
  */
-public class ConnectionPanel extends JPanel implements
-        ConnectionContext.ConnectionListener, PeerPresenceListener
+public class ConnectionPanel extends BaseChatPanel implements
+         PeerPresenceListener
 {
     private static final long serialVersionUID = 9019036598512173062L;
 
     private JButton connectButton = null;
     private PeerList peerList;
-
-    private HGPeerIdentity peerID;
 
     public ConnectionPanel()
     {
@@ -40,7 +38,7 @@ public class ConnectionPanel extends JPanel implements
 
     public ConnectionPanel(HGPeerIdentity peerID)
     {
-        this.peerID = peerID;
+        super(peerID);
     }
 
     public void connect()
@@ -53,12 +51,18 @@ public class ConnectionPanel extends JPanel implements
         }
         else
         {
-            if (!ctx.isConnected()) {
+            ctx.addConnectionListener(this);
+            if (!ctx.isConnected()) 
+            {
                 connectButton.setEnabled(false);
                 connectButton.setText("Connecting...");
+                ctx.connect();
+            }else
+            {
+                //ctx already connected, but panel is not
+                if(!isConnected())
+                  connected(ctx);
             }
-            ctx.addConnectionListener(this); 
-            ctx.connect();
         }
     }
 
@@ -72,13 +76,19 @@ public class ConnectionPanel extends JPanel implements
         }
         else
         {
+            ctx.addConnectionListener(this); 
             if (ctx.isConnected()) 
             {
                 connectButton.setEnabled(false);
                 connectButton.setText("Disconnecting...");
+                ctx.disconnect();
+            }else
+            {
+                //ctx already disconnected, but panel is not
+                if(isConnected())
+                  disconnected(ctx);
             }
-            ctx.addConnectionListener(this); 
-            ctx.disconnect();
+            
         }
     }
 
@@ -90,7 +100,7 @@ public class ConnectionPanel extends JPanel implements
         setConnectButton(new JButton("Connect"));
         connectButton.addActionListener(new ButtonListener(this));
         add(connectButton, BorderLayout.NORTH);
-        peerList = new PeerList(peerID);
+        peerList = new PeerList(getPeerID());
         peerList.initComponents();
         add(peerList, BorderLayout.CENTER);
     }
@@ -105,25 +115,6 @@ public class ConnectionPanel extends JPanel implements
         return getConnectionContext().getPeer();
     }
     
-    ConnectionContext ctx;
-    public ConnectionContext getConnectionContext()
-    {
-        if(ctx == null)
-        {
-          ctx = ConnectionManager.getConnectionContext(getPeerID());
-          if(ctx != null)
-          {
-             ctx.addConnectionListener(this);
-             if(ctx.isConnected() && !isConnected())
-                connected(ctx);
-             else if(!ctx.isConnected() && isConnected())
-                disconnected(ctx);
-          }
-        }
-        return ctx;
-        
-    }
-
     public JButton getConnectButton()
     {
         return connectButton;
@@ -144,17 +135,6 @@ public class ConnectionPanel extends JPanel implements
         this.peerList = peerList;
     }
 
-    public HGPeerIdentity getPeerID()
-    {
-        return peerID;
-    }
-
-    public void setPeerID(HGPeerIdentity peerID)
-    {
-        this.peerID = peerID;
-        getConnectionContext();
-    }
-
     @Override
     public void connected(ConnectionContext ctx)
     {
@@ -169,7 +149,7 @@ public class ConnectionPanel extends JPanel implements
         fetchRooms();
         for(HGPeerIdentity i: ctx.getPeer().getConnectedPeers())
             getPeerList().getListModel().addElement(i);
-        getPeerList().setPeerID(peerID);
+        getPeerList().setPeerID(getPeerID());
         ctx.getPeer().addPeerPresenceListener(this);
     }
 

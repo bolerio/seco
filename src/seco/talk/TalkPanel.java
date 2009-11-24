@@ -32,7 +32,7 @@ import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookTransferHandler;
 import seco.things.CellUtils;
 
-public class TalkPanel extends JPanel implements ConnectionContext.ConnectionListener
+public class TalkPanel extends BaseChatPanel
 {
     private static final String LABEL_READY = "Ready";
     private static final String LABEL_ACCEPT_TRANSFER = "Accept Transfer";
@@ -48,8 +48,6 @@ public class TalkPanel extends JPanel implements ConnectionContext.ConnectionLis
     private transient TalkActivity talkActivity;
     private HGHandle transfer;
 
-    private HGPeerIdentity peerID;
-    
     public void initComponents()
     {
         setLayout(new BorderLayout());
@@ -79,21 +77,14 @@ public class TalkPanel extends JPanel implements ConnectionContext.ConnectionLis
 
     public TalkPanel()
     {
-        this.setTransferHandler(new TPTransferHandler(this));
+        setTransferHandler(new TPTransferHandler(this));
     }
 
-//    public TalkPanel(TalkActivity talkActivity)
-//    {
-//        this();
-//        this.talkActivity = talkActivity;        
-//        initComponents();
-//    }
-    
     public TalkPanel(HGPeerIdentity friend, HGPeerIdentity peerID)
     {
-        this();
-        this.friend = friend;        
-        this.peerID = peerID;
+        super(peerID);
+        this.friend = friend;  
+        setTransferHandler(new TPTransferHandler(this));
         initComponents();
     }
 
@@ -175,17 +166,7 @@ public class TalkPanel extends JPanel implements ConnectionContext.ConnectionLis
         transferButton.setText(LABEL_READY);
     }
     
-//    public static void main(String[] argv)
-//    {
-//        JFrame frame = new JFrame();
-//        final TalkPanel talk = new TalkPanel(null);
-//        frame.add(talk);
-//        frame.setSize(500, 500);
-//        frame.setLocation(300, 200);
-//        frame.setVisible(true);
-//    }
 
-    
     public JButton getTransferButton()
     {
         return transferButton;
@@ -228,8 +209,8 @@ public class TalkPanel extends JPanel implements ConnectionContext.ConnectionLis
         
         public TPTransferHandler()
         {
-            
         }
+ 
         public TPTransferHandler(TalkPanel tp)
         {
             this.talkPanel = tp;
@@ -359,33 +340,8 @@ public class TalkPanel extends JPanel implements ConnectionContext.ConnectionLis
             this.panel = panel;
         }
     }
-
-    public HGPeerIdentity getPeerID()
-    {
-        return peerID;
-    }
-
-    public void setPeerID(HGPeerIdentity peerID)
-    {
-        this.peerID = peerID;
-        getConnectionContext();
-    }
     
-    ConnectionContext ctx;
-    public ConnectionContext getConnectionContext()
-    {
-        if(ctx == null)
-        {
-          ctx = ConnectionManager.getConnectionContext(getPeerID());
-          if(ctx != null)
-          {
-              ctx.addConnectionListener(this);
-          }
-        }
-        return ctx;
-        
-    }
-
+    
     @Override
     public void connected(ConnectionContext ctx)
     {
@@ -400,9 +356,20 @@ public class TalkPanel extends JPanel implements ConnectionContext.ConnectionLis
     
     public void initTalkActivity(ConnectionContext ctx)
     {
-        if(talkActivity == null) return;
-        TalkActivity activity = new TalkActivity(ctx.getPeer(), friend);
-        ctx.getPeer().getActivityManager().initiateActivity(activity);
-        setTalkActivity(activity);
+        if(talkActivity != null) return;
+        if(ctx.talks.containsKey(friend))
+        {
+            talkActivity = ctx.talks.get(friend);
+            return;
+        }
+        talkActivity = new TalkActivity(ctx.getPeer(), friend, this);
+        ctx.talks.put(friend, talkActivity);
+        ctx.getPeer().getActivityManager().initiateActivity(talkActivity);
+    }
+
+    @Override
+    public boolean isConnected()
+    {
+       return talkActivity != null;
     }
 }

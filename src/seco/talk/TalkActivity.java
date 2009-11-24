@@ -39,6 +39,7 @@ import seco.ThisNiche;
 import seco.events.EvalCellEvent;
 import seco.events.EventPubSub;
 import seco.gui.GUIHelper;
+import seco.gui.TopFrame;
 import seco.gui.VisualAttribs;
 import seco.things.Cell;
 import seco.things.CellGroup;
@@ -56,7 +57,7 @@ public class TalkActivity extends FSMActivity
     public static final String TYPENAME = "seco-talk";
 
     private HGPeerIdentity friend;
-    //private TalkPanel talkPanel;
+    private TalkPanel talkPanel;
 
     private void transferAtom(Message msg, HGHandle atom, Set<HGHandle> done,
             boolean mainAtom)
@@ -132,33 +133,9 @@ public class TalkActivity extends FSMActivity
 
     void openPanel()
     {
-        //ConnectionPanel connectionPanel = (ConnectionPanel) getThisPeer()
-        //        .getObjectContext().get(ConnectionPanel.class.getName());
         ConnectionContext ctx = 
             ConnectionManager.getConnectionContext(getThisPeer().getIdentity());
-//        if (!ctx.talks.containsKey(friend))
-//            ctx.talks.put(friend, this);
-//        if (talkPanel == null)
-//        {
-//            talkPanel = hg.getOne(ThisNiche.hg, hg.and(
-//                    hg.type(TalkPanel.class), hg.eq("friend", friend)));
-//            if (talkPanel == null)
-//            {
-//                talkPanel = new TalkPanel(this);
-//                talkPanel.setFriend(friend);
-//                ThisNiche.hg.add(talkPanel);
-//            }
-//        }
-//        talkPanel.setTalkActivity(this);
-//        Map<Object, Object> attribs = new HashMap<Object, Object>();
-//        // TODO: some sort of naming
-//        String title = (friend.getName() != null) ? friend.getName() : "Connection Panel";
-//        attribs.put(VisualAttribs.name, title);
-//        attribs.put(VisualAttribs.showTitle, true);
-//        GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE, ThisNiche.hg
-//                .getHandle(talkPanel), null, null, new Rectangle(500, 200, 300,
-//                300), attribs);
-        ctx.openTalkPanel(friend);
+        talkPanel = ctx.openTalkPanel(talkPanel, friend);
     }
 
     private void initFriend(Message msg)
@@ -186,11 +163,11 @@ public class TalkActivity extends FSMActivity
         super(thisPeer);
     }
 
-    public TalkActivity(HyperGraphPeer thisPeer, HGPeerIdentity friend)
+    public TalkActivity(HyperGraphPeer thisPeer, HGPeerIdentity friend, TalkPanel panel)
     {
         this(thisPeer);
         this.friend = friend;
-        //openPanel();
+        this.talkPanel = panel;
     }
 
     public TalkActivity(HyperGraphPeer thisPeer, UUID id)
@@ -202,13 +179,19 @@ public class TalkActivity extends FSMActivity
     {
         super(thisPeer, id);
         this.friend = friend;
-        //openPanel();
     }
 
     public TalkPanel getPanel()
     {
-        return getConnectionContext().getTalkPanel(friend);
+        //if(talkPanel == null)
+        //   talkPanel = getConnectionContext().getTalkPanel(friend);
+        return talkPanel;
     }
+    
+//    void setPanel(TalkPanel panel)
+//    {
+//        this.talkPanel = panel;
+//    }
 
     public void chat(String text)
     {
@@ -330,6 +313,7 @@ public class TalkActivity extends FSMActivity
             // friend.getId(),
             // new ChatEvent(friend, text));
             getPanel().getChatPane().chatFrom(friend, text);
+            TopFrame.getInstance().blink("New message received");
         }
         return null;
     }
