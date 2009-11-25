@@ -17,6 +17,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.Occupant;
 
 import seco.api.Callback;
 
@@ -110,6 +111,8 @@ public class TalkRoom extends BaseChatPanel
             String occ = i.next();
             if (getTheChat().getOccupantPresence(occ).isAvailable())
             {
+                //Occupant o = getTheChat().getOccupant(occ);
+                
                 HGPeerIdentity id = new HGPeerIdentity();
                 id.setName(occ);
                 id.setId(HGHandleFactory.makeHandle());

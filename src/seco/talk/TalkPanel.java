@@ -113,11 +113,11 @@ public class TalkPanel extends BaseChatPanel
         return talkActivity;
     }
 
-    @HGIgnore
-    public void setTalkActivity(TalkActivity talkActivity)
-    {
-        this.talkActivity = talkActivity;
-    }
+//    @HGIgnore
+//    public void setTalkActivity(TalkActivity talkActivity)
+//    {
+//        this.talkActivity = talkActivity;
+//    }
     
     private void endTransfer()
     {
@@ -138,7 +138,7 @@ public class TalkPanel extends BaseChatPanel
         String label = atom.getClass().getSimpleName() + "(" +ThisNiche.hg.getPersistentHandle(h).toString() + ")";              
             //ThisNiche.hg.getPersistentHandle(h).toString() + ":" + atom + ":" + type;
         String msg = "Offered " + label;
-        chatPane.actionableChatFrom(talkActivity.getThisPeer().getIdentity(), msg, "Cancel",
+        chatPane.actionableChatFrom(getConnectionContext().getPeer().getIdentity(), msg, "Cancel",
         new Runnable() {
             public void run()
             {
@@ -327,9 +327,10 @@ public class TalkPanel extends BaseChatPanel
             if (panel.talkActivity != null)
             {
                 panel.talkActivity.chat(msg);
-                panel.chatPane.chatFrom(panel.talkActivity.getThisPeer().getIdentity(), msg);
+                panel.chatPane.chatFrom(panel.getConnectionContext().getPeer().getIdentity(), msg);
             }                
         }
+        
         public TalkPanel getPanel()
         {
             return panel;
@@ -341,6 +342,16 @@ public class TalkPanel extends BaseChatPanel
         }
     }
     
+    @Override
+    public ConnectionContext getConnectionContext()
+    {
+        if(ctx == null)
+        {
+           ctx = ConnectionManager.getConnectionContext(getPeerID());
+           //initTalkActivity(ctx);
+        }
+        return ctx;
+    }
     
     @Override
     public void connected(ConnectionContext ctx)
@@ -364,6 +375,7 @@ public class TalkPanel extends BaseChatPanel
         }
         talkActivity = new TalkActivity(ctx.getPeer(), friend, this);
         ctx.talks.put(friend, talkActivity);
+        System.out.println("initTalkActivity: " + talkActivity);
         ctx.getPeer().getActivityManager().initiateActivity(talkActivity);
     }
 
@@ -372,4 +384,5 @@ public class TalkPanel extends BaseChatPanel
     {
        return talkActivity != null;
     }
+   
 }

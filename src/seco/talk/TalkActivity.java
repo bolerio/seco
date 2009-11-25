@@ -133,9 +133,10 @@ public class TalkActivity extends FSMActivity
 
     void openPanel()
     {
-        ConnectionContext ctx = 
-            ConnectionManager.getConnectionContext(getThisPeer().getIdentity());
-        talkPanel = ctx.openTalkPanel(talkPanel, friend);
+        if(talkPanel != null)
+            ctx.openTalkPanel(talkPanel);
+        else
+           talkPanel = getConnectionContext().openTalkPanel(friend);
     }
 
     private void initFriend(Message msg)
@@ -183,8 +184,8 @@ public class TalkActivity extends FSMActivity
 
     public TalkPanel getPanel()
     {
-        //if(talkPanel == null)
-        //   talkPanel = getConnectionContext().getTalkPanel(friend);
+        if(talkPanel == null)
+           talkPanel = getConnectionContext().getTalkPanel(friend);
         return talkPanel;
     }
     
