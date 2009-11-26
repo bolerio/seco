@@ -287,8 +287,8 @@ public class ConnectionContext
         if (panel == null)
         {
            panel = new TalkPanel(friend, getPeer().getIdentity());
-           panel.initTalkActivity(this); 
            ThisNiche.hg.add(panel);
+           panel.initTalkActivity(this); 
        }
      
        openTalkPanel(panel);
