@@ -348,7 +348,7 @@ public class TalkPanel extends BaseChatPanel
         if(ctx == null)
         {
            ctx = ConnectionManager.getConnectionContext(getPeerID());
-           //initTalkActivity(ctx);
+          // initTalkActivity(ctx);
         }
         return ctx;
     }
@@ -362,7 +362,7 @@ public class TalkPanel extends BaseChatPanel
     @Override
     public void disconnected(ConnectionContext ctx)
     {
-        talkActivity = null;
+        //talkActivity = null;
     }
     
     public void initTalkActivity(ConnectionContext ctx)
@@ -376,6 +376,7 @@ public class TalkPanel extends BaseChatPanel
         talkActivity = new TalkActivity(ctx.getPeer(), friend, this);
         ctx.talks.put(friend, talkActivity);
         System.out.println("initTalkActivity: " + talkActivity);
+        //Thread.dumpStack();
         ctx.getPeer().getActivityManager().initiateActivity(talkActivity);
     }
 

@@ -133,6 +133,8 @@ public class TalkActivity extends FSMActivity
 
     void openPanel()
     {
+        if (!getConnectionContext().talks.containsKey(friend))
+            getConnectionContext().talks.put(friend, this);
         if(talkPanel != null)
             ctx.openTalkPanel(talkPanel);
         else
@@ -169,6 +171,8 @@ public class TalkActivity extends FSMActivity
         this(thisPeer);
         this.friend = friend;
         this.talkPanel = panel;
+        openPanel();
+        
     }
 
     public TalkActivity(HyperGraphPeer thisPeer, UUID id)
@@ -180,13 +184,12 @@ public class TalkActivity extends FSMActivity
     {
         super(thisPeer, id);
         this.friend = friend;
+        openPanel();
     }
 
     public TalkPanel getPanel()
     {
-        if(talkPanel == null)
-           talkPanel = getConnectionContext().getTalkPanel(friend);
-        return talkPanel;
+       return talkPanel;
     }
     
 //    void setPanel(TalkPanel panel)
@@ -407,6 +410,12 @@ public class TalkActivity extends FSMActivity
     public String getType()
     {
         return TYPENAME;
+    }
+    
+    public String toString()
+    {
+        return "activity[" + getId() + "]:" + getType() + ":" + friend + ":" +
+        getThisPeer();
     }
     
     ConnectionContext ctx;
