@@ -24,6 +24,7 @@ import javax.swing.text.Element;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.annotation.HGIgnore;
 import org.hypergraphdb.peer.HGPeerIdentity;
+import org.hypergraphdb.peer.PeerPresenceListener;
 
 import seco.ThisNiche;
 import seco.api.Callback;
@@ -32,12 +33,12 @@ import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookTransferHandler;
 import seco.things.CellUtils;
 
-public class TalkPanel extends BaseChatPanel
+public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
 {
     private static final String LABEL_READY = "Ready";
     private static final String LABEL_ACCEPT_TRANSFER = "Accept Transfer";
     private static final long serialVersionUID = -4034875448632992670L;
-    
+
     private static final ActionListener transferButtonListener = new TransferButtonListener();
 
     private HGPeerIdentity friend;
@@ -62,8 +63,7 @@ public class TalkPanel extends BaseChatPanel
         outPanel.add(new JScrollPane(chatPane), BorderLayout.CENTER);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                                              outPanel, 
-                                              new JScrollPane(inputPane));
+                outPanel, new JScrollPane(inputPane));
         splitPane.setResizeWeight(0.8);
         this.add(splitPane, BorderLayout.CENTER);
         transferButton = new JButton(LABEL_ACCEPT_TRANSFER);
@@ -83,9 +83,9 @@ public class TalkPanel extends BaseChatPanel
     public TalkPanel(HGPeerIdentity friend, HGPeerIdentity peerID)
     {
         super(peerID);
-        this.friend = friend;  
+        this.friend = friend;
         setTransferHandler(new TPTransferHandler(this));
-        initComponents();
+        //initComponents();
     }
 
     public HGPeerIdentity getFriend()
@@ -97,7 +97,7 @@ public class TalkPanel extends BaseChatPanel
     {
         this.friend = friend;
     }
-    
+
     public ChatPane getChatPane()
     {
         return chatPane;
@@ -113,42 +113,38 @@ public class TalkPanel extends BaseChatPanel
         return talkActivity;
     }
 
-//    @HGIgnore
-//    public void setTalkActivity(TalkActivity talkActivity)
-//    {
-//        this.talkActivity = talkActivity;
-//    }
-    
     private void endTransfer()
     {
         transferButton.setVisible(false);
         transferButton.setText(LABEL_ACCEPT_TRANSFER);
         transfer = null;
     }
-    
-    //called by Transfer handler when smth is imported  
+
+    // called by Transfer handler when smth is imported
     public void acceptTransfer(HGHandle h)
     {
-        //TODO: send notification to peers and show their "Accept Transfer" button
-        //instead of these 2 lines
-//        transfer = h;
-//        showTransferButton();
+        // TODO: send notification to peers and show their "Accept Transfer"
+        // button
+        // instead of these 2 lines
+        // transfer = h;
+        // showTransferButton();
         Object atom = hget(h);
-//        HGAtomType type = hget(htype(h));        
-        String label = atom.getClass().getSimpleName() + "(" +ThisNiche.hg.getPersistentHandle(h).toString() + ")";              
-            //ThisNiche.hg.getPersistentHandle(h).toString() + ":" + atom + ":" + type;
+        // HGAtomType type = hget(htype(h));
+        String label = atom.getClass().getSimpleName() + "("
+                + ThisNiche.hg.getPersistentHandle(h).toString() + ")";
+        // ThisNiche.hg.getPersistentHandle(h).toString() + ":" + atom + ":" +
+        // type;
         String msg = "Offered " + label;
-        chatPane.actionableChatFrom(getConnectionContext().getPeer().getIdentity(), msg, "Cancel",
-        new Runnable() {
+        chatPane.actionableChatFrom(getConnectionContext().getPeer()
+                .getIdentity(), msg, "Cancel", new Runnable() {
             public void run()
             {
                 System.out.println("Action Cancelled.");
             }
-        }
-        );
+        });
         talkActivity.offerAtom(h, label);
     }
-    
+
     public void showTransferButton()
     {
         transferButton.setText(LABEL_ACCEPT_TRANSFER);
@@ -156,16 +152,15 @@ public class TalkPanel extends BaseChatPanel
         transferButton.addActionListener(transferButtonListener);
     }
 
-    //to be called when the copy is received and ready to be dragged   
+    // to be called when the copy is received and ready to be dragged
     public void transferAccepted(HGHandle h)
     {
-        System.out.println("TalkPanel - transferAccepted:" );
+        System.out.println("TalkPanel - transferAccepted:");
         transfer = h;
         transferButton.setVisible(true);
         transferButton.removeActionListener(transferButtonListener);
         transferButton.setText(LABEL_READY);
     }
-    
 
     public JButton getTransferButton()
     {
@@ -175,19 +170,19 @@ public class TalkPanel extends BaseChatPanel
     public void setTransferButton(JButton transferButton)
     {
         this.transferButton = transferButton;
-        if(transferButton != null)
-           transferButton.setVisible(false);
+        if (transferButton != null) transferButton.setVisible(false);
     }
-    
+
     private static class DragMouseListener extends MouseAdapter
     {
         public DragMouseListener()
         {
         }
+
         private void initDrag(MouseEvent e)
         {
             TalkPanel talkPanel = (TalkPanel) e.getComponent().getParent();
-            if(talkPanel.transfer == null) return;
+            if (talkPanel.transfer == null) return;
             TransferHandler handler = talkPanel.getTransferHandler();
             int action = ((e.getModifiers() & MouseEvent.CTRL_MASK) == 0) ? TransferHandler.MOVE
                     : TransferHandler.COPY;
@@ -198,19 +193,19 @@ public class TalkPanel extends BaseChatPanel
         {
             initDrag(e);
         }
-     
-   }
+
+    }
 
     public static class TPTransferHandler extends TransferHandler
     {
         private static final long serialVersionUID = -2286292421264849858L;
-        
+
         private TalkPanel talkPanel;
-        
+
         public TPTransferHandler()
         {
         }
- 
+
         public TPTransferHandler(TalkPanel tp)
         {
             this.talkPanel = tp;
@@ -220,17 +215,16 @@ public class TalkPanel extends BaseChatPanel
         {
             for (int i = 0; i < flavors.length; i++)
             {
-                if (flavors[i].equals(SecoTransferable.FLAVOR) ||
-                        flavors[i].equals(NotebookTransferHandler.FLAVOR))
+                if (flavors[i].equals(SecoTransferable.FLAVOR)
+                        || flavors[i].equals(NotebookTransferHandler.FLAVOR))
                     return flavors[i];
             }
             return null;
         }
-        
-      
+
         public int getSourceActions(JComponent c)
         {
-            return COPY;//_OR_MOVE;
+            return COPY;// _OR_MOVE;
         }
 
         protected Transferable createTransferable(JComponent comp)
@@ -251,7 +245,7 @@ public class TalkPanel extends BaseChatPanel
             JComponent comp = (JComponent) support.getComponent();
             Transferable t = support.getTransferable();
             // Don't drop on myself.
-            if (comp == talkPanel)  return false;
+            if (comp == talkPanel) return false;
             DataFlavor fl = getImportFlavor(t.getTransferDataFlavors(), comp);
             if (fl == null) return false;
             try
@@ -261,15 +255,16 @@ public class TalkPanel extends BaseChatPanel
                 {
                     data = (HGHandle) t.getTransferData(fl);
                 }
-                else if(fl.equals(NotebookTransferHandler.FLAVOR))
+                else if (fl.equals(NotebookTransferHandler.FLAVOR))
                 {
-                    Vector<Element> els = (Vector<Element>) t.getTransferData(fl);
+                    Vector<Element> els = (Vector<Element>) t
+                            .getTransferData(fl);
                     data = NotebookDocument.getNBElementH(els.get(0));
                 }
-                
-                if(data != null)
+
+                if (data != null)
                 {
-                    //if(support.getDropAction() == COPY)
+                    // if(support.getDropAction() == COPY)
                     data = CellUtils.makeCopy(data);
                     support.setDropAction(COPY);
                     talkPanel.acceptTransfer(data);
@@ -287,103 +282,125 @@ public class TalkPanel extends BaseChatPanel
         {
             return (getImportFlavor(flavors, comp) != null);
         }
+
         public TalkPanel getTalkPanel()
         {
             return talkPanel;
         }
+
         public void setTalkPanel(TalkPanel talkPanel)
         {
             this.talkPanel = talkPanel;
         }
     }
-    
+
     public static class TransferButtonListener implements ActionListener
     {
         public void actionPerformed(ActionEvent e)
         {
-            TalkPanel talkPanel = (TalkPanel) 
-                ((Component)e.getSource()).getParent();
-            //TODO: negotiate with the peer and get the copy here
+            TalkPanel talkPanel = (TalkPanel) ((Component) e.getSource())
+                    .getParent();
+            // TODO: negotiate with the peer and get the copy here
             talkPanel.transferAccepted(talkPanel.transfer);
         }
     }
-    
+
     public static class ChatCallback implements Callback<String>
     {
         private TalkPanel panel;
-        
+
         public ChatCallback(TalkPanel panel)
         {
             this.panel = panel;
         }
-        
+
         public ChatCallback()
         {
-        
+
         }
-        
+
         public void callback(String msg)
         {
             if (panel.talkActivity != null)
             {
                 panel.talkActivity.chat(msg);
-                panel.chatPane.chatFrom(panel.getConnectionContext().getPeer().getIdentity(), msg);
-            }                
+                panel.chatPane.chatFrom(panel.getConnectionContext().getPeer()
+                        .getIdentity(), msg);
+            }
         }
-        
+
         public TalkPanel getPanel()
         {
             return panel;
         }
-        
+
         public void setPanel(TalkPanel panel)
         {
             this.panel = panel;
         }
     }
-    
-    @Override
-    public ConnectionContext getConnectionContext()
-    {
-        if(ctx == null)
-        {
-           ctx = ConnectionManager.getConnectionContext(getPeerID());
-          // initTalkActivity(ctx);
-        }
-        return ctx;
-    }
-    
+
     @Override
     public void connected(ConnectionContext ctx)
     {
+        ctx.getPeer().addPeerPresenceListener(this);
         initTalkActivity(ctx);
     }
-    
+
     @Override
     public void disconnected(ConnectionContext ctx)
     {
-        //talkActivity = null;
+        ctx.getPeer().removePeerPresenceListener(this);
+        setEnabled(false);
+        // talkActivity = null;
     }
-    
+
     public void initTalkActivity(ConnectionContext ctx)
     {
-        if(talkActivity != null) return;
-        if(ctx.talks.containsKey(friend))
+        if (talkActivity != null) return;
+        if (ctx.talks.containsKey(friend))
         {
             talkActivity = ctx.talks.get(friend);
+            setEnabled(true);
             return;
         }
+        if (ctx.getPeer().getNetworkTarget(friend) == null)
+        {
+            setEnabled(false);
+            return;
+        }
+
         talkActivity = new TalkActivity(ctx.getPeer(), friend, this);
         ctx.talks.put(friend, talkActivity);
         System.out.println("initTalkActivity: " + talkActivity);
-        //Thread.dumpStack();
         ctx.getPeer().getActivityManager().initiateActivity(talkActivity);
+        setEnabled(true);
+    }
+
+    public void peerJoined(HGPeerIdentity target)
+    {
+        if (isConnected()) return;
+        //System.out.println("TalkPanel - peerJoined: " + target + ":" + friend);
+        if (target.equals(friend)) initTalkActivity(getConnectionContext());
+    }
+
+    public void peerLeft(HGPeerIdentity target)
+    {
+        if (target.equals(friend)) setEnabled(false);
     }
 
     @Override
     public boolean isConnected()
     {
-       return talkActivity != null;
+        return talkActivity != null;
     }
-   
+
+    @Override
+    public void setEnabled(boolean enabled)
+    {
+        super.setEnabled(enabled);
+        if (inputPane != null) inputPane.setEnabled(enabled);
+        if (chatPane != null) chatPane.setEnabled(enabled);
+    }
+
 }

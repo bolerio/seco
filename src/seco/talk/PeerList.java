@@ -1,19 +1,38 @@
 package seco.talk;
 
 import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
+import javax.swing.JComponent;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 import org.hypergraphdb.annotation.HGIgnore;
 import org.hypergraphdb.peer.HGPeerIdentity;
+import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.HostedRoom;
+import org.jivesoftware.smackx.muc.Occupant;
+
+import seco.ThisNiche;
+import seco.gui.GUIHelper;
+import seco.gui.TopFrame;
+import seco.notebook.NotebookEditorKit;
+import seco.notebook.NotebookUI;
+import seco.notebook.gui.GUIUtilities;
+import seco.notebook.gui.UpdatablePopupMenu;
 
 public class PeerList extends JPanel
 {
@@ -28,24 +47,120 @@ public class PeerList extends JPanel
         mouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e)
             {
-                if (e.getClickCount() == 2)
+                if (e.isPopupTrigger()
+                        || SwingUtilities.isRightMouseButton(e))
+                {
+                    if ((getList().getSelectedValue() instanceof HostedRoom)) return;
+                    if (PeerList.this.getPopup().isVisible()) popupMenu
+                            .setVisible(false);
+                    else
+                    {
+                        popupMenu.update();
+                        Frame f = GUIUtilities.getFrame(e.getComponent());
+                        Point pt = getPoint(e, f);
+                        popupMenu.show(f, pt.x, pt.y);
+                    }
+                    return;
+                }
+                
+                if (e.getClickCount() == 2 && !SwingUtilities.isRightMouseButton(e))
                 {
                     int index = getList().locationToIndex(e.getPoint());
                     if (index < 0 || index >= getList().getModel().getSize())
                         return;
                     Object x = getList().getModel().getElementAt(index);
-                    ConnectionContext ctx = 
-                        ConnectionManager.getConnectionContext(getPeerID());
-                    if(ctx == null) return;
-                    if (x instanceof HGPeerIdentity) 
-                        ctx.openTalkPanel((HGPeerIdentity) x);
-                    else
-                        ctx.openChatRoom((HostedRoom) x);
+                    ConnectionContext ctx = ConnectionManager
+                            .getConnectionContext(getPeerID());
+                    if (ctx == null) return;
+                    if (x instanceof HGPeerIdentity) ctx
+                            .openTalkPanel((HGPeerIdentity) x);
+                    else if (x instanceof HostedRoom) ctx
+                            .openChatRoom((HostedRoom) x);
+                    else if (x instanceof Occupant)
+                        ctx.openTalkPanel((Occupant) x);
                 }
             }
+
+            protected Point getPoint(MouseEvent e, Frame f)
+            {
+                Point pt = SwingUtilities.convertPoint(e.getComponent(), e
+                        .getX(), e.getY(), f);
+                if (e.getComponent() instanceof JComponent)
+                    return GUIHelper.computePoint(
+                            (JComponent) e.getComponent(), pt);
+                return pt;
+            }
+             
         };
     }
-    
+
+    protected static UpdatablePopupMenu popupMenu;
+
+    private UpdatablePopupMenu getPopup()
+    {
+        if (popupMenu != null) return popupMenu;
+
+        popupMenu = new UpdatablePopupMenu();
+        JMenuItem mi = new JMenuItem(new AbstractAction() {
+            @Override
+            public boolean isEnabled()
+            {
+                Object x = getList().getSelectedValue();
+                if (!(x instanceof Occupant)) return false;
+                ConnectionContext ctx = ConnectionManager
+                        .getConnectionContext(getPeerID());
+                return !ctx.isMe((Occupant) x)
+                        && ctx.getPeerIdentity((Occupant) x) == null;
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ConnectionContext ctx = ConnectionManager
+                        .getConnectionContext(getPeerID());
+                ctx.addRoster((Occupant) getList().getSelectedValue());
+            }
+
+        });
+        mi.setText("Add To Roaster");
+        popupMenu.add(mi);
+        
+        mi = new JMenuItem(new AbstractAction() {
+            @Override
+            public boolean isEnabled()
+            {
+                Object x = getList().getSelectedValue();
+                ConnectionContext ctx = ConnectionManager
+                        .getConnectionContext(getPeerID());
+                if (x instanceof Occupant) return !ctx.isMe((Occupant) x)
+                        && ctx.getPeerIdentity((Occupant) x) != null;
+                else
+                {
+                    // TODO:
+                    return false;
+                }
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Object x = getList().getSelectedValue();
+                ConnectionContext ctx = ConnectionManager
+                        .getConnectionContext(getPeerID());
+                if (x instanceof Occupant) ctx.addRoster((Occupant) getList()
+                        .getSelectedValue());
+                else
+                {
+                    // TODO:
+                }
+            }
+        });
+        mi.setText("Remove From Roaster");
+        popupMenu.add(mi);
+
+        return popupMenu;
+    }
+
     public PeerList(HGPeerIdentity peerID)
     {
         this();

@@ -71,6 +71,8 @@ public class ChatPane extends JTextPane
         {
             getDocument().insertString(getDocument().getLength(), s, null);
             show_the_last_line();
+            if(!from.equals(me))
+              Toolkit.getDefaultToolkit().beep();
        }
         catch (BadLocationException e)
         {
@@ -80,11 +82,10 @@ public class ChatPane extends JTextPane
     
     private void show_the_last_line()
     {
-      //scroll to the end and beep
+      //scroll to the end 
         //normally is scrolls just one line above the needed one? so +20 to get
         //where we want...
         scrollRectToVisible(new Rectangle(0, getBounds(null).height + 20, 1, 1));
-        Toolkit.getDefaultToolkit().beep();
     }
     
     /**
@@ -137,6 +138,8 @@ public class ChatPane extends JTextPane
                 }
                 getDocument().insertString(getDocument().getLength(), "]\n", null);   
                 show_the_last_line();
+                if(!from.equals(me))
+                    Toolkit.getDefaultToolkit().beep();
             }
         }
         catch (BadLocationException e) 

@@ -175,11 +175,11 @@ public class ConnectionPanel extends BaseChatPanel implements
 
     private void fetchRooms()
     {
-        
         XMPPPeerInterface peerInterface = (XMPPPeerInterface) getThisPeer()
                 .getPeerInterface();
         String server = peerInterface.getServerName();
-        if (server.indexOf("kobrix") > -1) server = "kobrix.syspark.net";
+        if (server.indexOf("kobrix") > -1) 
+            server = ConnectionContext.OPENFIRE_HOST;
         try
         {
             for (HostedRoom room : MultiUserChat.getHostedRooms(peerInterface

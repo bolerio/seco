@@ -12,6 +12,7 @@ import javax.swing.ListCellRenderer;
 
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.jivesoftware.smackx.muc.HostedRoom;
+import org.jivesoftware.smackx.muc.Occupant;
 
 import seco.notebook.util.IconManager;
 
@@ -42,7 +43,13 @@ class PeerItemRenderer extends JLabel implements ListCellRenderer
         {
             label = ((HostedRoom)value).getName();
             image = roomIcon;
-        }        
+        }   
+        else if (value instanceof Occupant)
+        {
+            label = ((Occupant)value).getNick();
+            image = personIcon;
+        }   
+         
         setText(label);
         setIcon(image);
         if (isSelected) 

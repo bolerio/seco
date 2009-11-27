@@ -3,6 +3,7 @@ package seco.talk;
 import static org.hypergraphdb.peer.Structs.getPart;
 
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,8 +19,12 @@ import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;
 import org.hypergraphdb.peer.serializer.JSONReader;
+import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
 import org.hypergraphdb.util.HGUtils;
+import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.HostedRoom;
+import org.jivesoftware.smackx.muc.Occupant;
 
 import seco.ThisNiche;
 import seco.U;
@@ -35,6 +40,8 @@ import seco.things.CellUtils;
 
 public class ConnectionContext
 {
+    static final String OPENFIRE_HOST = "kobrix.syspark.net";
+    
     private ConnectionConfig config;
     private boolean active;
 
@@ -288,7 +295,9 @@ public class ConnectionContext
         {
            panel = new TalkPanel(friend, getPeer().getIdentity());
            ThisNiche.hg.add(panel);
+           panel.initComponents();
            panel.initTalkActivity(this); 
+           ThisNiche.hg.update(panel);
        }
      
        openTalkPanel(panel);
@@ -296,20 +305,15 @@ public class ConnectionContext
        
     }
     
-//    public void openTalkPanel(HGPeerIdentity friend)
-//    {
-//        openTalkPanel(friend);
-//    }
-
     public void openChatRoom(HostedRoom room)
     {
-        TalkRoom panel = hg.getOne(ThisNiche.hg, hg.and(
-                hg.type(TalkRoom.class), hg.eq("roomId", room.getJid()), hg.eq(
+        RoomPanel panel = hg.getOne(ThisNiche.hg, hg.and(
+                hg.type(RoomPanel.class), hg.eq("roomId", room.getJid()), hg.eq(
                         "peerID", thisPeer.getIdentity())));
         HGHandle panelH;
         if (panel == null)
         {
-            panel = new TalkRoom(thisPeer.getIdentity());
+            panel = new RoomPanel(thisPeer.getIdentity());
             panel.setRoomId(room.getJid());
             panel.initComponents();
             panelH = ThisNiche.hg.add(panel);
@@ -344,6 +348,90 @@ public class ConnectionContext
         panel.initSplitterLocations();
         ThisNiche.hg.update(panel);
     }
+    
+    HGPeerIdentity getPeerIdentity(Occupant x)
+    {
+        String occ_name = stripJID(x.getJid());
+        for(HGPeerIdentity i : getPeer().getConnectedPeers())
+            if(i.getName().equals(occ_name))
+                return i;
+        return null;
+    }
+    
+    boolean isMe(Occupant x)
+    {
+        String occ_name = stripJID(x.getJid());
+        String me = stripJID(getPeer().getIdentity().getName());
+        return occ_name.equals(me);
+    }
+    
+    void addRoster(String short_name, String nick)
+    {
+        XMPPPeerInterface i = (XMPPPeerInterface) getPeer().getPeerInterface();
+        try{
+            i.getConnection().getRoster().createEntry(
+                    short_name + "@" + OPENFIRE_HOST, nick, null);
+        }catch(XMPPException ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+    
+    void addRoster(Occupant x)
+    {
+        String occ_name = stripJID(x.getJid());
+        addRoster(occ_name, x.getNick());
+    }
+    
+    void removeRoster(String short_name)
+    {
+        XMPPPeerInterface i = (XMPPPeerInterface) getPeer().getPeerInterface();
+        try{
+            RosterEntry entry = i.getConnection().getRoster().getEntry(
+                    short_name + "@" + OPENFIRE_HOST); 
+            if(entry != null)
+                i.getConnection().getRoster().removeEntry(entry);
+        }catch(XMPPException ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+    
+    void removeRoster(Occupant x)
+    {
+        removeRoster(stripJID(x.getJid()));
+    }
+    
+    void openTalkPanel(Occupant x)
+    {
+        if(isMe(x))
+        {
+            JOptionPane.showMessageDialog(TopFrame.getInstance(), "Can't talk to yourself");
+            return;
+        }
+        
+        HGPeerIdentity i = getPeerIdentity(x);
+        if(i != null) 
+        {
+            openTalkPanel(i);
+            return; 
+        }
+        
+        String message = "User " + x.getNick() + 
+        " is not currently in your friend list, would you like to add them?";
+        int res = JOptionPane.showConfirmDialog(TopFrame.getInstance(), message, "?", 
+                JOptionPane.OK_CANCEL_OPTION);
+        if(res == JOptionPane.OK_OPTION)
+            addRoster(x);
+    }
+    
+    static String stripJID(String name)
+    {
+        int ind = name.indexOf("@");
+        if (ind > -1)
+            name = name.substring(0, ind);
+        return name;
+    } 
 
     public ConnectionConfig getConfig()
     {
