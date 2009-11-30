@@ -25,10 +25,14 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
  * 
  */
 public class ConnectionPanel extends BaseChatPanel implements
-         PeerPresenceListener
+        PeerPresenceListener
 {
     private static final long serialVersionUID = 9019036598512173062L;
-
+    private static final String LABEL_CONNECT = "Connect";
+    private static final String LABEL_CONNECTING = "Connecting...";
+    private static final String LABEL_DISCONNECT = "Disconnect";
+    private static final String LABEL_DISCONNECTING = "Disconnecting...";
+   
     private JButton connectButton = null;
     private PeerList peerList;
 
@@ -52,16 +56,14 @@ public class ConnectionPanel extends BaseChatPanel implements
         else
         {
             ctx.addConnectionListener(this);
-            if (!ctx.isConnected()) 
+            if (!ctx.isConnected())
             {
-                connectButton.setEnabled(false);
-                connectButton.setText("Connecting...");
                 ctx.connect();
-            }else
+            }
+            else
             {
-                //ctx already connected, but panel is not
-                if(!isConnected())
-                  connected(ctx);
+                // ctx already connected, but panel is not
+                if (!isConnected()) connected(ctx);
             }
         }
     }
@@ -76,19 +78,17 @@ public class ConnectionPanel extends BaseChatPanel implements
         }
         else
         {
-            ctx.addConnectionListener(this); 
-            if (ctx.isConnected()) 
+            ctx.addConnectionListener(this);
+            if (ctx.isConnected())
             {
-                connectButton.setEnabled(false);
-                connectButton.setText("Disconnecting...");
                 ctx.disconnect();
-            }else
-            {
-                //ctx already disconnected, but panel is not
-                if(isConnected())
-                  disconnected(ctx);
             }
-            
+            else
+            {
+                // ctx already disconnected, but panel is not
+                if (isConnected()) disconnected(ctx);
+            }
+
         }
     }
 
@@ -97,7 +97,7 @@ public class ConnectionPanel extends BaseChatPanel implements
         if (connectButton != null) return;
         setLayout(new BorderLayout());
         setBorder(new BevelBorder(BevelBorder.RAISED));
-        setConnectButton(new JButton("Connect"));
+        setConnectButton(new JButton(LABEL_CONNECT));
         connectButton.addActionListener(new ButtonListener(this));
         add(connectButton, BorderLayout.NORTH);
         peerList = new PeerList(getPeerID());
@@ -107,14 +107,14 @@ public class ConnectionPanel extends BaseChatPanel implements
 
     public boolean isConnected()
     {
-        return connectButton.getText().equals("Disconnect");
+        return connectButton.getText().equals(LABEL_DISCONNECT);
     }
 
     public HyperGraphPeer getThisPeer()
     {
         return getConnectionContext().getPeer();
     }
-    
+
     public JButton getConnectButton()
     {
         return connectButton;
@@ -139,15 +139,15 @@ public class ConnectionPanel extends BaseChatPanel implements
     public void connected(ConnectionContext ctx)
     {
         connectButton.setEnabled(true);
-        connectButton.setText("Disconnect");
+        connectButton.setText(LABEL_DISCONNECT);
         populate();
     }
-    
+
     private void populate()
     {
         getPeerList().getListModel().removeAllElements();
         fetchRooms();
-        for(HGPeerIdentity i: ctx.getPeer().getConnectedPeers())
+        for (HGPeerIdentity i : ctx.getPeer().getConnectedPeers())
             getPeerList().getListModel().addElement(i);
         getPeerList().setPeerID(getPeerID());
         ctx.getPeer().addPeerPresenceListener(this);
@@ -157,14 +157,24 @@ public class ConnectionPanel extends BaseChatPanel implements
     public void disconnected(ConnectionContext ctx)
     {
         connectButton.setEnabled(true);
-        connectButton.setText("Connect");
+        connectButton.setText(LABEL_CONNECT);
         getPeerList().getListModel().removeAllElements();
     }
-    
+
+    @Override
+    public void workStarted(ConnectionContext ctx, boolean connect_or_disconnect)
+    {
+        connectButton.setEnabled(false);
+        String text = (connect_or_disconnect) ? LABEL_CONNECTING
+                : LABEL_DISCONNECTING;
+        connectButton.setText(text);
+    }
+
     @Override
     public void peerJoined(HGPeerIdentity target)
     {
-        getPeerList().getListModel().addElement(target);
+        if(getConnectionContext().isInRoster(target))
+           getPeerList().getListModel().addElement(target);
     }
 
     @Override
@@ -178,7 +188,7 @@ public class ConnectionPanel extends BaseChatPanel implements
         XMPPPeerInterface peerInterface = (XMPPPeerInterface) getThisPeer()
                 .getPeerInterface();
         String server = peerInterface.getServerName();
-        if (server.indexOf("kobrix") > -1) 
+        if (server.indexOf("kobrix") > -1)
             server = ConnectionContext.OPENFIRE_HOST;
         try
         {
@@ -193,7 +203,7 @@ public class ConnectionPanel extends BaseChatPanel implements
             e.printStackTrace();
         }
     }
-    
+
     public static class ButtonListener implements ActionListener
     {
         private ConnectionPanel panel;
@@ -209,10 +219,10 @@ public class ConnectionPanel extends BaseChatPanel implements
 
         public void actionPerformed(ActionEvent ev)
         {
-            if (panel.getConnectButton().getText().equals("Connect")) panel
+            if (panel.getConnectButton().getText().equals(LABEL_CONNECT)) panel
                     .connect();
-            else if (panel.getConnectButton().getText().equals("Disconnect"))
-                panel.disconnect();
+            else if (panel.getConnectButton().getText()
+                    .equals(LABEL_DISCONNECT)) panel.disconnect();
         }
 
         public ConnectionPanel getPanel()

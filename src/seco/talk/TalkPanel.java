@@ -73,6 +73,7 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
         this.add(transferButton, BorderLayout.SOUTH);
         transferButton.addMouseMotionListener(new DragMouseListener());
         transferButton.setVisible(false);
+        setDoubleBuffered(false);
     }
 
     public TalkPanel()
@@ -343,6 +344,7 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
     @Override
     public void connected(ConnectionContext ctx)
     {
+        setEnabled(true);
         ctx.getPeer().addPeerPresenceListener(this);
         initTalkActivity(ctx);
     }
@@ -351,8 +353,14 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
     public void disconnected(ConnectionContext ctx)
     {
         ctx.getPeer().removePeerPresenceListener(this);
+        talkActivity = null;
         setEnabled(false);
-        // talkActivity = null;
+    }
+    
+    @Override
+    public void workStarted(ConnectionContext ctx, boolean connect_or_disconnect)
+    {
+        setEnabled(false);
     }
 
     public void initTalkActivity(ConnectionContext ctx)

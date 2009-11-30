@@ -3,7 +3,6 @@ package seco.talk;
 import static org.hypergraphdb.peer.Structs.getPart;
 
 import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +20,7 @@ import org.hypergraphdb.peer.HyperGraphPeer;
 import org.hypergraphdb.peer.serializer.JSONReader;
 import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
 import org.hypergraphdb.util.HGUtils;
+import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.HostedRoom;
@@ -52,9 +52,6 @@ public class ConnectionContext
     Map<HGPeerIdentity, TalkActivity> talks = Collections
             .synchronizedMap(new HashMap<HGPeerIdentity, TalkActivity>());
 
-    // Map<String, TalkRoom> roomPanels = Collections
-    // .synchronizedMap(new HashMap<String, TalkRoom>());
-
     public ConnectionContext()
     {
     }
@@ -85,6 +82,12 @@ public class ConnectionContext
         for (ConnectionListener l : listeners)
             l.disconnected(this);
     }
+    
+    private void fireJobStarted(boolean connect_or_disconnect)
+    {
+        for (ConnectionListener l : listeners)
+            l.workStarted(this, connect_or_disconnect);
+    } 
 
     public boolean isActive()
     {
@@ -124,6 +127,7 @@ public class ConnectionContext
     public void connect()
     {
         if (isConnected()) return;
+        fireJobStarted(true);
         active = true;
         inProgress = true;
         ThisNiche.hg.update(this);
@@ -160,6 +164,7 @@ public class ConnectionContext
     public void disconnect()
     {
         if (!isConnected()) return;
+        fireJobStarted(false);
         inProgress = false;
         active = false;
         ThisNiche.hg.update(this);
@@ -178,6 +183,7 @@ public class ConnectionContext
                     // JOptionPane.showMessageDialog(ConnectionPanel.this,
                     // "Successfully disconnect from network.");
                     fireDisconnected();
+                    ConnectionContext.this.talks.clear();
                 }
                 else
                 {
@@ -320,11 +326,14 @@ public class ConnectionContext
             addConnectionListener(panel);
         }
         else
+        {
             panelH = ThisNiche.handleOf(panel);
+            panel.initSplitterLocations();
+        }
 
         panel.joinRoom();
 
-        // Find an existing cell with that panel:
+        // Find an existing cell with this panel:
         HGHandle existingH = GUIHelper.getCellHandleByValueHandle(
                 ThisNiche.TOP_CELL_GROUP_HANDLE, panelH);
         if (existingH != null)
@@ -358,11 +367,31 @@ public class ConnectionContext
         return null;
     }
     
+    boolean isInRoster(Occupant x)
+    {
+        String occ_name = stripJID(x.getJid());
+        XMPPPeerInterface i = (XMPPPeerInterface) getPeer().getPeerInterface();
+        Roster roster = i.getConnection().getRoster();
+        return roster.getEntry(occ_name + "@" + OPENFIRE_HOST) != null;
+    }
+    
     boolean isMe(Occupant x)
     {
         String occ_name = stripJID(x.getJid());
         String me = stripJID(getPeer().getIdentity().getName());
         return occ_name.equals(me);
+    }
+    
+    boolean isInRoster(HGPeerIdentity x)
+    {
+        XMPPPeerInterface i = (XMPPPeerInterface) getPeer().getPeerInterface();
+        Roster roster = i.getConnection().getRoster();
+        return roster.getEntry(x.getName() + "@" + OPENFIRE_HOST) != null;
+    }
+    
+    boolean isMe(HGPeerIdentity x)
+    {
+        return x.equals(getPeer().getIdentity());
     }
     
     void addRoster(String short_name, String nick)
@@ -381,6 +410,11 @@ public class ConnectionContext
     {
         String occ_name = stripJID(x.getJid());
         addRoster(occ_name, x.getNick());
+    }
+    
+    void addRoster(HGPeerIdentity x)
+    {
+        addRoster(x.getName(), x.getName());
     }
     
     void removeRoster(String short_name)
@@ -453,5 +487,7 @@ public class ConnectionContext
         void connected(ConnectionContext ctx);
 
         void disconnected(ConnectionContext ctx);
+        
+        void workStarted(ConnectionContext ctx, boolean connect_or_disconnect);
     }
 }

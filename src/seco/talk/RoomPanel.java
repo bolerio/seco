@@ -144,7 +144,7 @@ public class RoomPanel extends BaseChatPanel
         inputSplit.setOneTouchExpandable(true);
         inputSplit.setResizeWeight(1.0);
         add(inputSplit, BorderLayout.CENTER);
-
+        setDoubleBuffered(false);
         joinRoom();
     }
 
@@ -264,6 +264,14 @@ public class RoomPanel extends BaseChatPanel
     public void disconnected(ConnectionContext ctx)
     {
         getPeerList().getListModel().removeAllElements();
+        roomJoined = false;
+        thechat = null;
+    }
+    
+    @Override
+    public void workStarted(ConnectionContext ctx, boolean connect_or_disconnect)
+    {
+        
     }
 
     @Override

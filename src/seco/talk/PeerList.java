@@ -110,7 +110,7 @@ public class PeerList extends JPanel
                 ConnectionContext ctx = ConnectionManager
                         .getConnectionContext(getPeerID());
                 return !ctx.isMe((Occupant) x)
-                        && ctx.getPeerIdentity((Occupant) x) == null;
+                        && !ctx.isInRoster((Occupant) x);//ctx.getPeerIdentity((Occupant) x) == null;
             }
 
             @Override
@@ -133,12 +133,11 @@ public class PeerList extends JPanel
                 ConnectionContext ctx = ConnectionManager
                         .getConnectionContext(getPeerID());
                 if (x instanceof Occupant) return !ctx.isMe((Occupant) x)
-                        && ctx.getPeerIdentity((Occupant) x) != null;
-                else
-                {
-                    // TODO:
-                    return false;
-                }
+                        && ctx.isInRoster((Occupant) x);//ctx.getPeerIdentity((Occupant) x) != null;
+                else if(x instanceof HGPeerIdentity)
+                    return !ctx.isMe((HGPeerIdentity) x)
+                    && ctx.isInRoster((HGPeerIdentity) x);
+                return false;
             }
 
             @Override
@@ -147,12 +146,9 @@ public class PeerList extends JPanel
                 Object x = getList().getSelectedValue();
                 ConnectionContext ctx = ConnectionManager
                         .getConnectionContext(getPeerID());
-                if (x instanceof Occupant) ctx.addRoster((Occupant) getList()
-                        .getSelectedValue());
-                else
-                {
-                    // TODO:
-                }
+                if (x instanceof Occupant) ctx.addRoster((Occupant) x);
+                else if(x instanceof HGPeerIdentity)
+                   ctx.addRoster((HGPeerIdentity) x);
             }
         });
         mi.setText("Remove From Roaster");
@@ -241,6 +237,7 @@ public class PeerList extends JPanel
 
         public void addElement(Object obj)
         {
+            if(data.contains(obj)) return;
             int index = data.size();
             data.addElement(obj);
             fireIntervalAdded(this, index, index);
