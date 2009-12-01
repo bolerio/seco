@@ -148,7 +148,7 @@ public class PeerList extends JPanel
                         .getConnectionContext(getPeerID());
                 if (x instanceof Occupant) ctx.addRoster((Occupant) x);
                 else if(x instanceof HGPeerIdentity)
-                   ctx.addRoster((HGPeerIdentity) x);
+                   ctx.removeRoster((HGPeerIdentity) x);
             }
         });
         mi.setText("Remove From Roaster");

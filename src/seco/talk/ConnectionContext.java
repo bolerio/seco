@@ -434,6 +434,30 @@ public class ConnectionContext
     void removeRoster(Occupant x)
     {
         removeRoster(stripJID(x.getJid()));
+        HGPeerIdentity id = getPeerIdentity(x);
+        if(id != null)
+          removeTalkPanel(id);
+    }
+    
+    void removeRoster(HGPeerIdentity x)
+    {
+        removeRoster(x.getName());
+    }
+    
+    private void removeTalkPanel(HGPeerIdentity id)
+    {
+        TalkPanel panel = getTalkPanel(id);
+        if(panel != null)
+        {
+            // Find an existing cell with that panel:
+            HGHandle existingH = GUIHelper.getCellHandleByValueHandle(
+                    ThisNiche.TOP_CELL_GROUP_HANDLE, ThisNiche.handleOf(panel));
+            if (existingH != null)
+            {
+                CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+                top.remove(top.indexOf(existingH));
+            }
+        }
     }
     
     void openTalkPanel(Occupant x)
