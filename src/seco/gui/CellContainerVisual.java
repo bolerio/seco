@@ -29,7 +29,7 @@ import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.CellVisual;
 
-public class CellContainerVisual implements CellVisual, EventHandler
+public class CellContainerVisual implements CellVisual, GroupVisual, EventHandler
 {
     private static final HGPersistentHandle handle = HGHandleFactory
             .makeHandle("cc88ae4c-f70b-4536-814c-95a6ac6a7b62");

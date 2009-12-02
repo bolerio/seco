@@ -17,7 +17,7 @@ import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.CellVisual;
 
-public class TabbedPaneVisual implements CellVisual, EventHandler
+public class TabbedPaneVisual implements CellVisual, GroupVisual, EventHandler
 {
     private static final HGPersistentHandle handle = HGHandleFactory
             .makeHandle("55ddbdf0-149d-11de-8c30-0800200c9a66");

@@ -94,7 +94,7 @@ public class PeerList extends JPanel
         };
     }
 
-    protected static UpdatablePopupMenu popupMenu;
+    protected UpdatablePopupMenu popupMenu;
 
     private UpdatablePopupMenu getPopup()
     {
@@ -146,7 +146,7 @@ public class PeerList extends JPanel
                 Object x = getList().getSelectedValue();
                 ConnectionContext ctx = ConnectionManager
                         .getConnectionContext(getPeerID());
-                if (x instanceof Occupant) ctx.addRoster((Occupant) x);
+                if (x instanceof Occupant) ctx.removeRoster((Occupant) x);
                 else if(x instanceof HGPeerIdentity)
                    ctx.removeRoster((HGPeerIdentity) x);
             }

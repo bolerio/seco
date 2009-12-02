@@ -703,6 +703,15 @@ public class GUIHelper
             if (x instanceof Cell
                     && ((Cell) x).getAtomHandle().equals(objectHandle))
                 return group.getTargetAt(i);
+            else if(x instanceof CellGroup)
+            {
+                CellGroup inner = (CellGroup) x;
+                if(inner.getVisualInstance() instanceof GroupVisual)
+                {
+                    HGHandle inH = getCellHandleByValueHandle(ThisNiche.handleOf(inner), objectHandle);
+                    if(inH != null) return inH;
+                }
+            }
         }
         return null;
     }

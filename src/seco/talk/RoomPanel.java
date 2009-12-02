@@ -16,12 +16,17 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.muc.DefaultParticipantStatusListener;
+import org.jivesoftware.smackx.muc.DefaultUserStatusListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.Occupant;
+import org.jivesoftware.smackx.muc.ParticipantStatusListener;
 
 import seco.api.Callback;
+import seco.notebook.util.RequestProcessor;
 
-public class RoomPanel extends BaseChatPanel 
+public class RoomPanel extends BaseChatPanel
 {
     private static final long serialVersionUID = -6292689880168959513L;
     private String roomId;
@@ -61,18 +66,6 @@ public class RoomPanel extends BaseChatPanel
 
         if (getTheChat().isJoined()) return;
 
-        try
-        {
-            getTheChat().join(
-                    getConnectionContext().getPeer().getIdentity().getName());
-        }
-        catch (XMPPException e)
-        {
-            // e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-        roomJoined = true;
-        populatePeerList();
         getTheChat().addMessageListener(new PacketListener() {
             public void processPacket(Packet packet)
             {
@@ -82,7 +75,8 @@ public class RoomPanel extends BaseChatPanel
                 if (otherId == null)
                 {
                     System.err
-                            .println("Received a room message by a non-seco peer.");
+                            .println("Received a room message by a non-seco peer." +
+                                    msg.getBody());
                     return;
                 }
                 else if (otherId.equals(getConnectionContext().getPeer()
@@ -95,28 +89,96 @@ public class RoomPanel extends BaseChatPanel
                 getChatPane().chatFrom(id, msg.getBody());
             }
         });
+        
         getTheChat().addParticipantListener(new PacketListener() {
             public void processPacket(Packet packet)
             {
-                populatePeerList();
+                Presence presence = (Presence) packet;
+                final String from = presence.getFrom();
+                String myRoomJID = getTheChat().getRoom() + "/" + getTheChat().getNickname();
+                boolean isMe = from.equals(myRoomJID);
+                if(isMe)
+                {
+                    Occupant o = getTheChat().getOccupant(from);
+                    if(o != null)
+                        getPeerList().getListModel().addElement(o);
+                    else 
+                        //ugly hack, to add Me in the list
+                        RequestProcessor.getDefault().post(new Runnable(){
+                            public void run()
+                            {
+                                //populatePeerList();
+                                Occupant o = getTheChat().getOccupant(from);
+                                if(o != null)
+                                    getPeerList().getListModel().addElement(o);
+                            }
+                        }, 10000);
+                }
             }
         });
+
+        getTheChat().addParticipantStatusListener(
+            new DefaultParticipantStatusListener() {
+
+                @Override
+                public void joined(String participant)
+                {
+                   // System.out.println("Occupant joined: " + participant);
+                    Occupant o = getTheChat().getOccupant(participant);
+                    if (o != null)
+                        getPeerList().getListModel().addElement(o);
+                    
+                }
+
+                @Override
+                public void kicked(String participant, String actor,
+                        String reason)
+                {
+                    Occupant o = getTheChat().getOccupant(participant);
+                    if (o != null)
+                        getPeerList().getListModel().removeElement(o);
+                }
+
+                @Override
+                public void left(String participant)
+                {
+                    // populatePeerList();
+                    Occupant o = getTheChat().getOccupant(participant);
+                    if (o != null)
+                        getPeerList().getListModel().removeElement(o);
+                }
+            });
+
+        try
+        {
+            getTheChat().join(
+                    getConnectionContext().getPeer().getIdentity().getName());
+        }
+        catch (XMPPException e)
+        {
+            // e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        
+        roomJoined = true;
+        populatePeerList();
+        initSplitterLocations();
     }
 
     private void populatePeerList()
     {
-        getPeerList().getListModel().removeAllElements();
+       // getPeerList().getListModel().removeAllElements();
         for (Iterator<String> i = getTheChat().getOccupants(); i.hasNext();)
         {
             String occ_name = i.next();
             Occupant o = getTheChat().getOccupant(occ_name);
-            if (getTheChat().getOccupantPresence(occ_name).isAvailable())
+            if(getConnectionContext().isMe(o))
             {
-                //HGPeerIdentity id = new HGPeerIdentity();
-                //id.setName(occ);
-                //id.setId(HGHandleFactory.makeHandle());
                 getPeerList().getListModel().addElement(o);
+                continue;
             }
+            if (getTheChat().getOccupantPresence(occ_name).isAvailable())
+                getPeerList().getListModel().addElement(o);
         }
     }
 
@@ -148,9 +210,8 @@ public class RoomPanel extends BaseChatPanel
         joinRoom();
     }
 
-    public void initSplitterLocations()
+    private void initSplitterLocations()
     {
-        getPeerList().getListModel().removeAllElements();
         get_split(get_split(this, "inputSplit"), "peerListSplit")
                 .setDividerLocation((int) (0.8 * getHeight()));
         get_split(this, "inputSplit").setDividerLocation(
@@ -249,8 +310,7 @@ public class RoomPanel extends BaseChatPanel
 
     public void setPeerID(HGPeerIdentity peerID)
     {
-        if (peerList != null) 
-            peerList.setPeerID(peerID);
+        if (peerList != null) peerList.setPeerID(peerID);
         super.setPeerID(peerID);
     }
 
@@ -265,18 +325,19 @@ public class RoomPanel extends BaseChatPanel
     {
         getPeerList().getListModel().removeAllElements();
         roomJoined = false;
+        thechat.leave();
         thechat = null;
     }
-    
+
     @Override
     public void workStarted(ConnectionContext ctx, boolean connect_or_disconnect)
     {
-        
+
     }
 
     @Override
     public boolean isConnected()
     {
-       return roomJoined;
+        return roomJoined;
     }
 }

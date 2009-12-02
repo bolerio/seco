@@ -43,6 +43,17 @@ public class ConnectionManager
         }
     }
     
+    public static void stopConnections(boolean persistently)
+    {
+        List<ConnectionContext> list = hg.getAll(ThisNiche.hg, hg
+                .type(ConnectionContext.class));
+        for (ConnectionContext ctx : list)
+        {
+            if(ctx.isActive())
+                ctx.disconnect(persistently);
+        }
+    }
+    
     public static ConnectionContext getConnectionContext(HGPeerIdentity peerID)
     {
         if(peerID == null) return null;

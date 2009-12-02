@@ -19,6 +19,7 @@ import seco.ThisNiche;
 import seco.notebook.NotebookUI;
 import seco.notebook.util.Log;
 import seco.rtenv.RuntimeContext;
+import seco.talk.ConnectionManager;
 import seco.things.CellUtils;
 
 public abstract class TopFrame extends JFrame
@@ -150,6 +151,7 @@ public abstract class TopFrame extends JFrame
     {
         Log.end();
         if (AUTO_BACKUP) CommonActions.backup();
+        ConnectionManager.stopConnections(false);
         CellUtils.removeBackupedCells();
         System.exit(0);
     }

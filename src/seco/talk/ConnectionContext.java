@@ -161,13 +161,16 @@ public class ConnectionContext
         });
     }
 
-    public void disconnect()
+    //when persistently = true the connection is marked inactive in HG and won't be
+    //activated on the next startup
+    public void disconnect(boolean persistently)
     {
         if (!isConnected()) return;
         fireJobStarted(false);
         inProgress = false;
         active = false;
-        ThisNiche.hg.update(this);
+        if(persistently)
+           ThisNiche.hg.update(this);
         U.run(new CallableCallback<Boolean>() {
             public Boolean call() throws Exception
             {
@@ -328,7 +331,6 @@ public class ConnectionContext
         else
         {
             panelH = ThisNiche.handleOf(panel);
-            panel.initSplitterLocations();
         }
 
         panel.joinRoom();
@@ -354,7 +356,7 @@ public class ConnectionContext
                 top, null, null, new Rectangle(x, y, width, height), true));
         CellUtils.setName(cgm, "Chat room " + room.getName());
         cgm.setAttribute(VisualAttribs.showTitle, true);
-        panel.initSplitterLocations();
+        //panel.initSplitterLocations();
         ThisNiche.hg.update(panel);
     }
     
@@ -433,14 +435,15 @@ public class ConnectionContext
     
     void removeRoster(Occupant x)
     {
-        removeRoster(stripJID(x.getJid()));
         HGPeerIdentity id = getPeerIdentity(x);
         if(id != null)
           removeTalkPanel(id);
+        removeRoster(stripJID(x.getJid()));
     }
     
     void removeRoster(HGPeerIdentity x)
     {
+        removeTalkPanel(x);
         removeRoster(x.getName());
     }
     
@@ -469,7 +472,7 @@ public class ConnectionContext
         }
         
         HGPeerIdentity i = getPeerIdentity(x);
-        if(i != null) 
+        if(i != null && isInRoster(i)) 
         {
             openTalkPanel(i);
             return; 

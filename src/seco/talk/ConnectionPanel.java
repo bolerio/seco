@@ -3,6 +3,7 @@ package seco.talk;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -10,9 +11,12 @@ import javax.swing.border.BevelBorder;
 
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;
+import org.hypergraphdb.peer.NetworkPeerPresenceListener;
 import org.hypergraphdb.peer.PeerPresenceListener;
 import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
+import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
@@ -81,7 +85,7 @@ public class ConnectionPanel extends BaseChatPanel implements
             ctx.addConnectionListener(this);
             if (ctx.isConnected())
             {
-                ctx.disconnect();
+                ctx.disconnect(false);
             }
             else
             {
@@ -148,7 +152,8 @@ public class ConnectionPanel extends BaseChatPanel implements
         getPeerList().getListModel().removeAllElements();
         fetchRooms();
         for (HGPeerIdentity i : ctx.getPeer().getConnectedPeers())
-            getPeerList().getListModel().addElement(i);
+            if(getConnectionContext().isInRoster(i))    
+               getPeerList().getListModel().addElement(i);
         getPeerList().setPeerID(getPeerID());
         ctx.getPeer().addPeerPresenceListener(this);
     }
@@ -158,7 +163,6 @@ public class ConnectionPanel extends BaseChatPanel implements
     {
         connectButton.setEnabled(true);
         connectButton.setText(LABEL_CONNECT);
-        getPeerList().getListModel().removeAllElements();
     }
 
     @Override
@@ -168,6 +172,7 @@ public class ConnectionPanel extends BaseChatPanel implements
         String text = (connect_or_disconnect) ? LABEL_CONNECTING
                 : LABEL_DISCONNECTING;
         connectButton.setText(text);
+        getPeerList().getListModel().removeAllElements();
     }
 
     @Override
@@ -203,6 +208,47 @@ public class ConnectionPanel extends BaseChatPanel implements
             e.printStackTrace();
         }
     }
+    
+//    private Roster getRoster()
+//    {
+//        XMPPPeerInterface peerInterface = (XMPPPeerInterface) getThisPeer()
+//        .getPeerInterface();
+//        return peerInterface.getConnection().getRoster();
+//    }
+//    
+//    public void entriesAdded(Collection<String> addresses) 
+//    {
+//        System.out.println("New friends: " + addresses);
+//        for(String user: addresses)
+//        {
+//            Presence bestPresence = getRoster().getPresence(user);                   
+//            if (bestPresence.getType() == Presence.Type.available)
+//               peerJoined(user);
+//        }
+//    }
+//    public void entriesDeleted(Collection<String> addresses) 
+//    {
+//        System.out.println("Friends left: " + addresses);
+//        for(String user: addresses)
+//           peerLeft(user);
+//    }
+//    public void entriesUpdated(Collection<String> addresses) 
+//    {
+//        //System.out.println("friends changed: " + addresses);
+//    }
+//    public void presenceChanged(Presence presence) 
+//    {
+//        String user = presence.getFrom();
+//
+//        System.out.println("Presence changed: " + presence.getFrom() + " " + presence);                    
+//        Presence bestPresence = getRoster().getPresence(user);                   
+//        if (bestPresence.getType() == Presence.Type.available)
+//            peerJoined(user);
+//        else if (bestPresence.getType() == Presence.Type.unavailable)
+//        {
+//            peerLeft(user);                        
+//        }                        
+//    }
 
     public static class ButtonListener implements ActionListener
     {
