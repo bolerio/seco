@@ -23,7 +23,7 @@ import java.io.InputStream;
 public class SELoader extends ClassLoader
 {
 	private ClassLoader parent; // this is usually the RuntimeContext class loader.
-	private Set<String> packages = new HashSet<String>(); // a list of packages for class to be explicitely defined here.
+	private Set<String> packages = new HashSet<String>(); // a list of packages for class to be explicitly defined here.
 	
 	private Class<?> defineIt(String className)
 	{

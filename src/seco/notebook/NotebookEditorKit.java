@@ -258,7 +258,7 @@ public class NotebookEditorKit extends StyledEditorKit
             if (el == null) return;
             int pos = ui.getCaretPosition();
             final ScriptSupport sup = doc.getScriptSupport(pos);
-            if (sup == null) return;
+            //if (sup == null) return;
             // expand the evaluated cell and it's parent
             View root = ui.getUI().getRootView(ui);
             View cellV = ViewUtils.getView(el.getEndOffset() - 1, root);
@@ -270,7 +270,11 @@ public class NotebookEditorKit extends StyledEditorKit
             if (containerV != null && containerV instanceof CellHandleView)
                 ((CellHandleView) containerV).setCollapsed(false);
 
-            if (doc.evalCell(el)) sup.unMarkErrors();
+            if (doc.evalCell(el)) 
+            {
+            	if (sup != null)
+            		sup.unMarkErrors();
+            }
             Utilities.adjustScrollBar(ui, pos, Position.Bias.Forward);
         }
 

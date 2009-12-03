@@ -14,6 +14,12 @@ package seco.rtenv;
  * other dirty, but useful information about a particular scripting engine.
  * </p>
  * 
+ * <p>
+ * The package names are used in the {@link RuntimeContext} class loader to 
+ * force defining the classes there and isolate the different the different
+ * runtime contexts.
+ * </p>
+ * 
  * @author Borislav Iordanov
  *
  */
