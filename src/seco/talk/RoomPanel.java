@@ -23,8 +23,10 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.Occupant;
 import org.jivesoftware.smackx.muc.ParticipantStatusListener;
 
+import seco.ThisNiche;
 import seco.api.Callback;
 import seco.notebook.util.RequestProcessor;
+import seco.talk.PeerList.PeerListModel;
 
 public class RoomPanel extends BaseChatPanel
 {
@@ -62,9 +64,14 @@ public class RoomPanel extends BaseChatPanel
 
     void joinRoom()
     {
-        if (getTheChat() == null || roomJoined) return;
+        if (roomJoined) return;
 
-        if (getTheChat().isJoined()) return;
+        if (getTheChat().isJoined())
+        {
+            if(getPeerList().getListModel().size() == 0)
+               populatePeerList();
+            return;
+        } 
 
         getTheChat().addMessageListener(new PacketListener() {
             public void processPacket(Packet packet)
@@ -97,6 +104,8 @@ public class RoomPanel extends BaseChatPanel
                 final String from = presence.getFrom();
                 String myRoomJID = getTheChat().getRoom() + "/" + getTheChat().getNickname();
                 boolean isMe = from.equals(myRoomJID);
+               // System.out.println("PoomPanel - presence: " + presence.getFrom() + ":" + 
+               //         presence.getType() +  ":" + ThisNiche.graph.getLocation());
                 if(isMe)
                 {
                     Occupant o = getTheChat().getOccupant(from);
@@ -112,8 +121,10 @@ public class RoomPanel extends BaseChatPanel
                                 if(o != null)
                                     getPeerList().getListModel().addElement(o);
                             }
-                        }, 10000);
-                }
+                        }, 3000);
+                }//else
+                    
+                    
             }
         });
 
@@ -123,8 +134,9 @@ public class RoomPanel extends BaseChatPanel
                 @Override
                 public void joined(String participant)
                 {
-                   // System.out.println("Occupant joined: " + participant);
                     Occupant o = getTheChat().getOccupant(participant);
+                    //System.out.println("Occupant joined: " + participant + ":" + o+
+                    //        ":" + ThisNiche.graph.getLocation());
                     if (o != null)
                         getPeerList().getListModel().addElement(o);
                     
@@ -142,10 +154,26 @@ public class RoomPanel extends BaseChatPanel
                 @Override
                 public void left(String participant)
                 {
-                    // populatePeerList();
-                    Occupant o = getTheChat().getOccupant(participant);
-                    if (o != null)
-                        getPeerList().getListModel().removeElement(o);
+                    PeerListModel model = getPeerList().getListModel();
+                    Occupant oc = getTheChat().getOccupant(participant);
+                    if(oc != null)
+                    {
+                        model.removeElement(oc);
+                        return;
+                    }
+                        
+                    String p_name = stripNick(participant);
+                    //System.out.println("Occupant left: " + participant + ":" +
+                   //         ":" + ThisNiche.graph.getLocation());
+                    for(int i = 0; i < model.getSize(); i++)
+                    { 
+                        Occupant o =  (Occupant) model.getElementAt(i);
+                        if(p_name.equals(o.getNick()))
+                        {
+                            model.removeElement(o);
+                            return;
+                        }
+                    }
                 }
             });
 
@@ -164,6 +192,14 @@ public class RoomPanel extends BaseChatPanel
         populatePeerList();
         initSplitterLocations();
     }
+    
+    static String stripNick(String label)
+    {
+        int hostPart = label.lastIndexOf("/");
+        if (hostPart > -1)
+            label = label.substring(hostPart + 1);
+        return label;
+    } 
 
     private void populatePeerList()
     {
@@ -325,14 +361,14 @@ public class RoomPanel extends BaseChatPanel
     {
         getPeerList().getListModel().removeAllElements();
         roomJoined = false;
-        thechat.leave();
         thechat = null;
     }
 
     @Override
     public void workStarted(ConnectionContext ctx, boolean connect_or_disconnect)
     {
-
+         if(!connect_or_disconnect)
+            getTheChat().leave();
     }
 
     @Override

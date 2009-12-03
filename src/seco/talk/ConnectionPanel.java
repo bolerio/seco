@@ -1,10 +1,14 @@
 package seco.talk;
 
 import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JToolBar;
 import javax.swing.border.BevelBorder;
 
 import org.hypergraphdb.peer.HGPeerIdentity;
@@ -90,6 +94,14 @@ public class ConnectionPanel extends BaseChatPanel implements
 
         }
     }
+    
+    void updateState()
+    {
+        if(getConnectionContext().isConnected())
+            connected(getConnectionContext());
+        else
+            disconnected(getConnectionContext());
+    }
 
     public void initComponents()
     {
@@ -102,7 +114,35 @@ public class ConnectionPanel extends BaseChatPanel implements
         peerList = new PeerList(getPeerID());
         peerList.initComponents();
         add(peerList, BorderLayout.CENTER);
+       
+       // JToolBar toolbar = new JToolBar();
+        //add(toolbar, BorderLayout.SOUTH);
     }
+    
+//    private void add_status_bar()
+//    {
+//        JPanel status = new JPanel(new GridBagLayout());
+//        GridBagConstraints gbg = new GridBagConstraints();
+//        gbg.gridy = 0;  gbg.gridx = 0;
+//        gbg.fill = GridBagConstraints.HORIZONTAL;
+//        gbg.anchor = GridBagConstraints.WEST;
+//        gbg.weightx = 1.0;
+//        
+//        status.add(statusLabel, gbg);
+//        //status.add(statusLabel, BorderLayout.WEST);
+//        if(HGVKit.isEmbeded())
+//        {
+//            gbg = new GridBagConstraints();
+//            gbg.gridy = 0;
+//            gbg.gridx = 1;
+//            gbg.insets = new Insets(0, 0, 0, 5);
+//            gbg.anchor = GridBagConstraints.EAST;
+//            //status.add(statusLabel, BorderLayout.EAST);
+//            JToolBar bar = new JToolBar();
+//            status.add(bar, gbg);
+//            add(status, BorderLayout.SOUTH);
+//        }
+//    }
 
     public boolean isConnected()
     {

@@ -155,6 +155,7 @@ public class ConnectionContext
                             HGUtils.getRootCause(t),
                             "Failed to connect to network, see error console.",
                             JOptionPane.ERROR_MESSAGE);
+                    fireDisconnected();
                 }
 
             }
@@ -182,7 +183,6 @@ public class ConnectionContext
             {
                 if (t == null && result)
                 {
-
                     // JOptionPane.showMessageDialog(ConnectionPanel.this,
                     // "Successfully disconnect from network.");
                     fireDisconnected();
@@ -197,6 +197,8 @@ public class ConnectionContext
                                     t,
                                     "Failed to disconnected from network, see error console.",
                                     JOptionPane.ERROR_MESSAGE);
+                    //TODO: maybe we should fire new event
+                    fireConnected();
                 }
             }
         });
@@ -218,8 +220,10 @@ public class ConnectionContext
             panel.initComponents();
             panelHandle = ThisNiche.graph.add(panel);
         }
-        else
+        else{
             panelHandle = ThisNiche.handleOf(panel);
+            panel.updateState();
+        }
 
         addConnectionListener(panel);
         // Find an existing cell with that panel:
