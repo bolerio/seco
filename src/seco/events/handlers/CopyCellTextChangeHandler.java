@@ -22,9 +22,9 @@ public class CopyCellTextChangeHandler implements EventHandler
     public static HGHandle getInstance()
     {
         if(instance == null){instance = hg.findOne(
-                ThisNiche.hg, hg.and(hg.type(CopyCellTextChangeHandler.class)));
+                ThisNiche.graph, hg.and(hg.type(CopyCellTextChangeHandler.class)));
         if(instance == null)
-            instance = ThisNiche.hg.add(new CopyCellTextChangeHandler());
+            instance = ThisNiche.graph.add(new CopyCellTextChangeHandler());
         }
         return instance;
     }
@@ -35,7 +35,7 @@ public class CopyCellTextChangeHandler implements EventHandler
         if (eventType.equals(CellTextChangeEvent.HANDLE))
         {
             CellTextChangeEvent e = (CellTextChangeEvent) event;
-            Object pub = ThisNiche.hg.get(publisher);
+            Object pub = ThisNiche.graph.get(publisher);
 
             if (pub instanceof CellGroupMember)
             {

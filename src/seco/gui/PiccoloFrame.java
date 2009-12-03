@@ -56,8 +56,8 @@ public class PiccoloFrame extends TopFrame
     
     public void exit()
     {
-        if(ThisNiche.hg == null) System.exit(0);
-        CellGroup group = (CellGroup) ThisNiche.hg.get(
+        if(ThisNiche.graph == null) System.exit(0);
+        CellGroup group = (CellGroup) ThisNiche.graph.get(
                 ThisNiche.TOP_CELL_GROUP_HANDLE);
         group.setAttribute(VisualAttribs.rect, getBounds());
        // saveDims();

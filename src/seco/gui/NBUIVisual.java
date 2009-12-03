@@ -62,7 +62,7 @@ public class NBUIVisual implements CellVisual
         HGHandle ctxH = ThisNiche.getContextHandleFor(doc.getBookHandle());
         if(ThisNiche.TOP_CONTEXT_HANDLE.equals(ctxH))
         {
-           ThisNiche.hg.add(new ContextLink(doc.getBookHandle(), 
+           ThisNiche.graph.add(new ContextLink(doc.getBookHandle(), 
                    TopFrame.getInstance().getCurrentRuntimeContext()));
            ctxH = ThisNiche.getContextHandleFor(doc.getBookHandle());
         }

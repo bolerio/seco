@@ -30,7 +30,7 @@ public final class ThisNiche
     // Those three global variables are set by the bootstrapping HG listener.
     // 
     static String name = null;
-    public static HyperGraph hg = null;
+    public static HyperGraph graph = null;
     static EvaluationContext topContext;
     static HashMap<HGHandle, EvaluationContext> allContexts = new HashMap<HGHandle, EvaluationContext>();
 
@@ -53,7 +53,7 @@ public final class ThisNiche
             And qc = new And();
             qc.add(new AtomTypeCondition(ContextLink.class));
             qc.add(new LinkCondition(new HGHandle[] { entityHandle }));
-            rs = hg.find(qc);
+            rs = graph.find(qc);
             return rs.hasNext() ? rs.next() : null;
         }
         finally
@@ -64,10 +64,10 @@ public final class ThisNiche
 
     public static void bindNiche(HyperGraph graph)
     {
-        hg = graph;
-        NicheManager.loadPredefinedTypes(hg);
-        name = NicheManager.getNicheName(hg);
-        hg.freeze(TOP_CONTEXT_HANDLE);
+        ThisNiche.graph = graph;
+        NicheManager.loadPredefinedTypes(graph);
+        name = NicheManager.getNicheName(graph);
+        graph.freeze(TOP_CONTEXT_HANDLE);
         allContexts.clear();
         topContext = getEvaluationContext(TOP_CONTEXT_HANDLE);
         // TODO  - the following won't work with multiple contexts. This
@@ -76,13 +76,13 @@ public final class ThisNiche
         // for global threads like the Swing dispatcher thread (well perhaps
         // this is the only global thread with this problem, but it's causing
         // enough headaches already).
-        hg.getTypeSystem().setClassLoader(topContext.getClassLoader());  
+        graph.getTypeSystem().setClassLoader(topContext.getClassLoader());  
     }
 
     public static HGHandle getContextHandleFor(HGHandle entityHandle)
     {
         HGHandle h = findContextLink(entityHandle);
-        return h == null ? TOP_CONTEXT_HANDLE : ((ContextLink) hg.get(h))
+        return h == null ? TOP_CONTEXT_HANDLE : ((ContextLink) graph.get(h))
                 .getContext();
     }
 
@@ -94,8 +94,8 @@ public final class ThisNiche
     public static void setContextFor(HGHandle entityHandle, HGHandle rcContextHandle)
     {
         HGHandle h = findContextLink(entityHandle);
-        if (h != null) hg.remove(h);
-        hg.add(new ContextLink(entityHandle, rcContextHandle));
+        if (h != null) graph.remove(h);
+        graph.add(new ContextLink(entityHandle, rcContextHandle));
     }
 
     public static EvaluationContext getEvaluationContext(HGHandle rcContextHandle)
@@ -105,7 +105,7 @@ public final class ThisNiche
             EvaluationContext result = allContexts.get(rcContextHandle);
             if (result == null)
             {
-                hg.freeze(rcContextHandle);
+                graph.freeze(rcContextHandle);
                 result = new EvaluationContext(rcContextHandle);
                 initEvaluationContext(result);
                 allContexts.put(rcContextHandle, result);
@@ -124,6 +124,7 @@ public final class ThisNiche
      */
     static void initEvaluationContext(EvaluationContext ctx)
     {
+//    	List<SEDescriptor> allLanguages = hg.get
         // Add default scripting engine
         ctx.addLanguage("beanshell", "bsh.engine.BshScriptEngineFactoryEx",
                 new String[] { "bsh", "bsh.engine", "bsh.classpath",
@@ -145,7 +146,7 @@ public final class ThisNiche
 
     public static HyperGraph getHyperGraph()
     {
-        return hg;
+        return graph;
     }
 
     public static String getName()
@@ -155,7 +156,7 @@ public final class ThisNiche
 
     public static HGHandle handleOf(Object atom)
     {
-        return hg.getHandle(atom);
+        return graph.getHandle(atom);
     }
 
     // Task execution, keep package private cause it's not clear at this point where

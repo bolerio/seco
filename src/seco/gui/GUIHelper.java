@@ -118,7 +118,7 @@ public class GUIHelper
    // public static final String ANOTHER_ICON = "ANOTHER_ICON";
     public static List<Action> getWinTitleActions()
     {
-        List<Action> actions = (List<Action>)ThisNiche.hg.get(WIN_ACTIONS_HANDLE);
+        List<Action> actions = (List<Action>)ThisNiche.graph.get(WIN_ACTIONS_HANDLE);
         if(actions != null) return actions;
         actions = new ArrayList<Action>();
         //maximize
@@ -140,13 +140,13 @@ public class GUIHelper
         a.putValue(Action.SHORT_DESCRIPTION, "Minimize/Restore");
         actions.add(a);
         
-        ThisNiche.hg.define(WIN_ACTIONS_HANDLE, actions);
+        ThisNiche.graph.define(WIN_ACTIONS_HANDLE, actions);
         return actions;
     }
 
     public static JToolBar getMainToolBar()
     {
-        JToolBar toolBar = (JToolBar) ThisNiche.hg
+        JToolBar toolBar = (JToolBar) ThisNiche.graph
                 .get(GUIHelper.TOOLBAR_HANDLE);
 
         if (toolBar != null) return toolBar;
@@ -178,20 +178,20 @@ public class GUIHelper
                 .getActionByName(NotebookEditorKit.htmlAction),
                 "HTML Preview ON/OFF"));
         toolBar.setFloatable(false);
-        ThisNiche.hg.define(GUIHelper.TOOLBAR_HANDLE, toolBar);
+        ThisNiche.graph.define(GUIHelper.TOOLBAR_HANDLE, toolBar);
         return toolBar;
     }
 
     public static HTMLToolBar getHTMLToolBar()
     {
-        HTMLToolBar htmlToolBar = (HTMLToolBar) ThisNiche.hg
+        HTMLToolBar htmlToolBar = (HTMLToolBar) ThisNiche.graph
                 .get(GUIHelper.HTML_TOOLBAR_HANDLE);
         if (htmlToolBar != null) return htmlToolBar;
         htmlToolBar = new HTMLToolBar();
         htmlToolBar.init();
         htmlToolBar.setEnabled(false);
         htmlToolBar.setFloatable(false);
-        ThisNiche.hg.define(GUIHelper.HTML_TOOLBAR_HANDLE, htmlToolBar);
+        ThisNiche.graph.define(GUIHelper.HTML_TOOLBAR_HANDLE, htmlToolBar);
         return htmlToolBar;
     }
 
@@ -370,7 +370,7 @@ public class GUIHelper
     {
         public void actionPerformed(ActionEvent evt)
         {
-            CellGroupMember book = ThisNiche.hg
+            CellGroupMember book = ThisNiche.graph
                     .get(ThisNiche.TOP_CELL_GROUP_HANDLE);
             openCellTree(book);
         }
@@ -447,7 +447,7 @@ public class GUIHelper
 
     public static JMenuBar getMenuBar()
     {
-        JMenuBar menuBar = ThisNiche.hg.get(GUIHelper.MENUBAR_HANDLE);
+        JMenuBar menuBar = ThisNiche.graph.get(GUIHelper.MENUBAR_HANDLE);
         if (menuBar == null)
         {
             menuBar = new JMenuBar();
@@ -459,7 +459,7 @@ public class GUIHelper
             menuBar.add(createWindowMenu());
             menuBar.add(createNetworkMenu());
 
-            ThisNiche.hg.define(GUIHelper.MENUBAR_HANDLE, menuBar);
+            ThisNiche.graph.define(GUIHelper.MENUBAR_HANDLE, menuBar);
             // force the creation of the NotebookUI static popup
             NotebookUI.getPopupMenu();
         }
@@ -572,7 +572,7 @@ public class GUIHelper
 
     public static void makeTopCellGroup(HyperGraph hg)
     {
-        CellGroup group = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        CellGroup group = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         if (group == null)
         {
             group = new CellGroup("TOP_CELL_GROUP");
@@ -611,7 +611,7 @@ public class GUIHelper
             Map<Object, Object> addit_attribs, int index)
     {
         HGHandle cellH = (create_cell) ? CellUtils.getOrCreateCellHForRefH(h) : h;
-        CellGroupMember out = ThisNiche.hg.get(cellH);
+        CellGroupMember out = ThisNiche.graph.get(cellH);
         if (r != null) out.setAttribute(VisualAttribs.rect, r);
         if (visualH != null) out.setVisual(visualH);
         if (lh != null) out.setAttribute(VisualAttribs.layoutHandler, lh);
@@ -644,7 +644,7 @@ public class GUIHelper
     public static HGHandle addToTopCellGroup(HGHandle h, HGHandle visualH,
             LayoutHandler lh, Rectangle r)
     {
-        CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        CellGroup top = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         return addToCellGroup(h, top, visualH, lh, r, false);
     }
 
@@ -655,18 +655,18 @@ public class GUIHelper
         else if (CellContainerVisual.getHandle().equals(visualH))
             name = "CanvasCellGroup";
         CellGroup c = new CellGroup(name);
-        HGHandle h = ThisNiche.hg.add(c);
+        HGHandle h = ThisNiche.graph.add(c);
         return addToTopCellGroup(h, visualH, null, CONTAINER_RECT);
     }
 
     public static HGHandle addToTopCellGroup(final Object x, final Rectangle r)
     {
-        return ThisNiche.hg.getTransactionManager().transact(
+        return ThisNiche.graph.getTransactionManager().transact(
                 new Callable<HGHandle>() {
                     public HGHandle call()
                     {
-                        HGHandle h = ThisNiche.hg.getHandle(x);
-                        if (h == null) h = ThisNiche.hg.add(x);
+                        HGHandle h = ThisNiche.graph.getHandle(x);
+                        if (h == null) h = ThisNiche.graph.add(x);
                         return addToTopCellGroup(h, null, null, r);
                     }
                 });
@@ -688,18 +688,18 @@ public class GUIHelper
             getCellHandleByValueHandle(groupHandle, objectHandle);
         if(existingH != null) return existingH;
         
-        CellGroup group = ThisNiche.hg.get(groupHandle);
-        Object x = ThisNiche.hg.get(objectHandle);
+        CellGroup group = ThisNiche.graph.get(groupHandle);
+        Object x = ThisNiche.graph.get(objectHandle);
         return GUIHelper.addToCellGroup(objectHandle, group, null, null, r,
                 !(x instanceof CellGroupMember), addit_attribs, -1);
     }
     
     public static HGHandle getCellHandleByValueHandle(HGHandle groupHandle, HGHandle objectHandle)
     {
-        CellGroup group = ThisNiche.hg.get(groupHandle);
+        CellGroup group = ThisNiche.graph.get(groupHandle);
         for (int i = 0; i < group.getArity(); i++)
         {
-            Object x = ThisNiche.hg.get(group.getTargetAt(i));
+            Object x = ThisNiche.graph.get(group.getTargetAt(i));
             if (x instanceof Cell
                     && ((Cell) x).getAtomHandle().equals(objectHandle))
                 return group.getTargetAt(i);
@@ -718,8 +718,8 @@ public class GUIHelper
 
     public static void removeFromCellGroup(HGHandle groupH, HGHandle h, boolean backup)
     {
-        CellGroup top = ThisNiche.hg.get(groupH);
-        top.remove((CellGroupMember) ThisNiche.hg.get(h), backup);
+        CellGroup top = ThisNiche.graph.get(groupH);
+        top.remove((CellGroupMember) ThisNiche.graph.get(h), backup);
     }
 
     public static PSwingNode getPSwingNode(JComponent c)
@@ -754,11 +754,11 @@ public class GUIHelper
 
     private static void addAsBook(HGHandle h)
     {
-        CellGroup group = ThisNiche.hg.get(TopFrame.getInstance()
+        CellGroup group = ThisNiche.graph.get(TopFrame.getInstance()
                 .getFocusedContainerHandle());
         if(CellUtils.isBackuped(h))
             CellUtils.restoreCell(h);
-        CellGroupMember child = ThisNiche.hg.get(h);
+        CellGroupMember child = ThisNiche.graph.get(h);
         child.setVisual(NBUIVisual.getHandle());
         child.setAttribute(VisualAttribs.rect, new Rectangle(100, 100, 300, 200));
         if(!CellUtils.isShowTitle(child))
@@ -769,7 +769,7 @@ public class GUIHelper
     public static void newNotebook()
     {
         CellGroup nb = new CellGroup("CG");
-        HGHandle nbHandle = ThisNiche.hg.add(nb);
+        HGHandle nbHandle = ThisNiche.graph.add(nb);
         addAsBook(nbHandle);
     }
 
@@ -805,12 +805,12 @@ public class GUIHelper
 
     public static void updateFrameTitle(HGHandle h)
     {
-        CellGroupMember book = ThisNiche.hg.get(h);
+        CellGroupMember book = ThisNiche.graph.get(h);
         String name = CellUtils.getName(book);
         if (name == null) name = "";
-        RuntimeContext rcInstance = (RuntimeContext) ThisNiche.hg.get(TopFrame
+        RuntimeContext rcInstance = (RuntimeContext) ThisNiche.graph.get(TopFrame
                 .getInstance().getCurrentRuntimeContext());
-        String title = "[" + ThisNiche.hg.getLocation() + "] "
+        String title = "[" + ThisNiche.graph.getLocation() + "] "
                 + rcInstance.getName() + " " + name;
         TopFrame.getInstance().setTitle(title);
         TopFrame.getInstance().showHTMLToolBar(false);
@@ -941,7 +941,7 @@ public class GUIHelper
     {
         Set<HGHandle> res = new HashSet<HGHandle>();
 
-        CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        CellGroup top = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         search_group(top, res);
         return res;
     }
@@ -966,7 +966,7 @@ public class GUIHelper
 
     public static void handleTitle(PSwingNode node)
     {
-        CellGroupMember cgm = ThisNiche.hg.get(node.getHandle());
+        CellGroupMember cgm = ThisNiche.graph.get(node.getHandle());
         if(CellUtils.isMinimized(cgm)){
             update_minimized_UI(node, cgm);
             return;

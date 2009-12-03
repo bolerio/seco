@@ -33,7 +33,7 @@ public class OpenBookPanel extends JPanel
     /** Creates new form AddRemoveListPanel */
     public OpenBookPanel()
     {
-        docs = hg.getAll(ThisNiche.hg, hg.type(NotebookDocument.class));
+        docs = hg.getAll(ThisNiche.graph, hg.type(NotebookDocument.class));
         filterDocs();
         initComponents();
         list.setListData(docs.toArray());
@@ -115,10 +115,10 @@ public class OpenBookPanel extends JPanel
                 // opened there
                 CellGroup gr = CellUtils.getParentGroup(nb.getBookHandle());
                 if (gr != null)
-                    gr.remove((CellGroupMember) ThisNiche.hg.get(nb
+                    gr.remove((CellGroupMember) ThisNiche.graph.get(nb
                             .getBookHandle()));
 
-                ThisNiche.hg.remove(ThisNiche.handleOf(nb), true);
+                ThisNiche.graph.remove(ThisNiche.handleOf(nb), true);
                 docs.remove(removed[i]);
             }
             list.setListData(docs.toArray());

@@ -215,7 +215,7 @@ public class CellPropsDialog extends JDialog
 	{
 		if (bookH != null) return;
 		bookH = CellUtils.createGroupHandle();
-		CellGroup book = (CellGroup) ThisNiche.hg.get(bookH);
+		CellGroup book = (CellGroup) ThisNiche.graph.get(bookH);
 		//for(Iterator<NBStyle> it = doc.getStyles(); it.hasNext();)
 		//	CellUtils.addStyle(book, it.next());
 		book.insert(0,  CellUtils.makeCellH("Simple Input Cell", "beanshell"));

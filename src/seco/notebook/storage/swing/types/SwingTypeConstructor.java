@@ -14,12 +14,13 @@ public class SwingTypeConstructor extends HGAtomTypeBase {
 	}
 
 	public Object make(HGPersistentHandle handle,
-			LazyRef<HGHandle[]> targetSet, IncidenceSetRef incidenceSet) {
+			LazyRef<HGHandle[]> targetSet, IncidenceSetRef incidenceSet) 
+	{
 		HGPersistentHandle[] layout = graph.getStore().getLink(handle);
 		Class<?> cls = null;
 		try{
 		//	System.out.println("Class.forName: " + graph.get(layout[0]));
-		  cls = Class.forName((String)graph.get(layout[0]));
+		  cls = graph.getTypeSystem().getClassLoader().loadClass(((String)graph.get(layout[0])));
 		}catch(ClassNotFoundException ex){
 			throw new HGException(ex.toString());
 		}

@@ -117,7 +117,7 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
 
     private void addChild(final PiccoloCanvas top_canvas, HGHandle childH)
     {
-        final CellGroupMember x = ThisNiche.hg.get(childH);
+        final CellGroupMember x = ThisNiche.graph.get(childH);
         if(x == null) return;
         if(CellUtils.isMaximized(x)) 
             maximized = childH;
@@ -208,7 +208,7 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
 
     private void handleEvent(CellGroupChangeEvent e)
     {
-        CellGroup group = ThisNiche.hg.get(e.getCellGroup());
+        CellGroup group = ThisNiche.graph.get(e.getCellGroup());
         if (!(group.getVisualInstance() instanceof PiccoloCanvas)) return;
         PiccoloCanvas canvas = (PiccoloCanvas) group.getVisualInstance();
         HGHandle[] added = e.getChildrenAdded();

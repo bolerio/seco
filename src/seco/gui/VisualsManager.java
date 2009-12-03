@@ -27,7 +27,7 @@ public class VisualsManager
 {
 	public static HGHandle defaultVisualForType(HGHandle atomType)
 	{
-		DefaultALGenerator alGenerator = new DefaultALGenerator(ThisNiche.hg, 
+		DefaultALGenerator alGenerator = new DefaultALGenerator(ThisNiche.graph, 
 																new AtomTypeCondition(HGSubsumes.class),											
 												                null,
 												                true,
@@ -36,7 +36,7 @@ public class VisualsManager
 		HGBreadthFirstTraversal traversal = new HGBreadthFirstTraversal(atomType, alGenerator);		
 		for (HGHandle current = atomType; current != null; current = traversal.hasNext() ? traversal.next().getSecond():null)
 		{
-		    DefaultVisual v = hg.getOne(ThisNiche.hg, 
+		    DefaultVisual v = hg.getOne(ThisNiche.graph, 
 						hg.and(hg.type(DefaultVisual.class), hg.orderedLink(current, hg.anyHandle())));
 			if (v != null)
 				return v.getVisual();
@@ -46,13 +46,13 @@ public class VisualsManager
 	
 	public static HGHandle defaultVisualForAtom(HGHandle atom)
 	{
-		return defaultVisualForType(ThisNiche.hg.getType(atom));
+		return defaultVisualForType(ThisNiche.graph.getType(atom));
 	}
 	
 	public static List<HGHandle> availableVisualsForType(HGHandle atomType)
 	{
 		ArrayList<HGHandle> A = new ArrayList<HGHandle>();
-		DefaultALGenerator alGenerator = new DefaultALGenerator(ThisNiche.hg, 
+		DefaultALGenerator alGenerator = new DefaultALGenerator(ThisNiche.graph, 
 																new AtomTypeCondition(HGSubsumes.class),											
 												                null,
 												                true,
@@ -61,7 +61,7 @@ public class VisualsManager
 		HGBreadthFirstTraversal traversal = new HGBreadthFirstTraversal(atomType, alGenerator);		
 		for (HGHandle current = atomType; current != null; current = traversal.hasNext() ? traversal.next().getSecond():null)
 		{
-		    List<AvailableVisual> L = hg.getAll(ThisNiche.hg, 
+		    List<AvailableVisual> L = hg.getAll(ThisNiche.graph, 
 					hg.and(hg.type(AvailableVisual.class), hg.orderedLink(current, hg.anyHandle())));
 			for (AvailableVisual v : L)
 				A.add(v.getVisual());
@@ -71,6 +71,6 @@ public class VisualsManager
 	
 	public static List<HGHandle> availableVisualsForAtom(HGHandle atom)
 	{
-		return availableVisualsForType(ThisNiche.hg.getType(atom));
+		return availableVisualsForType(ThisNiche.graph.getType(atom));
 	}
 }

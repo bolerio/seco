@@ -123,7 +123,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         }
         if (node instanceof PSwingNode)
         {
-            CellGroupMember cgm = ThisNiche.hg.get(((PSwingNode) node)
+            CellGroupMember cgm = ThisNiche.graph.get(((PSwingNode) node)
                     .getHandle());
             if (CellUtils.isShowTitle(cgm) && !CellUtils.isMinimized(cgm))
             {
@@ -139,7 +139,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     public void unselect(PNode node)
     {
         if (!isSelected(node)) { return; }
-        CellGroupMember cgm = ThisNiche.hg.get(((PSwingNode) node).getHandle());
+        CellGroupMember cgm = ThisNiche.graph.get(((PSwingNode) node).getHandle());
         undecorateSelectedNode(node, !CellUtils.isShowTitle(cgm));
         selection.remove(node);
     }
@@ -281,7 +281,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     {
         return pressNode instanceof PSwingNode &&
         CellUtils.isMinimized( (CellGroupMember)
-                ThisNiche.hg.get(((PSwingNode)pressNode).getHandle()));
+                ThisNiche.graph.get(((PSwingNode)pressNode).getHandle()));
     }
 
     protected void startStandardSelection(PInputEvent pie)

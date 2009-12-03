@@ -184,7 +184,7 @@ public class TopCellTreeDlg extends JDialog
                     {
                         Cell cell = (Cell) cgm;
                         String s = "Cell handle="
-                                + ThisNiche.hg.getHandle(cell) + "\n"
+                                + ThisNiche.graph.getHandle(cell) + "\n"
                                 + "Cell atom handle=" + cell.getAtomHandle()
                                 + "\n" + "Cell atom " + cell.getValue();
                         out(s);
@@ -309,7 +309,7 @@ public class TopCellTreeDlg extends JDialog
         // otherwise it returns null.
         private void putInClipboard(HGHandle h) {
             String str = "h  = org.hypergraphdb.HGHandleFactory.makeHandle(\"" +
-            ThisNiche.hg.getPersistentHandle(h) + "\");";
+            ThisNiche.graph.getPersistentHandle(h) + "\");";
             StringSelection ss = new StringSelection(str);
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
         }
@@ -336,7 +336,7 @@ public class TopCellTreeDlg extends JDialog
         {
             HGHandle pub_or_sub = HGHandleFactory.anyHandle.equals(publisher) ? subscriber
                     : publisher;
-            return hg.getAll(ThisNiche.hg, hg.and(hg.type(EventPubSub.class),
+            return hg.getAll(ThisNiche.graph, hg.and(hg.type(EventPubSub.class),
                     hg.incident(pub_or_sub), hg.orderedLink(new HGHandle[] {
                             eventType, publisher, subscriber, listener })));
         }
@@ -373,11 +373,11 @@ public class TopCellTreeDlg extends JDialog
                     {
                         EventPubSub eps = (EventPubSub) removed[i];
                         String s = "" + eps + "\n" + "Pub: "
-                                + ThisNiche.hg.get(eps.getPublisher()) + "\n"
+                                + ThisNiche.graph.get(eps.getPublisher()) + "\n"
                                 + "Sub: "
-                                + ThisNiche.hg.get(eps.getSubscriber()) + "\n"
+                                + ThisNiche.graph.get(eps.getSubscriber()) + "\n"
                                 + "Handler: "
-                                + ThisNiche.hg.get(eps.getEventHandler());
+                                + ThisNiche.graph.get(eps.getEventHandler());
                         TopCellTreeDlg.this.out(s);
                     }
                 }
@@ -410,7 +410,7 @@ public class TopCellTreeDlg extends JDialog
             Object[] removed = list.getSelectedValues();
             for (int i = 0; i < removed.length; i++)
             {
-                ThisNiche.hg.remove(ThisNiche.handleOf(removed[i]), true);
+                ThisNiche.graph.remove(ThisNiche.handleOf(removed[i]), true);
                 docs.remove(removed[i]);
             }
             list.setListData(docs.toArray());

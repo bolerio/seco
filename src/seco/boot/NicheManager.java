@@ -258,8 +258,8 @@ public class NicheManager
         
     static void populateThisNiche()
     {
-    	populateDefaultVisuals(ThisNiche.hg);
-    	populateDefaultSecoUI(ThisNiche.hg);        
+    	populateDefaultVisuals(ThisNiche.graph);
+    	populateDefaultSecoUI(ThisNiche.graph);        
     }
     
     static void createNiche(String name, File path)
@@ -273,7 +273,7 @@ public class NicheManager
             hg = new HyperGraph(path.getAbsolutePath());
             // Scriptlet s = new Scriptlet("jscheme", "(load \"jscheme/scribaui.scm\")(install-runtime-menu)");            
           //  hg.add(new HGValueLink("on-load", new HGHandle[] {ThisNiche.TOP_CONTEXT_HANDLE, hg.add(s)}));
-            HyperGraph saveHG = ThisNiche.hg; // likely, this is null, but just in case
+            HyperGraph saveHG = ThisNiche.graph; // likely, this is null, but just in case
             try
             {                            	   	
                 hg.add(new HGListenerAtom(HGOpenedEvent.class.getName(), 

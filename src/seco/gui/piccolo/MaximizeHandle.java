@@ -26,7 +26,7 @@ public class MaximizeHandle extends CommandHandle
     
     public void performAction(Point2D aLocalPoint, PInputEvent aEvent)
     {
-        CellGroupMember cgm = ThisNiche.hg.get(node.getHandle());
+        CellGroupMember cgm = ThisNiche.graph.get(node.getHandle());
         if(CellUtils.isMinimized(cgm))
             CellUtils.toggleMinimized(cgm);
         CellUtils.toggleMaximized(cgm);

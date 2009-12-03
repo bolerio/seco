@@ -14,6 +14,7 @@ import org.hypergraphdb.event.HGEvent;
 import org.hypergraphdb.event.HGListener;
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
+import seco.gui.SecoUncaughtExceptionHandler;
 import seco.gui.TopFrame;
 import seco.rtenv.RuntimeContext;
 import seco.talk.ConnectionManager;
@@ -30,7 +31,7 @@ public class NicheBootListener implements HGListener
         RuntimeContext topRuntime = ThisNiche.getTopContext().getRuntimeContext(); 
         topRuntime.getBindings().put("desktop", TopFrame.getInstance());
         topRuntime.getBindings().put("canvas", TopFrame.getInstance().getCanvas());
-        ThisNiche.hg.update(topRuntime);
+        ThisNiche.graph.update(topRuntime);
         
         // We need to make sure that we have a TOP_CELL_GROUP, no matter what, even if
         // it was deleted by mistake.
@@ -50,6 +51,7 @@ public class NicheBootListener implements HGListener
                    s.setVisible(true);
                    ConnectionManager.startConnections();
                 }
+            	Thread.currentThread().setUncaughtExceptionHandler(new SecoUncaughtExceptionHandler());                
             }
         });
         return Result.ok;

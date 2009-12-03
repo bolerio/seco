@@ -59,7 +59,7 @@ public class IOUtils
 
     static void loadTopGroup(Element top, HGHandle top_groupH)
     {
-        CellGroup top_group = (CellGroup) ThisNiche.hg.get(top_groupH);
+        CellGroup top_group = (CellGroup) ThisNiche.graph.get(top_groupH);
         if (!top.getTagName().equals(XMLConstants.NOTEBOOK))
             throw new RuntimeException("The document '" + CellUtils.getName(top_group)
                     + "' is not a notebook.");
@@ -123,7 +123,7 @@ public class IOUtils
         HGHandle top_groupH =
         (name != null && name.length() > 0) ? CellUtils
                 .createGroupHandle(name) : CellUtils.createGroupHandle();
-        CellGroup top_group = (CellGroup) ThisNiche.hg.get(top_groupH);
+        CellGroup top_group = (CellGroup) ThisNiche.graph.get(top_groupH);
         String str_ind = el.getAttribute(XMLConstants.ATTR_INIT_CELL);
         if (str_ind != null && str_ind.length() > 0)
             CellUtils.setInitCell(top_group, Boolean.parseBoolean(str_ind));
@@ -205,7 +205,7 @@ public class IOUtils
             //                    + inner.getTagName());
         }
         HGHandle cellH = CellUtils.makeCellH(text, engine);
-        Cell cell = (Cell) ThisNiche.hg.get(cellH);
+        Cell cell = (Cell) ThisNiche.graph.get(cellH);
         if (initCell)
             CellUtils.setInitCell(cell, initCell);
         if (isHTML)
@@ -283,7 +283,7 @@ public class IOUtils
                         "Unrecognized tag inside inside cellGroup-group: "
                                 + inner.getTagName());
         }
-        Cell cell = (Cell) ThisNiche.hg.get(
+        Cell cell = (Cell) ThisNiche.graph.get(
                 CellUtils.createOutputCellH(par, text, component, isError));
         //if (isError)
         //    CellUtils.setError(cell, isError);
@@ -391,7 +391,7 @@ public class IOUtils
             for (int i = 0; i < gr.getArity(); i++)
             {
                 CellGroupMember m = (CellGroupMember)
-                    ThisNiche.hg.get(gr.getTargetAt(i));
+                    ThisNiche.graph.get(gr.getTargetAt(i));
                 if (m instanceof CellGroup)
                     fw.write(writeGroup((CellGroup) m, 1));
                 else
@@ -417,7 +417,7 @@ public class IOUtils
         for (int i = 0; i < gr.getArity(); i++)
         {
             CellGroupMember m = (CellGroupMember)
-                ThisNiche.hg.get(gr.getTargetAt(i));
+                ThisNiche.graph.get(gr.getTargetAt(i));
             s += (m instanceof CellGroup) ?
                 writeGroup((CellGroup) m, depth + 1) : writeCell((Cell) m, depth + 1);
         }

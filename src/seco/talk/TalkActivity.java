@@ -65,7 +65,7 @@ public class TalkActivity extends FSMActivity
         if (done.contains(atom)) return;
         System.out.println("");
         done.add(atom);
-        Object x = ThisNiche.hg.get(atom);
+        Object x = ThisNiche.graph.get(atom);
         if (x instanceof Cell)
         {
             transferAtom(msg, ((Cell) x).getAtomHandle(), done, false);
@@ -87,7 +87,7 @@ public class TalkActivity extends FSMActivity
             // //transferAtom(msg, pubsub.getEventHandler(), done, false);
             // }
             // }
-            List<EventPubSub> subscriptions = hg.getAll(ThisNiche.hg, hg.and(hg
+            List<EventPubSub> subscriptions = hg.getAll(ThisNiche.graph, hg.and(hg
                     .type(EventPubSub.class),
                     hg.incident(EvalCellEvent.HANDLE), hg.incident(atom), hg
                             .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
@@ -95,7 +95,7 @@ public class TalkActivity extends FSMActivity
                                     HGHandleFactory.anyHandle })));
             for (EventPubSub s : subscriptions)
             {
-                Object handler = ThisNiche.hg.get(s.getEventHandler());
+                Object handler = ThisNiche.graph.get(s.getEventHandler());
                 if (s.getEventHandler().equals(s.getSubscriber())
                         && handler instanceof Cell)
                 {

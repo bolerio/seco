@@ -70,7 +70,7 @@ public class TabbedPaneU
     {
         if(i < 0 || i >= tp.getTabCount()) return;
         HGHandle h = getHandleAt(tp, i);
-        ThisNiche.hg.unfreeze(h);
+        ThisNiche.graph.unfreeze(h);
         CellGroup top = CellUtils.getParentGroup(h);
         top.remove(i, false);
        

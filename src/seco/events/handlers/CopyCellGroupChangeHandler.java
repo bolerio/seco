@@ -27,10 +27,10 @@ public class CopyCellGroupChangeHandler implements EventHandler
     {
         if (instance == null)
         {
-            instance = hg.findOne(ThisNiche.hg, hg.and(hg
+            instance = hg.findOne(ThisNiche.graph, hg.and(hg
                     .type(CopyCellGroupChangeHandler.class)));
             if (instance == null)
-                instance = ThisNiche.hg.add(new CopyCellGroupChangeHandler());
+                instance = ThisNiche.graph.add(new CopyCellGroupChangeHandler());
         }
         return instance;
     }
@@ -43,11 +43,11 @@ public class CopyCellGroupChangeHandler implements EventHandler
             CellGroupChangeEvent e = (CellGroupChangeEvent) event;
             if (!e.getCellGroup().equals(publisher)) return;
 
-            Object pub = ThisNiche.hg.get(publisher);
+            Object pub = ThisNiche.graph.get(publisher);
             if (pub instanceof CellGroupMember)
             {
                 CellGroup main = (CellGroup) pub;
-                CellGroup copy = (CellGroup) ThisNiche.hg.get(subscriber);
+                CellGroup copy = (CellGroup) ThisNiche.graph.get(subscriber);
                 CellUtils.removeEventPubSub(CellGroupChangeEvent.HANDLE,
                         subscriber, publisher, getInstance());
 
@@ -92,14 +92,14 @@ public class CopyCellGroupChangeHandler implements EventHandler
     //we search for a corresponding CopyAttributeChangeHandler
     private static HGHandle findAppropriateCopy(HGHandle h, CellGroup copy)
     {
-         List<EventPubSub> subs = hg.getAll(ThisNiche.hg, 
+         List<EventPubSub> subs = hg.getAll(ThisNiche.graph, 
                 hg.and(hg.type(EventPubSub.class), hg
                 .incident(h), hg.orderedLink(new HGHandle[] {
                 AttributeChangeEvent.HANDLE, HGHandleFactory.anyHandle, 
                 HGHandleFactory.anyHandle, HGHandleFactory.anyHandle })));
         for (EventPubSub eps : subs)
         {
-            EventHandler eh = (EventHandler) ThisNiche.hg.get(eps.getEventHandler());
+            EventHandler eh = (EventHandler) ThisNiche.graph.get(eps.getEventHandler());
             if(eh instanceof CopyAttributeChangeHandler)
             {
                if (copy.indexOf(eps.getSubscriber()) != -1)

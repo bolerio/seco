@@ -146,17 +146,17 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 
     static NotebookDocument getDocForHandle(Class<?> cl, HGHandle bookH)
     {
-        List<HGHandle> list = hg.findAll(ThisNiche.hg, hg.type(cl));
+        List<HGHandle> list = hg.findAll(ThisNiche.graph, hg.type(cl));
         for (HGHandle h : list)
-            if (bookH.equals(((NotebookDocument) ThisNiche.hg.get(h)).bookH))
-                return ThisNiche.hg.get(h);
+            if (bookH.equals(((NotebookDocument) ThisNiche.graph.get(h)).bookH))
+                return ThisNiche.graph.get(h);
         return null;
     }
 
     public NotebookUI(HGHandle book, EvaluationContext evalContext)
     {
         super();
-        Object o = ThisNiche.hg.get(book);
+        Object o = ThisNiche.graph.get(book);
         NotebookDocument doc = null;
         if (o instanceof CellGroupMember)
         {
@@ -166,20 +166,20 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             {
                 doc = getDocForHandle(NotebookDocument.class, book);
                 if (doc == null)
-                    ThisNiche.hg.add(doc = new NotebookDocument(book,
+                    ThisNiche.graph.add(doc = new NotebookDocument(book,
                             evalContext));
             }
             else if (CellUtils.isInputCell((CellGroupMember) o))
             {
                 doc = getDocForHandle(ScriptletDocument.class, book);
                 if (doc == null)
-                    ThisNiche.hg.add(doc = new ScriptletDocument(book));
+                    ThisNiche.graph.add(doc = new ScriptletDocument(book));
             }
             else
             {
                 doc = getDocForHandle(OutputCellDocument.class, book);
                 if (doc == null)
-                    ThisNiche.hg.add(doc = new OutputCellDocument(book));
+                    ThisNiche.graph.add(doc = new OutputCellDocument(book));
             }
         }
         else
@@ -341,7 +341,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     private static void createPopup()
     {
         if (popupMenu != null) return;
-        popupMenu = (UpdatablePopupMenu) ThisNiche.hg.get(POPUP_HANDLE);
+        popupMenu = (UpdatablePopupMenu) ThisNiche.graph.get(POPUP_HANDLE);
         if (popupMenu == null)
         {
             popupMenu = new UpdatablePopupMenu();
@@ -383,7 +383,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             mi.addActionListener(new ParseTreeAction());
             popupMenu.add(mi);
             
-            ThisNiche.hg.define(POPUP_HANDLE, popupMenu);
+            ThisNiche.graph.define(POPUP_HANDLE, popupMenu);
         }
     }
 

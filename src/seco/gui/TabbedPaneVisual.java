@@ -62,7 +62,7 @@ public class TabbedPaneVisual implements CellVisual, GroupVisual, EventHandler
 
     private void addChild(JTabbedPane tp, HGHandle childH)
     {
-        CellGroupMember cell = ThisNiche.hg.get(childH);
+        CellGroupMember cell = ThisNiche.graph.get(childH);
         CellVisual visual = CellUtils.getVisual(cell);
         JComponent comp = visual.bind(cell);
         if(comp == null) return;
@@ -74,7 +74,7 @@ public class TabbedPaneVisual implements CellVisual, GroupVisual, EventHandler
 
     private void handleEvent(CellGroupChangeEvent e)
     {
-        CellGroup group = (CellGroup) ThisNiche.hg.get(e.getCellGroup());
+        CellGroup group = (CellGroup) ThisNiche.graph.get(e.getCellGroup());
         if (!(group.getVisualInstance() instanceof JTabbedPane)) return;
         JTabbedPane tp = (JTabbedPane) group.getVisualInstance();
         HGHandle[] added = e.getChildrenAdded();

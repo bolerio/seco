@@ -33,7 +33,7 @@ public class JComponentVisual implements CellVisual
         Cell cell = (Cell)element;
         //if(!(ThisNiche.hg.get(cell.getAtomHandle()) instanceof JComponent))
         //    return null;
-        Object o = ThisNiche.hg.get(cell.getAtomHandle());
+        Object o = ThisNiche.graph.get(cell.getAtomHandle());
         JComponent comp = null;
         if(o instanceof JComponent) 
             comp = (JComponent) o;

@@ -24,8 +24,8 @@ public class BackupLink extends HGPlainLink
                        List<EventPubSubInfo> pubs,
                        List<EventPubSubInfo> subs)
     {
-        super(new HGHandle[] {cell, ThisNiche.hg.add(pubs), 
-                ThisNiche.hg.add(subs)} );
+        super(new HGHandle[] {cell, ThisNiche.graph.add(pubs), 
+                ThisNiche.graph.add(subs)} );
     }
     
     public HGHandle getCell()
@@ -52,8 +52,8 @@ public class BackupLink extends HGPlainLink
     @Override
     public String toString()
     {
-        return "BackupLink:" + ThisNiche.hg.get(getCell()) + ":" +
-        ThisNiche.hg.get(getPubs()) + ":" + ThisNiche.hg.get(getSubs());
+        return "BackupLink:" + ThisNiche.graph.get(getCell()) + ":" +
+        ThisNiche.graph.get(getPubs()) + ":" + ThisNiche.graph.get(getSubs());
     }
 
     @Override

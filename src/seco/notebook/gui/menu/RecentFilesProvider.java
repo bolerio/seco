@@ -61,7 +61,7 @@ public class RecentFilesProvider implements DynamicMenuProvider, Serializable
 		
 		for(int i = 0; i < recentH.size(); i++)
 		    recentVector.add(i, CellUtils.getName((CellGroupMember)
-		            ThisNiche.hg.get(recentH.get(i))));
+		            ThisNiche.graph.get(recentH.get(i))));
 				
 		boolean sort = true;
         if(sort)

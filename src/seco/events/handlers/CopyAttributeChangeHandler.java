@@ -23,9 +23,9 @@ public class CopyAttributeChangeHandler implements EventHandler
         if (instance == null)
         {
             instance = hg.findOne(
-                    ThisNiche.hg, hg.and(hg.type(CopyAttributeChangeHandler.class)));
+                    ThisNiche.graph, hg.and(hg.type(CopyAttributeChangeHandler.class)));
             if(instance == null)
-                instance = ThisNiche.hg.add(new CopyAttributeChangeHandler());
+                instance = ThisNiche.graph.add(new CopyAttributeChangeHandler());
         }
         return instance;
     }
@@ -36,7 +36,7 @@ public class CopyAttributeChangeHandler implements EventHandler
         if (eventType.equals(AttributeChangeEvent.HANDLE))
         {
             AttributeChangeEvent e = (AttributeChangeEvent) event;
-            Object sub = ThisNiche.hg.get(subscriber);
+            Object sub = ThisNiche.graph.get(subscriber);
             if (e.getCellGroupMember().equals(publisher))
             if (sub instanceof CellGroupMember)
             {

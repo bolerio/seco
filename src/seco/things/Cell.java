@@ -31,7 +31,7 @@ public class Cell extends BaseCellGroupMember implements EventHandler
     public Object getValue()
     {
         try{
-          return ThisNiche.hg.get(ref.getReferent());
+          return ThisNiche.graph.get(ref.getReferent());
         }catch(Throwable t){
             t.printStackTrace();
             return null;
@@ -68,7 +68,7 @@ public class Cell extends BaseCellGroupMember implements EventHandler
        // if (h == null)
         HGHandle h = CellUtils.addSerializable(val);
         ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
-        ThisNiche.hg.update(this);
+        ThisNiche.graph.update(this);
     }
 
     @Override

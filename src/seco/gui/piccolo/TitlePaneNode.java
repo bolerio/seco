@@ -29,7 +29,7 @@ public class TitlePaneNode extends CommandHandle
     {
         super(new OffsetPBoundsLocator(node, SwingConstants.NORTH, new Point(0,
                 -HEIGHT / 2)));
-        setLabelText(CellUtils.getName((CellGroupMember) ThisNiche.hg
+        setLabelText(CellUtils.getName((CellGroupMember) ThisNiche.graph
                 .get(node.getHandle())));
         setHeight(PREF_DIM + 2);
         setWidth(node.getWidth());// - 50);

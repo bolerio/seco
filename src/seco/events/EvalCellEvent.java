@@ -27,8 +27,8 @@ public class EvalCellEvent extends AbstractUndoableEdit
         this.cellH = owner;
         this.value = value;
         this.oldValue = old_value;
-        if(ThisNiche.hg.get(HANDLE) == null)
-            ThisNiche.hg.define(HANDLE, "" + HANDLE);
+        if(ThisNiche.graph.get(HANDLE) == null)
+            ThisNiche.graph.define(HANDLE, "" + HANDLE);
     }
 
     public HGHandle getCellHandle()

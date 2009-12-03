@@ -172,13 +172,13 @@ public class NotebookEditorKit extends StyledEditorKit
 
     public static NotebookDocument getDefaultDocument()
     {
-        NotebookDocument doc = (NotebookDocument) ThisNiche.hg.get(DOC_HANDLE);
+        NotebookDocument doc = (NotebookDocument) ThisNiche.graph.get(DOC_HANDLE);
         if (doc != null) return doc;
 
-        doc = new NotebookDocument(ThisNiche.hg.add(DEFAULT_TOP_GROUP),
+        doc = new NotebookDocument(ThisNiche.graph.add(DEFAULT_TOP_GROUP),
                 ThisNiche.getTopContext());
         System.out.println("Adding DOC: " + DEFAULT_TOP_GROUP);
-        ThisNiche.hg.define(DOC_HANDLE, doc);
+        ThisNiche.graph.define(DOC_HANDLE, doc);
         doc.init();
         return doc;
     }

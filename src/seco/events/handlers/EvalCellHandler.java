@@ -25,9 +25,9 @@ public class EvalCellHandler implements EventHandler
     public static HGHandle getInstance()
     {
         if(instance == null){instance = hg.findOne(
-                ThisNiche.hg, hg.and(hg.type(EvalCellHandler.class)));
+                ThisNiche.graph, hg.and(hg.type(EvalCellHandler.class)));
         if(instance == null)
-            instance = ThisNiche.hg.add(new EvalCellHandler());
+            instance = ThisNiche.graph.add(new EvalCellHandler());
         }
         return instance;
     }
@@ -38,8 +38,8 @@ public class EvalCellHandler implements EventHandler
         if (eventType.equals(EvalCellEvent.HANDLE))
         {
             EvalCellEvent e = (EvalCellEvent) event;
-            Object sub = ThisNiche.hg.get(subscriber);
-            Object pub = ThisNiche.hg.get(publisher);
+            Object sub = ThisNiche.graph.get(subscriber);
+            Object pub = ThisNiche.graph.get(publisher);
             if (pub instanceof NotebookDocument)
             {
                 if (e.getCellHandle().equals(subscriber))

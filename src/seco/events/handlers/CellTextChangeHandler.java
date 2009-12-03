@@ -22,9 +22,9 @@ public class CellTextChangeHandler implements EventHandler
     public static HGHandle getInstance()
     {
         if(instance == null){instance = hg.findOne(
-                ThisNiche.hg, hg.and(hg.type(CellTextChangeHandler.class)));
+                ThisNiche.graph, hg.and(hg.type(CellTextChangeHandler.class)));
         if(instance == null)
-            instance = ThisNiche.hg.add(new CellTextChangeHandler());
+            instance = ThisNiche.graph.add(new CellTextChangeHandler());
         }
         return instance;
     }
@@ -35,8 +35,8 @@ public class CellTextChangeHandler implements EventHandler
         if (eventType.equals(CellTextChangeEvent.HANDLE))
         {
             CellTextChangeEvent e = (CellTextChangeEvent) event;
-            Object sub = ThisNiche.hg.get(subscriber);
-            Object pub = ThisNiche.hg.get(publisher);
+            Object sub = ThisNiche.graph.get(subscriber);
+            Object pub = ThisNiche.graph.get(publisher);
             if (pub instanceof NotebookDocument && sub instanceof CellGroupMember)
             {
                 if (e.getCell().equals(subscriber))

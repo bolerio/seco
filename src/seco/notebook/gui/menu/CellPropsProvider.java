@@ -113,7 +113,7 @@ public class CellPropsProvider implements DynamicMenuProvider
                     List<HGHandle> outs = 
                         CellUtils.getOutCellHandles(ThisNiche.handleOf(nb));
                     for(HGHandle h: outs)
-                        ThisNiche.hg.remove(h, true);
+                        ThisNiche.graph.remove(h, true);
                     
                 }
             });

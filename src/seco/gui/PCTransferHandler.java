@@ -66,7 +66,7 @@ public class PCTransferHandler extends TransferHandler
                 boolean outputC = NotebookDocument.isOutputCell(e);
                 HGHandle vis = (outputC) ? JComponentVisual.getHandle()
                         : NBUIVisual.getHandle();
-                CellGroup group = ThisNiche.hg.get(canvas.getGroupH());
+                CellGroup group = ThisNiche.graph.get(canvas.getGroupH());
                 if (move) GUIHelper.addToCellGroup(nbH, group, vis, null,
                         new Rectangle(pt.x, pt.y, 200, 200), false);
                 else
@@ -139,10 +139,10 @@ public class PCTransferHandler extends TransferHandler
     private boolean is_nested(TransferSupport support) throws IOException, UnsupportedFlavorException
     {
         HGHandle data = getTransferedHandle(support);
-        CellGroupMember cgm = ThisNiche.hg.get(data);
+        CellGroupMember cgm = ThisNiche.graph.get(data);
         if (!(cgm instanceof CellGroup)) return false;
         CellGroup group = (CellGroup) cgm;
-        CellGroup top = ThisNiche.hg.get(canvas.getGroupH());
+        CellGroup top = ThisNiche.graph.get(canvas.getGroupH());
         while (top != null)
         {
             if (group == top) return true;
@@ -159,11 +159,11 @@ public class PCTransferHandler extends TransferHandler
                 SecoTransferable.FLAVOR);
         boolean move = (support.getDropAction() == MOVE);
         CellGroup old_group = CellUtils.getParentGroup(data);
-        CellGroup top = ThisNiche.hg.get(canvas.getGroupH());
+        CellGroup top = ThisNiche.graph.get(canvas.getGroupH());
         if (old_group == top) return false;
         if (move)
         {
-            old_group.remove((CellGroupMember) ThisNiche.hg.get(data), false);
+            old_group.remove((CellGroupMember) ThisNiche.graph.get(data), false);
             add_to_top_group(top, data, pt);
         }
         else
@@ -173,7 +173,7 @@ public class PCTransferHandler extends TransferHandler
 
     private void add_to_top_group(CellGroup top, HGHandle h, Point pt)
     {
-        CellGroupMember cgm = ThisNiche.hg.get(h);
+        CellGroupMember cgm = ThisNiche.graph.get(h);
         Rectangle r = CellUtils.getAppropriateBounds(cgm);
         if (r == null) 
             r = new Rectangle(pt.x, pt.y, 300, 200);

@@ -19,10 +19,10 @@ public class AttributeChangeHandler implements EventHandler
     {
         if (instance == null)
         {
-            instance = hg.findOne(ThisNiche.hg, hg.and(hg
+            instance = hg.findOne(ThisNiche.graph, hg.and(hg
                     .type(AttributeChangeHandler.class)));
             if (instance == null)
-                instance = ThisNiche.hg.add(new AttributeChangeHandler());
+                instance = ThisNiche.graph.add(new AttributeChangeHandler());
         }
         return instance;
     }
@@ -33,8 +33,8 @@ public class AttributeChangeHandler implements EventHandler
         if (eventType.equals(AttributeChangeEvent.HANDLE))
         {
             AttributeChangeEvent e = (AttributeChangeEvent) event;
-            Object pub = ThisNiche.hg.get(publisher);
-            Object sub = ThisNiche.hg.get(subscriber);
+            Object pub = ThisNiche.graph.get(publisher);
+            Object sub = ThisNiche.graph.get(subscriber);
             if (pub instanceof NotebookDocument
                     && sub instanceof CellGroupMember)
             {

@@ -10,9 +10,8 @@ package seco.rtenv;
 /**
  * <p>
  * A descriptor bean for a script engine. It holds the engine
- * factory class name, package fontNames of the interpreter and eventually 
- * other dirty, but
- * useful information about a particular scripting engine.
+ * factory class name, package names of the interpreter and eventually 
+ * other dirty, but useful information about a particular scripting engine.
  * </p>
  * 
  * @author Borislav Iordanov

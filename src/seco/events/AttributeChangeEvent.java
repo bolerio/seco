@@ -54,7 +54,7 @@ public class AttributeChangeEvent extends AbstractUndoableEdit
     public void redo() throws CannotRedoException
     {
         super.redo();
-        CellGroupMember cell = (CellGroupMember) ThisNiche.hg.get(owner);
+        CellGroupMember cell = (CellGroupMember) ThisNiche.graph.get(owner);
         cell.setAttribute(name, value);
     }
 
@@ -62,7 +62,7 @@ public class AttributeChangeEvent extends AbstractUndoableEdit
     public void undo() throws CannotUndoException
     {
         super.undo();
-        CellGroupMember cell = (CellGroupMember) ThisNiche.hg.get(owner);
+        CellGroupMember cell = (CellGroupMember) ThisNiche.graph.get(owner);
         cell.setAttribute(name, old_value);
     }
  

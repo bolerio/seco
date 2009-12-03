@@ -1,26 +1,24 @@
 package seco.gui;
 
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
 public class SecoUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
 {
     public void uncaughtException(final Thread t, final Throwable e)
     {
-        if (SwingUtilities.isEventDispatchThread())
-        {
-            showException(t, e);
-        }
-        else
-        {
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    showException(t, e);
-                }
-            });
-        }
+    	showException(t, e);	
+//        if (true || SwingUtilities.isEventDispatchThread())
+//        {
+//            showException(t, e);
+//        }
+//        else
+//        {
+//            SwingUtilities.invokeLater(new Runnable()
+//            {
+//                public void run()
+//                {
+//                    showException(t, e);
+//                }
+//            });
+//        }
     }
 
     private void showException(Thread t, Throwable e)
@@ -34,12 +32,13 @@ public class SecoUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
         // or dialog and use it as the parent. In this example, I'm just passing
         // a null owner, which means this dialog may get buried behind
         // some other screen.
-        JOptionPane.showMessageDialog(null, msg);
+        //JOptionPane.showMessageDialog(null, msg);
     }
 
     private void logException(Thread t, Throwable e)
     {
         // todo: start a thread that sends an email, or write to a log file, or
         // send a JMS message...whatever
+    	e.printStackTrace(System.err);
     }
 }

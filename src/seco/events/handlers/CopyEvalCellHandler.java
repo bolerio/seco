@@ -25,9 +25,9 @@ public class CopyEvalCellHandler implements EventHandler
     public static HGHandle getInstance()
     {
         if(instance == null){instance = hg.findOne(
-                ThisNiche.hg, hg.and(hg.type(CopyEvalCellHandler.class)));
+                ThisNiche.graph, hg.and(hg.type(CopyEvalCellHandler.class)));
         if(instance == null)
-            instance = ThisNiche.hg.add(new CopyEvalCellHandler());
+            instance = ThisNiche.graph.add(new CopyEvalCellHandler());
         }
         return instance;
     }
@@ -38,8 +38,8 @@ public class CopyEvalCellHandler implements EventHandler
         if (eventType.equals(EvalCellEvent.HANDLE))
         {
             EvalCellEvent e = (EvalCellEvent) event;
-            Object sub = ThisNiche.hg.get(subscriber);
-            Object pub = ThisNiche.hg.get(publisher);
+            Object sub = ThisNiche.graph.get(subscriber);
+            Object pub = ThisNiche.graph.get(publisher);
             if (pub instanceof CellGroupMember && sub instanceof CellGroupMember)
             {
                 CellUtils.removeEventPubSub(EvalCellEvent.HANDLE,

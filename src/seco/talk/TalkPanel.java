@@ -132,7 +132,7 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
         Object atom = hget(h);
         // HGAtomType type = hget(htype(h));
         String label = atom.getClass().getSimpleName() + "("
-                + ThisNiche.hg.getPersistentHandle(h).toString() + ")";
+                + ThisNiche.graph.getPersistentHandle(h).toString() + ")";
         // ThisNiche.hg.getPersistentHandle(h).toString() + ":" + atom + ":" +
         // type;
         String msg = "Offered " + label;

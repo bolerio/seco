@@ -33,7 +33,7 @@ public class MinimizeHandle extends CommandHandle
       
     public void performAction(Point2D aLocalPoint, PInputEvent aEvent)
     {
-        CellGroupMember cgm = ThisNiche.hg.get(node.getHandle());
+        CellGroupMember cgm = ThisNiche.graph.get(node.getHandle());
         CellUtils.toggleMinimized(cgm);
     }
   

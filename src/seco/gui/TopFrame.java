@@ -57,7 +57,7 @@ public abstract class TopFrame extends JFrame
 
     protected void initFrame()
     {
-        this.setTitle("[" + ThisNiche.hg.getLocation() + "] ");
+        this.setTitle("[" + ThisNiche.graph.getLocation() + "] ");
     }
 
     public void blink(String message)
@@ -168,7 +168,7 @@ public abstract class TopFrame extends JFrame
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
         if (ui == null) return;
         currentRC = ch;
-        RuntimeContext rcInstance = (RuntimeContext) ThisNiche.hg
+        RuntimeContext rcInstance = (RuntimeContext) ThisNiche.graph
                 .get(currentRC);
         rcInstance.getBindings().put("notebook", ui.getDoc().getBook());
         ui.getDoc().setEvaluationContext(ThisNiche.getEvaluationContext(ch));

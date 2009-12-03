@@ -34,7 +34,7 @@ public class ConnectionManager
 
     public static void startConnections()
     {
-        List<ConnectionContext> list = hg.getAll(ThisNiche.hg, hg
+        List<ConnectionContext> list = hg.getAll(ThisNiche.graph, hg
                 .type(ConnectionContext.class));
         for (ConnectionContext ctx : list)
         {
@@ -45,7 +45,7 @@ public class ConnectionManager
     
     public static void stopConnections(boolean persistently)
     {
-        List<ConnectionContext> list = hg.getAll(ThisNiche.hg, hg
+        List<ConnectionContext> list = hg.getAll(ThisNiche.graph, hg
                 .type(ConnectionContext.class));
         for (ConnectionContext ctx : list)
         {
@@ -57,7 +57,7 @@ public class ConnectionManager
     public static ConnectionContext getConnectionContext(HGPeerIdentity peerID)
     {
         if(peerID == null) return null;
-        List<ConnectionContext> l = hg.getAll(ThisNiche.hg, hg.type(ConnectionContext.class));
+        List<ConnectionContext> l = hg.getAll(ThisNiche.graph, hg.type(ConnectionContext.class));
         for(ConnectionContext cc: l)
             if(peerID.equals(cc.getPeer().getIdentity()))
                 return cc;
@@ -66,7 +66,7 @@ public class ConnectionManager
     
     public static ConnectionContext getConnectionContext(ConnectionConfig config)
     {
-       return hg.getOne(ThisNiche.hg, hg.and(
+       return hg.getOne(ThisNiche.graph, hg.and(
                 hg.type(ConnectionContext.class), 
                 hg.eq("config", config)));
     }
@@ -78,7 +78,7 @@ public class ConnectionManager
         if(ctx == null)
         {
             ctx = new ConnectionContext(config);
-            ThisNiche.hg.add(ctx);
+            ThisNiche.graph.add(ctx);
         }
         return ctx.openConnectionPanel();
     }

@@ -68,8 +68,8 @@ public class PSwingNode extends PSwing implements Serializable
 
     public void storeBounds(Rectangle r)
     {
-        if (handle == null || ThisNiche.hg == null) return;
-        CellGroupMember cgm = ThisNiche.hg.get(getHandle());
+        if (handle == null || ThisNiche.graph == null) return;
+        CellGroupMember cgm = ThisNiche.graph.get(getHandle());
         if (CellUtils.isMaximized(cgm)) return;
         if (cgm != null)
         {

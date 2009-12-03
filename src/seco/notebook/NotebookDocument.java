@@ -136,7 +136,7 @@ public class NotebookDocument extends DefaultStyledDocument
             return;
         }
 
-        CellGroup book = (CellGroup) ThisNiche.hg.get(bookH);
+        CellGroup book = (CellGroup) ThisNiche.graph.get(bookH);
         Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) book
                 .getAttribute(XMLConstants.CELL_STYLE);
         if (map != null) for (NBStyle s : map.values())
@@ -179,12 +179,12 @@ public class NotebookDocument extends DefaultStyledDocument
         handle = ThisNiche.handleOf(this);
         if (handle != null) return handle;
 
-        Set<HGHandle> list = CellUtils.findAll(ThisNiche.hg, hg
+        Set<HGHandle> list = CellUtils.findAll(ThisNiche.graph, hg
                 .type(getClass()));
         for (HGHandle h : list)
-            if (bookH.equals(((NotebookDocument) ThisNiche.hg.get(h)).bookH))
+            if (bookH.equals(((NotebookDocument) ThisNiche.graph.get(h)).bookH))
                 return handle = h;
-        handle = ThisNiche.hg.add(this);
+        handle = ThisNiche.graph.add(this);
         // System.out.println("Adding DOC: " + this);
         return handle;
     }
@@ -245,7 +245,7 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public CellGroupMember getBook()
     {
-        return (CellGroupMember) ThisNiche.hg.get(bookH);
+        return (CellGroupMember) ThisNiche.graph.get(bookH);
     }
 
     public HGHandle getBookHandle()
@@ -479,7 +479,7 @@ public class NotebookDocument extends DefaultStyledDocument
         HGHandle outH = CellUtils.createOutputCellH(e.getCellHandle(), "",
                 null, false);
         Element el = getUpperElement(offset, inputCellBox);
-        CellGroup gr = (CellGroup) ThisNiche.hg.get(getContainerH(el));
+        CellGroup gr = (CellGroup) ThisNiche.graph.get(getContainerH(el));
         // gr.insert(gr.indexOf(e.getCellHandle()) + 1, outH);
         CellGroupChangeEvent ev = new CellGroupChangeEvent(ThisNiche
                 .handleOf(gr), gr.indexOf(e.getCellHandle()) + 1,
@@ -573,7 +573,7 @@ public class NotebookDocument extends DefaultStyledDocument
             if (par == getBook())
             {
                 child = CellUtils.createGroupHandle();
-                CellGroup group = (CellGroup) ThisNiche.hg.get(child);
+                CellGroup group = (CellGroup) ThisNiche.graph.get(child);
                 group.insert(0, CellUtils.createCellHandle(this, str));
             }
             else
@@ -583,12 +583,12 @@ public class NotebookDocument extends DefaultStyledDocument
             }
         }
 
-        Object childAtom = ThisNiche.hg.get(child);
+        Object childAtom = ThisNiche.graph.get(child);
 
         if (!(childAtom instanceof CellGroup) && par == getBook())
         {
             HGHandle enc_gr = CellUtils.createGroupHandle();
-            CellGroup group = (CellGroup) ThisNiche.hg.get(enc_gr);
+            CellGroup group = (CellGroup) ThisNiche.graph.get(enc_gr);
             group.insert(0, child);
             // par.insert(i, enc_gr);
             fireCellGroupChanged(new CellGroupChangeEvent(ThisNiche
@@ -639,7 +639,7 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         if (ind == -1) throw new BadLocationException("Wrong index", ind);
         int offset = findElementOffset(parentH);
-        CellGroup parent = (CellGroup) ThisNiche.hg.get(parentH);
+        CellGroup parent = (CellGroup) ThisNiche.graph.get(parentH);
         if (ind == 0) offset++;
         else
         {
@@ -1011,7 +1011,7 @@ public class NotebookDocument extends DefaultStyledDocument
     void group(Collection<Element> elems) throws BadLocationException
     {
         HGHandle gr_h = CellUtils.createGroupHandle();
-        CellGroup gr = (CellGroup) ThisNiche.hg.get(gr_h);
+        CellGroup gr = (CellGroup) ThisNiche.graph.get(gr_h);
         for (Element el : elems)
             gr.insert(gr.getArity(), getNBElementH(el));
         Element first_el = elems.iterator().next();
@@ -1102,7 +1102,7 @@ public class NotebookDocument extends DefaultStyledDocument
     private EvalCellEvent create_eval_event(HGHandle cellH, EvalResult value)
     {
         HGHandle oldH = CellUtils.getOutCellHandle(cellH);
-        Cell c = (oldH != null) ? ((Cell) ThisNiche.hg.get(oldH)) : null;
+        Cell c = (oldH != null) ? ((Cell) ThisNiche.graph.get(oldH)) : null;
         Object old = (oldH != null) ? c.getValue() : null;
         EvalResult old_res = new EvalResult(old, CellUtils.isError(c));
         return new EvalCellEvent(cellH, value, old_res);
@@ -1136,7 +1136,7 @@ public class NotebookDocument extends DefaultStyledDocument
         if (el == null) return null;
         HGHandle h = getNBElementH(el);
         if (h == null) return null;
-        return (CellGroupMember) ThisNiche.hg.get(h);
+        return (CellGroupMember) ThisNiche.graph.get(h);
     }
 
     public static HGHandle getNBElementH(Element el)
@@ -1147,7 +1147,7 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public NBStyle getStyle(StyleType type)
     {
-        CellGroupMember book = (CellGroupMember) ThisNiche.hg.get(bookH);
+        CellGroupMember book = (CellGroupMember) ThisNiche.graph.get(bookH);
         return CellUtils.getStyle(book, type);
     }
 
@@ -1241,7 +1241,7 @@ public class NotebookDocument extends DefaultStyledDocument
     CellGroupMember getContainer(Element el)
     {
         Element e = getContainerEl(el, false);
-        if (e == null) return (CellGroup) ThisNiche.hg.get(bookH);
+        if (e == null) return (CellGroup) ThisNiche.graph.get(bookH);
         return getNBElement(e);
     }
 
@@ -1260,7 +1260,7 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public void setDefaultEngineName(String name)
     {
-        CellGroup book = (CellGroup) ThisNiche.hg.get(bookH);
+        CellGroup book = (CellGroup) ThisNiche.graph.get(bookH);
         CellUtils.setEngine(book, name);
     }
 
@@ -1355,7 +1355,7 @@ public class NotebookDocument extends DefaultStyledDocument
         Cell c = (Cell) getNBElement(el);
         HGHandle cell = getNBElementH(el);
         HGHandle parH = getContainerH(el);
-        CellGroup par = (CellGroup) ThisNiche.hg.get(parH);
+        CellGroup par = (CellGroup) ThisNiche.graph.get(parH);
         int ind = par.indexOf(cell);
         try
         {
@@ -1440,7 +1440,7 @@ public class NotebookDocument extends DefaultStyledDocument
         supressEvents = true;
         if (DIRECT_EVENTING)
         {
-            CellGroup g = ThisNiche.hg.get(e.getCellGroup());
+            CellGroup g = ThisNiche.graph.get(e.getCellGroup());
             g.batchProcess(e);
         }
         else

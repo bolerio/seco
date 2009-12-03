@@ -197,10 +197,10 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         NotebookDocument doc = ui.getDoc();
         HGHandle h = ThisNiche.handleOf(ui);
-        if (h != null) ThisNiche.hg.remove(h, true);
+        if (h != null) ThisNiche.graph.remove(h, true);
         // CellUtils.removeHandlers(doc.getBookHandle());
         CellUtils.removeHandlers(doc.getHandle());
-        ThisNiche.hg.remove(doc.getHandle(), true);
+        ThisNiche.graph.remove(doc.getHandle(), true);
     }
 
     public Collection<PNode> getSelection()
@@ -227,7 +227,7 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         if (!(o instanceof PSwingNode)) return;
         PSwingNode p = (PSwingNode) o;
-        CellGroupMember cm = (CellGroupMember) ThisNiche.hg.get(p.getHandle());
+        CellGroupMember cm = (CellGroupMember) ThisNiche.graph.get(p.getHandle());
         if (cm != null)
         {
             if (CellUtils.isMinimized(cm)) return;
@@ -351,7 +351,7 @@ public class PiccoloCanvas extends PSwingCanvas
 
     void placeNode(PSwingNode p, boolean newly_added)
     {
-        CellGroupMember cgm = ThisNiche.hg.get(p.getHandle());
+        CellGroupMember cgm = ThisNiche.graph.get(p.getHandle());
         boolean minim = (CellUtils.isMinimized(cgm));
         Rectangle r = CellUtils.getAppropriateBounds(cgm);
         if (!newly_added)

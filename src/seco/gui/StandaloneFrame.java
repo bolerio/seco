@@ -56,7 +56,7 @@ public class StandaloneFrame extends TopFrame
     
     private Component getJTabbedPane()
     {
-        CellGroup top = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        CellGroup top = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         for(int i = 0; i < top.getArity(); i++)
         {
             CellGroupMember cgm = top.getElement(i);
@@ -64,15 +64,15 @@ public class StandaloneFrame extends TopFrame
                     TabbedPaneVisual.getHandle().equals(cgm.getVisual()))
             {
                 focusedContainerHandle = top.getTargetAt(i);
-                TabbedPaneVisual v = ThisNiche.hg.get(TabbedPaneVisual.getHandle());
+                TabbedPaneVisual v = ThisNiche.graph.get(TabbedPaneVisual.getHandle());
                 return v.bind(cgm);
             }
         }
         //no tabbedPane, add one
         CellGroup group = new CellGroup("TabbedPaneCellGroup");
-        focusedContainerHandle = ThisNiche.hg.add(group);
+        focusedContainerHandle = ThisNiche.graph.add(group);
         group.setVisual(TabbedPaneVisual.getHandle());
-        ThisNiche.hg.update(group);
+        ThisNiche.graph.update(group);
         top.insert(top.getArity(), group);
         return TabbedPaneU.createTabbedPane(group);
     } 

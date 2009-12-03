@@ -45,7 +45,7 @@ public class OutputCellDocument extends NotebookDocument
 
     public void init()
     {
-        Cell book = (Cell) ThisNiche.hg.get(bookH);
+        Cell book = (Cell) ThisNiche.graph.get(bookH);
         Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) book
                 .getAttribute(XMLConstants.CELL_STYLE);
         if (map != null) for (NBStyle s : map.values())
@@ -100,9 +100,9 @@ public class OutputCellDocument extends NotebookDocument
         {
             if (instance == null)
             {
-                instance = hg.findOne(ThisNiche.hg, hg.and(hg
+                instance = hg.findOne(ThisNiche.graph, hg.and(hg
                         .type(CopyEvalCellHandler.class)));
-                if (instance == null) instance = ThisNiche.hg
+                if (instance == null) instance = ThisNiche.graph
                         .add(new CopyEvalCellHandler());
             }
             return instance;
@@ -114,8 +114,8 @@ public class OutputCellDocument extends NotebookDocument
             if (eventType.equals(EvalCellEvent.HANDLE))
             {
                 EvalCellEvent e = (EvalCellEvent) event;
-                Object sub = ThisNiche.hg.get(subscriber);
-                Object pub = ThisNiche.hg.get(publisher);
+                Object sub = ThisNiche.graph.get(subscriber);
+                Object pub = ThisNiche.graph.get(publisher);
                 if (pub instanceof CellGroupMember
                         && sub instanceof OutputCellDocument)
                 {

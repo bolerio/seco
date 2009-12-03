@@ -33,7 +33,7 @@ public class ScriptletDocument extends NotebookDocument
     
     public void init()
     {
-        Cell book = (Cell) ThisNiche.hg.get(bookH);
+        Cell book = (Cell) ThisNiche.graph.get(bookH);
         Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) book
                 .getAttribute(XMLConstants.CELL_STYLE);
         if (map != null) for (NBStyle s : map.values())
@@ -60,7 +60,7 @@ public class ScriptletDocument extends NotebookDocument
     static void createCell(NotebookDocument doc, HGHandle cellH, 
             MutableAttributeSet attr, Vector<ElementSpec> vec)
     {
-        Cell cell = (Cell) ThisNiche.hg.get(cellH);
+        Cell cell = (Cell) ThisNiche.graph.get(cellH);
         // System.out.println("createCell: " + cellH + ":" + cell);
         attr = DocUtil.getDocStyle(doc, StyleType.inputCell);
         DocUtil.startTag(inputCellBox, attr, 0, vec);

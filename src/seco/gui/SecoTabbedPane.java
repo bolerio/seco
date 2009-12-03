@@ -38,7 +38,7 @@ public class SecoTabbedPane extends JTabbedPane
 
     public CellGroup getCellGroup()
     {
-        return (CellGroup) ThisNiche.hg.get(groupH);
+        return (CellGroup) ThisNiche.graph.get(groupH);
     }
 
     private int getTargetTabIndex(Point pt)
@@ -150,7 +150,7 @@ public class SecoTabbedPane extends JTabbedPane
         {
             if(i < 0 || i >= tp.getTabCount()) return;
             HGHandle h = TabbedPaneU.getHandleAt(tp, i);
-            ThisNiche.hg.unfreeze(h);
+            ThisNiche.graph.unfreeze(h);
             CellGroup top = CellUtils.getParentGroup(h);
             top.remove(i);
            

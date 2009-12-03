@@ -46,7 +46,7 @@ ConnectionContext.ConnectionListener
           ctx = ConnectionManager.getConnectionContext(getPeerID());
           if(ctx != null)
           {
-             ctx.addConnectionListener(this);
+        	 ctx.addConnectionListener(this);
              if(ctx.isConnected() && !isConnected())
                 connected(ctx);
              else if(!ctx.isConnected() && isConnected())

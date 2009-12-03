@@ -103,7 +103,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
         HGHandle[] tmp = removed;
         removed = added;
         added = tmp;
-        CellGroup gr = (CellGroup) ThisNiche.hg.get(groupH);
+        CellGroup gr = (CellGroup) ThisNiche.graph.get(groupH);
         gr
                 .batchProcess(new CellGroupChangeEvent(groupH, index, added,
                         removed));
@@ -118,7 +118,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
     public void undo() throws CannotUndoException
     {
         super.undo();
-        CellGroup gr = (CellGroup) ThisNiche.hg.get(groupH);
+        CellGroup gr = (CellGroup) ThisNiche.graph.get(groupH);
         gr
                 .batchProcess(new CellGroupChangeEvent(groupH, index, removed,
                         added));

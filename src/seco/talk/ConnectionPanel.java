@@ -3,20 +3,15 @@ package seco.talk;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
 
 import javax.swing.JButton;
-import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;
-import org.hypergraphdb.peer.NetworkPeerPresenceListener;
 import org.hypergraphdb.peer.PeerPresenceListener;
 import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
-import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
@@ -265,10 +260,11 @@ public class ConnectionPanel extends BaseChatPanel implements
 
         public void actionPerformed(ActionEvent ev)
         {
-            if (panel.getConnectButton().getText().equals(LABEL_CONNECT)) panel
-                    .connect();
+            if (panel.getConnectButton().getText().equals(LABEL_CONNECT)) 
+            	panel.connect();
             else if (panel.getConnectButton().getText()
-                    .equals(LABEL_DISCONNECT)) panel.disconnect();
+                    .equals(LABEL_DISCONNECT)) 
+            	panel.disconnect();
         }
 
         public ConnectionPanel getPanel()

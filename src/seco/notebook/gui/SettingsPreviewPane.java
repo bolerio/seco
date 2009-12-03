@@ -93,7 +93,7 @@ public class SettingsPreviewPane extends JSplitPane
 	protected void initSimpleBook()
 	{
 		HGHandle bookH = CellUtils.createGroupHandle();
-		book = (CellGroup) ThisNiche.hg.get(bookH);
+		book = (CellGroup) ThisNiche.graph.get(bookH);
 		//if(doc != null)
 		//  for(Iterator<NBStyle> it = doc.getStyles(); it.hasNext();)
 		//      CellUtils.addStyle(book, it.next());

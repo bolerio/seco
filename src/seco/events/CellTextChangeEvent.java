@@ -66,7 +66,7 @@ public class CellTextChangeEvent extends AbstractUndoableEdit
     public void redo() throws CannotRedoException
     {
         super.redo();
-        Cell cell = (Cell) ThisNiche.hg.get(cellH);
+        Cell cell = (Cell) ThisNiche.graph.get(cellH);
         Scriptlet s = (Scriptlet) cell.getValue();
         String code = s.getCode(); 
         StringBuffer res = new StringBuffer(code.substring(0, getOffset()));
@@ -77,7 +77,7 @@ public class CellTextChangeEvent extends AbstractUndoableEdit
             res.append(code.substring(getOffset() + getLength()));
         }
         s.setCode(res.toString());
-        ThisNiche.hg.update(s);
+        ThisNiche.graph.update(s);
         type = (type == CellTextChangeEvent.EventType.REMOVE) ? 
                 CellTextChangeEvent.EventType.INSERT : CellTextChangeEvent.EventType.REMOVE;
         CellUtils.fireCellTextChanged(cellH, this);
@@ -87,7 +87,7 @@ public class CellTextChangeEvent extends AbstractUndoableEdit
     public void undo() throws CannotUndoException
     {
         super.undo();
-        Cell cell = (Cell) ThisNiche.hg.get(cellH);
+        Cell cell = (Cell) ThisNiche.graph.get(cellH);
         Scriptlet s = (Scriptlet) cell.getValue();
         String code = s.getCode(); 
         //System.out.println("CellTextChangeEvent - undo:" + getType() + ":" + getText());
@@ -99,7 +99,7 @@ public class CellTextChangeEvent extends AbstractUndoableEdit
             res.append(code.substring(getOffset() + getLength()));
         }
         s.setCode(res.toString());
-        ThisNiche.hg.update(s);
+        ThisNiche.graph.update(s);
         type = (type == CellTextChangeEvent.EventType.REMOVE) ? 
                 CellTextChangeEvent.EventType.INSERT : CellTextChangeEvent.EventType.REMOVE;
         CellUtils.fireCellTextChanged(cellH, this);

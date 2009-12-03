@@ -60,13 +60,13 @@ public class CommonActions
     public static void backup()
     {
         File dir = new File(AppConfig.getConfigDirectory(), 
-                bck_dir + File.separator + NicheManager.getNicheName(ThisNiche.hg));
+                bck_dir + File.separator + NicheManager.getNicheName(ThisNiche.graph));
         if (!dir.exists()) dir.mkdir();
         System.out.println("Backup in: " + dir.getAbsolutePath());
         int i = 1;
         for (HGHandle h: GUIHelper.getOpenedBooks())
         {
-            CellGroupMember c = ThisNiche.hg.get(h);
+            CellGroupMember c = ThisNiche.graph.get(h);
             if(!(c instanceof CellGroup)) continue;
            
             CellGroup g = (CellGroup) c;
@@ -94,21 +94,21 @@ public class CommonActions
     public static void restoreDefaultGUI()
     {
         TopFrame.getInstance().getCanvas().removeAllNodes();
-        CellGroup group = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-        CellVisual v = ThisNiche.hg.get(group.getVisual());
-        ThisNiche.hg.remove(GUIHelper.MENUBAR_HANDLE, true);
-        ThisNiche.hg.remove(GUIHelper.TOOLBAR_HANDLE, true);
-        ThisNiche.hg.remove(GUIHelper.HTML_TOOLBAR_HANDLE, true);
+        CellGroup group = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        CellVisual v = ThisNiche.graph.get(group.getVisual());
+        ThisNiche.graph.remove(GUIHelper.MENUBAR_HANDLE, true);
+        ThisNiche.graph.remove(GUIHelper.TOOLBAR_HANDLE, true);
+        ThisNiche.graph.remove(GUIHelper.HTML_TOOLBAR_HANDLE, true);
         
         ContextMenuHandler.clear();
         
-        GUIHelper.makeTopCellGroup(ThisNiche.hg);
+        GUIHelper.makeTopCellGroup(ThisNiche.graph);
         v.bind(group);
     }
     
     public static void resetZoom()
     {
-        CellGroup group = ThisNiche.hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        CellGroup group = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         group.getAttributes().remove(VisualAttribs.zoom);
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         canvas.getCamera().setViewScale(1.0);
@@ -118,7 +118,7 @@ public class CommonActions
     public static void testEmbededContainer()
     {
         CellGroup group = new CellGroup("EMBEDED CONTAINER");
-        HGHandle groupH = ThisNiche.hg.add(group);
+        HGHandle groupH = ThisNiche.graph.add(group);
         HGHandle cellH1 = CellUtils.createOutputCellH(null, null, new JButton("Test"), false);
         HGHandle cellH2 = CellUtils.createOutputCellH(null, null, new JCheckBox("Test"), false);
         group.insert(0, cellH1);
@@ -128,7 +128,7 @@ public class CommonActions
     
     public static boolean renameCellGroupMember(HGHandle h)
     {
-        CellGroupMember cgm = ThisNiche.hg.get(h);
+        CellGroupMember cgm = ThisNiche.graph.get(h);
         String name = CellUtils.getName(cgm);
         NotifyDescriptor.InputLine nd = new NotifyDescriptor.InputLine(
                 TopFrame.getInstance(), "Name: ", "Rename");
@@ -146,7 +146,7 @@ public class CommonActions
     {
         PSwingNode ps = TopFrame.getInstance().getCanvas()
                 .getSelectedPSwingNode();
-        CellGroupMember cell = ThisNiche.hg.get(ps.getHandle());
+        CellGroupMember cell = ThisNiche.graph.get(ps.getHandle());
         if (cell instanceof Cell
                 && ((Cell) cell).getValue() instanceof JComponent)
             ((Cell) cell).updateValue(ps.getComponent());

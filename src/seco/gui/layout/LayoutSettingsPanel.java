@@ -214,7 +214,7 @@ public class LayoutSettingsPanel extends javax.swing.JPanel {
         butChange.setEnabled(true);
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         canvas.removeNode(node);
-        CellGroupMember m = ThisNiche.hg.get(node.getHandle());
+        CellGroupMember m = ThisNiche.graph.get(node.getHandle());
         m.setAttribute(VisualAttribs.layoutHandler, 
                 new DefaultLayoutHandler(getDRect(), getRefPoint()));
         canvas.addFixedNode(node);
@@ -229,7 +229,7 @@ public class LayoutSettingsPanel extends javax.swing.JPanel {
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         PBounds b = node.getFullBounds();
         canvas.removeFixedNode(node);
-        CellGroupMember m = ThisNiche.hg.get(node.getHandle());
+        CellGroupMember m = ThisNiche.graph.get(node.getHandle());
         m.getAttributes().remove(VisualAttribs.layoutHandler);
         m.setAttribute(VisualAttribs.rect, b);
         canvas.addNode(node);

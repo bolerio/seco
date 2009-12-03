@@ -19,9 +19,9 @@ public class CellGroupChangeHandler implements EventHandler
     public static HGHandle getInstance(){
         if(instance == null){
             instance = hg.findOne(
-                    ThisNiche.hg, hg.and(hg.type(CellGroupChangeHandler.class)));
+                    ThisNiche.graph, hg.and(hg.type(CellGroupChangeHandler.class)));
             if(instance == null)
-                instance = ThisNiche.hg.add(new CellGroupChangeHandler());
+                instance = ThisNiche.graph.add(new CellGroupChangeHandler());
          }
         return instance;
     }
@@ -32,8 +32,8 @@ public class CellGroupChangeHandler implements EventHandler
         if (eventType.equals(CellGroupChangeEvent.HANDLE))
         {
             CellGroupChangeEvent e = (CellGroupChangeEvent) event;
-            Object sub = ThisNiche.hg.get(subscriber);
-            Object pub = ThisNiche.hg.get(publisher);
+            Object sub = ThisNiche.graph.get(subscriber);
+            Object pub = ThisNiche.graph.get(publisher);
             if(sub instanceof CellGroup && pub instanceof NotebookDocument){
                 if (e.getCellGroup().equals(subscriber))
                    ((CellGroup)sub).batchProcess(e);

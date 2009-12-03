@@ -77,7 +77,7 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
 
     public CellGroupMember getElement(int ind)
     {
-        return (CellGroupMember) ThisNiche.hg.get(getTargetAt(ind));
+        return (CellGroupMember) ThisNiche.graph.get(getTargetAt(ind));
     }
 
     public int indexOf(CellGroupMember x)
@@ -85,7 +85,7 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
         HGHandle h = ThisNiche.handleOf(x);
         if (outgoingSet.indexOf(h) == -1)
             System.out.println("NOT IN GROUP: "
-                    + ThisNiche.hg.getPersistentHandle(h) + ":" + outgoingSet);
+                    + ThisNiche.graph.getPersistentHandle(h) + ":" + outgoingSet);
         return outgoingSet.indexOf(h);
     }
 
@@ -137,7 +137,7 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
         if(CellUtils.isBackuped(h))
             CellUtils.restoreCell(h);
         outgoingSet.add(ind, h);
-        ThisNiche.hg.update(this);
+        ThisNiche.graph.update(this);
         fireCellGroupChanged(new CellGroupChangeEvent(grH, ind,
                 new HGHandle[] { h }, new HGHandle[0]));
     }
@@ -182,7 +182,7 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
                     CellUtils.restoreCell(added[i]);
             }
         }
-        ThisNiche.hg.update(this);
+        ThisNiche.graph.update(this);
         fireCellGroupChanged(e);
     }
 
@@ -197,7 +197,7 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
         {
             HGHandle rem = outgoingSet.get(i);
             outgoingSet.remove(i);
-            ThisNiche.hg.update(this);
+            ThisNiche.graph.update(this);
             HGHandle grH = ThisNiche.handleOf(this);
             if (grH  == null)
                 throw new NullPointerException("Group with NULL handle: " + this);

@@ -403,7 +403,7 @@ public class SelectionManager extends
                 .handleOf(nb));
         List<CellGroupMember> mems = new ArrayList(list.size());
         for (HGHandle h : list)
-            mems.add((CellGroupMember) ThisNiche.hg.get(h));
+            mems.add((CellGroupMember) ThisNiche.graph.get(h));
         for (Element el : keySet())
             if (get(el) instanceof CellHandleView.CustomButton
                     && mems.contains(NotebookDocument.getNBElement(el)))

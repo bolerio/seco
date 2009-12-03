@@ -9,7 +9,7 @@ public class EventDispatcher
 {
     public static void dispatch(HGHandle eventType, HGHandle publisher, Object event)
     {
-        List<EventPubSub> L = hg.getAll(ThisNiche.hg,
+        List<EventPubSub> L = hg.getAll(ThisNiche.graph,
                                         hg.and(hg.type(EventPubSub.class), 
                                                hg.orderedLink(eventType, 
                                                               publisher, 
@@ -17,7 +17,7 @@ public class EventDispatcher
                                                               hg.anyHandle())));
         for (EventPubSub s : L)
         {
-            EventHandler handler = ThisNiche.hg.get(s.getEventHandler());
+            EventHandler handler = ThisNiche.graph.get(s.getEventHandler());
             if (handler != null)
                 handler.handle(eventType, event, publisher, s.getSubscriber());
         }

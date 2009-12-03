@@ -80,7 +80,7 @@ public class CellUtils
             // cell.ref = new HGAtomRef(ThisNiche.hg.add(val),
             // HGAtomRef.Mode.hard);
         }
-        ThisNiche.hg.update(c);
+        ThisNiche.graph.update(c);
     }
 
     public static HGHandle getOrCreateCellHForRefH(HGHandle h)
@@ -88,7 +88,7 @@ public class CellUtils
         HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
         HGHandle outH = ThisNiche.handleOf(out);
-        if (outH == null) outH = ThisNiche.hg.add(out);
+        if (outH == null) outH = ThisNiche.graph.add(out);
         return outH;
     }
 
@@ -98,7 +98,7 @@ public class CellUtils
         HGHandle visH = (c.getVisual() != null) ? c.getVisual() :
                 VisualsManager.defaultVisualForAtom(ThisNiche.handleOf(c));
         if(visH != null)// && TabbedPaneVisual.getHandle() != visH)
-            return (CellVisual) ThisNiche.hg.get(visH);
+            return (CellVisual) ThisNiche.graph.get(visH);
         CellVisual visual = null;
         if(visH == null || visH.equals(HGHandleFactory
                  .nullHandle()))
@@ -125,9 +125,9 @@ public class CellUtils
         // .orderedLink(new HGHandle[] { cgmH,
         // HGHandleFactory.anyHandle })));
         // return c;
-        for (HGHandle h : ThisNiche.hg.getIncidenceSet(cgmH))
+        for (HGHandle h : ThisNiche.graph.getIncidenceSet(cgmH))
         {
-            Object o = ThisNiche.hg.get(h);
+            Object o = ThisNiche.graph.get(h);
             if (o instanceof CellGroup) return (CellGroup) o;
         }
         return null;
@@ -136,7 +136,7 @@ public class CellUtils
     public static HGHandle makeCellH(String text, String lang)
     {
         Scriptlet s = new Scriptlet(lang, text);
-        HGHandle h = ThisNiche.hg.add(s);
+        HGHandle h = ThisNiche.graph.add(s);
         return CellUtils.getOrCreateCellHForRefH(h);
     }
 
@@ -221,7 +221,7 @@ public class CellUtils
     
     public static void toggleShowTitle(HGHandle h)
     {
-        toggleShowTitle((CellGroupMember) ThisNiche.hg.get(h)); 
+        toggleShowTitle((CellGroupMember) ThisNiche.graph.get(h)); 
     }
     
     public static void setCollapsed(CellGroupMember c, boolean b)
@@ -246,7 +246,7 @@ public class CellUtils
     
     public static void setError(HGHandle h, boolean b)
     {
-        CellGroupMember c = (CellGroupMember) ThisNiche.hg.get(h);
+        CellGroupMember c = (CellGroupMember) ThisNiche.graph.get(h);
         c.setAttribute(XMLConstants.ATTR_ERROR, b);
     }
 
@@ -270,16 +270,16 @@ public class CellUtils
 
     public static void setCellText(Cell c, String text)
     {
-        Object o = ThisNiche.hg.get(c.ref.getReferent());
+        Object o = ThisNiche.graph.get(c.ref.getReferent());
         // System.out.println("CellUtils - setText: " + text);
         if (o instanceof Scriptlet)
         {
             ((Scriptlet) o).setCode(text);
-            ThisNiche.hg.update(o);
+            ThisNiche.graph.update(o);
             return;
         }
         HGHandle h = ThisNiche.handleOf(text);
-        if (h == null) h = ThisNiche.hg.add(text);
+        if (h == null) h = ThisNiche.graph.add(text);
         c.ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         // ThisNiche.hg.update(c);
     }
@@ -393,7 +393,7 @@ public class CellUtils
         if (cellH == null) return null;
         try
         {
-            List<EventPubSub> subscriptions = hg.getAll(ThisNiche.hg, hg.and(hg
+            List<EventPubSub> subscriptions = hg.getAll(ThisNiche.graph, hg.and(hg
                     .type(EventPubSub.class),
                     hg.incident(EvalCellEvent.HANDLE), hg.incident(cellH), hg
                             .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
@@ -401,7 +401,7 @@ public class CellUtils
                                     HGHandleFactory.anyHandle })));
             for (EventPubSub s : subscriptions)
             {
-                Object handler = ThisNiche.hg.get(s.getEventHandler());
+                Object handler = ThisNiche.graph.get(s.getEventHandler());
                 if (s.getEventHandler().equals(s.getSubscriber())
                         && handler instanceof Cell)
                     list.add(s.getEventHandler());
@@ -411,7 +411,7 @@ public class CellUtils
         catch (Exception ex)
         {
             System.out.println("ERROR - getOutCellHandle"
-                    + ThisNiche.hg.getPersistentHandle(cellH));
+                    + ThisNiche.graph.getPersistentHandle(cellH));
             ex.printStackTrace();
         }
         return list;
@@ -421,14 +421,14 @@ public class CellUtils
     {
         List<Cell> list = new ArrayList<Cell>();
         if (cellH == null) return null;
-        List<EventPubSub> subscriptions = hg.getAll(ThisNiche.hg, hg.and(hg
+        List<EventPubSub> subscriptions = hg.getAll(ThisNiche.graph, hg.and(hg
                 .type(EventPubSub.class), hg.incident(EvalCellEvent.HANDLE), hg
                 .incident(cellH), hg.orderedLink(new HGHandle[] {
                 EvalCellEvent.HANDLE, cellH, HGHandleFactory.anyHandle,
                 HGHandleFactory.anyHandle })));
         for (EventPubSub s : subscriptions)
         {
-            Object handler = ThisNiche.hg.get(s.getEventHandler());
+            Object handler = ThisNiche.graph.get(s.getEventHandler());
             if (s.getEventHandler().equals(s.getSubscriber())
                     && handler instanceof Cell) list.add((Cell) handler);
         }
@@ -444,7 +444,7 @@ public class CellUtils
     public static Cell getOutCell(CellGroupMember cell)
     {
         HGHandle h = getOutCellHandle(cell);
-        return (h != null) ? (Cell) ThisNiche.hg.get(h) : null;
+        return (h != null) ? (Cell) ThisNiche.graph.get(h) : null;
     }
 
     public static HGHandle createOutputCellH(HGHandle par, EvalResult res)
@@ -469,7 +469,7 @@ public class CellUtils
     {
         Scriptlet s = new Scriptlet(doc.getDefaultEngineName(), text);
         HGHandle h = ThisNiche.handleOf(s);
-        if (h == null) h = ThisNiche.hg.add(s);
+        if (h == null) h = ThisNiche.graph.add(s);
         return CellUtils.getOrCreateCellHForRefH(h);
     }
 
@@ -478,30 +478,30 @@ public class CellUtils
     public static HGHandle createGroupHandle()
     {
         CellGroup out = new CellGroup("CG" + count++);
-        return ThisNiche.hg.add(out); // , HGSystemFlags.MUTABLE);
+        return ThisNiche.graph.add(out); // , HGSystemFlags.MUTABLE);
     }
 
     public static HGHandle createGroupHandle(String name)
     {
         CellGroup out = new CellGroup(name);
-        return ThisNiche.hg.add(out); // , HGSystemFlags.MUTABLE);
+        return ThisNiche.graph.add(out); // , HGSystemFlags.MUTABLE);
     }
 
     public static void removeOutputCellSubscription(HGHandle cell_handle)
     {
-       List<HGHandle> set = hg.findAll(ThisNiche.hg, hg.and(hg
+       List<HGHandle> set = hg.findAll(ThisNiche.graph, hg.and(hg
                 .type(EventPubSub.class), hg.incident(EvalCellEvent.HANDLE), hg
                 .incident(cell_handle), hg.orderedLink(new HGHandle[] {
                 EvalCellEvent.HANDLE, HGHandleFactory.anyHandle, cell_handle,
                 HGHandleFactory.anyHandle })));
         for (HGHandle s : set)
-            if (s != null) ThisNiche.hg.remove(s, true);
+            if (s != null) ThisNiche.graph.remove(s, true);
 
     }
 
     public static HGHandle makeCopy(HGHandle in_h)
     {
-        CellGroupMember in = (CellGroupMember) ThisNiche.hg.get(in_h);
+        CellGroupMember in = (CellGroupMember) ThisNiche.graph.get(in_h);
         if (in instanceof CellGroup) return cellGroupCopy(in_h);
         else if (isInputCell(in)) return inputCellCopy(in_h);
         else
@@ -511,7 +511,7 @@ public class CellUtils
     // full copy
     static HGHandle cellGroupCopy(HGHandle in_h)
     {
-        CellGroup in = (CellGroup) ThisNiche.hg.get(in_h);
+        CellGroup in = (CellGroup) ThisNiche.graph.get(in_h);
         Map<HGHandle, HGHandle> cells = new HashMap<HGHandle, HGHandle>();
         copy_input_cells(in, cells);
         return connect_output_cells(in, cells);
@@ -535,7 +535,7 @@ public class CellUtils
     {
         CellGroup outG = new CellGroup();
         outG.attributes = in.attributes;
-        HGHandle out = ThisNiche.hg.add(outG);
+        HGHandle out = ThisNiche.graph.add(outG);
         for (int i = 0; i < in.getArity(); i++)
         {
             CellGroupMember m = in.getElement(i);
@@ -558,21 +558,21 @@ public class CellUtils
 
     private static HGHandle inputCellCopy(HGHandle h)
     {
-        CellGroupMember in = (CellGroupMember) ThisNiche.hg.get(h);
+        CellGroupMember in = (CellGroupMember) ThisNiche.graph.get(h);
         Scriptlet s = (Scriptlet) ((Cell) in).getValue();
         Scriptlet out_s = new Scriptlet(s.getLanguage(), s.getCode());
-        HGAtomRef ref = new HGAtomRef(ThisNiche.hg.add(out_s),
+        HGAtomRef ref = new HGAtomRef(ThisNiche.graph.add(out_s),
                 HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
         out.attributes = in.getAttributes();
-        HGHandle outH = ThisNiche.hg.add(out);
+        HGHandle outH = ThisNiche.graph.add(out);
         //System.out.println("inputCellCopy: " + out.getValue().getClass());
         return outH;
     }
 
     private static HGHandle outputCellCopy(HGHandle in)
     {
-        Cell c = (Cell) ThisNiche.hg.get(in);
+        Cell c = (Cell) ThisNiche.graph.get(in);
         boolean error = isError(c);
         Object value = c.getValue();
         //TODO: not very clear when to clone 
@@ -586,13 +586,13 @@ public class CellUtils
 
     public static HGHandle getOutCellInput(HGHandle h)
     {
-       List<EventPubSub> subs = hg.getAll(ThisNiche.hg, hg.and(hg
+       List<EventPubSub> subs = hg.getAll(ThisNiche.graph, hg.and(hg
                 .type(EventPubSub.class), hg.incident(h), hg
                 .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
                         HGHandleFactory.anyHandle, h, h })));
         for (EventPubSub eps : subs)
         {
-            Object pub = ThisNiche.hg.get(eps.getPublisher());
+            Object pub = ThisNiche.graph.get(eps.getPublisher());
             if (pub instanceof Cell) return (eps.getPublisher());
         }
         return null;
@@ -604,7 +604,7 @@ public class CellUtils
         List<HGHandle> subscriptions = getEventPubSubListH(eventType,
                 publisher, subscriber, listener);
         for (HGHandle s : subscriptions)
-            ThisNiche.hg.remove(s, true);
+            ThisNiche.graph.remove(s, true);
     }
 
     public static void addEventPubSub(HGHandle eventType, 
@@ -616,7 +616,7 @@ public class CellUtils
         {
             EventPubSub e = new EventPubSub(eventType, pub, sub, handler);
             // System.out.println("Adding " + e);
-            ThisNiche.hg.add(e);
+            ThisNiche.graph.add(e);
         }
     }
 
@@ -645,7 +645,7 @@ public class CellUtils
     public static List<EventPubSub> getEventPubSubList(HGHandle eventType,
             HGHandle publisher, HGHandle subscriber, HGHandle listener)
     {
-        return hg.getAll(ThisNiche.hg, hg.and(hg.type(EventPubSub.class), hg
+        return hg.getAll(ThisNiche.graph, hg.and(hg.type(EventPubSub.class), hg
                 .incident(eventType), hg.incident(publisher), hg
                 .orderedLink(new HGHandle[] { eventType, publisher, subscriber,
                         listener })));
@@ -654,7 +654,7 @@ public class CellUtils
     public static List<HGHandle> getEventPubSubListH(HGHandle eventType,
             HGHandle publisher, HGHandle subscriber, HGHandle listener)
     {
-        return hg.findAll(ThisNiche.hg, hg.and(hg.type(EventPubSub.class), hg
+        return hg.findAll(ThisNiche.graph, hg.and(hg.type(EventPubSub.class), hg
                 .incident(eventType), hg.incident(publisher), hg
                 .orderedLink(new HGHandle[] { eventType, publisher, subscriber,
                         listener })));
@@ -662,8 +662,8 @@ public class CellUtils
 
     public static void addCopyListeners(HGHandle masterH, HGHandle copyH)
     {
-        Object master = ThisNiche.hg.get(masterH);
-        Object copy = ThisNiche.hg.get(copyH);
+        Object master = ThisNiche.graph.get(masterH);
+        Object copy = ThisNiche.graph.get(copyH);
         if (master instanceof CellGroup && copy instanceof CellGroup)
         {
             addCellGroupCopyListeners(masterH, copyH);
@@ -677,8 +677,8 @@ public class CellUtils
     private static void addCellGroupCopyListeners(HGHandle masterH,
             HGHandle copyH)
     {
-        CellGroup master = (CellGroup) ThisNiche.hg.get(masterH);
-        CellGroup copy = (CellGroup) ThisNiche.hg.get(copyH);
+        CellGroup master = (CellGroup) ThisNiche.graph.get(masterH);
+        CellGroup copy = (CellGroup) ThisNiche.graph.get(copyH);
         addMutualEventPubSub(AttributeChangeEvent.HANDLE, masterH, copyH,
                 CopyAttributeChangeHandler.getInstance());
         addMutualEventPubSub(CellGroupChangeEvent.HANDLE, masterH, copyH,
@@ -693,7 +693,7 @@ public class CellUtils
 
     private static void addCellCopyListeners(HGHandle masterH, HGHandle copyH)
     {
-        if (isInputCell((CellGroupMember) ThisNiche.hg.get(masterH)))
+        if (isInputCell((CellGroupMember) ThisNiche.graph.get(masterH)))
         {
             addMutualEventPubSub(CellTextChangeEvent.HANDLE, masterH, copyH,
                     CopyCellTextChangeHandler.getInstance());
@@ -707,7 +707,7 @@ public class CellUtils
      public static void removeHandlers(HGHandle masterH)
     {
         if (masterH == null) return;
-        Object master = ThisNiche.hg.get(masterH);
+        Object master = ThisNiche.graph.get(masterH);
         if (master instanceof CellGroup) 
             removeCellGroupHandlers(masterH);
         else
@@ -716,7 +716,7 @@ public class CellUtils
 
     private static void removeCellGroupHandlers(HGHandle masterH)
     {
-        CellGroup master = (CellGroup) ThisNiche.hg.get(masterH);
+        CellGroup master = (CellGroup) ThisNiche.graph.get(masterH);
         remove_event_handlers(masterH);
 
         for (int i = 0; i < master.getArity(); i++)
@@ -731,23 +731,23 @@ public class CellUtils
         List<HGHandle> subs = getListForPubOrSub(HGHandleFactory.anyHandle,
                 masterH, HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
         for (HGHandle s : subs)
-            ThisNiche.hg.remove(s, true);
+            ThisNiche.graph.remove(s, true);
         subs = getListForPubOrSub(HGHandleFactory.anyHandle, HGHandleFactory.anyHandle, masterH,
                 HGHandleFactory.anyHandle);
         for (HGHandle s : subs)
-            ThisNiche.hg.remove(s, true);
+            ThisNiche.graph.remove(s, true);
     }
     
     public static void backupCell(HGHandle cell)
     {
-        CellGroupMember cgm = ThisNiche.hg.get(cell);
+        CellGroupMember cgm = ThisNiche.graph.get(cell);
         if(cgm == null) return;
         if(cgm instanceof CellGroup)
             for(int i = 0; i < ((CellGroup) cgm).getArity() ;i++)
-                ThisNiche.hg.add(
+                ThisNiche.graph.add(
                         createBackupLink(((CellGroup) cgm).getTargetAt(i)));
         else
-            ThisNiche.hg.add(createBackupLink(cell));
+            ThisNiche.graph.add(createBackupLink(cell));
         CellUtils.removeHandlers(cell);
     }
     
@@ -759,9 +759,9 @@ public class CellUtils
     
     private static BackupLink getBackupLink(HGHandle cell)
     {
-       HGHandle h = hg.findOne(ThisNiche.hg, hg.and(hg
+       HGHandle h = hg.findOne(ThisNiche.graph, hg.and(hg
                 .type(BackupLink.class), hg.incident(cell)));
-       return h != null ? (BackupLink) ThisNiche.hg.get(h) : null;
+       return h != null ? (BackupLink) ThisNiche.graph.get(h) : null;
     }
     
     public static void restoreCell(HGHandle cell)
@@ -769,19 +769,19 @@ public class CellUtils
         BackupLink link = getBackupLink(cell);
         if(link == null) return;
         
-        CellGroupMember cgm = ThisNiche.hg.get(link.getCell());
+        CellGroupMember cgm = ThisNiche.graph.get(link.getCell());
         if(cgm instanceof CellGroup)
             for(int i = 0; i < ((CellGroup) cgm).getArity() ;i++)
                restoreCell(((CellGroup) cgm).getTargetAt(i));
         else
         {
-            List<EventPubSubInfo> pubs = ThisNiche.hg.get(link.getPubs());
+            List<EventPubSubInfo> pubs = ThisNiche.graph.get(link.getPubs());
             for(EventPubSubInfo inf: pubs)
-                ThisNiche.hg.add(new EventPubSub(inf.getEventType(),
+                ThisNiche.graph.add(new EventPubSub(inf.getEventType(),
                         link.getCell(), inf.getPubOrSub(), inf.getEventHandler()));
-            List<EventPubSubInfo> subs = ThisNiche.hg.get(link.getSubs());
+            List<EventPubSubInfo> subs = ThisNiche.graph.get(link.getSubs());
             for(EventPubSubInfo inf: subs)
-                ThisNiche.hg.add(new EventPubSub(inf.getEventType(),
+                ThisNiche.graph.add(new EventPubSub(inf.getEventType(),
                         inf.getPubOrSub(), link.getCell(), inf.getEventHandler()));
         }
         removeBackupLink(link, false);
@@ -789,7 +789,7 @@ public class CellUtils
     
     public static void removeBackupedCells()
     {
-       List<BackupLink> res = hg.getAll(ThisNiche.hg, hg.type(BackupLink.class));
+       List<BackupLink> res = hg.getAll(ThisNiche.graph, hg.type(BackupLink.class));
        for(BackupLink link: res)
             removeBackupLink(link, true);
     }
@@ -800,7 +800,7 @@ public class CellUtils
         HGHandle cellH = link.getCell();
         HGHandle pubs = link.getPubs();
         HGHandle subs = link.getSubs();
-        ThisNiche.hg.remove(linkH, true);
+        ThisNiche.graph.remove(linkH, true);
         //if(cell_too)
        //     ThisNiche.hg.remove(cellH, true);
        // ThisNiche.hg.remove(pubs, true);
@@ -809,14 +809,14 @@ public class CellUtils
     
     private static BackupLink createBackupLink(HGHandle cell)
     {
-        List<EventPubSub> pubs = hg.getAll(ThisNiche.hg, hg.and(hg
+        List<EventPubSub> pubs = hg.getAll(ThisNiche.graph, hg.and(hg
                 .type(EventPubSub.class), hg.incident(cell), hg
                 .orderedLink(new HGHandle[] { 
                         HGHandleFactory.anyHandle, cell, HGHandleFactory.anyHandle, HGHandleFactory.anyHandle })));
        List<EventPubSubInfo> pubs_out = new ArrayList<EventPubSubInfo>(pubs.size()); 
        for(EventPubSub eps : pubs)
            pubs_out.add(new EventPubSubInfo(eps.getEventType(), eps.getSubscriber(), eps.getEventHandler()));
-       List<EventPubSub> subs = hg.getAll(ThisNiche.hg, hg.and(hg
+       List<EventPubSub> subs = hg.getAll(ThisNiche.graph, hg.and(hg
                .type(EventPubSub.class), hg.incident(cell), hg
                .orderedLink(new HGHandle[] { 
                        HGHandleFactory.anyHandle, HGHandleFactory.anyHandle, cell, HGHandleFactory.anyHandle })));
@@ -831,7 +831,7 @@ public class CellUtils
     {
         HGHandle pub_or_sub = hg.anyHandle().equals(publisher) ? subscriber
                 : publisher;
-        return hg.findAll(ThisNiche.hg, hg.and(hg.type(EventPubSub.class), hg
+        return hg.findAll(ThisNiche.graph, hg.and(hg.type(EventPubSub.class), hg
                 .incident(pub_or_sub), hg.orderedLink(new HGHandle[] { eventType,
                 publisher, subscriber, listener })));
     }
@@ -839,7 +839,7 @@ public class CellUtils
     public static HGHandle addSerializable(Object o)
     {
         HGHandle h = null;
-        HGTypeSystem ts = ThisNiche.hg.getTypeSystem();
+        HGTypeSystem ts = ThisNiche.graph.getTypeSystem();
         try
         {
             if (o instanceof Component && o instanceof Serializable
@@ -847,24 +847,24 @@ public class CellUtils
             {
                 try
                 {
-                    h = ThisNiche.hg.add(o);
+                    h = ThisNiche.graph.add(o);
                 }
                 catch (Throwable ex)
                 {
                     ex.printStackTrace();
                     HGHandle t = ts.getTypeHandle(Serializable.class);
-                    h = ThisNiche.hg.add(o, t);
+                    h = ThisNiche.graph.add(o, t);
                 }
             }
             else
-                h = ThisNiche.hg.add(o);
+                h = ThisNiche.graph.add(o);
         }
         catch (Throwable ex)
         {
             System.err.println("Unable to add Cell value: " + o + " Reason: "
                     + ex);
             ex.printStackTrace();
-            h = ThisNiche.hg.add(ex.toString());
+            h = ThisNiche.graph.add(ex.toString());
         }
         return h;
     }
@@ -872,7 +872,7 @@ public class CellUtils
     public static void processCelTextChangeEvent(HGHandle cH,
             CellTextChangeEvent e)
     {
-        Cell c = (Cell) ThisNiche.hg.get(cH);
+        Cell c = (Cell) ThisNiche.graph.get(cH);
         Scriptlet s = (Scriptlet) c.getValue();
         String code = s.getCode();
         StringBuffer res = new StringBuffer(code.substring(0, e.getOffset()));
@@ -886,7 +886,7 @@ public class CellUtils
             res.append(code.substring(e.getOffset() + e.getLength()));
         }
         s.setCode(res.toString());
-        ThisNiche.hg.update(s);
+        ThisNiche.graph.update(s);
         fireCellTextChanged(cH, e);
     }
     
@@ -910,26 +910,26 @@ public class CellUtils
 
     static void setLayoutHandler(HGHandle cellH, LayoutHandler lh)
     {
-        CellGroupMember cell = ThisNiche.hg.get(cellH);
+        CellGroupMember cell = ThisNiche.graph.get(cellH);
         cell.setAttribute(VisualAttribs.layoutHandler, lh);
     }
 
     public static LayoutHandler getLayoutHandler(HGHandle cellH)
     {
-        CellGroupMember m = ThisNiche.hg.get(cellH);
+        CellGroupMember m = ThisNiche.graph.get(cellH);
         return (LayoutHandler) m.getAttribute(VisualAttribs.layoutHandler);
     }
     
     public static void setZoom(HGHandle cellH, PAffineTransform tr)
     {
-        CellGroupMember cell = ThisNiche.hg.get(cellH);
+        CellGroupMember cell = ThisNiche.graph.get(cellH);
         //System.out.println("setZoom: " + tr + ":" + cellH);
         cell.setAttribute(VisualAttribs.zoom, new AffineTransformEx(tr));
     }
     
     public static AffineTransformEx getZoom(HGHandle cellH)
     {
-        CellGroupMember m = ThisNiche.hg.get(cellH);
+        CellGroupMember m = ThisNiche.graph.get(cellH);
         Object o = m.getAttribute(VisualAttribs.zoom);
         //legacy cleanup
         if(o instanceof AffineTransformEx)

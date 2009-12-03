@@ -60,7 +60,7 @@ public class EventPubSub extends HGPlainLink
     @Override
     public String toString()
     {
-        return "EventPubSub:" + getEventType() + ":" + ThisNiche.hg.get(getEventHandler()) + ":" +
+        return "EventPubSub:" + getEventType() + ":" + ThisNiche.graph.get(getEventHandler()) + ":" +
         getPublisher() + ":" + getSubscriber();
     }
 

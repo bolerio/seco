@@ -139,7 +139,7 @@ abstract public class DocUtil
     static void createCellGroupMember(NotebookDocument doc, HGHandle cellH,
             MutableAttributeSet attr, Vector<ElementSpec> vec)
     {
-        CellGroupMember cgm = (CellGroupMember) ThisNiche.hg.get(cellH);
+        CellGroupMember cgm = (CellGroupMember) ThisNiche.graph.get(cellH);
         if (cgm instanceof CellGroup) createCellGroup(doc, cellH, attr, vec);
         else if (cgm instanceof Cell)
         {
@@ -154,7 +154,7 @@ abstract public class DocUtil
             MutableAttributeSet attr, Vector<ElementSpec> vec)
     {
 
-        Cell cell = (Cell) ThisNiche.hg.get(cellH);
+        Cell cell = (Cell) ThisNiche.graph.get(cellH);
         attr = getDocStyle(doc, StyleType.inputCell);
         attr.addAttribute(ATTR_CELL, cellH);
         startTag(inputCellBox, attr, 0, vec);
@@ -200,7 +200,7 @@ abstract public class DocUtil
             EvalCellEvent e)
     {
         attr.addAttribute(ATTR_CELL, cellH);
-        Cell c = (Cell) ThisNiche.hg.get(cellH);
+        Cell c = (Cell) ThisNiche.graph.get(cellH);
         startTag(outputCellBox, attr, 0, vec);
         attr.removeAttribute(ATTR_CELL);
         boolean isError = (e != null) ? e.getValue().isError() : CellUtils
@@ -371,7 +371,7 @@ abstract public class DocUtil
         attr.addAttribute(ATTR_CELL, cell_groupH);
         startTag(cellGroupBox, attr, 0, vec);
         startTag(cellGroup, attr, 0, vec);
-        CellGroup cell_group = (CellGroup) ThisNiche.hg.get(cell_groupH);
+        CellGroup cell_group = (CellGroup) ThisNiche.graph.get(cell_groupH);
         attr.removeAttribute(ATTR_CELL);
         for (int i = 0; i < cell_group.getArity(); i++)
         {

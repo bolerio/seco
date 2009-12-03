@@ -38,21 +38,21 @@ public class ContextMenuHandler extends PBasicInputEventHandler
     
     static void clear()
     {
-        ThisNiche.hg.remove(GLOBAL_ACTION_SET_HANDLE);
-        ThisNiche.hg.remove(NODE_ACTION_SET_HANDLE);
+        ThisNiche.graph.remove(GLOBAL_ACTION_SET_HANDLE);
+        ThisNiche.graph.remove(NODE_ACTION_SET_HANDLE);
     }
 
     public void addGlobalMenuAction(ScriptletAction a)
     {
         getGlobalActions().add(a);
-        ThisNiche.hg.update(getGlobalActions());
+        ThisNiche.graph.update(getGlobalActions());
         global_menu = null;
     }
 
     public void addNodeMenuAction(ScriptletAction a)
     {
         getNodeActions().add(a);
-        ThisNiche.hg.update(getNodeActions());
+        ThisNiche.graph.update(getNodeActions());
         node_menu = null;
     }
 
@@ -118,12 +118,12 @@ public class ContextMenuHandler extends PBasicInputEventHandler
 
     public List<ScriptletAction> getGlobalActions()
     {
-        global_actions = ThisNiche.hg.get(GLOBAL_ACTION_SET_HANDLE);
+        global_actions = ThisNiche.graph.get(GLOBAL_ACTION_SET_HANDLE);
         if (global_actions == null)
         {
             global_actions = new ArrayList<ScriptletAction>();
             init_global_actions();
-            ThisNiche.hg.define(GLOBAL_ACTION_SET_HANDLE, global_actions);
+            ThisNiche.graph.define(GLOBAL_ACTION_SET_HANDLE, global_actions);
         }
         return global_actions;
     }
@@ -144,12 +144,12 @@ public class ContextMenuHandler extends PBasicInputEventHandler
 
     public List<ScriptletAction> getNodeActions()
     {
-        node_actions = ThisNiche.hg.get(NODE_ACTION_SET_HANDLE);
+        node_actions = ThisNiche.graph.get(NODE_ACTION_SET_HANDLE);
         if (node_actions == null)
         {
             node_actions = new ArrayList<ScriptletAction>();
             init_node_actions();
-            ThisNiche.hg.define(NODE_ACTION_SET_HANDLE, node_actions);
+            ThisNiche.graph.define(NODE_ACTION_SET_HANDLE, node_actions);
         }
         return node_actions;
     }
