@@ -121,13 +121,11 @@ public class EvaluationContext
      * order to ensure class loading isolation b/w different runtime contexts.
      * </p>
      * 
-     * @param language
-     * @param factoryClass
-     * @param interpreterPackages
+     * @param desc The language descriptor.
      */
-    public void addLanguage(String language, String factoryClass, String [] interpreterPackages)
+    public void addLanguage(SEDescriptor desc)
     {
-        engineFactories.put(language, new SEDescriptor(factoryClass, interpreterPackages));
+        engineFactories.put(desc.getLanguage(), desc);
     }
     
     public Iterator<String> getLanguages()

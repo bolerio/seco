@@ -38,6 +38,7 @@ import seco.notebook.storage.swing.SwingTypeMapper;
 import seco.notebook.storage.swing.types.SwingType;
 import seco.notebook.storage.swing.types.SwingTypeConstructor;
 import seco.rtenv.RuntimeContext;
+import seco.rtenv.SEDescriptor;
 import seco.things.AvailableVisual;
 import seco.things.Cell;
 import seco.things.CellGroup;
@@ -207,6 +208,25 @@ public class NicheManager
         return (String) hg.get(ThisNiche.NICHE_NAME_HANDLE);
     }
     
+    static void populateDefaultScriptingLanguages(HyperGraph graph)
+    {
+    	graph.add(new SEDescriptor(
+    			"beanshell", 
+    			"bsh.engine.BshScriptEngineFactoryEx",
+                new String[] { "bsh", "bsh.engine", "bsh.classpath",
+                        "bsh.collection", "bsh.reflect", "bsh.util",
+                        "bsh.commands", "bsh.reflect", "bsh.util" }));
+        graph.add(new SEDescriptor(
+        		"jscheme",
+                "jscheme.scriptingapi.JSchemeScriptEngineFactory",
+                new String[] { "jsint", "jscheme", "jscheme.scriptingapi" }));
+        graph.add(new SEDescriptor(
+        		"jruby", 
+        		"seco.notebook.ruby.JRubyScriptEngineFactory",
+                new String[] {}));
+        graph.add(new SEDescriptor("html", null, new String[0]));    	
+    }
+    
     static void populateDefaultVisuals(HyperGraph graph)
     {
     	graph.define(JComponentVisual.getHandle(), new JComponentVisual());
@@ -258,6 +278,7 @@ public class NicheManager
         
     static void populateThisNiche()
     {
+    	populateDefaultScriptingLanguages(ThisNiche.graph);
     	populateDefaultVisuals(ThisNiche.graph);
     	populateDefaultSecoUI(ThisNiche.graph);        
     }

@@ -8,6 +8,8 @@
 package seco;
 
 import java.util.HashMap;
+import java.util.List;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,10 +21,11 @@ import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.query.And;
 import org.hypergraphdb.query.AtomTypeCondition;
 import org.hypergraphdb.query.LinkCondition;
-
+import static org.hypergraphdb.HGQuery.hg;
 import seco.boot.NicheManager;
 import seco.rtenv.ContextLink;
 import seco.rtenv.EvaluationContext;
+import seco.rtenv.SEDescriptor;
 
 public final class ThisNiche
 {
@@ -124,18 +127,9 @@ public final class ThisNiche
      */
     static void initEvaluationContext(EvaluationContext ctx)
     {
-//    	List<SEDescriptor> allLanguages = hg.get
-        // Add default scripting engine
-        ctx.addLanguage("beanshell", "bsh.engine.BshScriptEngineFactoryEx",
-                new String[] { "bsh", "bsh.engine", "bsh.classpath",
-                        "bsh.collection", "bsh.reflect", "bsh.util",
-                        "bsh.commands", "bsh.reflect", "bsh.util" });
-        ctx.addLanguage("jscheme",
-                "jscheme.scriptingapi.JSchemeScriptEngineFactory",
-                new String[] { "jsint", "jscheme", "jscheme.scriptingapi" });
-        ctx.addLanguage("jruby", "seco.notebook.ruby.JRubyScriptEngineFactory",
-                new String[] {}); // TODO: which packages to exclude?
-        ctx.addLanguage("html", null, new String[0]);
+    	List<SEDescriptor> allLanguages = hg.getAll(graph, hg.type(SEDescriptor.class));
+    	for (SEDescriptor desc : allLanguages)
+    		ctx.addLanguage(desc);
         ctx.onLoad();
     }
 

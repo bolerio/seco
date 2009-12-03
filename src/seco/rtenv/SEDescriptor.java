@@ -19,6 +19,7 @@ package seco.rtenv;
  */
 public class SEDescriptor
 {
+	private String language;
     private String factoryClassName;
     private String [] packageNames;
     
@@ -26,13 +27,24 @@ public class SEDescriptor
     {        
     }
     
-    public SEDescriptor(String factoryClassName, String [] packageNames)
+    public SEDescriptor(String language, String factoryClassName, String [] packageNames)
     {
+    	this.language = language;
         this.factoryClassName = factoryClassName;
         this.packageNames = packageNames;
     }
+    
+    public String getLanguage()
+	{
+		return language;
+	}
 
-    public String getFactoryClassName()
+	public void setLanguage(String language)
+	{
+		this.language = language;
+	}
+
+	public String getFactoryClassName()
     {
         return factoryClassName;
     }
