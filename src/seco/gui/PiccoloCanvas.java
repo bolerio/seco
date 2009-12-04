@@ -303,7 +303,7 @@ public class PiccoloCanvas extends PSwingCanvas
         if(!maximizedState) return;
         maximizedState = false;
         showAllNodes();
-        placeNode(n, false);
+        placeNode(n);
     }
 
     void showAllNodes()
@@ -340,7 +340,7 @@ public class PiccoloCanvas extends PSwingCanvas
         else
         {
             addNode(p);
-            placeNode(p, true);
+            placeNode(p);
         }
         GUIHelper.handleTitle(p);
         comp.revalidate();
@@ -349,24 +349,17 @@ public class PiccoloCanvas extends PSwingCanvas
         return p;
     }
 
-    void placeNode(PSwingNode p, boolean newly_added)
+    void placeNode(PSwingNode p)
     {
         CellGroupMember cgm = ThisNiche.graph.get(p.getHandle());
         boolean minim = (CellUtils.isMinimized(cgm));
         Rectangle r = CellUtils.getAppropriateBounds(cgm);
-        if (!newly_added)
-        {
-            p.setBounds(0, 0, r.width, r.height);
-            p.translate(r.x, r.y);
-            return;
-        }
-
         if (r != null)
         {
             normalize(r);
             p.setBounds(0, 0, r.width, r.height);
             p.translate(r.x, r.y);
-            //p.storeBounds(r);
+            p.storeBounds(r);
             return;
         }
 

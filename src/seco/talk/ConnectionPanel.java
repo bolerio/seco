@@ -84,7 +84,7 @@ public class ConnectionPanel extends BaseChatPanel implements
             ctx.addConnectionListener(this);
             if (ctx.isConnected())
             {
-                ctx.disconnect(false);
+                ctx.disconnect(true);
             }
             else
             {

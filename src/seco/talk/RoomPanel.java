@@ -64,6 +64,7 @@ public class RoomPanel extends BaseChatPanel
 
     void joinRoom()
     {
+        initSplitterLocations();
         if (roomJoined) return;
 
         if (getTheChat().isJoined())
@@ -190,7 +191,6 @@ public class RoomPanel extends BaseChatPanel
         
         roomJoined = true;
         populatePeerList();
-        initSplitterLocations();
     }
     
     static String stripNick(String label)

@@ -86,6 +86,7 @@ import seco.gui.GUIHelper.CellTreeAction;
 import seco.gui.GUIHelper.ElementTreeAction;
 import seco.gui.GUIHelper.ParseTreeAction;
 import seco.notebook.gui.GUIUtilities;
+import seco.notebook.gui.ScriptEngineProvider;
 import seco.notebook.gui.UpdatablePopupMenu;
 import seco.notebook.gui.menu.CellGroupPropsProvider;
 import seco.notebook.gui.menu.CellLangProvider;
@@ -345,6 +346,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         if (popupMenu == null)
         {
             popupMenu = new UpdatablePopupMenu();
+            popupMenu.add(new EnhancedMenu("Set Default Language",
+                    new ScriptEngineProvider()));
             NotebookEditorKit kit = new NotebookEditorKit();
             popupMenu
                     .add(new EnhancedMenu("Input Type", new CellLangProvider()));

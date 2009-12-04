@@ -243,10 +243,10 @@
          
 (define (netdialog-action e) 
   (let ((config (hg:with-rs rs (type ConnectionContext.class) 
-                  (if (.hasNext rs) (.getConfig (.get ThisNiche.hg$ (.next rs))) 
+                  (if (.hasNext rs) (.getConfig (.get ThisNiche.graph$ (.next rs))) 
                       (seco.talk.ConnectionConfig.)))))
-        (if (eq? #null (.getHandle ThisNiche.hg$ config))
-            (.add ThisNiche.hg$ config))
+        (if (eq? #null (.getHandle ThisNiche.graph$ config))
+            (.add ThisNiche.graph$ config))
         (open-network-connection config)
 ))
       

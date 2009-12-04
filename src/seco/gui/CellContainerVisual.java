@@ -87,11 +87,12 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
             });
         }
         
-        if(CellUtils.getZoom(elementH) != null)
-        {
-            AffineTransformEx tr = CellUtils.getZoom(elementH);
-            canvas.getCamera().setViewTransform(tr.getTransform());
-        }
+//        if(CellUtils.getZoom(elementH) != null)
+//        {
+//            AffineTransformEx tr = CellUtils.getZoom(elementH);
+//            canvas.getCamera().setViewTransform(tr.getTransform());
+//        }
+        
         return canvas;
     }
 

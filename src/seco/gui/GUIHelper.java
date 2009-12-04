@@ -55,6 +55,7 @@ import seco.gui.layout.DValue;
 import seco.gui.layout.DefaultLayoutHandler;
 import seco.gui.layout.LayoutHandler;
 import seco.gui.layout.RefPoint;
+import seco.gui.piccolo.TitlePaneNode;
 import seco.notebook.ActionManager;
 import seco.notebook.Actions;
 import seco.notebook.AppConfig;
@@ -975,6 +976,8 @@ public class GUIHelper
         if (CellUtils.isShowTitle(cgm) && title != null)
         {
             PCSelectionHandler.decorateSelectedNode(node, false);
+            //move down the node with the height of the added title pane
+            node.translate(0, TitlePaneNode.HEIGHT);
         }
         else if (!CellUtils.isShowTitle(cgm))
         {
