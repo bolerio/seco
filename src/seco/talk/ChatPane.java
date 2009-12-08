@@ -83,9 +83,9 @@ public class ChatPane extends JTextPane
     private void show_the_last_line()
     {
       //scroll to the end 
-        //normally is scrolls just one line above the needed one? so +20 to get
+        //normally is scrolls just one line above the needed one? so +100 to get
         //where we want...
-        scrollRectToVisible(new Rectangle(0, getBounds(null).height + 20, 1, 1));
+        scrollRectToVisible(new Rectangle(0, getBounds(null).height + 100, 1, 1));
     }
     
     /**

@@ -9,6 +9,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 
 import javax.swing.JFrame;
 import javax.swing.event.CaretListener;
@@ -38,6 +39,7 @@ public abstract class TopFrame extends JFrame
             TopFrame.class.getResource("/seco/notebook/images/nologo.jpg"));;
 
     private String original_title;
+    boolean blinking = false;
 
     public static TopFrame getInstance()
     {
@@ -52,18 +54,42 @@ public abstract class TopFrame extends JFrame
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         initFrame();
         Log.start();
-       
+        this.addWindowFocusListener(
+               new WindowFocusListener(){
+
+                @Override
+                public void windowGainedFocus(WindowEvent e)
+                {
+                    //System.out.println("TopFrame - windowGainedFocus");
+                    setIconImage(LOGO_IMAGE);
+                    setTitle(original_title);
+                }
+
+                @Override
+                public void windowLostFocus(WindowEvent e)
+                {
+                }
+
+        });
     }
 
     protected void initFrame()
     {
         this.setTitle("[" + ThisNiche.graph.getLocation() + "] ");
     }
+    
+    @Override
+    public void setTitle(String title)
+    {
+        super.setTitle(title);
+        if(!blinking) original_title = title; 
+    }
 
     public void blink(String message)
     {
         if(/*true ||*/ isFocused()) return;
-        original_title = getTitle();
+        //original_title = getTitle();
+        blinking = true;
         Toolkit.getDefaultToolkit().beep();
         flash(message, 600, 300, 5);
     }
@@ -106,7 +132,8 @@ public abstract class TopFrame extends JFrame
                         Thread.sleep(intertime);
                     }
                     // turn the flash off
-                    do_flash(message, false);
+                    do_flash(message, true);
+                    blinking = false;
                 }
                 catch (Exception ex)
                 {
@@ -183,4 +210,5 @@ public abstract class TopFrame extends JFrame
     {
         this.focusedContainerHandle = focusedContainerHandle;
     }
+
 }

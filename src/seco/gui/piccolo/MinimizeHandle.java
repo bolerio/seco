@@ -42,8 +42,8 @@ public class MinimizeHandle extends CommandHandle
 
         public Action()
         {
-            super("node = seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode();"+
-            "CellUtils.toggleMinimized(ThisNiche.hg.get(node.getHandle()))");
+            super("node = desktop.canvas.getSelectedPSwingNode();"+
+            "CellUtils.toggleMinimized(niche.get(node.getHandle()))");
             putValue(Action.SMALL_ICON, IconManager.resolveIcon("Minimize.gif"));
             putValue(Action.SHORT_DESCRIPTION, "Minimize/Restore");
             // TODO Auto-generated constructor stub

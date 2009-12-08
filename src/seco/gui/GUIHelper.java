@@ -124,8 +124,8 @@ public class GUIHelper
         actions = new ArrayList<Action>();
         //maximize
         Action a = new ScriptletAction(
-                "node = seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode();"+
-                "cgm = seco.ThisNiche.hg.get(node.getHandle());" +
+                "node = desktop.canvas.getSelectedPSwingNode();"+
+                "cgm = niche.get(node.getHandle());" +
                 "if(seco.things.CellUtils.isMinimized(cgm))" +
                 "seco.things.CellUtils.toggleMinimized(cgm);" +
                 "seco.things.CellUtils.toggleMaximized(cgm);");
@@ -134,8 +134,8 @@ public class GUIHelper
         a.putValue(Action.SHORT_DESCRIPTION, "Maximize/Restore");
         actions.add(a);
        //minimize
-        a = new ScriptletAction("node = seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode();"+
-        "seco.things.CellUtils.toggleMinimized(seco.ThisNiche.hg.get(node.getHandle()))");
+        a = new ScriptletAction("node = desktop.canvas.getSelectedPSwingNode();"+
+        "seco.things.CellUtils.toggleMinimized(niche.get(node.getHandle()))");
         a.putValue(Action.SMALL_ICON, IconManager.resolveIcon("Minimize.gif"));
        // a.putValue(ANOTHER_ICON, IconManager.resolveIcon("Restore.png"));
         a.putValue(Action.SHORT_DESCRIPTION, "Minimize/Restore");

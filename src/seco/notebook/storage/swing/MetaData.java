@@ -35,6 +35,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
+import javax.swing.SpringLayout;
 import javax.swing.ToolTipManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
@@ -839,6 +840,7 @@ class javax_swing_DefaultListModel_PersistenceDelegate extends DefaultConverter
     }
 }
 
+
 class javax_swing_JComboBox_PersistenceDelegate extends DefaultConverter
 {
     public javax_swing_JComboBox_PersistenceDelegate()
@@ -1028,16 +1030,17 @@ class javax_swing_JFrame_PersistenceDelegate extends DefaultConverter
     }
 }
 
-//class javax_swing_JPanel_PersistenceDelegate extends DefaultConverter
-//{
-//
-//    public javax_swing_JPanel_PersistenceDelegate()
-//    {
-//        super(JPanel.class);
-//    }
-//
-//    public Set<AddOnType> getAllAddOnFields()
-//    {
-//        return null;
-//    }
-//}
+class javax_swing_SpringLayout_PersistenceDelegate extends DefaultConverter
+{
+    public javax_swing_SpringLayout_PersistenceDelegate()
+    {
+        super(SpringLayout.class);
+    }
+
+    public Map<String, Class<?>> getSlots()
+    {
+        Map<String, Class<?>> sup = super.getSlots();
+        sup.put("componentConstraints", Map.class);
+        return sup;
+    }
+}

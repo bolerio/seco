@@ -159,17 +159,17 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         node_actions
                 .add(makeScriptletAction(
                         "Rename",
-                        "seco.gui.CommonActions.renameCellGroupMember(seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode().getHandle())"));
+                        "seco.gui.CommonActions.renameCellGroupMember(desktop.canvas.getSelectedPSwingNode().getHandle())"));
         node_actions
                 .add(makeScriptletAction(
                         "Title On/Off",
-                        "seco.things.CellUtils.toggleShowTitle(seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode().getHandle())"));
+                        "seco.things.CellUtils.toggleShowTitle(desktop.canvas.getSelectedPSwingNode().getHandle())"));
 
         node_actions
                 .add(makeScriptletAction(
                         "Pin/Unpin",
                         "seco.gui.CommonActions.showLayoutSettingsDlg("
-                                + "seco.gui.TopFrame.getInstance().getCanvas().getSelectedPSwingNode());"));
+                                + "desktop.canvas.getSelectedPSwingNode());"));
         node_actions
                 .add(makeScriptletAction("Store Changes",
                         "seco.gui.CommonActions.updateSelectedPSwingCellComponentValue();"));
