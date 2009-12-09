@@ -54,7 +54,7 @@ public abstract class TopFrame extends JFrame
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         initFrame();
         Log.start();
-        this.addWindowFocusListener(
+        addWindowFocusListener(
                new WindowFocusListener(){
 
                 @Override

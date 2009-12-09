@@ -49,7 +49,6 @@ import javax.swing.undo.CompoundEdit;
 import javax.swing.undo.UndoableEdit;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
@@ -59,7 +58,6 @@ import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
 import seco.events.EvalResult;
 import seco.events.EventDispatcher;
-import seco.events.EventPubSub;
 import seco.events.CellTextChangeEvent.EventType;
 import seco.events.handlers.AttributeChangeHandler;
 import seco.events.handlers.CellGroupChangeHandler;
@@ -1361,9 +1359,9 @@ public class NotebookDocument extends DefaultStyledDocument
         {
             updateCell(el, UpdateAction.syncronize);
             remove_cell_group_member(el);
-            if(!CellUtils.isHTML(c)) //without firing event
+            if (!CellUtils.isHTML(c)) // without firing event
                 c.getAttributes().put(XMLConstants.ATTR_ENGINE, "html");
-                
+
             insert(cell, parH, ind);
         }
         catch (BadLocationException ex)

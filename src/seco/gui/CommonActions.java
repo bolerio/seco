@@ -10,11 +10,14 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGHandleFactory;
+import org.hypergraphdb.HGPersistentHandle;
 
 import seco.ThisNiche;
 import seco.boot.NicheManager;
 import seco.gui.layout.LayoutSettingsPanel;
 import seco.notebook.AppConfig;
+import seco.notebook.NotebookUI;
 import seco.notebook.gui.DialogDisplayer;
 import seco.notebook.gui.NotifyDescriptor;
 import seco.things.Cell;
@@ -99,8 +102,12 @@ public class CommonActions
         ThisNiche.graph.remove(GUIHelper.MENUBAR_HANDLE, true);
         ThisNiche.graph.remove(GUIHelper.TOOLBAR_HANDLE, true);
         ThisNiche.graph.remove(GUIHelper.HTML_TOOLBAR_HANDLE, true);
+        ThisNiche.graph.remove(GUIHelper.WIN_ACTIONS_HANDLE, true);
+        ThisNiche.graph.remove(NotebookUI.POPUP_HANDLE, true);
+        ThisNiche.graph.remove(ContextMenuHandler.GLOBAL_ACTION_SET_HANDLE, true);
+        ThisNiche.graph.remove(ContextMenuHandler.NODE_ACTION_SET_HANDLE, true);
         
-        ContextMenuHandler.clear();
+     
         
         GUIHelper.makeTopCellGroup(ThisNiche.graph);
         v.bind(group);
