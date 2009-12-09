@@ -41,14 +41,14 @@ import seco.things.CellUtils;
 public class ConnectionContext
 {
     static final String OPENFIRE_HOST = "kobrix.syspark.net";
-    
+
     private ConnectionConfig config;
     private boolean active;
 
     private boolean inProgress;
     private HyperGraphPeer thisPeer;
     private Set<ConnectionListener> listeners = new HashSet<ConnectionListener>();
-    
+
     Map<HGPeerIdentity, TalkActivity> talks = Collections
             .synchronizedMap(new HashMap<HGPeerIdentity, TalkActivity>());
 
@@ -82,12 +82,12 @@ public class ConnectionContext
         for (ConnectionListener l : listeners)
             l.disconnected(this);
     }
-    
+
     private void fireJobStarted(boolean connect_or_disconnect)
     {
         for (ConnectionListener l : listeners)
             l.workStarted(this, connect_or_disconnect);
-    } 
+    }
 
     public boolean isActive()
     {
@@ -101,7 +101,42 @@ public class ConnectionContext
 
     public HyperGraphPeer getPeer()
     {
-        if (thisPeer != null) return thisPeer;
+        if (thisPeer != null) 
+            return thisPeer;
+        return create_new_peer();
+    }
+
+    //check if the current peer's config is the same
+    //before trying to connect it
+    private HyperGraphPeer getUpdatedPeer()
+    {
+        if(thisPeer == null)
+           return create_new_peer();
+        return (same_config(thisPeer.getConfiguration())) ? 
+                thisPeer :  create_new_peer();
+    }
+    
+    private boolean same_config(Map<String, Object> peerConfig)
+    {
+        Object o = peerConfig.get("peerName"); 
+        if(o == null || !o.equals(config.getUsername())) return false;
+        o = peerConfig.get("anonymous");
+        if(o == null || !o.equals(config.isAnonymousLogin())) return false;
+        o = peerConfig.get("autoRegister");
+        if(o == null || !o.equals(config.isAutoRegister())) return false;
+        o = peerConfig.get("user");
+        if(o == null || !o.equals(config.getUsername())) return false;
+        o = peerConfig.get("password");
+        if(o == null || !o.equals(config.getPassword())) return false;
+        o = peerConfig.get("serverUrl");
+        if(o == null || !o.equals(config.getHostname())) return false;
+        o = peerConfig.get("port");
+        if(o == null || !o.equals(config.getPort())) return false;
+        return true;
+    }
+    
+    private HyperGraphPeer create_new_peer()
+    {
         JSONReader reader = new JSONReader();
         Map<String, Object> peerConfig = getPart(reader
                 .read(ConnectionManager.JSON_CONFIG));
@@ -115,7 +150,7 @@ public class ConnectionContext
         xmppConfig.put("serverUrl", config.getHostname());
         xmppConfig.put("port", config.getPort());
         thisPeer = new HyperGraphPeer(peerConfig, ThisNiche.graph);
-        return thisPeer;
+        return thisPeer; 
     }
 
     public boolean isConnected()
@@ -131,11 +166,11 @@ public class ConnectionContext
         active = true;
         inProgress = true;
         ThisNiche.graph.update(this);
-        
+
         U.run(new CallableCallback<Boolean>() {
             public Boolean call() throws Exception
             {
-                Future<Boolean> f = getPeer().start(config.getUsername(),
+                Future<Boolean> f = getUpdatedPeer().start(config.getUsername(),
                         config.getPassword());
                 return f.get();
             }
@@ -156,22 +191,23 @@ public class ConnectionContext
                             "Failed to connect to network, see error console.",
                             JOptionPane.ERROR_MESSAGE);
                     fireDisconnected();
+                    thisPeer = null;
                 }
 
             }
         });
     }
 
-    //when persistently = true the connection is marked inactive in HG and won't be
-    //activated on the next startup
+    // when persistently = true the connection is marked inactive in HG and
+    // won't be
+    // activated on the next startup
     public void disconnect(boolean persistently)
     {
         if (!isConnected()) return;
         fireJobStarted(false);
         inProgress = false;
         active = false;
-        if(persistently)
-           ThisNiche.graph.update(this);
+        if (persistently) ThisNiche.graph.update(this);
         U.run(new CallableCallback<Boolean>() {
             public Boolean call() throws Exception
             {
@@ -197,7 +233,7 @@ public class ConnectionContext
                                     t,
                                     "Failed to disconnected from network, see error console.",
                                     JOptionPane.ERROR_MESSAGE);
-                    //TODO: maybe we should fire new event
+                    // TODO: maybe we should fire new event
                     fireConnected();
                 }
             }
@@ -206,8 +242,9 @@ public class ConnectionContext
 
     private ConnectionPanel getConnectionPanel()
     {
-        return hg.getOne(ThisNiche.graph, hg.and(hg.type(ConnectionPanel.class),
-                hg.eq("peerID", getPeer().getIdentity())));
+        return hg.getOne(ThisNiche.graph, hg.and(
+                hg.type(ConnectionPanel.class), hg.eq("peerID", getPeer()
+                        .getIdentity())));
     }
 
     public ConnectionPanel openConnectionPanel()
@@ -220,7 +257,8 @@ public class ConnectionContext
             panel.initComponents();
             panelHandle = ThisNiche.graph.add(panel);
         }
-        else{
+        else
+        {
             panelHandle = ThisNiche.handleOf(panel);
             panel.updateState();
         }
@@ -255,29 +293,29 @@ public class ConnectionContext
 
     public TalkPanel getTalkPanel(HGPeerIdentity friend)
     {
-        if(talks.containsKey(friend))
-            return talks.get(friend).getPanel();
-        //hg.findOne(arg0, arg1)(cond)
-        HGHandle panelH = hg.findOne(ThisNiche.graph, hg.and(hg.type(TalkPanel.class),
-          hg.eq("friend", friend), hg.eq("peerID", getPeer().getIdentity())));
-        if(panelH == null) return null;
+        if (talks.containsKey(friend)) return talks.get(friend).getPanel();
+        // hg.findOne(arg0, arg1)(cond)
+        HGHandle panelH = hg.findOne(ThisNiche.graph, hg.and(hg
+                .type(TalkPanel.class), hg.eq("friend", friend), hg.eq(
+                "peerID", getPeer().getIdentity())));
+        if (panelH == null) return null;
         TalkPanel panel = ThisNiche.graph.get(panelH);
-        if(panel != null)
-           panel.initTalkActivity(this);
+        if (panel != null) panel.initTalkActivity(this);
         return panel;
     }
-    
+
     static void clearTalkPanels()
     {
-        List<HGHandle> l = hg.findAll(ThisNiche.graph, hg.type(TalkPanel.class));
-        for(HGHandle p : l)
+        List<HGHandle> l = hg
+                .findAll(ThisNiche.graph, hg.type(TalkPanel.class));
+        for (HGHandle p : l)
             ThisNiche.graph.remove(p);
     }
-    
+
     void openTalkPanel(TalkPanel panel)
-     {
-         HGHandle panelH = ThisNiche.handleOf(panel);
-         // Find an existing cell with that panel:
+    {
+        HGHandle panelH = ThisNiche.handleOf(panel);
+        // Find an existing cell with that panel:
         HGHandle existingH = GUIHelper.getCellHandleByValueHandle(
                 ThisNiche.TOP_CELL_GROUP_HANDLE, panelH);
         if (existingH != null)
@@ -286,7 +324,7 @@ public class ConnectionContext
                     .getPSwingNodeForHandle(existingH);
             n.blink();
             return;
-        } 
+        }
 
         PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
         int width = 200;
@@ -294,35 +332,36 @@ public class ConnectionContext
         int x = Math.max(0, (canvas.getWidth() - width) / 2);
         int y = Math.max(0, (canvas.getHeight() - height) / 2);
         CellGroup top = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-        CellGroupMember cgm = ThisNiche.graph.get(GUIHelper.addToCellGroup(panelH,
-                top, null, null, new Rectangle(x, y, width, height), true));
+        CellGroupMember cgm = ThisNiche.graph.get(GUIHelper.addToCellGroup(
+                panelH, top, null, null, new Rectangle(x, y, width, height),
+                true));
         CellUtils.setName(cgm, panel.getFriend().getName());
         cgm.setAttribute(VisualAttribs.showTitle, true);
         return;
     }
-    
+
     synchronized TalkPanel openTalkPanel(HGPeerIdentity friend)
     {
         TalkPanel panel = getTalkPanel(friend);
         if (panel == null)
         {
-           panel = new TalkPanel(friend, getPeer().getIdentity());
-           ThisNiche.graph.add(panel);
-           panel.initComponents();
-           panel.initTalkActivity(this); 
-           ThisNiche.graph.update(panel);
-       }
-     
-       openTalkPanel(panel);
-       return panel;
-       
+            panel = new TalkPanel(friend, getPeer().getIdentity());
+            ThisNiche.graph.add(panel);
+            panel.initComponents();
+            panel.initTalkActivity(this);
+            ThisNiche.graph.update(panel);
+        }
+
+        openTalkPanel(panel);
+        return panel;
+
     }
-    
+
     public void openChatRoom(HostedRoom room)
     {
-        RoomPanel panel = hg.getOne(ThisNiche.graph, hg.and(
-                hg.type(RoomPanel.class), hg.eq("roomId", room.getJid()), hg.eq(
-                        "peerID", thisPeer.getIdentity())));
+        RoomPanel panel = hg.getOne(ThisNiche.graph, hg.and(hg
+                .type(RoomPanel.class), hg.eq("roomId", room.getJid()), hg.eq(
+                "peerID", thisPeer.getIdentity())));
         HGHandle panelH;
         if (panel == null)
         {
@@ -356,23 +395,23 @@ public class ConnectionContext
         int x = Math.max(0, (canvas.getWidth() - width) / 2);
         int y = Math.max(0, (canvas.getHeight() - height) / 2);
         CellGroup top = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-        CellGroupMember cgm = ThisNiche.graph.get(GUIHelper.addToCellGroup(panelH,
-                top, null, null, new Rectangle(x, y, width, height), true));
+        CellGroupMember cgm = ThisNiche.graph.get(GUIHelper.addToCellGroup(
+                panelH, top, null, null, new Rectangle(x, y, width, height),
+                true));
         CellUtils.setName(cgm, "Chat room " + room.getName());
         cgm.setAttribute(VisualAttribs.showTitle, true);
-        //panel.initSplitterLocations();
+        // panel.initSplitterLocations();
         ThisNiche.graph.update(panel);
     }
-    
+
     HGPeerIdentity getPeerIdentity(Occupant x)
     {
         String occ_name = stripJID(x.getJid());
-        for(HGPeerIdentity i : getPeer().getConnectedPeers())
-            if(i.getName().equals(occ_name))
-                return i;
+        for (HGPeerIdentity i : getPeer().getConnectedPeers())
+            if (i.getName().equals(occ_name)) return i;
         return null;
     }
-    
+
     boolean isInRoster(Occupant x)
     {
         String occ_name = stripJID(x.getJid());
@@ -380,123 +419,127 @@ public class ConnectionContext
         Roster roster = i.getConnection().getRoster();
         return roster.getEntry(occ_name + "@" + OPENFIRE_HOST) != null;
     }
-    
+
     boolean isMe(Occupant x)
     {
         String occ_name = stripJID(x.getJid());
         String me = stripJID(getPeer().getIdentity().getName());
         return occ_name.equals(me);
     }
-    
+
     boolean isInRoster(HGPeerIdentity x)
     {
         XMPPPeerInterface i = (XMPPPeerInterface) getPeer().getPeerInterface();
         Roster roster = i.getConnection().getRoster();
         return roster.getEntry(x.getName() + "@" + OPENFIRE_HOST) != null;
     }
-    
+
     boolean isMe(HGPeerIdentity x)
     {
         return x.equals(getPeer().getIdentity());
     }
-    
+
     void addRoster(String short_name, String nick)
     {
         XMPPPeerInterface i = (XMPPPeerInterface) getPeer().getPeerInterface();
-        try{
+        try
+        {
             i.getConnection().getRoster().createEntry(
                     short_name + "@" + OPENFIRE_HOST, nick, null);
-        }catch(XMPPException ex)
+        }
+        catch (XMPPException ex)
         {
             ex.printStackTrace();
         }
     }
-    
+
     void addRoster(Occupant x)
     {
         String occ_name = stripJID(x.getJid());
         addRoster(occ_name, x.getNick());
     }
-    
+
     void addRoster(HGPeerIdentity x)
     {
         addRoster(x.getName(), x.getName());
     }
-    
+
     void removeRoster(String short_name)
     {
         XMPPPeerInterface i = (XMPPPeerInterface) getPeer().getPeerInterface();
-        try{
+        try
+        {
             RosterEntry entry = i.getConnection().getRoster().getEntry(
-                    short_name + "@" + OPENFIRE_HOST); 
-            if(entry != null)
+                    short_name + "@" + OPENFIRE_HOST);
+            if (entry != null)
                 i.getConnection().getRoster().removeEntry(entry);
-        }catch(XMPPException ex)
+        }
+        catch (XMPPException ex)
         {
             ex.printStackTrace();
         }
     }
-    
+
     void removeRoster(Occupant x)
     {
         HGPeerIdentity id = getPeerIdentity(x);
-        if(id != null)
-          removeTalkPanel(id);
+        if (id != null) removeTalkPanel(id);
         removeRoster(stripJID(x.getJid()));
     }
-    
+
     void removeRoster(HGPeerIdentity x)
     {
         removeTalkPanel(x);
         removeRoster(x.getName());
     }
-    
+
     private void removeTalkPanel(HGPeerIdentity id)
     {
         TalkPanel panel = getTalkPanel(id);
-        if(panel != null)
+        if (panel != null)
         {
             // Find an existing cell with that panel:
             HGHandle existingH = GUIHelper.getCellHandleByValueHandle(
                     ThisNiche.TOP_CELL_GROUP_HANDLE, ThisNiche.handleOf(panel));
             if (existingH != null)
             {
-                CellGroup top = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+                CellGroup top = ThisNiche.graph
+                        .get(ThisNiche.TOP_CELL_GROUP_HANDLE);
                 top.remove(top.indexOf(existingH));
             }
         }
     }
-    
+
     void openTalkPanel(Occupant x)
     {
-        if(isMe(x))
+        if (isMe(x))
         {
-            JOptionPane.showMessageDialog(TopFrame.getInstance(), "Can't talk to yourself");
+            JOptionPane.showMessageDialog(TopFrame.getInstance(),
+                    "Can't talk to yourself");
             return;
         }
-        
+
         HGPeerIdentity i = getPeerIdentity(x);
-        if(i != null && isInRoster(i)) 
+        if (i != null && isInRoster(i))
         {
             openTalkPanel(i);
-            return; 
+            return;
         }
-        
-        String message = "User " + x.getNick() + 
-        " is not currently in your friend list, would you like to add them?";
-        int res = JOptionPane.showConfirmDialog(TopFrame.getInstance(), message, "?", 
-                JOptionPane.OK_CANCEL_OPTION);
-        if(res == JOptionPane.OK_OPTION)
-            addRoster(x);
+
+        String message = "User "
+                + x.getNick()
+                + " is not currently in your friend list, would you like to add them?";
+        int res = JOptionPane.showConfirmDialog(TopFrame.getInstance(),
+                message, "?", JOptionPane.OK_CANCEL_OPTION);
+        if (res == JOptionPane.OK_OPTION) addRoster(x);
     }
-    
+
     static String stripJID(String name)
     {
         int ind = name.indexOf("@");
-        if (ind > -1)
-            name = name.substring(0, ind);
+        if (ind > -1) name = name.substring(0, ind);
         return name;
-    } 
+    }
 
     public ConnectionConfig getConfig()
     {
@@ -518,7 +561,7 @@ public class ConnectionContext
         void connected(ConnectionContext ctx);
 
         void disconnected(ConnectionContext ctx);
-        
+
         void workStarted(ConnectionContext ctx, boolean connect_or_disconnect);
     }
 }
