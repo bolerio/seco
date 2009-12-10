@@ -101,6 +101,7 @@ import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.TokenMarker;
 import seco.notebook.syntax.XModeHandler;
 import seco.notebook.view.HtmlView;
+import seco.prolog.PrologScriptSupport;
 import seco.rtenv.EvaluationContext;
 import seco.things.Cell;
 import seco.things.CellGroup;
@@ -119,6 +120,9 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     public static final String LAST_VISIBLE_OFFSET = "lastVisibleOffset";
     public static final HGPersistentHandle POPUP_HANDLE = HGHandleFactory
             .makeHandle("97287a6a-0195-11dd-a1bb-d15dfc7a2992");
+    
+    public static final HGPersistentHandle SCRIPT_SUPPORTS_HANDLE =
+         HGHandleFactory.makeHandle("76b35260-e5ad-11de-8a39-0800200c9a66");
 
     private boolean drawCellNums = false;
     protected UndoManager undo = new UndoManager();
@@ -798,6 +802,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
      */
     public static Mode getMode(String name)
     {
+        getScriptSupportClassesMap();
         for (int i = 0; i < modes.size(); i++)
         {
             Mode mode = (Mode) modes.elementAt(i);
@@ -806,7 +811,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         return null;
     }
 
-    public static void addMode(Mode mode)
+    private static void addMode(Mode mode)
     {
         modes.addElement(mode);
     }
@@ -821,28 +826,41 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         return array;
     }
 
-    public static void registerScriptSupport(ScriptSupport sup)
+    public static void registerScriptSupport(ScriptSupport sup, boolean permanently)
     {
         if (sup == null)
             throw new NullPointerException(
                     "Attempt to register null ScriptSupport");
-        if (supports.containsKey(sup.getScriptEngineName())) return;
+        if ( getScriptSupportClassesMap().containsKey(sup.getScriptEngineName())) return;
         for (Mode m : sup.getModes())
             if (getMode(m.getName()) == null) addMode(m);
-        supports.put(sup.getScriptEngineName(), sup.getClass());
+        getScriptSupportClassesMap().put(sup.getScriptEngineName(), sup.getClass());
+        if(permanently)
+           ThisNiche.graph.update(getScriptSupportClassesMap());
     }
 
-    static Map<String, Class<?>> supports = new HashMap<String, Class<?>>();
+    private static Map<String, Class<?>> supports = null; 
     private static Vector<Mode> modes = new Vector<Mode>();
-    static
+    
+    static Map<String, Class<?>> getScriptSupportClassesMap()
     {
-        registerScriptSupport(new BshScriptSupport());
-        registerScriptSupport(new JSchemeScriptSupport());
-        registerScriptSupport(new RubyScriptSupport());
-        registerScriptSupport(new HTMLScriptSupport());
+        if(supports == null)
+        {     
+           supports = (Map<String, Class<?>>) 
+                ThisNiche.graph.get(SCRIPT_SUPPORTS_HANDLE);
+           if(supports != null) return supports;
+           supports = new HashMap<String, Class<?>>();
+           registerScriptSupport(new BshScriptSupport(), false);
+           registerScriptSupport(new JSchemeScriptSupport(), false);
+           registerScriptSupport(new RubyScriptSupport(), false);
+           registerScriptSupport(new HTMLScriptSupport(), false);
+           registerScriptSupport(new PrologScriptSupport(), false);
+           ThisNiche.graph.define(SCRIPT_SUPPORTS_HANDLE, supports);
+        }
+        return supports;
     }
-
-   // the vertical scrolls don't work as expected, so we need to force them...
+    
+      // the vertical scrolls don't work as expected, so we need to force them...
    // by the next 2 methods
     @Override
     public Dimension getPreferredSize()

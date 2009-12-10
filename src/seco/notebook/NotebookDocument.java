@@ -353,11 +353,12 @@ public class NotebookDocument extends DefaultStyledDocument
         Cell cell = (Cell) nb;
         String name = DocUtil.getEngineName(this, cell);
         el = getLowerElement(el, inputCellBox);
-        Class<?> cls = NotebookUI.supports.get(name);
-        MutableAttributeSet attrs = (MutableAttributeSet) el.getAttributes();
+        Class<?> cls = NotebookUI.getScriptSupportClassesMap().get(name);
+       // MutableAttributeSet attrs = (MutableAttributeSet) el.getAttributes();
         if (cls == null)
         {
-            if (force) attrs.removeAttribute(ATTR_SCRIPT_SUPPORT);
+            if (force) 
+                removeAttribute(el, ATTR_SCRIPT_SUPPORT);
             return;
         }
         sup = null;
@@ -371,18 +372,13 @@ public class NotebookDocument extends DefaultStyledDocument
         }
         if (sup == null)
         {
-            if (force) attrs.removeAttribute(ATTR_SCRIPT_SUPPORT);
+            if (force) 
+                removeAttribute(el, ATTR_SCRIPT_SUPPORT);
             return;
         }
-        try
-        {
-            writeLock();
-            attrs.addAttribute(ATTR_SCRIPT_SUPPORT, sup);
-        }
-        finally
-        {
-            writeUnlock();
-        }
+        
+        addAttribute(el, ATTR_SCRIPT_SUPPORT, sup);
+       
         sup.init(this, el.getElement(0));
     }
 
@@ -393,6 +389,20 @@ public class NotebookDocument extends DefaultStyledDocument
             writeLock();
             MutableAttributeSet set = (MutableAttributeSet) el.getAttributes();
             set.addAttribute(name, value);
+        }
+        finally
+        {
+            writeUnlock();
+        }
+    }
+    
+    private void removeAttribute(Element el, String name)
+    {
+        try
+        {
+            writeLock();
+            MutableAttributeSet set = (MutableAttributeSet) el.getAttributes();
+            set.removeAttribute(name);
         }
         finally
         {

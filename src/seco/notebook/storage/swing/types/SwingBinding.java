@@ -124,11 +124,6 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
         HGPersistentHandle result = TypeUtils.getHandleFor(graph, instance);
         if (result == null)
         {
-            if(instance instanceof JButton && "Connect".equals(
-                    ((JButton) instance).getText()))
-            {
-                System.out.println("SwingBinding: " + instance);
-            }
             final Record record = new SwingRecord(typeHandle, instance);
             storeBean(instance, record);
             result = hgType.store(record);

@@ -116,7 +116,7 @@ public class ClassGenerator
         mv.visitEnd();
     }
 
-    public Class<?> generate()
+    public Class<?> generate(ClassLoader parent)
     {
         Class<?> cls = type.getJavaClass();
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -140,8 +140,9 @@ public class ClassGenerator
             {
                 ex.printStackTrace();
             }
-        CGPrivateClassLoader cl = new CGPrivateClassLoader(Thread
-                .currentThread().getContextClassLoader());
+            
+        CGPrivateClassLoader cl = new CGPrivateClassLoader(parent != null ?
+                parent : Thread.currentThread().getContextClassLoader());
         Class<?> result = cl.defineClass(genClassName.replace('/', '.'),
                 byteCode);
         cache.put(cls, result);

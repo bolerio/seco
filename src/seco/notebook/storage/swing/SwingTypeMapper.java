@@ -90,7 +90,7 @@ public class SwingTypeMapper extends JavaObjectMapper
                 {
                     Class<?> gen = ClassGenerator.getClass(javaClass);
                     if (gen == null)
-                        gen = new ClassGenerator(graph, (SwingType) hgType).generate();
+                        gen = new ClassGenerator(graph, (SwingType) hgType).generate(graph.getTypeSystem().getClassLoader());
                     GeneratedClass inst = (GeneratedClass) gen.newInstance();
                     inst.init(typeHandle, (SwingType) hgType);
                     return inst;
