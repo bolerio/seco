@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.Action;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.BadLocationException;
@@ -31,142 +32,150 @@ public class ChatPane extends JTextPane
     private static final long serialVersionUID = 8264519627985265257L;
     private static SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a");
     private static final HTMLEditorKit htmlEditorKit = new HTMLEditorKit();
-    
+
     private HGPeerIdentity me;
     // tracking user actions
     @HGIgnore
     AtomicInteger actionGroupId = new AtomicInteger(0);
     @HGIgnore
-    Map<Integer, List<Runnable>> actions = 
-        Collections.synchronizedMap(new HashMap<Integer, List<Runnable>>());
-    
+    Map<Integer, List<Runnable>> actions = Collections
+            .synchronizedMap(new HashMap<Integer, List<Runnable>>());
+
     public void initComponents()
     {
         setEditorKit(htmlEditorKit);
         setEditable(false);
-        addHyperlinkListener(new LinkActionListener(this));        
+        addHyperlinkListener(new LinkActionListener(this));
     }
-    
+
     public ChatPane()
     {
     }
-        
+
     public HGPeerIdentity getMe()
     {
         return me;
     }
-
 
     public void setMe(HGPeerIdentity me)
     {
         this.me = me;
     }
 
-    public void chatFrom(HGPeerIdentity from, String text)
+    public void chatFrom(final HGPeerIdentity from, String text)
     {
         String s = "(" + sdf.format(new Date()) + ") ";
         s += (from.equals(me) ? "me" : from.getName()) + ":" + text;
-        //outText.setText(outText.getText() + s);
+        // outText.setText(outText.getText() + s);
         try
         {
             getDocument().insertString(getDocument().getLength(), s, null);
-            show_the_last_line();
-            if(!from.equals(me))
-              Toolkit.getDefaultToolkit().beep();
-       }
+            scroll_and_beep(from); 
+        }
         catch (BadLocationException e)
         {
             e.printStackTrace();
         }
-    }    
+    }
+
     
-    private void show_the_last_line()
+    private void scroll_and_beep(final HGPeerIdentity from)
     {
-      //scroll to the end 
-        //normally is scrolls just one line above the needed one? so +100 to get
-        //where we want...
-        scrollRectToVisible(new Rectangle(0, getBounds(null).height + 100, 1, 1));
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run()
+            {
+                // scroll to the end
+                // normally is scrolls just one line above the needed one? so +100 to
+                // get
+                // where we want...
+                scrollRectToVisible(new Rectangle(0, getBounds(null).height + 100, 1, 1));
+                if (!from.equals(me)) Toolkit.getDefaultToolkit().beep();
+            }
+        });
     }
     
+
     /**
      * <p>
      * Like 'chatFrom', but with some actions appended. The 'actions' argument
-     * is a flattened list of (String, Runnable) pairs. That is, an argument at an 
-     * even position is a string label of the action and an argument at an odd position
-     * is the Runnable the will execute it. Actions are presented as hyperlinks and
-     * are exclusive: once a user click on one of the action, all of them become
-     * disabled.
+     * is a flattened list of (String, Runnable) pairs. That is, an argument at
+     * an even position is a string label of the action and an argument at an
+     * odd position is the Runnable the will execute it. Actions are presented
+     * as hyperlinks and are exclusive: once a user click on one of the action,
+     * all of them become disabled.
      * </p>
      */
-    public void actionableChatFrom(HGPeerIdentity from, 
-                                   String text, 
-                                   Object...actions)
+    public void actionableChatFrom(HGPeerIdentity from, String text,
+            Object... actions)
     {
-        try 
+        try
         {
             String s = "(" + sdf.format(new Date()) + ") ";
             s += (from.equals(me) ? "me" : from.getName()) + ":";
             String indent = s.replaceAll(".", " ");
-            s += text + "\n" + indent;            
-            getDocument().insertString(getDocument().getLength(), s, null);            
+            s += text + "\n" + indent;
+            getDocument().insertString(getDocument().getLength(), s, null);
             if (actions.length % 2 != 0)
-                throw new RuntimeException("Wrong number of arguments: actions must be (label, Runnable) pairs.");
+                throw new RuntimeException(
+                        "Wrong number of arguments: actions must be (label, Runnable) pairs.");
             if (actions.length > 0)
             {
-                getDocument().insertString(getDocument().getLength(), "[", null);
+                getDocument()
+                        .insertString(getDocument().getLength(), "[", null);
                 List<Runnable> actionList = new ArrayList<Runnable>();
                 int groupId = actionGroupId.incrementAndGet();
                 this.actions.put(groupId, actionList);
-                for (int i = 0; i < actions.length; i+=2)
+                for (int i = 0; i < actions.length; i += 2)
                 {
                     int actionId = actionList.size();
-                    actionList.add((Runnable)actions[i+1]);
-                    
+                    actionList.add((Runnable) actions[i + 1]);
+
                     SimpleAttributeSet hrefAttr = new SimpleAttributeSet();
-                    hrefAttr.addAttribute(HTML.Attribute.HREF, "" + groupId + ":" + actionId);
-                    
+                    hrefAttr.addAttribute(HTML.Attribute.HREF, "" + groupId
+                            + ":" + actionId);
+
                     SimpleAttributeSet attrs = new SimpleAttributeSet();
                     StyleConstants.setUnderline(attrs, true);
                     StyleConstants.setForeground(attrs, Color.blue);
-                    StyleConstants.setAlignment(attrs, StyleConstants.ALIGN_LEFT);
-                    attrs.addAttribute(HTML.Tag.A, hrefAttr);                    
-                    getDocument().insertString(getDocument().getLength(), 
-                                                       actions[i].toString(), 
-                                                       attrs);
+                    StyleConstants.setAlignment(attrs,
+                            StyleConstants.ALIGN_LEFT);
+                    attrs.addAttribute(HTML.Tag.A, hrefAttr);
+                    getDocument().insertString(getDocument().getLength(),
+                            actions[i].toString(), attrs);
                     if (i < actions.length - 2)
-                        getDocument().insertString(getDocument().getLength(), ",", null);                
+                        getDocument().insertString(getDocument().getLength(),
+                                ",", null);
                 }
-                getDocument().insertString(getDocument().getLength(), "]\n", null);   
-                show_the_last_line();
-                if(!from.equals(me))
-                    Toolkit.getDefaultToolkit().beep();
+                getDocument().insertString(getDocument().getLength(), "]\n",
+                        null);
+                scroll_and_beep(from); 
             }
         }
-        catch (BadLocationException e) 
+        catch (BadLocationException e)
         {
             e.printStackTrace(System.err);
-        }              
+        }
     }
-    
+
     public static class LinkActionListener implements HyperlinkListener
     {
         ChatPane pane;
-        
+
         public LinkActionListener()
-        {            
+        {
         }
-        
+
         public LinkActionListener(ChatPane pane)
         {
             this.pane = pane;
         }
-        
+
         public void hyperlinkUpdate(HyperlinkEvent e)
         {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
-            {                
+            {
                 System.out.println("Link clicked: " + e.getDescription());
-                String [] A = e.getDescription().split(":");
+                String[] A = e.getDescription().split(":");
                 int groupId = Integer.parseInt(A[0]);
                 int actionId = Integer.parseInt(A[1]);
                 List<Runnable> actions = pane.actions.get(groupId);
@@ -187,6 +196,6 @@ public class ChatPane extends JTextPane
         public void setPane(ChatPane pane)
         {
             this.pane = pane;
-        }        
-    }    
+        }
+    }
 }

@@ -231,7 +231,7 @@ public class RoomPanel extends BaseChatPanel
         chatPane.initComponents();
         peerListSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                 new JScrollPane(chatPane), new JScrollPane(inputPane));
-        peerListSplit.setResizeWeight(1.0);
+        //peerListSplit.setResizeWeight(1.0);
         peerListSplit.setName("peerListSplit");
         peerList = new PeerList(getPeerID());
         peerList.initComponents();
@@ -240,7 +240,7 @@ public class RoomPanel extends BaseChatPanel
                 peerList);
         inputSplit.setName("inputSplit");
         inputSplit.setOneTouchExpandable(true);
-        inputSplit.setResizeWeight(1.0);
+        //inputSplit.setResizeWeight(1.0);
         add(inputSplit, BorderLayout.CENTER);
         setDoubleBuffered(false);
         joinRoom();
@@ -248,10 +248,12 @@ public class RoomPanel extends BaseChatPanel
 
     private void initSplitterLocations()
     {
+        int h = Math.max(300, getHeight());
+        int w = Math.max(300, getWidth());   
         get_split(get_split(this, "inputSplit"), "peerListSplit")
-                .setDividerLocation((int) (0.8 * getHeight()));
+                .setDividerLocation((int) (0.8 * h));
         get_split(this, "inputSplit").setDividerLocation(
-                (int) (0.7 * getWidth()));
+                (int) (0.7 * w));
     }
 
     private JSplitPane get_split(Container cont, String name)
@@ -368,7 +370,14 @@ public class RoomPanel extends BaseChatPanel
     public void workStarted(ConnectionContext ctx, boolean connect_or_disconnect)
     {
          if(!connect_or_disconnect)
-            getTheChat().leave();
+         {
+             try{
+              getTheChat().leave();
+             }catch(Exception ex)
+             {
+                 ex.printStackTrace();
+             }
+         }
     }
 
     @Override

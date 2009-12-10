@@ -87,7 +87,7 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
         super(peerID);
         this.friend = friend;
         setTransferHandler(new TPTransferHandler(this));
-        //initComponents();
+        // initComponents();
     }
 
     public HGPeerIdentity getFriend()
@@ -357,7 +357,7 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
         talkActivity = null;
         setEnabled0(false);
     }
-    
+
     @Override
     public void workStarted(ConnectionContext ctx, boolean connect_or_disconnect)
     {
@@ -390,8 +390,13 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
     {
         setEnabled0(true);
         if (isConnected()) return;
-        //System.out.println("TalkPanel - peerJoined: " + target + ":" + friend);
-        if (target.equals(friend)) initTalkActivity(getConnectionContext());
+        // System.out.println("TalkPanel - peerJoined: " + target + ":" +
+        // friend);
+        if (target.equals(friend))
+        {
+            initTalkActivity(getConnectionContext());
+            chatPane.setMe(getConnectionContext().getPeer().getIdentity());
+        }
     }
 
     public void peerLeft(HGPeerIdentity target)
@@ -407,7 +412,7 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
 
     void setEnabled0(boolean enabled)
     {
-       setEnabled(enabled);
+        setEnabled(enabled);
         if (inputPane != null) inputPane.setEnabled(enabled);
         if (chatPane != null) chatPane.setEnabled(enabled);
     }
