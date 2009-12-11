@@ -116,7 +116,7 @@ public class SettingsPreviewPane extends JSplitPane
 	{
 		try
 		{
-			InputStream is = AppConfig.getClassLoader()
+			InputStream is = getClass().getClassLoader()
 					.getResourceAsStream(TEMPLATE);
 			InputStreamReader in = new InputStreamReader(is);
 			char[] buff = new char[1024];

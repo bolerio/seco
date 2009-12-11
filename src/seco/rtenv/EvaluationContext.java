@@ -234,5 +234,6 @@ public class EvaluationContext
         this.loader = null;        
         onLoad();
         Thread.currentThread().setContextClassLoader(save);
+        //ThisNiche.graph.getTypeSystem().setClassLoader(save);
     }
 }

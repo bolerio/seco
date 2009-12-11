@@ -63,7 +63,11 @@ public abstract class ScriptSupport
 		lineMgr.contentInserted(0, 0, el.getElementCount(), el.getEndOffset()
 				- el.getStartOffset());
 		chunkCache = new ChunkCache(this);
-		tokenMarker = NotebookUI.getMode(getModeName()).getTokenMarker();
+		Mode mode = NotebookUI.getMode(getModeName());
+		if(mode != null)
+		   tokenMarker = mode.getTokenMarker();
+		else
+		    System.err.println("Unable to find mode: " + getModeName());
 		notifyParser();
 	}
 

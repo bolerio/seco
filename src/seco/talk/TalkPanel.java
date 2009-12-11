@@ -186,8 +186,9 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
             TalkPanel talkPanel = (TalkPanel) e.getComponent().getParent();
             if (talkPanel.transfer == null) return;
             TransferHandler handler = talkPanel.getTransferHandler();
-            int action = ((e.getModifiers() & MouseEvent.CTRL_MASK) == 0) ? TransferHandler.MOVE
-                    : TransferHandler.COPY;
+            int action = //((e.getModifiers() & MouseEvent.CTRL_MASK) == 0) ? 
+                    //TransferHandler.MOVE : 
+                        TransferHandler.COPY;
             handler.exportAsDrag(talkPanel, e, action);
         }
 
@@ -244,10 +245,12 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
         @SuppressWarnings("unchecked")
         public boolean importData(TransferSupport support)
         {
+            if(!support.isDrop()) return false;
             JComponent comp = (JComponent) support.getComponent();
             Transferable t = support.getTransferable();
             // Don't drop on myself.
             if (comp == talkPanel) return false;
+            if(talkPanel.getTalkActivity() == null) return false;
             DataFlavor fl = getImportFlavor(t.getTransferDataFlavors(), comp);
             if (fl == null) return false;
             try
@@ -266,10 +269,12 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
 
                 if (data != null)
                 {
-                    // if(support.getDropAction() == COPY)
+                    boolean move = (support.getDropAction() == MOVE);
                     data = CellUtils.makeCopy(data);
                     support.setDropAction(COPY);
                     talkPanel.acceptTransfer(data);
+                    //NO OTHER WAY TO PREVENT NBUI from deleting the cut component
+                    if(move && fl.equals(NotebookTransferHandler.FLAVOR)) return false;
                     return true;
                 }
             }

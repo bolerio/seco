@@ -275,6 +275,7 @@ public class NotebookEditorKit extends StyledEditorKit
             	if (sup != null)
             		sup.unMarkErrors();
             }
+
             Utilities.adjustScrollBar(ui, pos, Position.Bias.Forward);
         }
 

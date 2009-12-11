@@ -1030,17 +1030,17 @@ class javax_swing_JFrame_PersistenceDelegate extends DefaultConverter
     }
 }
 
-class javax_swing_SpringLayout_PersistenceDelegate extends DefaultConverter
-{
-    public javax_swing_SpringLayout_PersistenceDelegate()
-    {
-        super(SpringLayout.class);
-    }
-
-    public Map<String, Class<?>> getSlots()
-    {
-        Map<String, Class<?>> sup = super.getSlots();
-        sup.put("componentConstraints", Map.class);
-        return sup;
-    }
-}
+//class javax_swing_SpringLayout_PersistenceDelegate extends DefaultConverter
+//{
+//    public javax_swing_SpringLayout_PersistenceDelegate()
+//    {
+//        super(SpringLayout.class);
+//    }
+//
+//    public Map<String, Class<?>> getSlots()
+//    {
+//        Map<String, Class<?>> sup = super.getSlots();
+//        sup.put("componentConstraints", Map.class);
+//        return sup;
+//    }
+//}

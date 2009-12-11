@@ -120,9 +120,9 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     public static final String LAST_VISIBLE_OFFSET = "lastVisibleOffset";
     public static final HGPersistentHandle POPUP_HANDLE = HGHandleFactory
             .makeHandle("97287a6a-0195-11dd-a1bb-d15dfc7a2992");
-    
-    public static final HGPersistentHandle SCRIPT_SUPPORTS_HANDLE =
-         HGHandleFactory.makeHandle("76b35260-e5ad-11de-8a39-0800200c9a66");
+
+    public static final HGPersistentHandle SCRIPT_SUPPORTS_HANDLE = HGHandleFactory
+            .makeHandle("76b35260-e5ad-11de-8a39-0800200c9a66");
 
     private boolean drawCellNums = false;
     protected UndoManager undo = new UndoManager();
@@ -134,15 +134,18 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 
     protected static NBFocusListener nbFocusListener = new NBFocusListener();
     protected static HTMLEditor html_editor;
-    
-    //TODO: pending deadlock - 
-    //http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6195631 looks very similar 
-    //AWT - Thread:NotebookUI(Component).invalidate() line: 2721 
-    //Main -Thread:
-    //NotebookDocument(AbstractDocument).readLock() line: 1372 [local variables unavailable]   
-    //BasicTextPaneUI(BasicTextUI).getMinimumSize(JComponent) line: 930   
-    //NotebookUI(JEditorPane).getScrollableTracksViewportWidth() line: 1546   
-    //putting main UI creation in AWT thread seems to solve the problem for now...
+
+    // TODO: pending deadlock -
+    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6195631 looks very
+    // similar
+    // AWT - Thread:NotebookUI(Component).invalidate() line: 2721
+    // Main -Thread:
+    // NotebookDocument(AbstractDocument).readLock() line: 1372 [local variables
+    // unavailable]
+    // BasicTextPaneUI(BasicTextUI).getMinimumSize(JComponent) line: 930
+    // NotebookUI(JEditorPane).getScrollableTracksViewportWidth() line: 1546
+    // putting main UI creation in AWT thread seems to solve the problem for
+    // now...
 
     public NotebookUI(HGHandle book)
     {
@@ -165,8 +168,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         NotebookDocument doc = null;
         if (o instanceof CellGroupMember)
         {
-            if(CellUtils.isBackuped(book))
-                CellUtils.restoreCell(book);
+            if (CellUtils.isBackuped(book)) CellUtils.restoreCell(book);
             if (o instanceof CellGroup)
             {
                 doc = getDocForHandle(NotebookDocument.class, book);
@@ -255,15 +257,14 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         }
         super.paintComponent(g2);
     }
-    
-    
-    //in piccolo pageUp/Down scrolling won't work as expected 
-    //so this is a hack over the original SUN hack:)
-    public Rectangle getVisibleRect() {
+
+    // in piccolo pageUp/Down scrolling won't work as expected
+    // so this is a hack over the original SUN hack:)
+    public Rectangle getVisibleRect()
+    {
         Rectangle visibleRect = new Rectangle();
         getBounds(visibleRect);
-        if(!TopFrame.PICCOLO)
-           computeVisibleRect(visibleRect);
+        if (!TopFrame.PICCOLO) computeVisibleRect(visibleRect);
         return visibleRect;
     }
 
@@ -297,23 +298,23 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         key = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,
                 InputEvent.CTRL_DOWN_MASK);
         inputMap.put(key, NotebookEditorKit.showInputTypePopup);
-        
-        //UNDO, REDO
+
+        // UNDO, REDO
         key = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK);
         inputMap.put(key, NotebookEditorKit.undo);
         key = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK);
         inputMap.put(key, NotebookEditorKit.redo);
-        
-       //CUT, COPY, PASTE
-       key = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK);
-       inputMap.put(key,DefaultEditorKit.cutAction);
-       key = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK);
-       inputMap.put(key, DefaultEditorKit.copyAction);
-       key = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK);
-       inputMap.put(key, DefaultEditorKit.pasteAction);
 
-       key = KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK);
-       inputMap.put(key, DefaultEditorKit.selectAllAction);
+        // CUT, COPY, PASTE
+        key = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK);
+        inputMap.put(key, DefaultEditorKit.cutAction);
+        key = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK);
+        inputMap.put(key, DefaultEditorKit.copyAction);
+        key = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK);
+        inputMap.put(key, DefaultEditorKit.pasteAction);
+
+        key = KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK);
+        inputMap.put(key, DefaultEditorKit.selectAllAction);
     }
 
     void restoreCaret()
@@ -389,7 +390,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             mi = new JMenuItem("View Parse Tree");
             mi.addActionListener(new ParseTreeAction());
             popupMenu.add(mi);
-            
+
             ThisNiche.graph.define(POPUP_HANDLE, popupMenu);
         }
     }
@@ -558,13 +559,12 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         }
         return super.getToolTipText(e);
     }
-    
+
     @Override
     public Point getToolTipLocation(MouseEvent e)
     {
-        return (TopFrame.PICCOLO) ? 
-                GUIHelper.computePoint(this, e.getPoint()):
-                super.getToolTipLocation(e);
+        return (TopFrame.PICCOLO) ? GUIHelper.computePoint(this, e.getPoint())
+                : super.getToolTipLocation(e);
     }
 
     public static UpdatablePopupMenu getPopupMenu()
@@ -579,12 +579,12 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         getPopupListener().mouseClicked(e);
         getPopupListener().dont_change_pos = false;
     }
-    
+
     public static void setFocusedHTMLEditor(HTMLEditor e)
     {
         html_editor = e;
     }
-    
+
     public static HTMLEditor getFocusedHTMLEditor()
     {
         return html_editor;
@@ -623,7 +623,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getX(),
                     e.getY(), f);
             if (e.getComponent() instanceof JComponent)
-                return GUIHelper.computePoint((JComponent) e.getComponent(), pt);
+                return GUIHelper
+                        .computePoint((JComponent) e.getComponent(), pt);
             return pt;
         }
     }
@@ -826,42 +827,69 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         return array;
     }
 
-    public static void registerScriptSupport(ScriptSupport sup, boolean permanently)
+    public static void registerScriptSupport(ScriptSupport sup,
+            boolean permanently)
     {
         if (sup == null)
             throw new NullPointerException(
                     "Attempt to register null ScriptSupport");
-        if ( getScriptSupportClassesMap().containsKey(sup.getScriptEngineName())) return;
+        if (getScriptSupportClassesMap().containsKey(sup.getScriptEngineName()))
+            return;
         for (Mode m : sup.getModes())
             if (getMode(m.getName()) == null) addMode(m);
-        getScriptSupportClassesMap().put(sup.getScriptEngineName(), sup.getClass());
-        if(permanently)
-           ThisNiche.graph.update(getScriptSupportClassesMap());
+        getScriptSupportClassesMap().put(sup.getScriptEngineName(),
+                sup.getClass());
+        if (permanently) ThisNiche.graph.update(getScriptSupportClassesMap());
     }
 
-    private static Map<String, Class<?>> supports = null; 
-    private static Vector<Mode> modes = new Vector<Mode>();
-    
+    private static Map<String, Class<?>> supports = null;
+    private static Vector<Mode> modes = null;
+
     static Map<String, Class<?>> getScriptSupportClassesMap()
     {
-        if(supports == null)
-        {     
-           supports = (Map<String, Class<?>>) 
-                ThisNiche.graph.get(SCRIPT_SUPPORTS_HANDLE);
-           if(supports != null) return supports;
-           supports = new HashMap<String, Class<?>>();
-           registerScriptSupport(new BshScriptSupport(), false);
-           registerScriptSupport(new JSchemeScriptSupport(), false);
-           registerScriptSupport(new RubyScriptSupport(), false);
-           registerScriptSupport(new HTMLScriptSupport(), false);
-           registerScriptSupport(new PrologScriptSupport(), false);
-           ThisNiche.graph.define(SCRIPT_SUPPORTS_HANDLE, supports);
+        if (supports == null)
+        {
+            supports = (Map<String, Class<?>>) ThisNiche.graph
+                    .get(SCRIPT_SUPPORTS_HANDLE);
+            if (supports != null)
+            {
+                if (modes == null) init_modes();
+                return supports;
+            }
+            supports = new HashMap<String, Class<?>>();
+            modes = new Vector<Mode>();
+            registerScriptSupport(new BshScriptSupport(), false);
+            registerScriptSupport(new JSchemeScriptSupport(), false);
+            registerScriptSupport(new RubyScriptSupport(), false);
+            registerScriptSupport(new HTMLScriptSupport(), false);
+            registerScriptSupport(new PrologScriptSupport(), false);
+            ThisNiche.graph.define(SCRIPT_SUPPORTS_HANDLE, supports);
         }
         return supports;
     }
-    
-      // the vertical scrolls don't work as expected, so we need to force them...
-   // by the next 2 methods
+
+    static void init_modes()
+    {
+        modes = new Vector<Mode>();
+        for (Class<?> c : getScriptSupportClassesMap().values())
+        {
+            ScriptSupport sup = null;
+            try
+            {
+                sup = (ScriptSupport) c.newInstance();
+            }
+            catch (Exception ex)
+            {
+                System.err.println("Unable to create ScriptSupport for: "
+                        + c.getName());
+            }
+            if (sup != null) for (Mode m : sup.getModes())
+                if (getMode(m.getName()) == null) addMode(m);
+        }
+    }
+
+    // the vertical scrolls don't work as expected, so we need to force them...
+    // by the next 2 methods
     @Override
     public Dimension getPreferredSize()
     {
@@ -874,25 +902,25 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         }
         return isPreferredSizeSet() ? super.getPreferredSize() : dim;
     }
-    
-    //return true only if NBUI is smaller then the viewport, thus we
-    //expand it to the whole viewport, avoiding ugly background at the bottom
-    //Needed because if (in the opposite case) this method returns true
-    //it breaks somehow the ScrollPaneLayout.layout() and
-    //the vertical scroll is not always shown accordingly
+
+    // return true only if NBUI is smaller then the viewport, thus we
+    // expand it to the whole viewport, avoiding ugly background at the bottom
+    // Needed because if (in the opposite case) this method returns true
+    // it breaks somehow the ScrollPaneLayout.layout() and
+    // the vertical scroll is not always shown accordingly
     @Override
     public boolean getScrollableTracksViewportHeight()
     {
         if (getParent() instanceof JViewport)
         {
-            JViewport port = (JViewport)getParent();
+            JViewport port = (JViewport) getParent();
             int h = port.getHeight();
             Dimension min = getPreferredSize();
             return (h >= min.height);
         }
         return false;
     }
-   
+
     private static final Dimension dim = new Dimension(300, 200);
 
     public void changedUpdate(DocumentEvent e)
@@ -1049,7 +1077,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     @Override
     public void setCaretPosition(int position)
     {
-        //System.out.println("NotebookUI - setCaretPosition: " + position);
+        // System.out.println("NotebookUI - setCaretPosition: " + position);
         Document doc = getDocument();
         if (doc != null)
         {
@@ -1057,7 +1085,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             // throw new IllegalArgumentException("bad position: " + position);
             getCaret().setDot(position);
         }
-        //super.setCaretPosition(position);
+        // super.setCaretPosition(position);
         lastCaretStart = getCaretPosition();
     }
 
@@ -1075,7 +1103,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     {
         return getSelectedNBElement(inputCellBox);
     }
-    
+
     public Element getSelectedContentCellElement()
     {
         return getSelectedNBElement(commonCell);
@@ -1135,5 +1163,5 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             super.setDot(dot, dotBias);
         }
     }
- 
+
 }

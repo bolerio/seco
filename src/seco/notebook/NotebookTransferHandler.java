@@ -127,8 +127,9 @@ public class NotebookTransferHandler extends TransferHandler
         {
             if (data instanceof TextTransferable)
                 ((TextTransferable) data).removeText();
+            //done during the import
             if (data instanceof ElementTransferable)
-                ((ElementTransferable) data).removeText();
+                ((ElementTransferable) data).removeElements();
         }
         exportComp = null;
     }
@@ -357,7 +358,7 @@ public class NotebookTransferHandler extends TransferHandler
             return FLAVOR.equals(flavor);
         }
 
-        void removeText()
+        void removeElements()
         {
             NotebookDocument doc = c.getDoc();
             for (Element e : elements)

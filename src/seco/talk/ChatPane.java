@@ -27,6 +27,8 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.hypergraphdb.annotation.HGIgnore;
 import org.hypergraphdb.peer.HGPeerIdentity;
 
+import seco.gui.TopFrame;
+
 public class ChatPane extends JTextPane
 {
     private static final long serialVersionUID = 8264519627985265257L;
@@ -89,7 +91,11 @@ public class ChatPane extends JTextPane
                 // get
                 // where we want...
                 scrollRectToVisible(new Rectangle(0, getBounds(null).height + 100, 1, 1));
-                if (!from.equals(me)) Toolkit.getDefaultToolkit().beep();
+                if (!from.equals(me)) 
+                {
+                    Toolkit.getDefaultToolkit().beep();
+                    TopFrame.getInstance().blink("New message received");
+                }
             }
         });
     }

@@ -26,7 +26,7 @@ public class SwingTypeConstructor extends HGAtomTypeBase {
 		    //Trying with the context class loader then give up
 		    ClassLoader loader = Thread.currentThread().getContextClassLoader();
 	        if (loader == null)
-	            loader = this.getClass().getClassLoader();
+	            loader = getClass().getClassLoader();
 	        try{
 	            loader.loadClass((String)graph.get(layout[0]));
 	        }catch(ClassNotFoundException ex1){

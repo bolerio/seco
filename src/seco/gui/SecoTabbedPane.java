@@ -133,16 +133,18 @@ public class SecoTabbedPane extends JTabbedPane
             return new SecoTransferable(tp.dragTabHandle);
         }
 
+        
+        
         protected void exportDone(JComponent source, Transferable data,
                 int action)
         {
             super.exportDone(source, data, action);
-            if (action == MOVE ) 
-            {
-                int i = tp.getCellGroup().indexOf(tp.dragTabHandle);
-                if(i > -1)
-                  closeAt(tp, i);
-            }
+//            if (action == MOVE ) 
+//            {
+//                int i = tp.getCellGroup().indexOf(tp.dragTabHandle);
+//                if(i > -1)
+//                  closeAt(tp, i);
+//            }
                 
         }
         

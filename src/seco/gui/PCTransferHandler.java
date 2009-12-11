@@ -46,6 +46,7 @@ public class PCTransferHandler extends TransferHandler
         Point pt = support.getDropLocation().getDropPoint();
         try
         {
+            if(!support.isDrop()) return false;
             if (support.isDataFlavorSupported(SecoTransferable.FLAVOR))
             {
                 if (is_nested(support)) return false;
