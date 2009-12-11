@@ -761,7 +761,7 @@ public class GUIHelper
             CellUtils.restoreCell(h);
         CellGroupMember child = ThisNiche.graph.get(h);
         child.setVisual(NBUIVisual.getHandle());
-        child.setAttribute(VisualAttribs.rect, new Rectangle(100, 100, 300, 200));
+        child.setAttribute(VisualAttribs.rect, new Rectangle(100, 100, 500, 400));
         if(!CellUtils.isShowTitle(child))
            CellUtils.toggleShowTitle(child);
         group.insert(group.getArity(), h);
