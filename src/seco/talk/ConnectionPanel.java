@@ -7,7 +7,13 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.border.BevelBorder;
 
@@ -18,6 +24,13 @@ import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+
+import seco.notebook.ScriptletAction;
+import seco.notebook.gui.DialogDescriptor;
+import seco.notebook.gui.DialogDisplayer;
+import seco.notebook.gui.GUIUtilities;
+import seco.notebook.gui.ToolbarButton;
+import seco.notebook.util.IconManager;
 
 /**
  * <p>
@@ -35,7 +48,7 @@ public class ConnectionPanel extends BaseChatPanel implements
     private static final String LABEL_CONNECTING = "Connecting...";
     private static final String LABEL_DISCONNECT = "Disconnect";
     private static final String LABEL_DISCONNECTING = "Disconnecting...";
-   
+
     private JButton connectButton = null;
     private PeerList peerList;
 
@@ -94,11 +107,10 @@ public class ConnectionPanel extends BaseChatPanel implements
 
         }
     }
-    
+
     void updateState()
     {
-        if(getConnectionContext().isConnected())
-            connected(getConnectionContext());
+        if (getConnectionContext().isConnected()) connected(getConnectionContext());
         else
             disconnected(getConnectionContext());
     }
@@ -114,35 +126,16 @@ public class ConnectionPanel extends BaseChatPanel implements
         peerList = new PeerList(getPeerID());
         peerList.initComponents();
         add(peerList, BorderLayout.CENTER);
-       
-       // JToolBar toolbar = new JToolBar();
-        //add(toolbar, BorderLayout.SOUTH);
+
+        add_status_bar();
     }
-    
-//    private void add_status_bar()
-//    {
-//        JPanel status = new JPanel(new GridBagLayout());
-//        GridBagConstraints gbg = new GridBagConstraints();
-//        gbg.gridy = 0;  gbg.gridx = 0;
-//        gbg.fill = GridBagConstraints.HORIZONTAL;
-//        gbg.anchor = GridBagConstraints.WEST;
-//        gbg.weightx = 1.0;
-//        
-//        status.add(statusLabel, gbg);
-//        //status.add(statusLabel, BorderLayout.WEST);
-//        if(HGVKit.isEmbeded())
-//        {
-//            gbg = new GridBagConstraints();
-//            gbg.gridy = 0;
-//            gbg.gridx = 1;
-//            gbg.insets = new Insets(0, 0, 0, 5);
-//            gbg.anchor = GridBagConstraints.EAST;
-//            //status.add(statusLabel, BorderLayout.EAST);
-//            JToolBar bar = new JToolBar();
-//            status.add(bar, gbg);
-//            add(status, BorderLayout.SOUTH);
-//        }
-//    }
+
+    private void add_status_bar()
+    {
+        StatusPanel status = new StatusPanel();
+        status.init();
+        add(status, BorderLayout.SOUTH);
+    }
 
     public boolean isConnected()
     {
@@ -187,8 +180,8 @@ public class ConnectionPanel extends BaseChatPanel implements
         getPeerList().getListModel().removeAllElements();
         fetchRooms();
         for (HGPeerIdentity i : ctx.getPeer().getConnectedPeers())
-            if(getConnectionContext().isInRoster(i))    
-               getPeerList().getListModel().addElement(i);
+            if (getConnectionContext().isInRoster(i))
+                getPeerList().getListModel().addElement(i);
         getPeerList().setPeerID(getPeerID());
         ctx.getPeer().addPeerPresenceListener(this);
     }
@@ -213,8 +206,8 @@ public class ConnectionPanel extends BaseChatPanel implements
     @Override
     public void peerJoined(HGPeerIdentity target)
     {
-        if(getConnectionContext().isInRoster(target))
-           getPeerList().getListModel().addElement(target);
+        if (getConnectionContext().isInRoster(target))
+            getPeerList().getListModel().addElement(target);
     }
 
     @Override
@@ -243,47 +236,48 @@ public class ConnectionPanel extends BaseChatPanel implements
             e.printStackTrace();
         }
     }
-    
-//    private Roster getRoster()
-//    {
-//        XMPPPeerInterface peerInterface = (XMPPPeerInterface) getThisPeer()
-//        .getPeerInterface();
-//        return peerInterface.getConnection().getRoster();
-//    }
-//    
-//    public void entriesAdded(Collection<String> addresses) 
-//    {
-//        System.out.println("New friends: " + addresses);
-//        for(String user: addresses)
-//        {
-//            Presence bestPresence = getRoster().getPresence(user);                   
-//            if (bestPresence.getType() == Presence.Type.available)
-//               peerJoined(user);
-//        }
-//    }
-//    public void entriesDeleted(Collection<String> addresses) 
-//    {
-//        System.out.println("Friends left: " + addresses);
-//        for(String user: addresses)
-//           peerLeft(user);
-//    }
-//    public void entriesUpdated(Collection<String> addresses) 
-//    {
-//        //System.out.println("friends changed: " + addresses);
-//    }
-//    public void presenceChanged(Presence presence) 
-//    {
-//        String user = presence.getFrom();
-//
-//        System.out.println("Presence changed: " + presence.getFrom() + " " + presence);                    
-//        Presence bestPresence = getRoster().getPresence(user);                   
-//        if (bestPresence.getType() == Presence.Type.available)
-//            peerJoined(user);
-//        else if (bestPresence.getType() == Presence.Type.unavailable)
-//        {
-//            peerLeft(user);                        
-//        }                        
-//    }
+
+    // private Roster getRoster()
+    // {
+    // XMPPPeerInterface peerInterface = (XMPPPeerInterface) getThisPeer()
+    // .getPeerInterface();
+    // return peerInterface.getConnection().getRoster();
+    // }
+    //    
+    // public void entriesAdded(Collection<String> addresses)
+    // {
+    // System.out.println("New friends: " + addresses);
+    // for(String user: addresses)
+    // {
+    // Presence bestPresence = getRoster().getPresence(user);
+    // if (bestPresence.getType() == Presence.Type.available)
+    // peerJoined(user);
+    // }
+    // }
+    // public void entriesDeleted(Collection<String> addresses)
+    // {
+    // System.out.println("Friends left: " + addresses);
+    // for(String user: addresses)
+    // peerLeft(user);
+    // }
+    // public void entriesUpdated(Collection<String> addresses)
+    // {
+    // //System.out.println("friends changed: " + addresses);
+    // }
+    // public void presenceChanged(Presence presence)
+    // {
+    // String user = presence.getFrom();
+    //
+    // System.out.println("Presence changed: " + presence.getFrom() + " " +
+    // presence);
+    // Presence bestPresence = getRoster().getPresence(user);
+    // if (bestPresence.getType() == Presence.Type.available)
+    // peerJoined(user);
+    // else if (bestPresence.getType() == Presence.Type.unavailable)
+    // {
+    // peerLeft(user);
+    // }
+    // }
 
     public static class ButtonListener implements ActionListener
     {
@@ -300,11 +294,10 @@ public class ConnectionPanel extends BaseChatPanel implements
 
         public void actionPerformed(ActionEvent ev)
         {
-            if (panel.getConnectButton().getText().equals(LABEL_CONNECT)) 
-            	panel.connect();
+            if (panel.getConnectButton().getText().equals(LABEL_CONNECT)) panel
+                    .connect();
             else if (panel.getConnectButton().getText()
-                    .equals(LABEL_DISCONNECT)) 
-            	panel.disconnect();
+                    .equals(LABEL_DISCONNECT)) panel.disconnect();
         }
 
         public ConnectionPanel getPanel()
@@ -316,5 +309,115 @@ public class ConnectionPanel extends BaseChatPanel implements
         {
             this.panel = panel;
         }
+    }
+
+    public static class StatusPanel extends JPanel
+    {
+        private JLabel statusLabel;
+        private JToolBar bar;
+        
+        public StatusPanel()
+        {
+        }
+
+        void init()
+        {
+            setLayout(new GridBagLayout());
+            GridBagConstraints gbg = new GridBagConstraints();
+            gbg.gridy = 0;
+            gbg.gridx = 0;
+            gbg.fill = GridBagConstraints.HORIZONTAL;
+            gbg.anchor = GridBagConstraints.WEST;
+            gbg.weightx = 1.0;
+            statusLabel = new JLabel();
+            add(statusLabel, gbg);
+            
+            gbg = new GridBagConstraints();
+            gbg.gridy = 0;
+            gbg.gridx = 1;
+            gbg.insets = new Insets(0, 0, 0, 0);
+            gbg.anchor = GridBagConstraints.EAST;
+            // status.add(statusLabel, BorderLayout.EAST);
+            bar = new JToolBar();
+            bar.add(new ToolbarButton(new AddToRoaster(), "Add To Roaster"));
+            bar.add(new ToolbarButton(new RemoveFromRoaster(), "Remove From Roaster"));
+            add(bar, gbg);
+        }
+        
+        public void setMessage(String text)
+        {
+            getStatusLabel().setText(text);
+        }
+
+        public JLabel getStatusLabel()
+        {
+            return statusLabel;
+        }
+
+        public void setStatusLabel(JLabel statusLabel)
+        {
+            this.statusLabel = statusLabel;
+        }
+
+        public JToolBar getBar()
+        {
+            return bar;
+        }
+
+        public void setBar(JToolBar bar)
+        {
+            this.bar = bar;
+        }
+    }
+    
+    private static ConnectionPanel get_from_event(ActionEvent e)
+    {
+        Object o = e.getSource();
+        while(o instanceof JComponent)
+        {
+            o = ((JComponent) o).getParent();
+            if(o instanceof ConnectionPanel)
+                return (ConnectionPanel) o;
+        }
+        return null;
+    }
+    
+    static class AddToRoaster extends AbstractAction
+    {
+
+        public AddToRoaster()
+        {
+            putValue(Action.SMALL_ICON, IconManager.resolveIcon("add.gif"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            ConnectionPanel panel = get_from_event(e);
+            if(!panel.getConnectionContext().isConnected()) return;
+            RoasterDlg dlg = new RoasterDlg(panel.getConnectionContext(), true);
+            dlg.setTitle("Add To Roster");
+            dlg.setVisible(true);
+        }
+    }
+    
+    static class RemoveFromRoaster extends AbstractAction
+    {
+
+        public RemoveFromRoaster()
+        {
+            putValue(Action.SMALL_ICON, IconManager.resolveIcon("remove.gif"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            ConnectionPanel panel = get_from_event(e);
+            if(!panel.getConnectionContext().isConnected()) return;
+            RoasterDlg dlg = new RoasterDlg(panel.getConnectionContext(), false);
+            dlg.setTitle("Remove From Roster");
+            dlg.setVisible(true);
+        }
+        
     }
 }

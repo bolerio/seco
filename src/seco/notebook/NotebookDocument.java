@@ -1005,8 +1005,9 @@ public class NotebookDocument extends DefaultStyledDocument
                 super.remove(start, end - start - 1);
                 super.insertString(start, s, contentAttrSet);
                 supressEvents = false;
-                Log.Trace("remove - replace: " + start + " length: "
-                        + (end - start - 1) + ":" + s);
+                fireCaretMoved(res);
+                //Log.Trace("remove - replace: " + start + " length: "
+                //        + (end - start - 1) + ":" + s);
             }
         }
         finally

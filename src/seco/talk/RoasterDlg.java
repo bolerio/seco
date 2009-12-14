@@ -10,6 +10,7 @@ import java.util.Iterator;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -31,8 +32,7 @@ import org.jivesoftware.smackx.ReportedData;
 import org.jivesoftware.smackx.ReportedData.Row;
 import org.jivesoftware.smackx.search.UserSearchManager;
 
-//VS4E -- DO NOT REMOVE THIS LINE!
-public class RoasterPanel extends JPanel
+public class RoasterDlg extends JDialog
 {
 
     private static final long serialVersionUID = 1L;
@@ -50,12 +50,12 @@ public class RoasterPanel extends JPanel
     ConnectionContext ctx;
     boolean add_or_remove;
 
-    public RoasterPanel()
+    public RoasterDlg()
     {
         initComponents();
     }
 
-    public RoasterPanel(ConnectionContext conn, boolean add_or_remove)
+    public RoasterDlg(ConnectionContext conn, boolean add_or_remove)
     {
         this();
         ctx = conn;

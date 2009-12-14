@@ -435,7 +435,7 @@ public class PiccoloCanvas extends PSwingCanvas
     
     public PNode getFixedNode(int i)
     {
-       return getNodeLayer().getChild(i);
+       return getCamera().getChild(i);
     }
     
     public Collection<PSwingNode> getNodes()
