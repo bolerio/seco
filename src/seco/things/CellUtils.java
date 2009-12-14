@@ -845,19 +845,24 @@ public class CellUtils
     {
         HGHandle h = null;
         HGTypeSystem ts = ThisNiche.graph.getTypeSystem();
+        ClassLoader save = Thread.currentThread().getContextClassLoader();
         try
         {
+            Thread.currentThread().setContextClassLoader(ThisNiche.getTopContext()
+                    .getClassLoader());
+            ThisNiche.graph.getTypeSystem().setClassLoader(ThisNiche.getTopContext()
+                    .getClassLoader());
             if (o instanceof Component && o instanceof Serializable
                     && !(o instanceof NotebookUI))
             {
-                Object prop = null;
+                //Object prop = null;
                 //remove added by Piccolo PSwingNode, which breaks serialization
-                if (o instanceof JComponent)
-                    prop = ((JComponent) o)
-                            .getClientProperty(PSwing.PSWING_PROPERTY);
-                if (prop != null)
-                    ((JComponent) o).putClientProperty(PSwing.PSWING_PROPERTY,
-                            null);
+                //if (o instanceof JComponent)
+                //    prop = ((JComponent) o)
+                //            .getClientProperty(PSwing.PSWING_PROPERTY);
+                //if (prop != null)
+                //    ((JComponent) o).putClientProperty(PSwing.PSWING_PROPERTY,
+                //            null);
                 try
                 {
                     h = ThisNiche.graph.add(o);
@@ -868,13 +873,13 @@ public class CellUtils
                     HGHandle t = ts.getTypeHandle(Serializable.class);
                     h = ThisNiche.graph.add(o, t);
                 }
-                finally
-                {
+                //finally
+                //{
                     //restore PSwingNode
-                    if (prop != null)
-                        ((JComponent) o).putClientProperty(
-                                PSwing.PSWING_PROPERTY, prop);
-                }
+                //    if (prop != null)
+               //         ((JComponent) o).putClientProperty(
+               //                 PSwing.PSWING_PROPERTY, prop);
+               // }
             }
             else
                 h = ThisNiche.graph.add(o);
@@ -885,6 +890,10 @@ public class CellUtils
                     + ex);
             ex.printStackTrace();
             h = ThisNiche.graph.add(ex.toString());
+        }finally
+        {
+            Thread.currentThread().setContextClassLoader(save);
+            ThisNiche.graph.getTypeSystem().setClassLoader(save);
         }
         return h;
     }
