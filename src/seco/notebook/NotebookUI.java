@@ -425,6 +425,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         CellGroupMember nb = NotebookDocument.getNBElement(el);
         if (!(nb instanceof Cell)) return;
         nb.setAttribute(XMLConstants.ATTR_ENGINE, engine);
+        if("html".equals(engine))
+            nb.setAttribute(XMLConstants.ATTR_HTML, true);
         SwingUtilities.invokeLater(new Runnable() {
             public void run()
             {

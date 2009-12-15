@@ -590,7 +590,8 @@ public class NotebookEditorKit extends StyledEditorKit
             Caret caret = ui.getCaret();
             int dot = caret.getDot();
             int mark = caret.getMark();
-            if (doc.isOutputCell(dot - 1) || doc.isInsertionPoint(dot - 1))
+            if (doc.isOutputCell(dot - 1) || doc.isInsertionPoint(dot - 1)
+                    || doc.isCellHandle(dot-1))
             {
                 UIManager.getLookAndFeel().provideErrorFeedback(ui);
                 return;

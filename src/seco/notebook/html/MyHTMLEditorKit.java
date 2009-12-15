@@ -27,10 +27,12 @@ import javax.swing.UIManager;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.LabelView;
 import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.Position;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledEditorKit;
@@ -988,9 +990,18 @@ public class MyHTMLEditorKit extends HTMLEditorKit
                     }
                 }
                 doc.remove(dot - delChars, delChars);
-                HTMLUtils.setCaretPosInAWT(editor, dot - 1);
+                //setCaretPosInAWT0(editor, dot - 1);
             }
         }
+        
+//        static void setCaretPosInAWT0(final HTMLEditor editor, final int pos){
+//            
+//            SwingUtilities.invokeLater(new Runnable(){
+//                public void run(){
+//                    ((DefaultCaret)editor.getCaret()).setDot(pos, Position.Bias.Backward); //.setCaretPosition(pos);
+//                }
+//            });
+//        }
 
         private boolean special_deal(final HTMLEditor editor, final int dot)
                 throws Exception

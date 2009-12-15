@@ -15,6 +15,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
@@ -164,6 +165,11 @@ public class HtmlView extends HidableComponentView
         {
             return (NotebookUI) HtmlView.this.getContainer();
         }
+        
+        public void setCaretPosition(int position) {
+            if(position == this.getCaretPosition()) return;
+            super.setCaretPosition(position);
+        }
 
         protected class MyPopupListener extends PopupListener
         {
@@ -173,20 +179,31 @@ public class HtmlView extends HidableComponentView
                 {
                     NotebookUI ui = ((InnerHTMLEditor) e.getComponent())
                             .getNotebookUI();
-                    if (popupMenu.isVisible())
+                    if (getPopup().isVisible())
                     {
-                        popupMenu.setVisible(false);
+                        getPopup().setVisible(false);
                     } else
                     {
                         int off = ui.viewToModel(e.getPoint());
+                        //getNotebookUI().setCaretPosition(
+                        //        getElement().getStartOffset() + 1);
                         if (off != -1) ui.setCaretPosition(off);
-                        popupMenu.update();
+                        getPopup().update();
                         Frame f = GUIUtilities.getFrame(e.getComponent());
-                        Point pt = SwingUtilities.convertPoint(
-                                e.getComponent(), e.getX(), e.getY(), f);
-                        popupMenu.show(f, pt.x, pt.y);
+                        Point pt = getPoint(e, f);
+                        getPopup().show(f, pt.x, pt.y);
                     }
                 }
+            }
+            
+            private Point getPoint(MouseEvent e, Frame f)
+            {
+                Point pt = SwingUtilities.convertPoint(getNotebookUI(), e.getX(),
+                        e.getY(), f);
+                if (e.getComponent() instanceof JComponent)
+                    return GUIHelper
+                            .computePoint(getNotebookUI(), pt);
+                return pt;
             }
         }
 
@@ -202,10 +219,10 @@ public class HtmlView extends HidableComponentView
                 // endpos and down arrow is pressed
                 boolean spec_down = realDirection == SwingConstants.SOUTH
                         && lastDot == dot;
-                // System.out.println("InnerHTMLNavigationFilter-setDot: " + dot
-                // + ":" + lastDot
-                // + ":" + getDocument().getLength() + ":" + fb + ":" + bias +
-                // ":" + realDirection);
+                 System.out.println("InnerHTMLNavigationFilter-setDot: " + dot
+                 + ":" + lastDot
+                 + ":" + getDocument().getLength() + ":" + fb + ":" + bias +
+                 ":" + realDirection);
 
                 InnerHTMLEditor ed = InnerHTMLEditor.this;
                 if ((dot == ed.getDocument().getLength() && lastDot == dot)

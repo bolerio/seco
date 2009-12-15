@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
 import javax.swing.JOptionPane;
 
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGQuery;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;

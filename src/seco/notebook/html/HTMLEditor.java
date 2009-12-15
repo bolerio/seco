@@ -53,12 +53,15 @@ import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 import javax.swing.undo.UndoManager;
 
+import seco.notebook.NotebookEditorKit;
+import seco.notebook.XMLConstants;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.UpdatablePopupMenu;
 import seco.notebook.gui.menu.CellGroupPropsProvider;
 import seco.notebook.gui.menu.CellLangProvider;
 import seco.notebook.gui.menu.CellPropsProvider;
 import seco.notebook.gui.menu.EnhancedMenu;
+import seco.things.CellUtils;
 
 
 public class HTMLEditor extends JTextPane 
@@ -80,7 +83,6 @@ public class HTMLEditor extends JTextPane
 		// putClientProperty(W3C_LENGTH_UNITS, true);
 		setMargin(new Insets(0, 3, 3, 3));
 		installKeyActions();
-		createPopup();
 		setTransferHandler(new HTMLTransferHandler());
 		setDragEnabled(true);
 		getDocument().addUndoableEditListener(new UndoableEditListener() {
@@ -841,18 +843,28 @@ public class HTMLEditor extends JTextPane
 		setCaretPosition(pos);
 	}
 
-	private void createPopup()
+	protected static UpdatablePopupMenu getPopup(){
+	    if (popupMenu == null)
+	        createPopup();
+	    return popupMenu;
+	}
+	
+	private static void createPopup()
 	{
 		if (popupMenu != null) return;
 		popupMenu = new UpdatablePopupMenu();
-		MyHTMLEditorKit htmlKit = getMyEditorKit();
-		popupMenu.add(new EnhancedMenu("Input Type", new CellLangProvider()));
-		popupMenu.add(new JMenuItem(htmlKit.getActionByName("Cut")));
-		popupMenu.add(new JMenuItem(htmlKit.getActionByName("Copy")));
-		popupMenu.add(new JMenuItem(htmlKit.getActionByName("Paste")));
-		popupMenu.addSeparator();
-		popupMenu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
-		popupMenu.add(new EnhancedMenu("Cell Group", new CellGroupPropsProvider()));
+		MyHTMLEditorKit htmlKit = new MyHTMLEditorKit();
+		//popupMenu.add(new EnhancedMenu("Input Type", new CellLangProvider()));
+		popupMenu.add(new JMenuItem(htmlKit
+                .getActionByName(MyHTMLEditorKit.sourceAction)));
+//        popupMenu.addSeparator();
+//   		NotebookEditorKit kit = new NotebookEditorKit();
+//		popupMenu.add(new JMenuItem(kit.getActionByName("Cut")));
+//		popupMenu.add(new JMenuItem(kit.getActionByName("Copy")));
+//		popupMenu.add(new JMenuItem(kit.getActionByName("Paste")));
+		//popupMenu.addSeparator();
+		//popupMenu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
+		//popupMenu.add(new EnhancedMenu("Cell Group", new CellGroupPropsProvider()));
 		popupMenu.addSeparator();
 		JMenu menu = new JMenu("Table");
 		menu.add(new JMenuItem(htmlKit
@@ -891,7 +903,7 @@ public class HTMLEditor extends JTextPane
 		//popupMenu.add(new JMenuItem(htmlKit
 		//		.getActionByName(MyHTMLEditorKit.sourceAction)));
 	}
-
+	
 	public AttributeSet getMaxAttributes(String elemName)
 	{
 		Element e = getDoc().getCharacterElement(getSelectionStart());
@@ -979,18 +991,18 @@ public class HTMLEditor extends JTextPane
 		{
 			if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e))
 			{
-				if (popupMenu.isVisible())
+				if (getPopup().isVisible())
 				{
-					popupMenu.setVisible(false);
+				    getPopup().setVisible(false);
 				} else
 				{
 					//int off = viewToModel(e.getPoint());
 					//if(off != -1) setCaretPosition(off);
-					popupMenu.update();
+				    getPopup().update();
 					Frame f = GUIUtilities.getFrame(e.getComponent());
 					Point pt = SwingUtilities.convertPoint(
 							e.getComponent(), e.getX(), e.getY(), f);
-					popupMenu.show(f, pt.x, pt.y);
+					getPopup().show(f, pt.x, pt.y);
 				}
 			}
 		}
