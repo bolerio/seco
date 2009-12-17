@@ -9,10 +9,8 @@ package seco;
 
 import java.util.HashMap;
 import java.util.List;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
@@ -108,10 +106,10 @@ public final class ThisNiche
             EvaluationContext result = allContexts.get(rcContextHandle);
             if (result == null)
             {
-                graph.freeze(rcContextHandle);
+                graph.freeze(rcContextHandle);                
                 result = new EvaluationContext(rcContextHandle);
-                initEvaluationContext(result);
-                allContexts.put(rcContextHandle, result);
+                allContexts.put(rcContextHandle, result);                
+                initEvaluationContext(result);                
             }
             return result;
         }
@@ -127,9 +125,19 @@ public final class ThisNiche
      */
     static void initEvaluationContext(EvaluationContext ctx)
     {
-    	List<SEDescriptor> allLanguages = hg.getAll(graph, hg.type(SEDescriptor.class));
-    	for (SEDescriptor desc : allLanguages)
-    		ctx.addLanguage(desc);
+    	List<HGHandle> allLanguages = hg.findAll(graph, hg.type(SEDescriptor.class));
+    	for (HGHandle h : allLanguages)
+    	{
+    		HGHandle languageContext = findContextLink(h);
+    		if (languageContext == null)
+    			ctx.addLanguage((SEDescriptor)graph.get(h));
+    		else
+    		{
+    			HGHandle ctxHandle = ((ContextLink)graph.get(languageContext)).getContext();
+    			if (allContexts.get(ctxHandle) == ctx)
+    				ctx.addLanguage((SEDescriptor)graph.get(h));
+    		}
+    	}
         ctx.onLoad();
     }
 

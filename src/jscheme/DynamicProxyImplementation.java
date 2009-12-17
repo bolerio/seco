@@ -54,9 +54,9 @@ public class DynamicProxyImplementation implements InvocationHandler
 			throw new UnsupportedOperationException("Can't find method " + method + " in proxy.");
 		try
 		{
-			if (method.getName().equals("getTableCellEditorComponent"))
-				return generic.apply(args);
-			else
+//			if (method.getName().equals("stopCellEditing"))
+//				return generic.apply(args);
+//			else
 				return generic.apply(args);
 		}
 		catch (Throwable t)
@@ -74,8 +74,13 @@ public class DynamicProxyImplementation implements InvocationHandler
 	{
 		LexicalEnvironment lexenv = new LexicalEnvironment(variables, values, LexicalEnvironment.NULLENV);
 	    Object analyzedCode = Scheme.currentEvaluator().analyze(lambdaExpression,
-	    		Scheme.getInteractionEnvironment(),lexenv);
-	    Closure cl = (Closure)Scheme.currentEvaluator().execute(analyzedCode,LexicalEnvironment.NULLENV);		
+	    														Scheme.getInteractionEnvironment(),lexenv);
+	    Closure cl = (Closure)Scheme.currentEvaluator().execute(analyzedCode,lexenv);
+	    for (int i = 0; i < values.length; i++)
+	    {
+	    	Object code = Scheme.currentEvaluator().analyze(values[i], Scheme.getInteractionEnvironment(),lexenv);	    	
+	    	values[i] = Scheme.currentEvaluator().execute(code,lexenv);
+	    }
 		return Generic.defineMethod(name, types, cl.copy(lexenv));
 	}
 	

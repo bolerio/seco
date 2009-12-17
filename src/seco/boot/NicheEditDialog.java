@@ -166,6 +166,7 @@ public class NicheEditDialog extends javax.swing.JDialog {
                 .addContainerGap(25, Short.MAX_VALUE))
         );
         pack();
+        txtNicheName.requestFocusInWindow();
     }// </editor-fold>//GEN-END:initComponents
 
     private void directorySelected(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_directorySelected

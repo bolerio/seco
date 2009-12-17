@@ -1,6 +1,7 @@
 package seco.things;
 
 import java.awt.Color;
+
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.io.Serializable;
@@ -11,8 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
 import org.hypergraphdb.HGHandle;
@@ -52,7 +51,6 @@ import seco.notebook.StyleAttribs;
 import seco.notebook.StyleType;
 import seco.notebook.XMLConstants;
 import edu.umd.cs.piccolo.util.PAffineTransform;
-import edu.umd.cs.piccolox.pswing.PSwing;
 
 public class CellUtils
 {
@@ -362,14 +360,16 @@ public class CellUtils
         // }
     }
 
-    public static NBStyle getStyle(CellGroupMember c, StyleType type)
+    @SuppressWarnings("unchecked")
+	public static NBStyle getStyle(CellGroupMember c, StyleType type)
     {
         Map<StyleType, NBStyle> s = (Map<StyleType, NBStyle>) c
                 .getAttribute(XMLConstants.CELL_STYLE);
         return s != null ? s.get(type) : styles.get(type);
     }
 
-    public static void addStyle(CellGroupMember c, NBStyle style)
+    @SuppressWarnings("unchecked")
+	public static void addStyle(CellGroupMember c, NBStyle style)
     {
         Map<StyleType, NBStyle> s = (Map<StyleType, NBStyle>) c
                 .getAttribute(XMLConstants.CELL_STYLE);
@@ -849,10 +849,7 @@ public class CellUtils
         ClassLoader save = Thread.currentThread().getContextClassLoader();
         try
         {
-            Thread.currentThread().setContextClassLoader(ThisNiche.getTopContext()
-                    .getClassLoader());
-            ThisNiche.graph.getTypeSystem().setClassLoader(ThisNiche.getTopContext()
-                    .getClassLoader());
+            Thread.currentThread().setContextClassLoader(ThisNiche.getTopContext().getClassLoader());
             if (o instanceof Component && o instanceof Serializable
                     && !(o instanceof NotebookUI))
             {
@@ -889,10 +886,10 @@ public class CellUtils
                     + ex);
             ex.printStackTrace();
             h = ThisNiche.graph.add(ex.toString());
-        }finally
+        }
+        finally
         {
             Thread.currentThread().setContextClassLoader(save);
-            ThisNiche.graph.getTypeSystem().setClassLoader(save);
         }
         return h;
     }

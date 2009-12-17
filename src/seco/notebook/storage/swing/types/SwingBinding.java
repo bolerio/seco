@@ -125,7 +125,7 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
         if (result == null)
         {
             final Record record = new SwingRecord(typeHandle, instance);
-            storeBean(instance, record);
+           	storeBean(instance, record);
             result = hgType.store(record);
         }
         return result;
