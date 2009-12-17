@@ -1,6 +1,7 @@
 package seco.talk;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -397,6 +398,7 @@ public class ConnectionPanel extends BaseChatPanel implements
             if(!panel.getConnectionContext().isConnected()) return;
             RoasterDlg dlg = new RoasterDlg(panel.getConnectionContext(), true);
             dlg.setTitle("Add To Roster");
+            dlg.setSize(new Dimension(420, 400));
             dlg.setVisible(true);
         }
     }
@@ -416,6 +418,7 @@ public class ConnectionPanel extends BaseChatPanel implements
             if(!panel.getConnectionContext().isConnected()) return;
             RoasterDlg dlg = new RoasterDlg(panel.getConnectionContext(), false);
             dlg.setTitle("Remove From Roster");
+            dlg.setSize(new Dimension(420, 400));
             dlg.setVisible(true);
         }
         

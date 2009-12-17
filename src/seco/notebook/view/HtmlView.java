@@ -219,10 +219,10 @@ public class HtmlView extends HidableComponentView
                 // endpos and down arrow is pressed
                 boolean spec_down = realDirection == SwingConstants.SOUTH
                         && lastDot == dot;
-                 System.out.println("InnerHTMLNavigationFilter-setDot: " + dot
-                 + ":" + lastDot
-                 + ":" + getDocument().getLength() + ":" + fb + ":" + bias +
-                 ":" + realDirection);
+//                 System.out.println("InnerHTMLNavigationFilter-setDot: " + dot
+//                 + ":" + lastDot
+//                 + ":" + getDocument().getLength() + ":" + fb + ":" + bias +
+//                 ":" + realDirection);
 
                 InnerHTMLEditor ed = InnerHTMLEditor.this;
                 if ((dot == ed.getDocument().getLength() && lastDot == dot)

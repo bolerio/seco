@@ -3,11 +3,6 @@ package seco.gui;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
@@ -39,8 +34,7 @@ public abstract class TopFrame extends JFrame
             TopFrame.class.getResource("/seco/notebook/images/nologo.jpg"));;
 
     private String original_title;
-    boolean blinking = false;
-
+    
     public static TopFrame getInstance()
     {
         if (instance == null)
@@ -60,9 +54,9 @@ public abstract class TopFrame extends JFrame
                 @Override
                 public void windowGainedFocus(WindowEvent e)
                 {
-                    //System.out.println("TopFrame - windowGainedFocus");
                     setIconImage(LOGO_IMAGE);
                     setTitle(original_title);
+                    System.out.println("TopFrame - windowGainedFocus: " + original_title);
                 }
 
                 @Override
@@ -75,31 +69,52 @@ public abstract class TopFrame extends JFrame
 
     protected void initFrame()
     {
-        this.setTitle("[" + ThisNiche.graph.getLocation() + "] ");
+        setTitle("[" + ThisNiche.graph.getLocation() + "] ");
     }
     
     @Override
     public void setTitle(String title)
     {
         super.setTitle(title);
-        if(!blinking) original_title = title; 
+        if(!is_blinking()) 
+        {
+            original_title = title;
+            if(original_title.startsWith("New"))
+                Thread.dumpStack();
+        }
     }
 
     public void blink(String message)
     {
         if(/*true ||*/ isFocused()) return;
         //original_title = getTitle();
-        blinking = true;
+        //blinking = true;
         Toolkit.getDefaultToolkit().beep();
         flash(message, 600, 300, 5);
+    }
+    
+    private boolean blink = false;
+    
+    //synchronized 
+    boolean is_blinking()
+    {
+        return blink;
+    }
+    
+    //synchronized 
+    void set_blinking(boolean blink)
+    {
+        this.blink = blink;
     }
 
     private void do_flash(String message, boolean on)
     {
+        set_blinking(true);
         if (!on)
         {
             setIconImage(LOGO_IMAGE);
             setTitle(original_title);
+            set_blinking(false);
             return;
         }
 
@@ -113,6 +128,7 @@ public abstract class TopFrame extends JFrame
             setIconImage(LOGO_IMAGE);
             setTitle(original_title);
         }
+        set_blinking(false);
     }
 
    // protected Thread flashThread;  
@@ -133,7 +149,6 @@ public abstract class TopFrame extends JFrame
                     }
                     // turn the flash off
                     do_flash(message, true);
-                    blinking = false;
                 }
                 catch (Exception ex)
                 {
