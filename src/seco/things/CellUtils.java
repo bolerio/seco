@@ -39,6 +39,7 @@ import seco.events.handlers.CopyCellTextChangeHandler;
 import seco.events.handlers.CopyEvalCellHandler;
 import seco.gui.JComponentVisual;
 import seco.gui.NBUIVisual;
+import seco.gui.PSwingNode;
 import seco.gui.TabbedPaneVisual;
 import seco.gui.VisualAttribs;
 import seco.gui.VisualsManager;
@@ -855,14 +856,13 @@ public class CellUtils
             if (o instanceof Component && o instanceof Serializable
                     && !(o instanceof NotebookUI))
             {
-                //Object prop = null;
+                PSwingNode node = null;
                 //remove added by Piccolo PSwingNode, which breaks serialization
-                //if (o instanceof JComponent)
-                //    prop = ((JComponent) o)
-                //            .getClientProperty(PSwing.PSWING_PROPERTY);
-                //if (prop != null)
-                //    ((JComponent) o).putClientProperty(PSwing.PSWING_PROPERTY,
-                //            null);
+                if (o instanceof JComponent)
+                    node = (PSwingNode)((JComponent) o)
+                            .getClientProperty(PSwing.PSWING_PROPERTY);
+                if (node != null)
+                    node.prepareForSerialization();
                 try
                 {
                     h = ThisNiche.graph.add(o);
@@ -873,13 +873,12 @@ public class CellUtils
                     HGHandle t = ts.getTypeHandle(Serializable.class);
                     h = ThisNiche.graph.add(o, t);
                 }
-                //finally
-                //{
+                finally
+                {
                     //restore PSwingNode
-                //    if (prop != null)
-               //         ((JComponent) o).putClientProperty(
-               //                 PSwing.PSWING_PROPERTY, prop);
-               // }
+                    if (node != null)
+                        node.restoreAfterSerialization();
+                }
             }
             else
                 h = ThisNiche.graph.add(o);

@@ -4,9 +4,16 @@
 package seco.gui;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -32,18 +39,23 @@ public class PSwingNode extends PSwing implements Serializable
     private static final long serialVersionUID = 4732523747800268384L;
     public boolean deleteable;
     private HGHandle handle;
-
+    private PropertyChangeListener componentListener;
+    
     public PSwingNode(PSwingCanvas canvas, JComponent component, HGHandle handle)
     {
         super(component);
         this.handle = handle;
+        //remove the annonimous listenr add by PSwing
+        for(PropertyChangeListener l :component.getPropertyChangeListeners())
+           if(l.getClass().getName().startsWith("edu.umd.cs.piccolox.pswing.PSwing$"))
+           {
+              component.removePropertyChangeListener(l);
+              break;
+           }
+        componentListener = new CompListener(this);
+        component.addPropertyChangeListener(componentListener);
     }
     
-    public PSwingNode(PSwingCanvas canvas, JComponent component)
-    {
-        super(component);
-    }
-
     public boolean isDeleteable()
     {
         return deleteable;
@@ -216,5 +228,85 @@ public class PSwingNode extends PSwing implements Serializable
             ClassNotFoundException
     {
 
+    }
+    
+    //strips the PSwingNode stuff which breaks the proper serialization    
+    public void prepareForSerialization()
+    {
+        getComponent().putClientProperty(PSWING_PROPERTY, null );
+        getComponent().removePropertyChangeListener(componentListener);
+        deal_with_listeners( getComponent(), false);
+    }
+    
+    //restore the PSwingNode stuff removed in prepareForSerialization()
+    public void restoreAfterSerialization()
+    {
+        getComponent().putClientProperty(PSWING_PROPERTY, this );
+        getComponent().addPropertyChangeListener(componentListener);
+        deal_with_listeners(getComponent(), true);
+    }
+    
+    private void deal_with_listeners(Component c, boolean add_or_remove ) 
+    {
+        Component[] children = null;
+        if( c instanceof Container ) {
+            children = ( (Container)c ).getComponents();
+        }
+
+        if( children != null ) {
+            for( int j = 0; j < children.length; j++ ) {
+                deal_with_listeners( children[j], add_or_remove);
+            }
+        }
+
+        if( c instanceof JComponent ) {
+            if(add_or_remove){
+               c.addPropertyChangeListener( "font", this );
+               c.addComponentListener(new CompBoundsListener(this));
+            }else
+            {
+                c.removePropertyChangeListener( "font", this );
+                for(ComponentListener cl : c.getComponentListeners()) 
+                    if(cl instanceof CompBoundsListener) 
+                    {
+                        c.removeComponentListener(cl);
+                        break;
+                    }
+            }
+        }
+    }
+    
+    static class CompListener implements PropertyChangeListener
+    {
+        private PSwingNode node;
+
+        public CompListener(PSwingNode node)
+        {
+            super();
+            this.node = node;
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt)
+        {
+            node.reshape();
+        }
+   }
+    
+     static class CompBoundsListener extends ComponentAdapter 
+     {
+        private PSwingNode node;
+        public CompBoundsListener(PSwingNode node)
+        {
+            this.node = node;
+        }
+
+        public void componentResized( ComponentEvent e ) {
+            node.computeBounds();
+        }
+
+        public void componentShown( ComponentEvent e ) {
+            node.computeBounds();
+        }
     }
 }
