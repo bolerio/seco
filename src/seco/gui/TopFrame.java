@@ -76,45 +76,22 @@ public abstract class TopFrame extends JFrame
     public void setTitle(String title)
     {
         super.setTitle(title);
-        if(!is_blinking()) 
-        {
-            original_title = title;
-            if(original_title.startsWith("New"))
-                Thread.dumpStack();
-        }
     }
 
     public void blink(String message)
     {
-        if(/*true ||*/ isFocused()) return;
-        //original_title = getTitle();
-        //blinking = true;
+        if(isFocused()) return;
+        original_title = getTitle();
         Toolkit.getDefaultToolkit().beep();
-        flash(message, 600, 300, 5);
+        flash(message, 600, 300, 6);
     }
     
-    private boolean blink = false;
-    
-    //synchronized 
-    boolean is_blinking()
-    {
-        return blink;
-    }
-    
-    //synchronized 
-    void set_blinking(boolean blink)
-    {
-        this.blink = blink;
-    }
-
     private void do_flash(String message, boolean on)
     {
-        set_blinking(true);
         if (!on)
         {
             setIconImage(LOGO_IMAGE);
             setTitle(original_title);
-            set_blinking(false);
             return;
         }
 
@@ -128,7 +105,6 @@ public abstract class TopFrame extends JFrame
             setIconImage(LOGO_IMAGE);
             setTitle(original_title);
         }
-        set_blinking(false);
     }
 
    // protected Thread flashThread;  
