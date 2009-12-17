@@ -69,7 +69,8 @@ public abstract class TopFrame extends JFrame
 
     protected void initFrame()
     {
-        setTitle("[" + ThisNiche.graph.getLocation() + "] ");
+        original_title = "[" + ThisNiche.graph.getLocation() + "] ";
+        setTitle(original_title);
     }
     
     @Override
@@ -81,7 +82,7 @@ public abstract class TopFrame extends JFrame
     public void blink(String message)
     {
         if(isFocused()) return;
-        original_title = getTitle();
+        //original_title = getTitle();
         Toolkit.getDefaultToolkit().beep();
         flash(message, 600, 300, 6);
     }
