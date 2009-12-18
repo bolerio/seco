@@ -44,7 +44,6 @@ public abstract class TopFrame extends JFrame
 
     public TopFrame() throws HeadlessException
     {
-        setIconImage(LOGO_IMAGE);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         initFrame();
         Log.start();
@@ -54,9 +53,8 @@ public abstract class TopFrame extends JFrame
                 @Override
                 public void windowGainedFocus(WindowEvent e)
                 {
-                    setIconImage(LOGO_IMAGE);
-                    setTitle(original_title);
-                    System.out.println("TopFrame - windowGainedFocus: " + original_title);
+                    set_original_title_and_icon();
+                    //System.out.println("TopFrame - windowGainedFocus: " + original_title);
                 }
 
                 @Override
@@ -70,7 +68,7 @@ public abstract class TopFrame extends JFrame
     protected void initFrame()
     {
         original_title = "[" + ThisNiche.graph.getLocation() + "] ";
-        setTitle(original_title);
+        set_original_title_and_icon();
     }
     
     @Override
@@ -82,17 +80,15 @@ public abstract class TopFrame extends JFrame
     public void blink(String message)
     {
         if(isFocused()) return;
-        //original_title = getTitle();
         Toolkit.getDefaultToolkit().beep();
-        flash(message, 600, 300, 6);
+        flash(message, 1000, 500, 5);
     }
     
     private void do_flash(String message, boolean on)
     {
         if (!on)
         {
-            setIconImage(LOGO_IMAGE);
-            setTitle(original_title);
+            set_original_title_and_icon();
             return;
         }
 
@@ -103,12 +99,16 @@ public abstract class TopFrame extends JFrame
         }
         else
         {
-            setIconImage(LOGO_IMAGE);
-            setTitle(original_title);
+            set_original_title_and_icon();
         }
     }
+    
+    private void set_original_title_and_icon()
+    {
+        setIconImage(LOGO_IMAGE);
+        setTitle(original_title);
+    } 
 
-   // protected Thread flashThread;  
     private void flash(final String message, final int intratime, final int intertime, final int count)
     {
         Thread flashThread = new Thread(new Runnable() {

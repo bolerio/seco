@@ -192,6 +192,7 @@ public class ConnectionPanel extends BaseChatPanel implements
     {
         connectButton.setEnabled(true);
         connectButton.setText(LABEL_CONNECT);
+        getPeerList().getListModel().removeAllElements();
     }
 
     @Override

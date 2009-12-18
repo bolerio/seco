@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 import org.hypergraphdb.peer.HGPeerIdentity;
 
 public abstract class BaseChatPanel extends JPanel implements
-ConnectionContext.ConnectionListener
+ConnectionContext.ConnectionContextListener
 {
     public BaseChatPanel()
     {

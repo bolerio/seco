@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
 import org.hypergraphdb.HGHandle;
@@ -51,6 +53,7 @@ import seco.notebook.StyleAttribs;
 import seco.notebook.StyleType;
 import seco.notebook.XMLConstants;
 import edu.umd.cs.piccolo.util.PAffineTransform;
+import edu.umd.cs.piccolox.pswing.PSwing;
 
 public class CellUtils
 {

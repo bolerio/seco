@@ -21,6 +21,7 @@ import org.hypergraphdb.peer.HyperGraphPeer;
 import org.hypergraphdb.peer.serializer.JSONReader;
 import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
 import org.hypergraphdb.util.HGUtils;
+import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPException;
@@ -48,7 +49,7 @@ public class ConnectionContext
 
     private boolean inProgress;
     private HyperGraphPeer thisPeer;
-    private Set<ConnectionListener> listeners = new HashSet<ConnectionListener>();
+    private Set<ConnectionContextListener> listeners = new HashSet<ConnectionContextListener>();
 
     Map<HGPeerIdentity, TalkActivity> talks = Collections
             .synchronizedMap(new HashMap<HGPeerIdentity, TalkActivity>());
@@ -62,31 +63,31 @@ public class ConnectionContext
         this.config = config;
     }
 
-    public void addConnectionListener(ConnectionListener l)
+    public void addConnectionListener(ConnectionContextListener l)
     {
         listeners.add(l);
     }
 
-    public void removeConnectionListener(ConnectionListener l)
+    public void removeConnectionListener(ConnectionContextListener l)
     {
         listeners.remove(l);
     }
 
     private void fireConnected()
     {
-        for (ConnectionListener l : listeners)
+        for (ConnectionContextListener l : listeners)
             l.connected(this);
     }
 
     private void fireDisconnected()
     {
-        for (ConnectionListener l : listeners)
+        for (ConnectionContextListener l : listeners)
             l.disconnected(this);
     }
 
     private void fireJobStarted(boolean connect_or_disconnect)
     {
-        for (ConnectionListener l : listeners)
+        for (ConnectionContextListener l : listeners)
             l.workStarted(this, connect_or_disconnect);
     }
 
@@ -183,6 +184,8 @@ public class ConnectionContext
                     // JOptionPane.showMessageDialog(ConnectionPanel.this,
                     // "Successfully connected to network.");
                     fireConnected();
+                    XMPPPeerInterface i = (XMPPPeerInterface) getPeer().getPeerInterface();
+                    i.getConnection().addConnectionListener(new MyConnectionListener());
                 }
                 else
                 {
@@ -556,8 +559,37 @@ public class ConnectionContext
     {
         this.config = config;
     }
+    
+    private class MyConnectionListener implements ConnectionListener
+    {
 
-    public static interface ConnectionListener
+        public void connectionClosed()
+        {
+            fireDisconnected();
+        }
+
+        public void connectionClosedOnError(Exception ex)
+        {
+            fireDisconnected();
+        }
+
+        public void reconnectingIn(int arg0)
+        {
+            //fireJobStarted(true);
+        }
+
+        public void reconnectionFailed(Exception ex)
+        {
+            fireDisconnected();
+        }
+
+        public void reconnectionSuccessful()
+        {
+            fireConnected();
+        }       
+    }
+
+    public static interface ConnectionContextListener
     {
         void connected(ConnectionContext ctx);
 
