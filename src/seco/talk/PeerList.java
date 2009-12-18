@@ -47,10 +47,10 @@ public class PeerList extends JPanel
         mouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e)
             {
-                if (e.isPopupTrigger()
-                        || SwingUtilities.isRightMouseButton(e))
+                if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e))
                 {
-                    if ((getList().getSelectedValue() instanceof HostedRoom)) return;
+                    if ((getList().getSelectedValue() instanceof HostedRoom))
+                        return;
                     if (PeerList.this.getPopup().isVisible()) popupMenu
                             .setVisible(false);
                     else
@@ -62,8 +62,9 @@ public class PeerList extends JPanel
                     }
                     return;
                 }
-                
-                if (e.getClickCount() == 2 && !SwingUtilities.isRightMouseButton(e))
+
+                if (e.getClickCount() == 2
+                        && !SwingUtilities.isRightMouseButton(e))
                 {
                     int index = getList().locationToIndex(e.getPoint());
                     if (index < 0 || index >= getList().getModel().getSize())
@@ -90,7 +91,7 @@ public class PeerList extends JPanel
                             (JComponent) e.getComponent(), pt);
                 return pt;
             }
-             
+
         };
     }
 
@@ -109,8 +110,10 @@ public class PeerList extends JPanel
                 if (!(x instanceof Occupant)) return false;
                 ConnectionContext ctx = ConnectionManager
                         .getConnectionContext(getPeerID());
-                return !ctx.isMe((Occupant) x)
-                        && !ctx.isInRoster((Occupant) x);//ctx.getPeerIdentity((Occupant) x) == null;
+                return !ctx.isMe((Occupant) x) && !ctx.isInRoster((Occupant) x);// ctx.getPeerIdentity((Occupant)
+                                                                                // x)
+                                                                                // ==
+                                                                                // null;
             }
 
             @Override
@@ -124,7 +127,7 @@ public class PeerList extends JPanel
         });
         mi.setText("Add To Roaster");
         popupMenu.add(mi);
-        
+
         mi = new JMenuItem(new AbstractAction() {
             @Override
             public boolean isEnabled()
@@ -133,10 +136,11 @@ public class PeerList extends JPanel
                 ConnectionContext ctx = ConnectionManager
                         .getConnectionContext(getPeerID());
                 if (x instanceof Occupant) return !ctx.isMe((Occupant) x)
-                        && ctx.isInRoster((Occupant) x);//ctx.getPeerIdentity((Occupant) x) != null;
-                else if(x instanceof HGPeerIdentity)
+                        && ctx.isInRoster((Occupant) x);// ctx.getPeerIdentity((Occupant)
+                                                        // x) != null;
+                else if (x instanceof HGPeerIdentity)
                     return !ctx.isMe((HGPeerIdentity) x)
-                    && ctx.isInRoster((HGPeerIdentity) x);
+                            && ctx.isInRoster((HGPeerIdentity) x);
                 return false;
             }
 
@@ -147,8 +151,8 @@ public class PeerList extends JPanel
                 ConnectionContext ctx = ConnectionManager
                         .getConnectionContext(getPeerID());
                 if (x instanceof Occupant) ctx.removeRoster((Occupant) x);
-                else if(x instanceof HGPeerIdentity)
-                   ctx.removeRoster((HGPeerIdentity) x);
+                else if (x instanceof HGPeerIdentity)
+                    ctx.removeRoster((HGPeerIdentity) x);
             }
         });
         mi.setText("Remove From Roaster");
@@ -237,7 +241,13 @@ public class PeerList extends JPanel
 
         public void addElement(Object obj)
         {
-            if(data.contains(obj)) return;
+            if (data.contains(obj)) return;
+            //no equals() defined in HostedRoom 
+            if (obj instanceof HostedRoom)
+                for (Object o : data)
+                    if (o instanceof HostedRoom
+                            && ((HostedRoom) o).getJid().equals(
+                                    ((HostedRoom) obj).getJid())) return;
             int index = data.size();
             data.addElement(obj);
             fireIntervalAdded(this, index, index);
