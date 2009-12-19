@@ -20,6 +20,7 @@ import javax.swing.border.BevelBorder;
 
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;
+import org.hypergraphdb.peer.NetworkPeerPresenceListener;
 import org.hypergraphdb.peer.PeerPresenceListener;
 import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
 import org.jivesoftware.smack.XMPPException;
@@ -185,6 +186,28 @@ public class ConnectionPanel extends BaseChatPanel implements
                 getPeerList().getListModel().addElement(i);
         getPeerList().setPeerID(getPeerID());
         ctx.getPeer().addPeerPresenceListener(this);
+        ctx.getPeer().getPeerInterface().addPeerPresenceListener(
+                new NetworkPeerPresenceListener() {
+
+                    @Override
+                    public void peerJoined(Object networkTarget)
+                    {
+                        HGPeerIdentity i = ctx
+                                .getPeerIdentity((String) networkTarget);
+                        if (i != null && getConnectionContext().isInRoster(i))
+                            getPeerList().getListModel().addElement(i);
+                    }
+
+                    @Override
+                    public void peerLeft(Object networkTarget)
+                    {
+                        HGPeerIdentity i = ctx
+                                .getPeerIdentity((String) networkTarget);
+                        if (i != null && getConnectionContext().isInRoster(i))
+                            getPeerList().getListModel().removeElement(i);
+                    }
+
+                });
     }
 
     @Override
@@ -317,7 +340,7 @@ public class ConnectionPanel extends BaseChatPanel implements
     {
         private JLabel statusLabel;
         private JToolBar bar;
-        
+
         public StatusPanel()
         {
         }
@@ -333,7 +356,7 @@ public class ConnectionPanel extends BaseChatPanel implements
             gbg.weightx = 1.0;
             statusLabel = new JLabel();
             add(statusLabel, gbg);
-            
+
             gbg = new GridBagConstraints();
             gbg.gridy = 0;
             gbg.gridx = 1;
@@ -342,10 +365,11 @@ public class ConnectionPanel extends BaseChatPanel implements
             // status.add(statusLabel, BorderLayout.EAST);
             bar = new JToolBar();
             bar.add(new ToolbarButton(new AddToRoaster(), "Add To Roaster"));
-            bar.add(new ToolbarButton(new RemoveFromRoaster(), "Remove From Roaster"));
+            bar.add(new ToolbarButton(new RemoveFromRoaster(),
+                    "Remove From Roaster"));
             add(bar, gbg);
         }
-        
+
         public void setMessage(String text)
         {
             getStatusLabel().setText(text);
@@ -371,19 +395,18 @@ public class ConnectionPanel extends BaseChatPanel implements
             this.bar = bar;
         }
     }
-    
+
     private static ConnectionPanel get_from_event(ActionEvent e)
     {
         Object o = e.getSource();
-        while(o instanceof JComponent)
+        while (o instanceof JComponent)
         {
             o = ((JComponent) o).getParent();
-            if(o instanceof ConnectionPanel)
-                return (ConnectionPanel) o;
+            if (o instanceof ConnectionPanel) return (ConnectionPanel) o;
         }
         return null;
     }
-    
+
     static class AddToRoaster extends AbstractAction
     {
 
@@ -396,14 +419,14 @@ public class ConnectionPanel extends BaseChatPanel implements
         public void actionPerformed(ActionEvent e)
         {
             ConnectionPanel panel = get_from_event(e);
-            if(!panel.getConnectionContext().isConnected()) return;
+            if (!panel.getConnectionContext().isConnected()) return;
             RoasterDlg dlg = new RoasterDlg(panel.getConnectionContext(), true);
             dlg.setTitle("Add To Roster");
             dlg.setSize(new Dimension(420, 400));
             dlg.setVisible(true);
         }
     }
-    
+
     static class RemoveFromRoaster extends AbstractAction
     {
 
@@ -416,12 +439,12 @@ public class ConnectionPanel extends BaseChatPanel implements
         public void actionPerformed(ActionEvent e)
         {
             ConnectionPanel panel = get_from_event(e);
-            if(!panel.getConnectionContext().isConnected()) return;
+            if (!panel.getConnectionContext().isConnected()) return;
             RoasterDlg dlg = new RoasterDlg(panel.getConnectionContext(), false);
             dlg.setTitle("Remove From Roster");
             dlg.setSize(new Dimension(420, 400));
             dlg.setVisible(true);
         }
-        
+
     }
 }

@@ -408,14 +408,19 @@ public class ConnectionContext
         ThisNiche.graph.update(panel);
     }
 
-    HGPeerIdentity getPeerIdentity(Occupant x)
+    HGPeerIdentity getPeerIdentity(String jid)
     {
-        String occ_name = stripJID(x.getJid());
+        String occ_name = stripJID(jid);
         for (HGPeerIdentity i : getPeer().getConnectedPeers())
             if (i.getName().equals(occ_name)) return i;
         return null;
     }
-
+    
+    HGPeerIdentity getPeerIdentity(Occupant x)
+    {
+        return getPeerIdentity(x.getJid());
+    }
+    
     boolean isInRoster(Occupant x)
     {
         String occ_name = stripJID(x.getJid());

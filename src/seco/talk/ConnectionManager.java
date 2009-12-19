@@ -80,7 +80,9 @@ public class ConnectionManager
             ctx = new ConnectionContext(config);
             ThisNiche.graph.add(ctx);
         }
-        return ctx.openConnectionPanel();
+        ConnectionPanel panel = ctx.openConnectionPanel();
+        panel.connect();
+        return panel;
     }
 
 }
