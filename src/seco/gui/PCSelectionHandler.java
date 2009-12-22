@@ -127,6 +127,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
                     .getHandle());
             if (CellUtils.isShowTitle(cgm) && !CellUtils.isMinimized(cgm))
             {
+                if(!title_already_present(node))
                 node.addChild(new TitlePaneNode((PSwingNode) node));
             }
             else //if(!CellUtils.isMinimized(cgm))
@@ -134,6 +135,17 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
                 TitlePaneNode.addActionHandles((PSwingNode) node, node);
             }
         }
+    }
+    
+    private static boolean title_already_present(PNode node)
+    {
+        for (Iterator i = node.getChildrenIterator(); i.hasNext();)
+        {
+            PNode each = (PNode) i.next();
+            if (each instanceof TitlePaneNode) 
+                return true;
+        }
+        return false;
     }
 
     public void unselect(PNode node)
@@ -148,16 +160,14 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     {
         ArrayList<PNode> handles = new ArrayList<PNode>();
         Iterator i = node.getChildrenIterator();
-        //boolean compensate = false;
         while (i.hasNext())
         {
             PNode each = (PNode) i.next();
             if (each instanceof PSmallBoundsHandle)
             {
                 if (each instanceof TitlePaneNode && !remove_title) 
-                    ;//compensate = true;
-                else
-                    handles.add(each);
+                    continue;
+                handles.add(each);
             }
         }
         node.removeChildren(handles);

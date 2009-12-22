@@ -186,28 +186,29 @@ public class ConnectionPanel extends BaseChatPanel implements
                 getPeerList().getListModel().addElement(i);
         getPeerList().setPeerID(getPeerID());
         ctx.getPeer().addPeerPresenceListener(this);
-        ctx.getPeer().getPeerInterface().addPeerPresenceListener(
-                new NetworkPeerPresenceListener() {
-
-                    @Override
-                    public void peerJoined(Object networkTarget)
-                    {
-                        HGPeerIdentity i = ctx
-                                .getPeerIdentity((String) networkTarget);
-                        if (i != null && getConnectionContext().isInRoster(i))
-                            getPeerList().getListModel().addElement(i);
-                    }
-
-                    @Override
-                    public void peerLeft(Object networkTarget)
-                    {
-                        HGPeerIdentity i = ctx
-                                .getPeerIdentity((String) networkTarget);
-                        if (i != null && getConnectionContext().isInRoster(i))
-                            getPeerList().getListModel().removeElement(i);
-                    }
-
-                });
+//        ctx.getPeer().getPeerInterface().addPeerPresenceListener(
+//                new NetworkPeerPresenceListener() {
+//
+//                    @Override
+//                    public void peerJoined(Object networkTarget)
+//                    {
+//                        HGPeerIdentity i = ctx.getPeer().getIdentity(networkTarget);
+//                               // .getPeerIdentity((String) networkTarget);
+//                        if (i != null && getConnectionContext().isInRoster(i))
+//                            getPeerList().getListModel().addElement(i);
+//                    }
+//
+//                    @Override
+//                    public void peerLeft(Object networkTarget)
+//                    {
+//                        //do nothing
+//                       // HGPeerIdentity i = ctx
+//                       //         .getPeerIdentity((String) networkTarget);
+//                       // if (i != null && getConnectionContext().isInRoster(i))
+//                       //     getPeerList().getListModel().removeElement(i);
+//                    }
+//
+//                });
     }
 
     @Override

@@ -14,23 +14,16 @@ import javax.swing.AbstractListModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 import org.hypergraphdb.annotation.HGIgnore;
 import org.hypergraphdb.peer.HGPeerIdentity;
-import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.Occupant;
 
-import seco.ThisNiche;
 import seco.gui.GUIHelper;
-import seco.gui.TopFrame;
-import seco.notebook.NotebookEditorKit;
-import seco.notebook.NotebookUI;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.UpdatablePopupMenu;
 
@@ -49,8 +42,14 @@ public class PeerList extends JPanel
             {
                 if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e))
                 {
-                    if ((getList().getSelectedValue() instanceof HostedRoom))
-                        return;
+                    Object val = getList().getSelectedValue();
+                    if (val == null || val instanceof HostedRoom) return;
+                    ConnectionContext ctx = ConnectionManager
+                    .getConnectionContext(getPeerID());
+                    if (ctx == null) return;
+                    //don't show popup on ME
+                    if(val instanceof Occupant && ctx.isMe((Occupant) val)) return;
+                    
                     if (PeerList.this.getPopup().isVisible()) popupMenu
                             .setVisible(false);
                     else
