@@ -27,12 +27,19 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
+import edu.umd.cs.piccolox.pswing.PSwing;
+
+import seco.ThisNiche;
+import seco.gui.GUIHelper;
+import seco.gui.PSwingNode;
 import seco.notebook.ScriptletAction;
 import seco.notebook.gui.DialogDescriptor;
 import seco.notebook.gui.DialogDisplayer;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.ToolbarButton;
 import seco.notebook.util.IconManager;
+import seco.things.CellGroupMember;
+import seco.things.CellUtils;
 
 /**
  * <p>
@@ -175,6 +182,13 @@ public class ConnectionPanel extends BaseChatPanel implements
         connectButton.setEnabled(true);
         connectButton.setText(LABEL_DISCONNECT);
         populate();
+        PSwingNode node = GUIHelper.getPSwingNode(this);
+        if (node != null)
+        {
+            CellGroupMember cgm = ThisNiche.graph.get(node.getHandle());
+            String n = ctx.getConfig().getUsername() + " on " + ctx.getNetworkName();
+            CellUtils.setName(cgm, n);
+        }
     }
 
     private void populate()

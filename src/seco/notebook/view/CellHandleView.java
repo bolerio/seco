@@ -30,6 +30,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.View;
 import javax.swing.text.Position.Bias;
@@ -196,6 +197,11 @@ public class CellHandleView extends HidableComponentView
 				NotebookUI ui = (NotebookUI) b.view.getContainer();
 				if (KeyEvent.VK_DELETE == e.getKeyCode())
 					ui.deleteSelectedElements();
+				else if(e.isShiftDown() &&
+				        KeyEvent.VK_ENTER == e.getKeyCode())
+				{
+				   ui.evalSelectedElements();
+				}
 				else
 					processArrowKeys(b.view, e);
 			}

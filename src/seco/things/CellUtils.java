@@ -38,6 +38,7 @@ import seco.events.handlers.CopyAttributeChangeHandler;
 import seco.events.handlers.CopyCellGroupChangeHandler;
 import seco.events.handlers.CopyCellTextChangeHandler;
 import seco.events.handlers.CopyEvalCellHandler;
+import seco.gui.GUIHelper;
 import seco.gui.JComponentVisual;
 import seco.gui.NBUIVisual;
 import seco.gui.PSwingNode;
@@ -803,10 +804,10 @@ public class CellUtils
         HGHandle pubs = link.getPubs();
         HGHandle subs = link.getSubs();
         ThisNiche.graph.remove(linkH, true);
-        // if(cell_too)
-        // ThisNiche.hg.remove(cellH, true);
-        // ThisNiche.hg.remove(pubs, true);
-        // ThisNiche.hg.remove(subs, true);
+        if(cell_too)
+          ThisNiche.graph.remove(cellH, true);
+        ThisNiche.graph.remove(pubs, true);
+        ThisNiche.graph.remove(subs, true);
     }
 
     private static BackupLink createBackupLink(HGHandle cell)
@@ -859,8 +860,7 @@ public class CellUtils
                 PSwingNode node = null;
                 //remove added by Piccolo PSwingNode, which breaks serialization
                 if (o instanceof JComponent)
-                    node = (PSwingNode)((JComponent) o)
-                            .getClientProperty(PSwing.PSWING_PROPERTY);
+                    node = GUIHelper.getPSwingNode((JComponent) o);
                 if (node != null)
                     node.prepareForSerialization();
                 try

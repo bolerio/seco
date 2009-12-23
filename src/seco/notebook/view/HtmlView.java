@@ -125,7 +125,7 @@ public class HtmlView extends HidableComponentView
                 {
                     NotebookDocument doc = (NotebookDocument) getElement().getDocument();
                     try{
-                     doc.updateCell(getElement(), UpdateAction.syncronize);
+                     doc.updateCell(getElement(), UpdateAction.syncronize, null);
                     }catch(Exception ex)
                     {
                         ex.printStackTrace();

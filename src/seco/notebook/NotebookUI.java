@@ -468,6 +468,29 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         if (offset > 0) setCaretPosition(offset - 1);
         requestFocus();
     }
+    
+    public void evalSelectedElements()
+    {
+        if (getDoc() instanceof OutputCellDocument || 
+                getDoc() instanceof ScriptletDocument) return;
+        
+        for (Element el : new Vector<Element>(getSelectionManager()
+                .getSelection()))
+        {
+            try
+            {
+                if(NotebookDocument.isOutputCell(el)) continue;
+                if(NotebookDocument.getNBElement(el) instanceof CellGroup)
+                    getDoc().evalGroup(el);
+                 else // inputCell
+                   getDoc().evalCell(el);
+            }
+            catch (BadLocationException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public void mergeCells()
     {
@@ -607,10 +630,11 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 }
                 else
                 {
-                    if (!dont_change_pos)
+                    if (!dont_change_pos && ui.getCaretPosition() <0)
                     {
                         int off = ui.viewToModel(e.getPoint());
-                        if (off != -1) ui.setCaretPosition(off);
+                        if (off != -1) // && ui.getCaretPosition() != off)
+                            ui.setCaretPosition(off);
                     }
                     popupMenu.update();
                     Frame f = GUIUtilities.getFrame(e.getComponent());
@@ -1163,6 +1187,12 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         {
             if (dotBias == null) dotBias = Position.Bias.Forward;
             super.setDot(dot, dotBias);
+        }
+        
+        //this is fired to often and erases the selection
+        public void focusLost(FocusEvent e) {
+           // setVisible(false);
+           //     setSelectionVisible(ownsSelection || e.isTemporary());
         }
     }
 

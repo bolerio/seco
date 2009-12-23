@@ -42,6 +42,11 @@ import seco.things.CellUtils;
 
 public class ConnectionContext
 {
+    //TODO: shouldn't be hardcoded
+    private String networkName = "Seco Network";
+    
+   
+
     static final String OPENFIRE_HOST = "kobrix.syspark.net";
 
     private ConnectionConfig config;
@@ -289,7 +294,7 @@ public class ConnectionContext
         CellGroupMember cell = ThisNiche.graph.get(GUIHelper.addToCellGroup(
                 panelHandle, top, null, null,
                 new Rectangle(x, y, width, height), true));
-        CellUtils.setName(cell, "Seco Network");
+        CellUtils.setName(cell, networkName);
         cell.setAttribute(VisualAttribs.showTitle, true);
 
         return panel;
@@ -563,6 +568,11 @@ public class ConnectionContext
     public void setConfig(ConnectionConfig config)
     {
         this.config = config;
+    }
+    
+    public String getNetworkName()
+    {
+        return networkName;
     }
     
     private class MyConnectionListener implements ConnectionListener

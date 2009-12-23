@@ -127,8 +127,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
                     .getHandle());
             if (CellUtils.isShowTitle(cgm) && !CellUtils.isMinimized(cgm))
             {
-                if(!title_already_present(node))
-                node.addChild(new TitlePaneNode((PSwingNode) node));
+                addTitle(node, new TitlePaneNode((PSwingNode) node));
             }
             else //if(!CellUtils.isMinimized(cgm))
             {
@@ -137,15 +136,18 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         }
     }
     
-    private static boolean title_already_present(PNode node)
+    private static void addTitle(PNode node, TitlePaneNode titleNode)
     {
         for (Iterator i = node.getChildrenIterator(); i.hasNext();)
         {
             PNode each = (PNode) i.next();
             if (each instanceof TitlePaneNode) 
-                return true;
+            {    
+                each.removeFromParent();
+                break;
+            }
         }
-        return false;
+        node.addChild(titleNode);
     }
 
     public void unselect(PNode node)
@@ -341,17 +343,16 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         }
     }
 
-    public void deleteSelection(PInputEvent e)
-    {
-        for (PNode node : selection.keySet())
-        {
-            // if (node instanceof PSwingNode
-            // && !((PSwingNode) node).isDeleteable()) continue;
-            node.removeFromParent();
-        }
-        selection.clear();
-
-    }
+//    public void deleteSelection(PInputEvent e)
+//    {
+//        for (PNode node : selection.keySet())
+//        {
+//            // if (node instanceof PSwingNode
+//            // && !((PSwingNode) node).isDeleteable()) continue;
+//            node.removeFromParent();
+//        }
+//        selection.clear();
+//    }
 
     @Override
     public void mousePressed(PInputEvent e)

@@ -52,7 +52,7 @@ public class CommandHandle extends PSmallBoundsHandle
     
     public Cursor getCursorFor(int side)
     {
-        return new Cursor(Cursor.CROSSHAIR_CURSOR);
+        return new Cursor(Cursor.HAND_CURSOR);//.CROSSHAIR_CURSOR);
     }
     
     public void endHandleDrag(Point2D aLocalPoint, PInputEvent aEvent)

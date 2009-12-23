@@ -19,6 +19,7 @@ import java.util.Vector;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
+import javax.swing.SwingUtilities;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -197,13 +198,13 @@ abstract public class DocUtil
 
     static void createOutputCell(NotebookDocument doc, HGHandle cellH,
             MutableAttributeSet attr, Vector<ElementSpec> vec, boolean genInsP,
-            EvalCellEvent e)
+            EvalResult e)
     {
         attr.addAttribute(ATTR_CELL, cellH);
         Cell c = (Cell) ThisNiche.graph.get(cellH);
         startTag(outputCellBox, attr, 0, vec);
         attr.removeAttribute(ATTR_CELL);
-        boolean isError = (e != null) ? e.getValue().isError() : CellUtils
+        boolean isError = (e != null) ? e.isError() : CellUtils
                 .isError(c);
         attr = isError ? getDocStyle(doc, StyleType.error) : getDocStyle(doc,
                 StyleType.outputCell);
@@ -228,11 +229,11 @@ abstract public class DocUtil
     }
 
     private static void createOutputCellContents(NotebookDocument doc, Cell c,
-            MutableAttributeSet attr, Vector<ElementSpec> vec, EvalCellEvent e)
+            MutableAttributeSet attr, Vector<ElementSpec> vec, EvalResult e)
     {
         startTag(commonCell, attr, 0, vec);
-        Object val = (e != null) ? e.getValue().getComponent() : c.getValue();
-        String text = (e != null) ? e.getValue().getText() : "";
+        Object val = (e != null) ? e.getComponent() : c.getValue();
+        String text = (e != null) ? e.getText() : "";
         if (text == null) text = "null";
         Component comp = null;
         if (val != null)
@@ -268,7 +269,25 @@ abstract public class DocUtil
         return (name != null) ? name : doc.getDefaultEngineName();
     }
     
-    static EvalResult eval_result(NotebookDocument doc, Cell cell)
+    static void eval_result_in_aux_thread(final NotebookDocument doc, final Cell cell)
+    {
+        //EvalResult res = new EvalResult();
+        //res.setText("Evaluating");
+        Runnable r = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                EvalResult res = eval_result(doc, cell);
+                doc.handle_delayed_evaluation(res, ThisNiche.handleOf(cell));
+            }
+        };
+        SwingUtilities.invokeLater(r);
+        //r.run();
+        //return res;
+    }
+    
+    static EvalResult eval_result(final NotebookDocument doc, final Cell cell)
     {
         EvalResult res = new EvalResult();
         try

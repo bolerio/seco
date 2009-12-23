@@ -186,7 +186,7 @@ public class PiccoloCanvas extends PSwingCanvas
                     .getCanvas());
             HGHandle groupH = (outer != null) ? outer.getHandle() : getGroupH();
             GUIHelper.removeFromCellGroup(groupH, ((PSwingNode) node)
-                    .getHandle(), false);
+                    .getHandle(), true);
             // Object ui = ((PSwingNode) node).getComponent();
             // if (ui instanceof NotebookUI) remove_and_clean((NotebookUI) ui);
             node.removeFromParent();

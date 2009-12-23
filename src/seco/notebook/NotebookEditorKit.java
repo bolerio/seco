@@ -257,8 +257,6 @@ public class NotebookEditorKit extends StyledEditorKit
             Element el = ui.getSelectedCellElement();
             if (el == null) return;
             int pos = ui.getCaretPosition();
-            final ScriptSupport sup = doc.getScriptSupport(pos);
-            //if (sup == null) return;
             // expand the evaluated cell and it's parent
             View root = ui.getUI().getRootView(ui);
             View cellV = ViewUtils.getView(el.getEndOffset() - 1, root);
@@ -270,12 +268,8 @@ public class NotebookEditorKit extends StyledEditorKit
             if (containerV != null && containerV instanceof CellHandleView)
                 ((CellHandleView) containerV).setCollapsed(false);
 
-            if (doc.evalCell(el)) 
-            {
-            	if (sup != null)
-            		sup.unMarkErrors();
-            }
-
+            doc.evalCellInAuxThread(el); 
+          
             Utilities.adjustScrollBar(ui, pos, Position.Bias.Forward);
         }
 
@@ -436,7 +430,7 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             NotebookDocument doc = ui.getDoc();
             doc.beginCompoundEdit("Output Cells Eval");
-            doc.update(UpdateAction.reEvaluateOutputCells);
+            doc.update(UpdateAction.evalCells);
             doc.endCompoundEdit();
         }
     }
@@ -459,7 +453,7 @@ public class NotebookEditorKit extends StyledEditorKit
                     doc.beginCompoundEdit("CellGroup Eval");
                     doc.updateGroup(NotebookDocument.getLowerElement(gr,
                             ElementType.cellGroup),
-                            UpdateAction.reEvaluateOutputCells);
+                            UpdateAction.evalCells);
                 }
                 catch (Exception ex)
                 {
