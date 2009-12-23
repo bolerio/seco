@@ -254,7 +254,7 @@ public class NotebookDocument extends DefaultStyledDocument
 
     // last param could be null, passed for speed and used only with
     // UpdateAction.evalInitCells
-    public void updateCell(Element inner, UpdateAction action, CellGroup parent)
+    public void updateCell(Element inner, UpdateAction action, Object param)
             throws BadLocationException
     {
         // if (!(getNBElement(inner) instanceof Cell)) return;
@@ -265,7 +265,7 @@ public class NotebookDocument extends DefaultStyledDocument
         {
             Cell cell = (Cell) getNBElement(inner);
             if (CellUtils.isInitCell(cell)
-                    || (parent != null && CellUtils.isInitCell(parent)))
+                    || (param != null && (Boolean) param))
                 evalCell(inner);
         }
         else if (UpdateAction.evalCells == action && !out) evalCell(inner);
@@ -309,14 +309,13 @@ public class NotebookDocument extends DefaultStyledDocument
             Element el = root.getElement(i);
             try
             {
+                Object param = CellUtils.isInitCell(getBook());
                 if (cellGroupBox == getElementType(el)) updateGroup(
-                        getLowerElement(el, cellGroup), action);
+                        getLowerElement(el, cellGroup), action, param);
                 else if (inputCellBox == getElementType(el)
                         || outputCellBox == getElementType(el))
                 {
-                    CellGroup group = getBook() instanceof CellGroup ? (CellGroup) getBook()
-                            : null;
-                    updateCell(el, action, group);
+                   updateCell(el, action, param);
                 }
             }
             catch (Exception ex)
@@ -334,20 +333,22 @@ public class NotebookDocument extends DefaultStyledDocument
         updateElement(getRootElements()[0]);
     }
 
-    void updateGroup(Element el, UpdateAction action)
+    void updateGroup(Element el, UpdateAction action, Object param)
             throws BadLocationException
     {
         if (cellGroup != getElementType(el)) return;
         if (UpdateAction.index == action)
             indexes.put(getNBElementH(el), createPosition(el.getStartOffset()));
+        else if(UpdateAction.evalInitCells == action)
+            param = ((Boolean) param) ? param : CellUtils.isInitCell(getNBElement(el));
         for (int i = 0; i < el.getElementCount(); i++)
         {
             Element inner = el.getElement(i);
             if (cellGroupBox == getElementType(inner)) updateGroup(
-                    getLowerElement(inner, cellGroup), action);
+                    getLowerElement(inner, cellGroup), action, param);
             else if (getWholeCellElement(inner.getStartOffset()) != null)
             {
-                updateCell(inner, action, (CellGroup) getNBElement(el));
+                updateCell(inner, action, param);
             }
         }
     }
@@ -473,7 +474,7 @@ public class NotebookDocument extends DefaultStyledDocument
         if(cellGroup != getElementType(el))
             el = getLowerElement(el, cellGroup);
         if(el != null)
-           updateGroup(el, UpdateAction.evalCells);
+           updateGroup(el, UpdateAction.evalCells, null);
     }
 
     void evalCellInAuxThread(Element el) throws BadLocationException

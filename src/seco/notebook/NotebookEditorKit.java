@@ -453,7 +453,7 @@ public class NotebookEditorKit extends StyledEditorKit
                     doc.beginCompoundEdit("CellGroup Eval");
                     doc.updateGroup(NotebookDocument.getLowerElement(gr,
                             ElementType.cellGroup),
-                            UpdateAction.evalCells);
+                            UpdateAction.evalCells, null);
                 }
                 catch (Exception ex)
                 {
