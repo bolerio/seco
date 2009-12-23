@@ -450,7 +450,7 @@ public class NotebookDocument extends DefaultStyledDocument
     };
 
     // return true if the result is not an error
-    boolean evalCell(Element el) throws BadLocationException
+    public boolean evalCell(Element el) throws BadLocationException
     {
         Cell cell = (Cell) getNBElement(el);
         EvalResult res = DocUtil.eval_result(this, cell);

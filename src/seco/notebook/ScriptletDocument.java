@@ -82,7 +82,7 @@ public class ScriptletDocument extends NotebookDocument
                 doc.getHandle(), CellTextChangeHandler.getInstance());
     }
     
-    boolean evalCell(Element el) throws BadLocationException
+    public boolean evalCell(Element el) throws BadLocationException
     {
         return false;
     }
