@@ -103,7 +103,6 @@ abstract public class DocUtil
             Vector<ElementSpec> vec)
     {
         if (c == null) return;
-        System.out.println("createComponent: " + c);
         attr.addAttribute(StyleConstants.ComponentAttribute, c);
         startTag(component, attr, 0, vec);
         addSubContent(NEWLINE, 0, vec);

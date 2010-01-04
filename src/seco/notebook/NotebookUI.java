@@ -12,8 +12,10 @@ import static seco.notebook.ElementType.commonCell;
 import static seco.notebook.ElementType.inputCellBox;
 import static seco.notebook.ElementType.outputCellBox;
 
+import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -22,6 +24,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -263,9 +266,33 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     public Rectangle getVisibleRect()
     {
         Rectangle visibleRect = new Rectangle();
-        getBounds(visibleRect);
-        if (!TopFrame.PICCOLO) computeVisibleRect(visibleRect);
+        //getBounds(visibleRect);
+        //if (!TopFrame.PICCOLO) 
+        computeVisibleRect(visibleRect);
         return visibleRect;
+    }
+    
+    public void computeVisibleRect(Rectangle visibleRect) {
+        computeVisibleRect(this, visibleRect);
+    }
+    
+    static final void computeVisibleRect(Component c, Rectangle visibleRect) {
+        Container p = c.getParent();
+        Rectangle bounds = c.getBounds();
+
+        if (p == null || p instanceof Window || p instanceof Applet) 
+        {
+            visibleRect.setBounds(0, 0, bounds.width, bounds.height);
+        }else if(TopFrame.PICCOLO)// && p instanceof PiccoloCanvas)
+        {
+            visibleRect.setBounds(0, 0, bounds.width, bounds.height);
+        } 
+        else {
+            computeVisibleRect(p, visibleRect);
+            visibleRect.x -= bounds.x;
+            visibleRect.y -= bounds.y;
+            SwingUtilities.computeIntersection(0,0,bounds.width,bounds.height,visibleRect);
+        }
     }
 
     public static void setAntiAliasing(boolean _antiAliasing)
@@ -946,6 +973,25 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         }
         return false;
     }
+    
+    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+        switch(orientation) {
+        case SwingConstants.VERTICAL:
+        {
+            if (getParent() instanceof JViewport)
+            {
+                JViewport port = (JViewport) getParent();
+                return port.getHeight();
+            }
+            return visibleRect.height;
+        }
+        case SwingConstants.HORIZONTAL:
+            return visibleRect.width;
+        default:
+            throw new IllegalArgumentException("Invalid orientation: " + orientation);
+        }
+        
+    }  
 
     private static final Dimension dim = new Dimension(300, 200);
 

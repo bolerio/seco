@@ -287,8 +287,7 @@ public class NotebookDocument extends DefaultStyledDocument
                     HTMLEditor ed = (HTMLEditor) html.getAttributes()
                             .getAttribute(ATTR_HTML_EDITOR);
                     CellUtils.setCellText(cell, ed.getContent());
-                    // System.out.println("NBDOC- updateHTML: " +
-                    // ed.getContent());
+                    // System.out.println("NBDOC- updateHTML: " + ed.getContent());
                 }
                 else if (e != null)
                 {
