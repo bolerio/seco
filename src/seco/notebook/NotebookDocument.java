@@ -33,6 +33,7 @@ import java.util.Vector;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleScriptContext;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.text.AbstractDocument;
@@ -265,8 +266,7 @@ public class NotebookDocument extends DefaultStyledDocument
         {
             Cell cell = (Cell) getNBElement(inner);
             if (CellUtils.isInitCell(cell)
-                    || (param != null && (Boolean) param))
-                evalCell(inner);
+                    || (param != null && (Boolean) param)) evalCell(inner);
         }
         else if (UpdateAction.evalCells == action && !out) evalCell(inner);
         else if ((UpdateAction.syncronize == action
@@ -287,7 +287,8 @@ public class NotebookDocument extends DefaultStyledDocument
                     HTMLEditor ed = (HTMLEditor) html.getAttributes()
                             .getAttribute(ATTR_HTML_EDITOR);
                     CellUtils.setCellText(cell, ed.getContent());
-                    // System.out.println("NBDOC- updateHTML: " + ed.getContent());
+                    // System.out.println("NBDOC- updateHTML: " +
+                    // ed.getContent());
                 }
                 else if (e != null)
                 {
@@ -314,7 +315,7 @@ public class NotebookDocument extends DefaultStyledDocument
                 else if (inputCellBox == getElementType(el)
                         || outputCellBox == getElementType(el))
                 {
-                   updateCell(el, action, param);
+                    updateCell(el, action, param);
                 }
             }
             catch (Exception ex)
@@ -336,10 +337,11 @@ public class NotebookDocument extends DefaultStyledDocument
             throws BadLocationException
     {
         if (cellGroup != getElementType(el)) return;
-        if (UpdateAction.index == action)
-            indexes.put(getNBElementH(el), createPosition(el.getStartOffset()));
-        else if(UpdateAction.evalInitCells == action)
-            param = ((Boolean) param) ? param : CellUtils.isInitCell(getNBElement(el));
+        if (UpdateAction.index == action) indexes.put(getNBElementH(el),
+                createPosition(el.getStartOffset()));
+        else if (UpdateAction.evalInitCells == action)
+            param = ((Boolean) param) ? param : CellUtils
+                    .isInitCell(getNBElement(el));
         for (int i = 0; i < el.getElementCount(); i++)
         {
             Element inner = el.getElement(i);
@@ -467,13 +469,12 @@ public class NotebookDocument extends DefaultStyledDocument
         supressEvents = false;
         return res.isError();
     }
-    
+
     public void evalGroup(Element el) throws BadLocationException
     {
-        if(cellGroup != getElementType(el))
+        if (cellGroup != getElementType(el))
             el = getLowerElement(el, cellGroup);
-        if(el != null)
-           updateGroup(el, UpdateAction.evalCells, null);
+        if (el != null) updateGroup(el, UpdateAction.evalCells, null);
     }
 
     void evalCellInAuxThread(Element el) throws BadLocationException
@@ -506,16 +507,23 @@ public class NotebookDocument extends DefaultStyledDocument
     }
 
     // called from evaluation thread upon finish
-    void handle_delayed_evaluation(EvalResult res, HGHandle cellH)
+    void handle_delayed_evaluation(final EvalResult res, final HGHandle cellH)
     {
-        EvalCellEvent e = create_eval_event(cellH, res);
-        fireUndoableEditUpdate(new UndoableEditEvent(this, e));
-        supressEvents = true;
-        if (DIRECT_EVENTING) EventDispatcher.dispatch(EvalCellEvent.HANDLE, e
-                .getCellHandle(), e);
-        else
-            EventDispatcher.dispatch(EvalCellEvent.HANDLE, getHandle(), e);
-        supressEvents = false;
+        Runnable r = new Runnable() {
+            public void run()
+            {
+                EvalCellEvent e = create_eval_event(cellH, res);
+                fireUndoableEditUpdate(new UndoableEditEvent(this, e));
+                supressEvents = true;
+                if (DIRECT_EVENTING) EventDispatcher.dispatch(
+                        EvalCellEvent.HANDLE, e.getCellHandle(), e);
+                else
+                    EventDispatcher.dispatch(EvalCellEvent.HANDLE, getHandle(),
+                            e);
+                supressEvents = false;
+            }
+        };
+        SwingUtilities.invokeLater(r);
     }
 
     private boolean maybe_create_output_cell(HGHandle cellH, String text)

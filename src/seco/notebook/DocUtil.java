@@ -37,6 +37,7 @@ import seco.events.handlers.AttributeChangeHandler;
 import seco.events.handlers.CellGroupChangeHandler;
 import seco.events.handlers.CellTextChangeHandler;
 import seco.events.handlers.EvalCellHandler;
+import seco.notebook.util.RequestProcessor;
 import seco.rtenv.EvaluationContext;
 import seco.things.Cell;
 import seco.things.CellGroup;
@@ -281,7 +282,8 @@ abstract public class DocUtil
                 doc.handle_delayed_evaluation(res, ThisNiche.handleOf(cell));
             }
         };
-        SwingUtilities.invokeLater(r);
+        RequestProcessor.getDefault().post(r);
+        //SwingUtilities.invokeLater(r);
         //r.run();
         //return res;
     }
