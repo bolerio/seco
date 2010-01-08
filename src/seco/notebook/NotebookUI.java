@@ -96,7 +96,9 @@ import seco.notebook.gui.menu.CellLangProvider;
 import seco.notebook.gui.menu.CellPropsProvider;
 import seco.notebook.gui.menu.EnhancedMenu;
 import seco.notebook.gui.menu.GroupingProvider;
+import seco.notebook.gui.menu.NotebookPropsProvider;
 import seco.notebook.html.HTMLEditor;
+import seco.notebook.javascript.JSScriptSupport;
 import seco.notebook.jscheme.JSchemeScriptSupport;
 import seco.notebook.ruby.RubyScriptSupport;
 import seco.notebook.syntax.Mode;
@@ -405,6 +407,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             // popupMenu.addSeparator();
             popupMenu.add(new EnhancedMenu("Cell Group",
                     new CellGroupPropsProvider()));
+            popupMenu.add(new EnhancedMenu("Notebook",
+                    new NotebookPropsProvider()));
             popupMenu.addSeparator();
             popupMenu.add(new EnhancedMenu("Grouping", new GroupingProvider()));
             popupMenu.addSeparator();
@@ -507,10 +511,11 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             try
             {
                 if(NotebookDocument.isOutputCell(el)) continue;
-                if(NotebookDocument.getNBElement(el) instanceof CellGroup)
-                    getDoc().evalGroup(el);
+                CellGroupMember cgm = NotebookDocument.getNBElement(el);
+                if(cgm instanceof CellGroup)
+                    getDoc().evalGroup((CellGroup) cgm);
                  else // inputCell
-                   getDoc().evalCell(el);
+                   getDoc().evalCellInAuxThread(el);
             }
             catch (BadLocationException e)
             {
@@ -916,6 +921,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             registerScriptSupport(new RubyScriptSupport(), false);
             registerScriptSupport(new HTMLScriptSupport(), false);
             registerScriptSupport(new PrologScriptSupport(), false);
+            registerScriptSupport(new JSScriptSupport(), false);
             ThisNiche.graph.define(SCRIPT_SUPPORTS_HANDLE, supports);
         }
         return supports;

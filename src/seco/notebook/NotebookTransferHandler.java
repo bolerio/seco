@@ -174,7 +174,7 @@ public class NotebookTransferHandler extends TransferHandler
         return imported;
     }
 
-    public boolean importJavaStringData(JComponent comp, Transferable t)
+    public boolean importJavaStringData(JComponent comp, Transferable t, boolean keep_newlines)
     {
         NotebookUI c = (NotebookUI) comp;
         // Don't drop on myself.
@@ -200,7 +200,7 @@ public class NotebookTransferHandler extends TransferHandler
                 shouldRemove = false;
                 return true;
             }
-            handleJavaStringImport((String) t.getTransferData(importFlavor), c);
+            handleJavaStringImport((String) t.getTransferData(importFlavor), c, keep_newlines);
             imported = true;
         }
         catch (UnsupportedFlavorException ufe)
@@ -218,7 +218,7 @@ public class NotebookTransferHandler extends TransferHandler
         return imported;
     }
 
-    protected void handleJavaStringImport(String s, JTextComponent c)
+    protected void handleJavaStringImport(String s, JTextComponent c, boolean keep_newlines)
             throws BadLocationException
     {
         String tab = Utilities.getTabSubstitute();
@@ -232,10 +232,14 @@ public class NotebookTransferHandler extends TransferHandler
             {
                 if (i != sbuff.length() - 1)
                 {
-                    // not very clear if the \n should be considered as
-                    // a whitespace, but...
-                    out.append(' ');
-                    out.append("\"+ \"");
+                    
+                    if(keep_newlines)
+                    {
+                        out.append("\\n");
+                        out.append("\"+ \"");
+                    }else // not very clear if the \n should be considered as
+                        // a whitespace, but...
+                       out.append(' ');
                 }
             }
             else if (ch == '"') // || ch == '\'')
@@ -409,7 +413,7 @@ public class NotebookTransferHandler extends TransferHandler
                     .getTransferHandler();
             Clipboard clipboard = getClipboard(ui);
             Transferable trans = clipboard.getContents(null);
-            if (trans != null) th.importJavaStringData(ui, trans);
+            if (trans != null) th.importJavaStringData(ui, trans, true);
         }
 
         private Clipboard getClipboard(JComponent c)

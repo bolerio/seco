@@ -79,7 +79,7 @@ public class HtmlView extends HidableComponentView
             view = new InnerHTMLEditor(fn); // HTMLEditor(fn);
             Cell cell = (Cell) NotebookDocument.getNBElement(getElement());
             view.setContent(CellUtils.getText(cell));
-            view.setEditable(!CellUtils.isReadonly(cell));
+            view.setEditable(ui.getDoc().isReadOnlyEl(getElement()));//!CellUtils.isReadonly(cell));
 
             SwingUtilities.invokeLater(new Runnable() {
                 public void run()
@@ -114,8 +114,9 @@ public class HtmlView extends HidableComponentView
                     ui.getSelectionManager().clearSelections();
                     NotebookUI.setFocusedHTMLEditor(editor);
                     editor = InnerHTMLEditor.this;
-                    CellGroupMember cgm = NotebookDocument.getNBElement(getElement());
-                    if(CellUtils.isReadonly(cgm))
+                    //CellGroupMember cgm = NotebookDocument.getNBElement(getElement());
+                    //if(CellUtils.isReadonly(cgm))
+                    if(ui.getDoc().isReadOnlyEl(getElement()))
                         return;
                     TopFrame.getInstance().showHTMLToolBar(true);
                     // System.out.println("InnerHTMLEditor -focusGained: " + ui.getCaretPosition());
@@ -139,8 +140,9 @@ public class HtmlView extends HidableComponentView
 
                 public void caretUpdate(CaretEvent e)
                 {
-                    CellGroupMember cgm = NotebookDocument.getNBElement(getElement());
-                    if(CellUtils.isReadonly(cgm))  return;
+                    //CellGroupMember cgm = NotebookDocument.getNBElement(getElement());
+                   // if(CellUtils.isReadonly(cgm))  return;
+                    if(getNotebookUI().getDoc().isReadOnlyEl(getElement())) return;
                     GUIHelper.getHTMLToolBar().showAttributes(editor, e.getDot());
                 }
                 

@@ -31,10 +31,16 @@ import seco.things.CellUtils;
 
 public class CellPropsProvider implements DynamicMenuProvider
 {
-    public boolean updateEveryTime()
-    {
-        return true;
-    }
+    
+   private static final long serialVersionUID = 8668523086705739697L;
+
+   public void update(final JMenu menu)
+   {
+       NotebookUI nbui = NotebookUI.getFocusedNotebookUI();
+       if (nbui == null) return;
+       int offset = nbui.getCaretPosition();
+       _update(menu, nbui, offset);
+   }
 
     protected void _update(JMenu menu, final NotebookUI nbui, final int off)
     {
@@ -50,7 +56,6 @@ public class CellPropsProvider implements DynamicMenuProvider
             initCellCheck.addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent e)
                 {
-                    // nbui.getDoc().toggleInitCell(el.getStartOffset(), true);
                     CellUtils.toggleAttribute(nb, XMLConstants.ATTR_INIT_CELL);
                 }
             });
@@ -65,7 +70,6 @@ public class CellPropsProvider implements DynamicMenuProvider
             readonlyCellCheck.addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent e)
                 {
-                    // nbui.getDoc().toggleReadonlyCell(el, true);
                     CellUtils.toggleAttribute(nb, XMLConstants.ATTR_READONLY);
                 }
             });
@@ -79,7 +83,6 @@ public class CellPropsProvider implements DynamicMenuProvider
             htmlCellCheck.addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent e)
                 {
-                    // nbui.getDoc().toggleHTMLCell(el.getStartOffset());
                     CellUtils.toggleAttribute(nb, XMLConstants.ATTR_HTML);
                 }
             });
@@ -98,7 +101,6 @@ public class CellPropsProvider implements DynamicMenuProvider
             outputCellCheck.addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent e)
                 {
-                    // nbui.getDoc().toggleErrorCell(output_el.getStartOffset());
                     CellUtils.toggleAttribute(out, XMLConstants.ATTR_ERROR);
                 }
             });
@@ -112,7 +114,7 @@ public class CellPropsProvider implements DynamicMenuProvider
                 public void actionPerformed(ActionEvent e)
                 {
                     try{
-                     nbui.getDoc().evalCell(el);
+                     nbui.getDoc().evalCellInAuxThread(el);
                     }catch(BadLocationException ex)
                     {
                         ex.printStackTrace();
@@ -135,12 +137,10 @@ public class CellPropsProvider implements DynamicMenuProvider
             menu.add(mi);
         }
     }
-
-    public void update(final JMenu menu)
+    
+    public boolean updateEveryTime()
     {
-        NotebookUI nbui = NotebookUI.getFocusedNotebookUI();
-        if (nbui == null) return;
-        int offset = nbui.getCaretPosition();
-        _update(menu, nbui, offset);
+        return true;
     }
+
 }

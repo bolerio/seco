@@ -1,10 +1,15 @@
 package seco.things;
 
+import static seco.notebook.ElementType.inputCellBox;
+
 import java.awt.Color;
 
 import java.awt.Component;
 import java.awt.Rectangle;
+import java.awt.Window;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -13,8 +18,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.script.ScriptEngine;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.text.Element;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
@@ -38,6 +46,7 @@ import seco.events.handlers.CopyAttributeChangeHandler;
 import seco.events.handlers.CopyCellGroupChangeHandler;
 import seco.events.handlers.CopyCellTextChangeHandler;
 import seco.events.handlers.CopyEvalCellHandler;
+import seco.gui.CellContainerVisual;
 import seco.gui.GUIHelper;
 import seco.gui.JComponentVisual;
 import seco.gui.NBUIVisual;
@@ -47,12 +56,14 @@ import seco.gui.VisualAttribs;
 import seco.gui.VisualsManager;
 import seco.gui.layout.LayoutHandler;
 import seco.gui.piccolo.AffineTransformEx;
+import seco.notebook.DocUtil;
 import seco.notebook.NBStyle;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.StyleAttribs;
 import seco.notebook.StyleType;
 import seco.notebook.XMLConstants;
+import seco.rtenv.EvaluationContext;
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolox.pswing.PSwing;
 
@@ -74,6 +85,166 @@ public class CellUtils
 
     private CellUtils()
     {
+    }
+
+    public static void evaluateVisibleInitCells()
+    {
+        processGroup((CellGroup) ThisNiche.graph
+                .get(ThisNiche.TOP_CELL_GROUP_HANDLE));
+    }
+
+    private static void processGroup(CellGroup group)
+    {
+        for (int i = 0; i < group.getArity(); i++)
+        {
+            CellGroupMember cgm = group.getElement(i);
+            if (cgm instanceof Cell) continue;
+            CellVisual visual = CellUtils.getVisual(cgm);
+            if (visual instanceof NBUIVisual) evalInitCells((CellGroup) cgm);
+            else if (visual instanceof CellContainerVisual
+                    || visual instanceof TabbedPaneVisual)
+                processGroup((CellGroup) cgm);
+        }
+    }
+
+    public static void evalInitCells(CellGroup group)
+    {
+        String name = CellUtils.getEngine(group);
+        if (name == null) name = defaultEngineName;
+        evalInitGroup(group, name, ThisNiche.getTopContext(), CellUtils.isInitCell(group));
+    }
+
+    public static void evalInitGroup(CellGroup group, String inherited_engine_name, EvaluationContext ctx,
+            boolean inherited_init)
+    {
+        String name = CellUtils.getEngine(group);
+        if (name == null) name = inherited_engine_name;
+        if (name == null) name = defaultEngineName;
+        for (int i = 0; i < group.getArity(); i++)
+        {
+            CellGroupMember cgm = group.getElement(i);
+            boolean init = CellUtils.isInitCell(cgm);
+            if (!init && inherited_init) init = true;
+            if (cgm instanceof CellGroup) evalInitGroup((CellGroup) cgm, name, ctx, init);
+            else if (CellUtils.isInputCell(cgm))
+            {
+                if (!init) continue;
+                evalCell(group, (Cell) cgm, name, ctx);
+            }
+        }
+    }
+    
+    public static void evalGroup(CellGroup group, String inherited_engine_name, EvaluationContext ctx)
+    {
+        String name = CellUtils.getEngine(group);
+        if (name == null) name = inherited_engine_name;
+        if (name == null) name = defaultEngineName;
+        for (int i = 0; i < group.getArity(); i++)
+        {
+            CellGroupMember cgm = group.getElement(i);
+            if (cgm instanceof CellGroup) evalGroup((CellGroup) cgm, name, ctx);
+            else if (CellUtils.isInputCell(cgm))
+               evalCell(group, (Cell) cgm, name, ctx);
+       }
+    }
+    
+    public static void evalCell(Cell cell,
+            String inherited_engine_name, EvaluationContext ctx)
+    {
+        CellGroup parent = CellUtils.getParentGroup(ThisNiche.handleOf(cell));
+        evalCell(parent, cell, inherited_engine_name, ctx);
+    }
+
+    private static void evalCell(CellGroup parent, Cell cell,
+            String inherited_engine_name, EvaluationContext ctx)
+    {
+        HGHandle cellH = ThisNiche.handleOf(cell);
+        EvalResult res = eval_result(cell, inherited_engine_name, ctx);
+        EvalCellEvent e = create_eval_event(cellH, res);
+        // check if we already have an output cell. if not, add one
+        List<Cell> list = getOutCells(cellH);
+        if (list.isEmpty())
+        {
+            HGHandle outH = createOutputCellH(cellH, "", null, false);
+            CellGroupChangeEvent ev = new CellGroupChangeEvent(ThisNiche
+                    .handleOf(parent), parent.indexOf(cellH) + 1,
+                    new HGHandle[] { outH }, new HGHandle[0]);
+            parent.batchProcess(ev);
+        }
+        EventDispatcher.dispatch(EvalCellEvent.HANDLE, e.getCellHandle(), e);
+    }
+
+    public static EvalResult eval_result(final Cell cell, String engine_name, EvaluationContext ctx)
+    {
+        EvalResult res = new EvalResult();
+        try
+        {
+            String name = CellUtils.getEngine(cell);
+            if (name == null) name = engine_name;
+            Object o = ctx.eval(name, getText(cell));
+            if (o instanceof Component)
+            {
+                Component c = (Component) o;
+                if (c instanceof Window)
+                {
+                    res.setText("Window: " + c);
+                }
+                else if (c.getParent() != null)
+                {
+                    // If this component is displayed in some output cell,
+                    // detach it from there,
+                    // otherwise we don't own the component so we
+                    // don't display it.
+                    if (c.getParent() instanceof seco.notebook.view.ResizableComponent)
+                    {
+                        c.getParent().remove(c);
+                        res.setComponent(c);
+                    }
+                    else
+                        res.setText("AWT Component - " + c.toString()
+                                + " -- belongs to parent component "
+                                + c.getParent().toString());
+                }
+                else
+                    res.setComponent(c);
+            }
+            else
+                res.setText(eval_to_string(o, ThisNiche.getTopContext()));
+
+        }
+        catch (Throwable ex)
+        {
+            res.setError(true);
+            StringWriter w = new StringWriter();
+            PrintWriter writer = new PrintWriter(w);
+            ex.printStackTrace(writer);
+            res.setText(w.toString());
+        }
+        return res;
+    }
+
+    public static String eval_to_string(Object o, EvaluationContext ctx)
+    {
+        ClassLoader save = Thread.currentThread().getContextClassLoader();
+        try
+        {
+            Thread.currentThread().setContextClassLoader(ctx.getClassLoader());
+            return "" + o;
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader(save);
+        }
+    }
+
+    public static EvalCellEvent create_eval_event(HGHandle cellH,
+            EvalResult value)
+    {
+        HGHandle oldH = CellUtils.getOutCellHandle(cellH);
+        Cell c = (oldH != null) ? ((Cell) ThisNiche.graph.get(oldH)) : null;
+        Object old = (oldH != null) ? c.getValue() : null;
+        EvalResult old_res = new EvalResult(old, CellUtils.isError(c));
+        return new EvalCellEvent(cellH, value, old_res);
     }
 
     static void updateCellGroupMember(CellGroupMember c)
@@ -102,17 +273,13 @@ public class CellUtils
     {
         HGHandle visH = (c.getVisual() != null) ? c.getVisual()
                 : VisualsManager.defaultVisualForAtom(ThisNiche.handleOf(c));
-        if (visH != null) // && TabbedPaneVisual.getHandle() != visH)
-            return (CellVisual) ThisNiche.graph.get(visH);
+        if (visH != null) return (CellVisual) ThisNiche.graph.get(visH);
         CellVisual visual = null;
         if (visH == null || visH.equals(HGHandleFactory.nullHandle()))
         {
             if (c instanceof CellGroup || CellUtils.isInputCell(c)) visual = new NBUIVisual();
             else
             {
-                Object val = ((Cell) c).getValue();
-                if (val instanceof JTabbedPane)
-                    visual = new TabbedPaneVisual();
                 visual = new JComponentVisual();
             }
         }
@@ -299,10 +466,16 @@ public class CellUtils
         return (v != null) ? v.toString() : "null";
     }
 
+    public static String getNotNullEngine(CellGroupMember c)
+    {
+        String eng = (String) c.getAttribute(XMLConstants.ATTR_ENGINE);
+        return eng != null ? eng : defaultEngineName;
+    }
+
     public static String getEngine(CellGroupMember c)
     {
         String eng = (String) c.getAttribute(XMLConstants.ATTR_ENGINE);
-        return eng; // eng != null ? eng : defaultEngineName;
+        return eng;
     }
 
     public static void setEngine(CellGroupMember c, String s)
@@ -365,7 +538,7 @@ public class CellUtils
     }
 
     @SuppressWarnings("unchecked")
-	public static NBStyle getStyle(CellGroupMember c, StyleType type)
+    public static NBStyle getStyle(CellGroupMember c, StyleType type)
     {
         Map<StyleType, NBStyle> s = (Map<StyleType, NBStyle>) c
                 .getAttribute(XMLConstants.CELL_STYLE);
@@ -373,7 +546,7 @@ public class CellUtils
     }
 
     @SuppressWarnings("unchecked")
-	public static void addStyle(CellGroupMember c, NBStyle style)
+    public static void addStyle(CellGroupMember c, NBStyle style)
     {
         Map<StyleType, NBStyle> s = (Map<StyleType, NBStyle>) c
                 .getAttribute(XMLConstants.CELL_STYLE);
@@ -804,8 +977,7 @@ public class CellUtils
         HGHandle pubs = link.getPubs();
         HGHandle subs = link.getSubs();
         ThisNiche.graph.remove(linkH, true);
-        if(cell_too)
-          ThisNiche.graph.remove(cellH, true);
+        if (cell_too) ThisNiche.graph.remove(cellH, true);
         ThisNiche.graph.remove(pubs, true);
         ThisNiche.graph.remove(subs, true);
     }
@@ -853,16 +1025,17 @@ public class CellUtils
         ClassLoader save = Thread.currentThread().getContextClassLoader();
         try
         {
-            Thread.currentThread().setContextClassLoader(ThisNiche.getTopContext().getClassLoader());
+            Thread.currentThread().setContextClassLoader(
+                    ThisNiche.getTopContext().getClassLoader());
             if (o instanceof Component && o instanceof Serializable
                     && !(o instanceof NotebookUI))
             {
                 PSwingNode node = null;
-                //remove added by Piccolo PSwingNode, which breaks serialization
+                // remove added by Piccolo PSwingNode, which breaks
+                // serialization
                 if (o instanceof JComponent)
                     node = GUIHelper.getPSwingNode((JComponent) o);
-                if (node != null)
-                    node.prepareForSerialization();
+                if (node != null) node.prepareForSerialization();
                 try
                 {
                     h = ThisNiche.graph.add(o);
@@ -875,9 +1048,8 @@ public class CellUtils
                 }
                 finally
                 {
-                    //restore PSwingNode
-                    if (node != null)
-                        node.restoreAfterSerialization();
+                    // restore PSwingNode
+                    if (node != null) node.restoreAfterSerialization();
                 }
             }
             else

@@ -36,6 +36,8 @@ import javax.swing.*;
 
 public class EnhancedMenu extends JMenu implements MenuListener
 {
+	private static final long serialVersionUID = 6798827747654062221L;
+   
 	protected DynamicMenuProvider provider;
 	public EnhancedMenu()
 	{

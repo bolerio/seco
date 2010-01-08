@@ -20,18 +20,16 @@ import javax.swing.text.Element;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.XMLConstants;
+import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
 public class CellGroupPropsProvider extends CellPropsProvider
 {
+    private static final long serialVersionUID = 8459743780230145374L;
+
     public CellGroupPropsProvider()
     {
-    }
-
-    public boolean updateEveryTime()
-    {
-        return true;
     }
 
     protected void _update(JMenu menu, final NotebookUI nbui, final int off)
@@ -63,7 +61,6 @@ public class CellGroupPropsProvider extends CellPropsProvider
             readonlyCellCheck.addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent e)
                 {
-                    // doc.toggleReadonlyCell(el, false);
                     CellUtils.toggleAttribute(nb, XMLConstants.ATTR_READONLY);
                 }
             });
@@ -76,14 +73,8 @@ public class CellGroupPropsProvider extends CellPropsProvider
             m.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-                    try
-                    {
-                        nbui.getDoc().evalGroup(el);
-                    }
-                    catch (BadLocationException ex)
-                    {
-                        ex.printStackTrace();
-                    }
+                    nbui.getDoc().evalGroup(
+                            (CellGroup) NotebookDocument.getNBElement(el));
                 }
             });
             menu.add(m);

@@ -12,14 +12,8 @@ import static seco.notebook.ElementType.outputCellBox;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Window;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Vector;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
-import javax.swing.SwingUtilities;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -38,7 +32,6 @@ import seco.events.handlers.CellGroupChangeHandler;
 import seco.events.handlers.CellTextChangeHandler;
 import seco.events.handlers.EvalCellHandler;
 import seco.notebook.util.RequestProcessor;
-import seco.rtenv.EvaluationContext;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -174,21 +167,22 @@ abstract public class DocUtil
         createInsertionPoint(attr, vec);
         CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cellH, doc
                 .getHandle(), AttributeChangeHandler.getInstance());
-        if(NotebookDocument.DIRECT_EVENTING)
+        if (NotebookDocument.DIRECT_EVENTING)
         {
             CellUtils.addEventPubSub(CellTextChangeEvent.HANDLE, cellH, doc
                     .getHandle(), CellTextChangeHandler.getInstance());
             CellUtils.addEventPubSub(EvalCellEvent.HANDLE, cellH, doc
                     .getHandle(), EvalCellHandler.getInstance());
-            
-        }else
-        {
-        CellUtils.addMutualEventPubSub(CellTextChangeEvent.HANDLE, cellH, doc
-                .getHandle(), CellTextChangeHandler.getInstance());
-        CellUtils.addMutualEventPubSub(EvalCellEvent.HANDLE, cellH, doc
-                .getHandle(), EvalCellHandler.getInstance());
+
         }
-   }
+        else
+        {
+            CellUtils.addMutualEventPubSub(CellTextChangeEvent.HANDLE, cellH,
+                    doc.getHandle(), CellTextChangeHandler.getInstance());
+            CellUtils.addMutualEventPubSub(EvalCellEvent.HANDLE, cellH, doc
+                    .getHandle(), EvalCellHandler.getInstance());
+        }
+    }
 
     static void createOutputCell(NotebookDocument doc, HGHandle cellH,
             MutableAttributeSet attr, Vector<ElementSpec> vec, boolean genInsP)
@@ -204,8 +198,7 @@ abstract public class DocUtil
         Cell c = (Cell) ThisNiche.graph.get(cellH);
         startTag(outputCellBox, attr, 0, vec);
         attr.removeAttribute(ATTR_CELL);
-        boolean isError = (e != null) ? e.isError() : CellUtils
-                .isError(c);
+        boolean isError = (e != null) ? e.isError() : CellUtils.isError(c);
         attr = isError ? getDocStyle(doc, StyleType.error) : getDocStyle(doc,
                 StyleType.outputCell);
         createOutputCellContents(doc, c, attr, vec, e);
@@ -214,12 +207,12 @@ abstract public class DocUtil
         attr.removeAttribute(ATTR_CELL);
         endTag(vec);
         if (genInsP) createInsertionPoint(attr, vec);
-        if(NotebookDocument.DIRECT_EVENTING)
-           CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cellH, doc
-                    .getHandle(), AttributeChangeHandler.getInstance());
+        if (NotebookDocument.DIRECT_EVENTING) CellUtils.addEventPubSub(
+                AttributeChangeEvent.HANDLE, cellH, doc.getHandle(),
+                AttributeChangeHandler.getInstance());
         else
-           CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, cellH, doc
-                .getHandle(), AttributeChangeHandler.getInstance());
+            CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, cellH,
+                    doc.getHandle(), AttributeChangeHandler.getInstance());
     }
 
     static void createOutputCell(NotebookDocument doc, HGHandle cellH,
@@ -243,7 +236,7 @@ abstract public class DocUtil
                 comp = (Component) val;
         }
 
-        if (comp == null)//text.length() > 0)
+        if (comp == null)// text.length() > 0)
         {
             if (!text.endsWith("\n")) text += "\n";
             addContent(text.toCharArray(), 0, vec, 0);
@@ -268,112 +261,100 @@ abstract public class DocUtil
         String name = CellUtils.getEngine(cell);
         return (name != null) ? name : doc.getDefaultEngineName();
     }
-    
-    static void eval_result_in_aux_thread(final NotebookDocument doc, final Cell cell)
+
+    static void eval_result_in_aux_thread(final NotebookDocument doc,
+            final Cell cell)
     {
-        //EvalResult res = new EvalResult();
-        //res.setText("Evaluating");
-        Runnable r = new Runnable()
-        {
+        // EvalResult res = new EvalResult();
+        // res.setText("Evaluating");
+        Runnable r = new Runnable() {
             @Override
             public void run()
             {
-                EvalResult res = eval_result(doc, cell);
+                EvalResult res = CellUtils.eval_result(cell, getEngineName(doc,
+                        cell), doc.getEvaluationContext());
                 doc.handle_delayed_evaluation(res, ThisNiche.handleOf(cell));
             }
         };
         RequestProcessor.getDefault().post(r);
-        //SwingUtilities.invokeLater(r);
-        //r.run();
-        //return res;
-    }
-    
-    static EvalResult eval_result(final NotebookDocument doc, final Cell cell)
-    {
-        EvalResult res = new EvalResult();
-        try
-        {
-            String name = getEngineName(doc, cell);
-            if (ThisNiche.getHyperGraph() == null) // are we running a niche or
-            // some other testing/development mode?
-            {
-                ScriptEngine eng = doc.scriptManager.getEngineByName(name);
-                if (eng != null)
-                {
-                    Object o = eng.eval(CellUtils.getText(cell), doc.context);
-                    if (o instanceof Component) res
-                            .setComponent(maybe_clone((Component) o));
-                    else
-                        res.setText("" + o);
-                }
-                else
-                {
-                    res.setError(true);
-                    res.setText("Unknown scripting engine: " + name);
-                }
-            }
-            else
-            {
-                if (doc.evalContext == null)
-                    doc.evalContext = ThisNiche.getTopContext();
-                if (doc.evalContext == null)
-                    doc.evalContext = ThisNiche
-                            .getEvaluationContext(ThisNiche.TOP_CONTEXT_HANDLE);
-                Object o = doc.evalContext.eval(name, CellUtils.getText(cell));
-                if (o instanceof Component)
-                {
-                    Component c = (Component) o;
-                    if (c instanceof Window)
-                    {
-                        res.setText("Window: " + c);
-                    }
-                    else if (c.getParent() != null)
-                    {
-                        // If this component is displayed in some output cell,
-                        // detach it from there,
-                        // otherwise we don't own the component so we
-                        // don't display it.
-                        if (c.getParent() instanceof seco.notebook.view.ResizableComponent)
-                        {
-                            c.getParent().remove(c);
-                            res.setComponent(c);
-                        }
-                        else
-                            res.setText("AWT Component - " + c.toString()
-                                    + " -- belongs to parent component "
-                                    + c.getParent().toString());
-                    }
-                    else
-                        res.setComponent(c);
-                }
-                else
-                    res.setText(eval_to_string(o, doc.evalContext));
-            }
-        }
-        catch (ScriptException ex)
-        {
-            res.setError(true);
-            StringWriter w = new StringWriter();
-            PrintWriter writer = new PrintWriter(w);
-            ex.printStackTrace(writer);
-            res.setText(w.toString());
-        }
-        return res;
+        // SwingUtilities.invokeLater(r);
+        // r.run();
+        // return res;
     }
 
-    private static String eval_to_string(Object o, EvaluationContext ctx)
-    {
-        ClassLoader save = Thread.currentThread().getContextClassLoader();
-        try
-        {
-            Thread.currentThread().setContextClassLoader(ctx.getClassLoader());
-            return "" + o;
-        }
-        finally
-        {
-            Thread.currentThread().setContextClassLoader(save);
-        }
-    }
+    // static EvalResult eval_result(final NotebookDocument doc, final Cell
+    // cell)
+    // {
+    // EvalResult res = new EvalResult();
+    // try
+    // {
+    // String name = getEngineName(doc, cell);
+    // if (ThisNiche.getHyperGraph() == null) // are we running a niche or
+    // // some other testing/development mode?
+    // {
+    // ScriptEngine eng = doc.scriptManager.getEngineByName(name);
+    // if (eng != null)
+    // {
+    // Object o = eng.eval(CellUtils.getText(cell), doc.context);
+    // if (o instanceof Component) res
+    // .setComponent(maybe_clone((Component) o));
+    // else
+    // res.setText("" + o);
+    // }
+    // else
+    // {
+    // res.setError(true);
+    // res.setText("Unknown scripting engine: " + name);
+    // }
+    // }
+    // else
+    // {
+    // if (doc.evalContext == null)
+    // doc.evalContext = ThisNiche.getTopContext();
+    // if (doc.evalContext == null)
+    // doc.evalContext = ThisNiche
+    // .getEvaluationContext(ThisNiche.TOP_CONTEXT_HANDLE);
+    // Object o = doc.evalContext.eval(name, CellUtils.getText(cell));
+    // if (o instanceof Component)
+    // {
+    // Component c = (Component) o;
+    // if (c instanceof Window)
+    // {
+    // res.setText("Window: " + c);
+    // }
+    // else if (c.getParent() != null)
+    // {
+    // // If this component is displayed in some output cell,
+    // // detach it from there,
+    // // otherwise we don't own the component so we
+    // // don't display it.
+    // if (c.getParent() instanceof seco.notebook.view.ResizableComponent)
+    // {
+    // c.getParent().remove(c);
+    // res.setComponent(c);
+    // }
+    // else
+    // res.setText("AWT Component - " + c.toString()
+    // + " -- belongs to parent component "
+    // + c.getParent().toString());
+    // }
+    // else
+    // res.setComponent(c);
+    // }
+    // else
+    // res.setText(CellUtils.eval_to_string(o, doc.evalContext));
+    // }
+    // }
+    // catch (Throwable ex)
+    // {
+    // res.setError(true);
+    // StringWriter w = new StringWriter();
+    // PrintWriter writer = new PrintWriter(w);
+    // ex.printStackTrace(writer);
+    // res.setText(w.toString());
+    // }
+    // return res;
+    // }
 
     public static Component maybe_clone(Component c)
     {
@@ -405,15 +386,14 @@ abstract public class DocUtil
         attr.removeAttribute(ATTR_CELL);
         endTag(vec);
         createInsertionPoint(attr, vec);
-        if(NotebookDocument.DIRECT_EVENTING)
+        if (NotebookDocument.DIRECT_EVENTING)
         {
-        CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE,
-                cell_groupH, doc.getHandle(), AttributeChangeHandler
-                        .getInstance());
-        CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE,
-                cell_groupH, doc.getHandle(), CellGroupChangeHandler
-                        .getInstance());
-        }else
+            CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cell_groupH,
+                    doc.getHandle(), AttributeChangeHandler.getInstance());
+            CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE, cell_groupH,
+                    doc.getHandle(), CellGroupChangeHandler.getInstance());
+        }
+        else
         {
             CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE,
                     cell_groupH, doc.getHandle(), AttributeChangeHandler

@@ -52,7 +52,7 @@ public class Cell extends BaseCellGroupMember implements EventHandler
         }
     }
     
-    private void updateValue(EvalCellEvent e)
+    void updateValue(EvalCellEvent e)
     {
         //System.out.println("Cell - updateValue: " + e);
         Object val = (e.getValue().getComponent() != null) ?

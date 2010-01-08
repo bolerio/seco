@@ -435,7 +435,7 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             NotebookDocument doc = ui.getDoc();
             doc.beginCompoundEdit("Output Cells Eval");
-            doc.update(UpdateAction.evalCells);
+            doc.evalGroup((CellGroup)doc.getBook());
             doc.endCompoundEdit();
         }
     }
@@ -456,9 +456,8 @@ public class NotebookEditorKit extends StyledEditorKit
                 try
                 {
                     doc.beginCompoundEdit("CellGroup Eval");
-                    doc.updateGroup(NotebookDocument.getLowerElement(gr,
-                            ElementType.cellGroup),
-                            UpdateAction.evalCells, null);
+                    doc.evalGroup((CellGroup)NotebookDocument.getLowerElement(gr,
+                            ElementType.cellGroup));
                 }
                 catch (Exception ex)
                 {

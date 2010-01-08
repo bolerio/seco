@@ -18,7 +18,9 @@ import seco.notebook.NotebookUI;
 
 public class GroupingProvider implements DynamicMenuProvider
 {
-	protected NotebookUI nbui;
+	private static final long serialVersionUID = -3666464210809413850L;
+	
+    protected NotebookUI nbui;
 	protected StandaloneFrame app;
 	
 	public boolean updateEveryTime()
@@ -35,7 +37,6 @@ public class GroupingProvider implements DynamicMenuProvider
 
 			public void actionPerformed(ActionEvent e)
 			{
-				//System.out.println("GroupingProvider - group: " + nbui.getSelectionManager().getSelection());
 				if(!nbui.getSelectionManager().canGroup()) return;
 				nbui.getSelectionManager().group();
 			}});

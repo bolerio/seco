@@ -70,6 +70,7 @@ import seco.notebook.gui.ToolbarButton;
 import seco.notebook.gui.menu.CellGroupPropsProvider;
 import seco.notebook.gui.menu.CellPropsProvider;
 import seco.notebook.gui.menu.EnhancedMenu;
+import seco.notebook.gui.menu.NotebookPropsProvider;
 import seco.notebook.gui.menu.RecentFilesProvider;
 import seco.notebook.gui.menu.VisPropsProvider;
 import seco.notebook.html.HTMLToolBar;
@@ -931,6 +932,7 @@ public class GUIHelper
                 .getActionByName(NotebookEditorKit.ctxInspectorAction)));
         menu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
         menu.add(new EnhancedMenu("CellGroup", new CellGroupPropsProvider()));
+        menu.add(new EnhancedMenu("Notebook", new NotebookPropsProvider()));
         menu.add(new JSeparator());
         JMenuItem mi = new GlobMenuItem("Top CellGroup Tree");
         mi.addActionListener(new TopCellTreeAction());

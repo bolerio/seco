@@ -19,6 +19,7 @@ import seco.gui.TopFrame;
 import seco.rtenv.RuntimeContext;
 import seco.talk.ConnectionManager;
 import seco.things.CellGroup;
+import seco.things.CellUtils;
 import seco.things.CellVisual;
 
 public class NicheBootListener implements HGListener
@@ -47,6 +48,7 @@ public class NicheBootListener implements HGListener
                     new GUIHelper.TopCellTreeAction().actionPerformed(null);
                     DEBUG_NICHE = false; 
                 }else{
+                   CellUtils.evaluateVisibleInitCells();
                    v.bind(group);
                    s.setVisible(true);
                    ConnectionManager.startConnections();

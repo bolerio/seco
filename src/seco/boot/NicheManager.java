@@ -224,6 +224,10 @@ public class NicheManager
         		"jruby", 
         		"seco.notebook.ruby.JRubyScriptEngineFactory",
                 new String[] {}));
+        graph.add(new SEDescriptor(
+                "javascript", 
+                "seco.notebook.javascript.jsr.RhinoScriptEngineFactory",
+                new String[] {}));
         graph.add(new SEDescriptor("html", null, new String[0]));    	
     }
     

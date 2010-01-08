@@ -47,7 +47,6 @@ public class ScriptletDocument extends NotebookDocument
         DocUtil.endTag(parseBuffer);
         create(parseBuffer.toArray(new ElementSpec[parseBuffer.size()]));
         update(UpdateAction.tokenize);
-        update(UpdateAction.evalInitCells);
         setModified(false);
         if(NotebookDocument.DIRECT_EVENTING)
            CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, bookH,

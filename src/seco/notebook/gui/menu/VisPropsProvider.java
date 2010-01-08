@@ -9,7 +9,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import seco.gui.StandaloneFrame;
 import seco.notebook.NotebookUI;
 import seco.notebook.StyleType;
 import seco.notebook.gui.CellPropsDialog;
@@ -24,12 +23,11 @@ import seco.notebook.syntax.java.JavaFormatterOptionsPane;
 
 public class VisPropsProvider implements DynamicMenuProvider, Serializable
 {
-    // transient ActionListener actionListener;
+    private static final long serialVersionUID = -6896106906804231842L;
     transient MouseListener mouseListener;
 
     public VisPropsProvider()
     {
-        // actionListener = new MIActionListener();
     }
 
     public boolean updateEveryTime()
@@ -95,6 +93,8 @@ public class VisPropsProvider implements DynamicMenuProvider, Serializable
 
     public static class MIActionListener extends AbstractAction
     {
+        private static final long serialVersionUID = 8167693899124685827L;
+        
         protected StyleType stype;
 
         public MIActionListener()

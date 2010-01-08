@@ -30,6 +30,8 @@ import seco.rtenv.RuntimeContext;
 
 public class RCListProvider implements DynamicMenuProvider
 {
+    private static final long serialVersionUID = 3127888958558526166L;
+
     public void update(JMenu m)
     {
         if (NotebookUI.getFocusedNotebookUI() == null) return;

@@ -8,32 +8,35 @@
 package seco.notebook.gui.menu;
 
 
-import java.awt.event.*;
-import java.io.File;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.Serializable;
-import javax.swing.*;
+import java.util.Collections;
+import java.util.Vector;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
-import seco.gui.StandaloneFrame;
 import seco.gui.TopFrame;
 import seco.notebook.AppConfig;
-import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
-
-
-
-import java.util.*;
 
 /*
  * Loosely based on jEdit's RecentFilesProvider.java
  */
 public class RecentFilesProvider implements DynamicMenuProvider, Serializable
 {
-	transient MouseListener mouseListener;
+	private static final long serialVersionUID = 8629428510393152418L;
+	
+    transient MouseListener mouseListener;
 	
 	public RecentFilesProvider()
 	{
