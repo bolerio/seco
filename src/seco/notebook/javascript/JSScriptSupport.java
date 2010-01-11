@@ -3,7 +3,6 @@ package seco.notebook.javascript;
 import java.util.LinkedList;
 import java.util.List;
 
-import seco.notebook.ruby.RubyParser;
 import seco.notebook.syntax.Mode;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.CompletionProvider;
@@ -16,6 +15,11 @@ public class JSScriptSupport extends ScriptSupport
     {
         modes.add(new Mode("javascript", "/modes/javascript.xml"));
     }
+    
+    private static CompletionProvider[] providers = 
+        new CompletionProvider[]{
+              new JSCompletionProvider()};
+
 
     @Override
     public String getModeName()
@@ -38,19 +42,21 @@ public class JSScriptSupport extends ScriptSupport
     @Override
     public CompletionProvider[] getCompletionProviders()
     {
-        return null;
+        return providers;
     }
 
-    private JSParser parser = null;
+    private JSParser0 parser = null;
 
     @Override
     public NBParser getParser()
     {
         if (parser == null)
         {
-            parser = new JSParser(this);
+            parser = new JSParser0(this);
         }
         return parser;
     }
+    
+    
 
 }

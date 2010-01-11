@@ -243,9 +243,9 @@ public class TypeAnalyzer
 				if(type != null){
 					String fqn = getFQNFromIncludes(type);
 					type =  fqn != null ? fqn : type;
-				 System.out.println("2" + call.getName() + ":" + type + ":" + getType(type));
+				// System.out.println("2" + call.getName() + ":" + type + ":" + getType(type));
 				 Object o = parser.evalType(type);
-				 System.out.println("22" + o);
+				// System.out.println("22" + o);
 				}
 			   
 			}

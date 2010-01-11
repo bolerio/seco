@@ -1,262 +1,288 @@
+/*
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright 1997-2007 Sun Microsystems, Inc. All rights reserved.
+ *
+ * The contents of this file are subject to the terms of either the GNU
+ * General Public License Version 2 only ("GPL") or the Common
+ * Development and Distribution License("CDDL") (collectively, the
+ * "License"). You may not use this file except in compliance with the
+ * License. You can obtain a copy of the License at
+ * http://www.netbeans.org/cddl-gplv2.html
+ * or nbbuild/licenses/CDDL-GPL-2-CP. See the License for the
+ * specific language governing permissions and limitations under the
+ * License.  When distributing the software, include this License Header
+ * Notice in each file and include the License file at
+ * nbbuild/licenses/CDDL-GPL-2-CP.  Sun designates this
+ * particular file as subject to the "Classpath" exception as provided
+ * by Sun in the GPL Version 2 section of the License file that
+ * accompanied this code. If applicable, add the following below the
+ * License Header, with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * Contributor(s):
+ *
+ * Portions Copyrighted 2007 Sun Microsystems, Inc.
+ */
 package seco.notebook.javascript;
 
-import java.util.Iterator;
+import javax.swing.text.Document;
+//import org.netbeans.modules.javascript.editing.lexer.JsTokenId;
+//import org.openide.filesystems.FileObject;
+//import org.openide.util.NbBundle;
 
-import org.mozilla.javascript.FunctionNode;
-import org.mozilla.javascript.Kit;
-import org.mozilla.javascript.Node;
-import org.mozilla.javascript.ObjToIntMap;
-import org.mozilla.javascript.ScriptOrFnNode;
-import org.mozilla.javascript.Token;
-import org.mozilla.javascript.Node.Jump;
+/**
+ *
+ * @author Tor Norbye
+ */
+public class JsUtils {
 
-public class JSUtils
-{
-    public static String toString(Node node)
-    {
-        StringBuffer sb = new StringBuffer();
-        ObjToIntMap printIds = new ObjToIntMap();
-        int type = node.getType();
-        sb.append(TokenEx.name(type));
-        if (node.getClass().getName().indexOf("StringNode") > 0)
-        {
-            sb.append(' ');
-            sb.append(node.getString());
-//            Node.Scope scope = node.getScope();
-//            if (scope != null)
-//            {
-//                sb.append("[scope: ");
-//                appendPrintId(scope, printIds, sb);
-//                sb.append("]");
-//            }
-        }
-        else if (node.getClass().getName().indexOf("Node.Scope") > 0)
-        {
-            if (node instanceof ScriptOrFnNode)
-            {
-                ScriptOrFnNode sof = (ScriptOrFnNode) node;
-                if (node instanceof FunctionNode)
-                {
-                    FunctionNode fn = (FunctionNode) node;
-                    sb.append(' ');
-                    sb.append(fn.getFunctionName());
-                }
-                sb.append(" [source name: ");
-                sb.append(sof.getSourceName());
-                sb.append("] [encoded source length: ");
-                sb.append(sof.getEncodedSourceEnd()
-                        - sof.getEncodedSourceStart());
-                sb.append("] [base line: ");
-                sb.append(sof.getBaseLineno());
-                sb.append("] [end line: ");
-                sb.append(sof.getEndLineno());
-                sb.append(']');
-            }
-//            if (((Node.Scope) node).symbolTable != null)
-//            {
-//                sb.append(" [scope ");
-//                appendPrintId(node, printIds, sb);
-//                sb.append(": ");
-//                Iterator<String> iter = ((Node.Scope) node).symbolTable
-//                        .keySet().iterator();
-//                while (iter.hasNext())
-//                {
-//                    sb.append(iter.next());
-//                    sb.append(" ");
-//                }
-//                sb.append("]");
-//            }
-        }
-        else if (node instanceof Jump)
-        {
-            Jump jump = (Jump) node;
-            if (type == Token.BREAK || type == Token.CONTINUE)
-            {
-                sb.append(" [label: ");
-                appendPrintId(jump.getJumpStatement(), printIds, sb);
-                sb.append(']');
-            }
-            else if (type == Token.TRY)
-            {
-                Node catchNode = jump.target;
-                Node finallyTarget = jump.getFinally();
-                if (catchNode != null)
-                {
-                    sb.append(" [catch: ");
-                    appendPrintId(catchNode, printIds, sb);
-                    sb.append(']');
-                }
-                if (finallyTarget != null)
-                {
-                    sb.append(" [finally: ");
-                    appendPrintId(finallyTarget, printIds, sb);
-                    sb.append(']');
-                }
-            }
-            else if (type == Token.LABEL || type == Token.LOOP
-                    || type == Token.SWITCH)
-            {
-                sb.append(" [break: ");
-                appendPrintId(jump.target, printIds, sb);
-                sb.append(']');
-                if (type == Token.LOOP)
-                {
-                    sb.append(" [continue: ");
-                    appendPrintId(jump.getContinue(), printIds, sb);
-                    sb.append(']');
-                }
-            }
-            else
-            {
-                sb.append(" [target: ");
-                appendPrintId(jump.target, printIds, sb);
-                sb.append(']');
-            }
-        }
-        else if (type == Token.NUMBER)
-        {
-            sb.append(' ');
-            sb.append(node.getDouble());
-        }
-        else if (type == Token.TARGET)
-        {
-            sb.append(' ');
-            appendPrintId(node, printIds, sb);
-        }
-        if (node.getLineno() != -1)
-        {
-            sb.append(" line: ");
-            sb.append(node.getLineno());
-        }
-
-//        for (PropListItem x = propListHead; x != null; x = x.next)
-//        {
-//            int t = x.type;
-//            sb.append(" [");
-//            sb.append(node.propToString(type));
-//            sb.append(": ");
-//            String value;
-//            switch (t)
-//            {
-//            case Node.TARGETBLOCK_PROP: // can't add this as it recurses
-//                value = "target block property";
-//                break;
-//            case  Node.LOCAL_BLOCK_PROP: // can't add this as it is dull
-//                value = "last local block";
-//                break;
-//            case  Node.ISNUMBER_PROP:
-//                switch (x.intValue)
-//                {
-//                case  Node.BOTH:
-//                    value = "both";
-//                    break;
-//                case  Node.RIGHT:
-//                    value = "right";
-//                    break;
-//                case  Node.LEFT:
-//                    value = "left";
-//                    break;
-//                default:
-//                    throw Kit.codeBug();
-//                }
-//                break;
-//            case  Node.SPECIALCALL_PROP:
-//                switch (x.intValue)
-//                {
-//                case  Node.SPECIALCALL_EVAL:
-//                    value = "eval";
-//                    break;
-//                case  Node.SPECIALCALL_WITH:
-//                    value = "with";
-//                    break;
-//                default:
-//                    // NON_SPECIALCALL should not be stored
-//                    throw Kit.codeBug();
-//                }
-//                break;
-//            case  Node.OBJECT_IDS_PROP:
-//            {
-//                Object[] a = (Object[]) x.objectValue;
-//                value = "[";
-//                for (int i = 0; i < a.length; i++)
-//                {
-//                    value += a[i].toString();
-//                    if (i + 1 < a.length) value += ", ";
-//                }
-//                value += "]";
-//                break;
-//            }
-//            default:
-//                Object obj = x.objectValue;
-//                if (obj != null)
-//                {
-//                    value = obj.toString();
-//                }
-//                else
-//                {
-//                    value = String.valueOf(x.intValue);
-//                }
-//                break;
-//            }
-//            sb.append(value);
-//            sb.append(']');
-//        }
-        return sb.toString();
+    private JsUtils() {
     }
+
+//    public static boolean isJsFile(FileObject f) {
+//        return JsTokenId.JAVASCRIPT_MIME_TYPE.equals(f.getMIMEType());
+//    }
+
+//    public static boolean isJsOrJsonDocument(Document doc) {
+//        String mimeType = (String)doc.getProperty("mimeType"); // NOI18N
+//
+//        return JsTokenId.JAVASCRIPT_MIME_TYPE.equals(mimeType) || JsTokenId.JSON_MIME_TYPE.equals(mimeType);
+//    }
+//
+//    public static boolean isJsonFile(FileObject f) {
+//        return f != null && "json".equals(f.getExt()); // NOI18N
+//    }
+//
+//    public static boolean isEjsFile(FileObject f) {
+//        return f != null && "ejs".equals(f.getExt()); // NOI18N
+//    }
+
+    public static final String HTML_MIME_TYPE = "text/html"; // NOI18N
     
-    static final String propToString(int propType)
-    {
-        if (Token.printTrees) {
-            // If Context.printTrees is false, the compiler
-            // can remove all these strings.
-            switch (propType) {
-                case Node.FUNCTION_PROP:      return "function";
-                case Node.LOCAL_PROP:         return "local";
-                case Node.LOCAL_BLOCK_PROP:   return "local_block";
-                case Node.REGEXP_PROP:        return "regexp";
-                case Node.CASEARRAY_PROP:     return "casearray";
+    public static boolean isSafeIdentifierName(String name, int fromIndex) {
+        int i = fromIndex;
 
-                case Node.TARGETBLOCK_PROP:   return "targetblock";
-                case Node.VARIABLE_PROP:      return "variable";
-                case Node.ISNUMBER_PROP:      return "isnumber";
-                case Node.DIRECTCALL_PROP:    return "directcall";
+        if (i >= name.length()) {
+            if (i == 0) {
+                return false;
+            }
+            return true;
+        }
 
-                case Node.SPECIALCALL_PROP:   return "specialcall";
-                case Node.SKIP_INDEXES_PROP:  return "skip_indexes";
-                case Node.OBJECT_IDS_PROP:    return "object_ids_prop";
-                case Node.INCRDECR_PROP:      return "incrdecr_prop";
-                case Node.CATCH_SCOPE_PROP:   return "catch_scope_prop";
-                case Node.LABEL_ID_PROP:      return "label_id_prop";
-                case Node.MEMBER_TYPE_PROP:   return "member_type_prop";
-                case Node.NAME_PROP:          return "name_prop";
-                case Node.CONTROL_BLOCK_PROP: return "control_block_prop";
-                case Node.PARENTHESIZED_PROP: return "parenthesized_prop";
-                case Node.GENERATOR_END_PROP: return "generator_end";
-                case Node.DESTRUCTURING_ARRAY_LENGTH:
-                                         return "destructuring_array_length";
-                case Node.DESTRUCTURING_NAMES:return "destructuring_names";
+        if (i == 0) {
+            if (isJsKeyword(name)) {
+                return false;
+            }
 
-                default: Kit.codeBug();
+            // Digits not allwed in the first position
+            if (Character.isDigit(name.charAt(0))) {
+                return false;
             }
         }
-        return null;
+
+        for (; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (c == '\\') {
+                // Unicode escape sequences are okay
+                if (i == name.length()-1 || name.charAt(i+1) != 'u') {
+                    return false;
+                }
+            } else if (!(c == '$' || c == '_' || Character.isLetterOrDigit(c))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    private static void appendPrintId(Node n, ObjToIntMap printIds,
-            StringBuffer sb)
-    {
-        if (n != null)
-        {
-            int id = printIds.get(n, -1);
-            sb.append('#');
-            if (id != -1)
-            {
-                sb.append(id + 1);
-            }
-            else
-            {
-                sb.append("<not_available>");
+    /** 
+     * Return null if the given identifier name is valid, otherwise a localized
+     * error message explaining the problem.
+     */
+    public static String getIdentifierWarning(String name, int fromIndex) {
+        if (isSafeIdentifierName(name, fromIndex)) {
+            return null;
+        } else {
+            return "Bad variable name"; 
+            //NbBundle.getMessage(JsUtils.class, "UnsafeIdentifierName");
+        }
+    }
+
+    public static boolean isValidJsClassName(String name) {
+        if (isJsKeyword(name)) {
+            return false;
+        }
+
+        if (name.trim().length() == 0) {
+            return false;
+        }
+
+        if (!Character.isUpperCase(name.charAt(0))) {
+            return false;
+        }
+
+        for (int i = 1; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (!isStrictIdentifierChar(c)) {
+                return false;
             }
         }
+
+        return true;
+    }
+
+    public static boolean isValidJsMethodName(String name) {
+        return isSafeIdentifierName(name, 0);
+    }
+
+    public static boolean isValidJsIdentifier(String name) {
+        return isSafeIdentifierName(name, 0);
+    }
+
+    public static boolean isJsKeyword(String name) {
+        for (String s : JAVASCRIPT_KEYWORDS) {
+            if (s.equals(name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static String getLineCommentPrefix() {
+        return "//"; // NOI18N
+    }
+
+    /** Includes things you'd want selected as a unit when double clicking in the editor */
+    public static boolean isIdentifierChar(char c) {
+        return Character.isJavaIdentifierPart(c) || (// Globals, fields and parameter prefixes (for blocks and symbols)
+                c == '$' || c == '\\'); // \\u is valid
+    }
+
+    /** Includes things you'd want selected as a unit when double clicking in the editor */
+    public static boolean isStrictIdentifierChar(char c) {
+        return Character.isJavaIdentifierPart(c) ||
+                (c == '$' || c == '\\');
+    }
+
+    /** The following keywords apply inside a call expression */
+    public static final String[] CALL_KEYWORDS =
+            new String[] {
+        "true", // NOI18N
+        "false", // NOI18N
+        "null" // NOI18N
+    };
+    
+    // Section 7.5.2 in ECMAScript Language Specification, ECMA-262
+    public static final String[] JAVASCRIPT_KEYWORDS =
+            new String[]{
+        // Uhm... what about "true" and "false" ? And "nil" ?
+        "break",
+        "case",
+        "catch",
+        "continue",
+        "default",
+        "delete",
+        "do",
+        "else",
+
+        // Not included in the ECMAScript list of keywords - really a datatype
+        "false", // NOI18N
+        
+        "finally",
+        "for",
+        "function",
+        "if",
+        "in",
+        "instanceof",
+        "let", // New in 1.7 -- do language-specific checks here?
+        "new",
+
+        // Not included in the ECMAScript list of keywords - really a datatype
+        "null", // NOI18N
+        
+        "return",
+        "switch",
+        "this",
+        "throw",
+        
+        // Not included in the ECMAScript list of keywords - really a datatype
+        "true", // NOI18N
+        
+        "try",
+        "typeof",
+
+        // Not included in the ECMAScript list of keywords - really a datatype
+        "undefined", // NOI18N
+        
+        "var",
+        "void",
+        "while",
+        "with",
+        "yield" // New in 1.7 -- do language-specific checks here?
+    };
+
+    // Section 7.5.3 in ECMAScript Language Specification, ECMA-262
+    public static final String[] JAVASCRIPT_RESERVED_WORDS =
+            new String[]{
+        "abstract",
+        "boolean",
+        "byte",
+        "char",
+        "class",
+        "const",
+        "debugger",
+        "double",
+        "enum",
+        "export",
+        "extends",
+        "final",
+        "float",
+        "goto",
+        "implements",
+        "import",
+        "int",
+        "interface",
+        "long",
+        "native",
+        "package",
+        "private",
+        "protected",
+        "public",
+        "short",
+        "static",
+        "super",
+        "synchronized",
+        "throws",
+        "transient",
+        "volatile",
+    };
+
+    /**
+     * Convert the display string used for types internally to something
+     * suitable. For example, Array<String> is shown as String[].
+     */
+    public static String normalizeTypeString(String s) {
+       if (s.indexOf("Array<") != -1) { // NOI18N
+           String[] types = s.split("\\|"); // NOI18N
+           StringBuilder sb = new StringBuilder();
+           for (String t : types) {
+               if (sb.length() > 0) {
+                   sb.append("|"); // NOI18N
+               }
+               if (t.startsWith("Array<") && t.endsWith(">")) { // NOI18N
+                   sb.append(t.substring(6, t.length()-1));
+                   sb.append("[]"); // NOI18N
+               } else {
+                   sb.append(t);
+               }
+           }
+           
+           return sb.toString();
+       } 
+       
+       return s;
     }
 }
