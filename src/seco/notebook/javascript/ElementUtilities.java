@@ -149,7 +149,7 @@ public final class ElementUtilities {
 //                }
 //            }
 //        } else {
-            comments = LexUtilities.gatherDocumentation(info, node.getSourceStart());
+ //           comments = LexUtilities.gatherDocumentation(info, node.getSourceStart());
 //        }
 
         if ((comments == null) || (comments.size() == 0)) {
