@@ -64,7 +64,6 @@ import javax.swing.text.StyledDocument;
 //import org.netbeans.modules.csl.api.DataLoadersBridge;
 //import org.netbeans.modules.editor.NbEditorUtilities;
 //import org.netbeans.modules.editor.indent.api.IndentUtils;
-//import org.netbeans.modules.parsing.api.Snapshot;
 //import org.netbeans.modules.parsing.api.Source;
 //import org.netbeans.modules.parsing.spi.CursorMovedSchedulerEvent;
 //import org.openide.ErrorManager;

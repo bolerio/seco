@@ -33,6 +33,7 @@ import seco.notebook.storage.PackageInfo;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.AsyncCompletionQuery;
 import seco.notebook.syntax.completion.AsyncCompletionTask;
+import seco.notebook.syntax.completion.BaseAsyncCompletionQuery;
 import seco.notebook.syntax.completion.Completion;
 import seco.notebook.syntax.completion.CompletionDocumentation;
 import seco.notebook.syntax.completion.CompletionProvider;
@@ -74,27 +75,11 @@ public class BshCompletionProvider implements CompletionProvider
 	}
 
 
-	static final class Query extends AsyncCompletionQuery
+	static final class Query extends BaseAsyncCompletionQuery
 	{
-		private JTextComponent component;
-		private CompletionResultSet queryResult;
-		private int creationCaretOffset;
-		private int queryCaretOffset;
-		private int queryAnchorOffset;
-		private String filterPrefix;
-
-		Query(int caretOffset)
+		public Query(int caretOffset)
 		{
-			this.creationCaretOffset = caretOffset;
-		}
-
-		protected void preQueryUpdate(JTextComponent component)
-		{
-			int caretOffset = component.getCaretPosition();
-			// NotebookDocument doc = (NotebookDocument) component.getDocument();
-			if (caretOffset >= creationCaretOffset)
-					return;
-			Completion.get().hideCompletion();
+			super(caretOffset);
 		}
 
 		protected void query(CompletionResultSet resultSet,
@@ -314,99 +299,6 @@ public class BshCompletionProvider implements CompletionProvider
 			if (!priv && (mod & Modifier.PUBLIC) == 0) return true;
 			//if (!stat && (mod & Modifier.STATIC) != 0) return true;
 			return false;
-		}
-
-		protected void prepareQuery(JTextComponent component)
-		{
-			this.component = component;
-		}
-
-		protected boolean canFilter(JTextComponent component)
-		{
-			int caretOffset = component.getCaretPosition();
-			Document doc = component.getDocument();
-			filterPrefix = null;
-			if (caretOffset >= queryCaretOffset)
-			{
-				if (queryAnchorOffset > -1)
-				{
-					try
-					{
-						filterPrefix = doc.getText(queryAnchorOffset,
-								caretOffset - queryAnchorOffset);
-						if (!isJavaIdentifierPart(filterPrefix))
-						{
-							filterPrefix = null;
-						}
-					}
-					catch (BadLocationException e)
-					{
-						// filterPrefix stays null -> no filtering
-					}
-				}
-			}
-			return (filterPrefix != null);
-		}
-
-		protected void filter(CompletionResultSet resultSet)
-		{
-			// System.out.println("filter: " + filterPrefix + ":" +
-			// queryResult);
-			if (filterPrefix != null && queryResult != null)
-			{
-				//resultSet.setTitle(
-				//		getFilteredTitle(queryResult.getTitle(),filterPrefix));
-				resultSet.setAnchorOffset(queryAnchorOffset);
-				resultSet.addAllItems(getFilteredData(queryResult.getData(),
-						filterPrefix));
-			}
-			resultSet.finish();
-		}
-
-		private boolean isJavaIdentifierPart(CharSequence text)
-		{
-			for (int i = 0; i < text.length(); i++)
-			{
-				if (!(Character.isJavaIdentifierPart(text.charAt(i))))
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-
-		private Collection getFilteredData(Collection data, String prefix)
-		{
-			List<CompletionQuery.ResultItem> ret = new ArrayList<CompletionQuery.ResultItem>();
-			boolean camelCase = prefix.length() > 1
-					&& prefix.equals(prefix.toUpperCase());
-			for (Iterator it = data.iterator(); it.hasNext();)
-			{
-				CompletionQuery.ResultItem itm = (CompletionQuery.ResultItem) it
-						.next();
-				if (JMIUtils.startsWith(itm.getItemText(), prefix)
-						|| (camelCase
-								&& (itm instanceof JavaResultItem.ClassResultItem) && JMIUtils
-								.matchesCamelCase(itm.getItemText(), prefix)))
-				{
-					ret.add(itm);
-				}
-				// System.out.println("getFilteredData - in: " + itm + ":" +
-				// itm.getItemText());
-			}
-			// System.out.println("getFilteredData: " + ret.size());
-			return ret;
-		}
-
-		private String getFilteredTitle(String title, String prefix)
-		{
-			int lastIdx = title.lastIndexOf('.');
-			String ret = lastIdx == -1 ? prefix : title.substring(0,
-					lastIdx + 1)
-					+ prefix;
-			if (title.endsWith("*")) // NOI18N
-				ret += "*"; // NOI18N
-			return ret;
 		}
 	}
 

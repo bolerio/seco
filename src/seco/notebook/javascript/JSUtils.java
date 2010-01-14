@@ -41,24 +41,6 @@ public class JsUtils {
     private JsUtils() {
     }
 
-//    public static boolean isJsFile(FileObject f) {
-//        return JsTokenId.JAVASCRIPT_MIME_TYPE.equals(f.getMIMEType());
-//    }
-
-//    public static boolean isJsOrJsonDocument(Document doc) {
-//        String mimeType = (String)doc.getProperty("mimeType"); // NOI18N
-//
-//        return JsTokenId.JAVASCRIPT_MIME_TYPE.equals(mimeType) || JsTokenId.JSON_MIME_TYPE.equals(mimeType);
-//    }
-//
-//    public static boolean isJsonFile(FileObject f) {
-//        return f != null && "json".equals(f.getExt()); // NOI18N
-//    }
-//
-//    public static boolean isEjsFile(FileObject f) {
-//        return f != null && "ejs".equals(f.getExt()); // NOI18N
-//    }
-
     public static final String HTML_MIME_TYPE = "text/html"; // NOI18N
     
     public static boolean isSafeIdentifierName(String name, int fromIndex) {

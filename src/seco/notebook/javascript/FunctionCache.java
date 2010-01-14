@@ -1,8 +1,8 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- *
+ * 
  * Copyright 2008 Sun Microsystems, Inc. All rights reserved.
- *
+ * 
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common
  * Development and Distribution License("CDDL") (collectively, the
@@ -20,7 +20,7 @@
  * License Header, with the fields enclosed by brackets [] replaced by
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
- *
+ * 
  * If you wish your version of this file to be governed by only the CDDL
  * or only the GPL Version 2, indicate your decision by adding
  * "[Contributor] elects to include this software in this distribution
@@ -31,38 +31,58 @@
  * However, if you add GPL Version 2 code and therefore, elected the GPL
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
- *
+ * 
  * Contributor(s):
- *
+ * 
  * Portions Copyrighted 2008 Sun Microsystems, Inc.
  */
 
-package seco.notebook.csl; 
+package seco.notebook.javascript;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- *
- * @author hanz
+ * Cache which performs type lookup etc. for functions
+ * 
+ * @author Tor Norbye
  */
-public abstract class ParserResult  
-{
-    private final String source;
-
-    protected ParserResult(String source)
-    {
-        this.source = source;
+public class FunctionCache {
+    public static final FunctionCache INSTANCE = new FunctionCache();
+    static final String NONE = new String("NONE");
+    
+    Map<String,String> cache = new HashMap<String,String>(500);
+    
+    public String getType(String fqn, JsIndex index) {
+        String type = cache.get(fqn);
+        if (type == NONE) {
+            return null;
+        } else if (type == null) {
+            type = index.getType(fqn);
+            if (type == null) {
+                // Special case checks
+                if (fqn.endsWith("Element.getContext")) { // NOI18N
+                    // Probably a call on the HTMLCanvasElement
+                    // TODO - check args - see if it's passing in "2d" etc.
+                    // At least see if it's an element...
+                    return "CanvasRenderingContext2D"; // NOI18N
+                }
+                
+                cache.put(fqn, NONE);
+                return null;
+            } else {
+                cache.put(fqn, type);
+            }
+        }
+        
+        return type;
     }
     
-    public String getSource () 
-    {
-        return source;
+    public void wipe(String fqn) {
+        cache.remove(fqn);
     }
-
-    public abstract List<? extends DefaultError> getDiagnostics ();
-
+    
+    boolean isEmpty() {
+        return cache.size() == 0;
+    }
 }
-
-
-
-

@@ -51,7 +51,6 @@ import javax.swing.text.Document;
 
 import seco.notebook.csl.GsfUtilities;
 import seco.notebook.csl.OffsetRange;
-import seco.notebook.csl.Snapshot;
 import seco.notebook.javascript.JsParseResult;
 
 //import org.netbeans.modules.csl.api.OffsetRange;
@@ -122,22 +121,22 @@ public class LexUtilities {
 //    }
 
     /** For a possibly generated offset in an AST, return the corresponding lexing/true document offset */
-    public static int getLexerOffset(JsParseResult info, int astOffset) {
-        return info.getSnapshot().getOriginalOffset(astOffset);
-    }
+//    public static int getLexerOffset(JsParseResult info, int astOffset) {
+//        return info.getSnapshot().getOriginalOffset(astOffset);
+//    }
     
-    public static OffsetRange getLexerOffsets(JsParseResult info, OffsetRange astRange) {
-        int rangeStart = astRange.getStart();
-        int start = info.getSnapshot().getOriginalOffset(rangeStart);
-        if (start == rangeStart) {
-            return astRange;
-        } else if (start == -1) {
-            return OffsetRange.NONE;
-        } else {
-            // Assumes the translated range maintains size
-            return new OffsetRange(start, start + astRange.getLength());
-        }
-    }
+//    public static OffsetRange getLexerOffsets(JsParseResult info, OffsetRange astRange) {
+//        int rangeStart = astRange.getStart();
+//        int start = info.getSnapshot().getOriginalOffset(rangeStart);
+//        if (start == rangeStart) {
+//            return astRange;
+//        } else if (start == -1) {
+//            return OffsetRange.NONE;
+//        } else {
+//            // Assumes the translated range maintains size
+//            return new OffsetRange(start, start + astRange.getLength());
+//        }
+//    }
 
     /** Find the NEXT JavaScript sequence in the buffer starting from the given offset */
 //    @SuppressWarnings("unchecked")
@@ -754,7 +753,7 @@ public class LexUtilities {
         int elementBegin = nodeOffset;
         
         try {
-            CharSequence text = info.getSnapshot().getText();
+            CharSequence text = info.getSource();
             if (elementBegin < 0 || elementBegin >= text.length()) {
                 return null;
             }

@@ -193,7 +193,6 @@ public class RhinoScriptEngine extends AbstractScriptEngine
         } finally {
             cx.exit();
         }
-        
         return unwrapReturnValue(ret);
     }
     
@@ -298,7 +297,7 @@ public class RhinoScriptEngine extends AbstractScriptEngine
             "    context.getWriter().println(String(str)); \n" +
             "}";
     
-    Scriptable getRuntimeScope(ScriptContext ctxt) {
+    public Scriptable getRuntimeScope(ScriptContext ctxt) {
         if (ctxt == null) {
             throw new NullPointerException("null script context");
         }

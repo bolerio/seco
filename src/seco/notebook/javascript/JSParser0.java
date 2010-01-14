@@ -4,45 +4,46 @@ import java.awt.Component;
 import java.io.CharArrayReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import javax.script.ScriptContext;
-import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
 import javax.swing.JTree;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.Segment;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import org.mozilla.javascript.Node;
-import org.mozilla.javascript.CompilerEnvirons;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.ErrorReporter;
-import org.mozilla.javascript.Kit;
-import org.mozilla.javascript.Parser;
-import org.mozilla.javascript.ScriptOrFnNode;
-import org.mozilla.javascript.Token;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.nb.javascript.Node;
 
+//import org.mozilla.javascript.CompilerEnvirons;
+//import org.mozilla.javascript.Context;
+//import org.mozilla.javascript.ErrorReporter;
+//import org.mozilla.javascript.Node;
+//import org.mozilla.javascript.Parser;
+//import org.mozilla.javascript.ScriptOrFnNode;
+
+import seco.notebook.csl.ParseException;
+import seco.notebook.csl.StructureItem;
+import seco.notebook.javascript.JsAnalyzer.AnalysisResult;
 import seco.notebook.javascript.jsr.RhinoScriptEngine;
-import seco.notebook.storage.ClassRepository;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.NBParser;
-import seco.notebook.syntax.completion.NBParser.ParserRunnable;
 import seco.notebook.util.SegmentCache;
 
 public class JSParser0 extends NBParser
 {
     boolean evaled_or_guessed = true;
     ParserRunnable parserRunnable;
-    Parser parser;
-    ScriptOrFnNode astRoot;
+    JsParser parser;
+    Node astRoot;
     boolean implicitExecutionOn = false;
     // private List<Node> nodes = new LinkedList<Node>();
     // Ruby runtime;
@@ -55,27 +56,44 @@ public class JSParser0 extends NBParser
                 .getEvaluationContext().getEngine("javascript");
     }
 
-    public ScriptOrFnNode getRootNode()
+    public Node getRootNode()
     {
         return astRoot;
     }
 
-    public Object resolveVar(String s, int offset) 
+    public Object resolveVar(String s, int offset)
     {
         if (s == null || s.length() == 0) return null;
-        // if (getRootNode() != null)
+        if (getRootNode() == null) return null;
+        
+        Scriptable scope = engine.getRuntimeScope(engine.getContext());
+        Object o = scope.get(s, scope);
+        if (o != null) return o;
+       
+        JsAnalyzer an = new JsAnalyzer();
+        JsParseResult info = parser.getResult();
+        List<? extends StructureItem> list = an.scan(info);
+        AnalysisResult res = JsAnalyzer.analyze(info);
+        // AstUtilities.getExpressionType(node)
+        // offset = offset - support.getElement().getStartOffset()-1;
+        // final AstPath path = new AstPath(astRoot, offset);
+        // final Node closest = path.leaf();
+        // String type = JsTypeAnalyzer.getCallFqn(info, closest, true);
+        // String type1 = AstUtilities.getExpressionType(closest);
+
         // {
-        // Node n = ParserUtils.getASTNodeAtOffset(support.getElement(),
-        // getRootNode(), offset - 1);
-        // // AstPath ap = new AstPath();
+        Node n = ParserUtils.getASTNodeAtOffset(support.getElement(),
+                getRootNode(), offset - 1);
+        // AstPath ap = new AstPath();
         // // Node n1 = ap.findPathTo(getRootNode(), offset-1);
         // // System.out.println("RubyParser - resolveVar: " + n + ":" + n1
         // // + ":" + (offset-1) + ":" + n.equals(n1));
         // try
         // {
-        // TypeAnalyzer a = new TypeAnalyzer(getRootNode(), n,
-        // offset - 1, support.getDocument(), this);
-        // String type = a.getType(s);
+        JsTypeAnalyzer a = new JsTypeAnalyzer(info, JsIndex.EMPTY,
+                getRootNode(), n, offset - 1, offset - 1);
+        String type2 = a.getType(s);
+
         // System.out.println("Type: " + s + ":" + type);
         // if (type == null)
         // type = a.expressionType(n);
@@ -120,23 +138,20 @@ public class JSParser0 extends NBParser
     // }
     // }
 
-    private Parser getParser()
+    private JsParser getParser()
     {
         if (parser == null)
         {
-            CompilerEnvirons compilerEnv = new CompilerEnvirons();
-            compilerEnv.initFromContext(Context.enter());
-            ErrorReporter compilationErrorReporter = null; // TODO:
-            if (compilationErrorReporter == null)
-            {
-                compilationErrorReporter = compilerEnv.getErrorReporter();
-            }
-
-            parser = new Parser(compilerEnv, compilationErrorReporter);
-            // if (returnFunction)
+            // CompilerEnvirons compilerEnv = new CompilerEnvirons();
+            // compilerEnv.initFromContext(Context.enter());
+            // ErrorReporter compilationErrorReporter = null; // TODO:
+            // if (compilationErrorReporter == null)
             // {
-            // p.calledByCompileFunction = true;
+            // compilationErrorReporter = compilerEnv.getErrorReporter();
             // }
+
+            // parser = new Parser(compilerEnv, compilationErrorReporter);
+            parser = new JsParser();
         }
         return parser;
     }
@@ -161,26 +176,27 @@ public class JSParser0 extends NBParser
                     int offset = el.getStartOffset();
                     int length = el.getEndOffset() - el.getStartOffset();
                     support.getDocument().getText(offset, length, seg);
-                    Reader r = makeReader(seg, offset, length);
+                    // Reader r = makeReader(seg, offset, length);
                     parser = getParser();
-                    System.out.println("parser.start()..." + length);
-                    long start = System.currentTimeMillis();
-                    //Token.printTrees = true;
-                    astRoot = parser
-                            .parse(r, "<Unknown Source>", 1);
+                    //System.out.println("parser.start()..." + length);
+                  //  long start = System.currentTimeMillis();
+                    // astRoot = parser.parse(r, "<Unknown Source>", 1);
+                    parser.parse(seg.toString());
+                    astRoot = parser.getResult().getRootNode();
+                   // System.out.println("Time: "
+                   //         + (System.currentTimeMillis() - start));
+                   // System.out.println("Root: " + astRoot);
 
-                    System.out.println("Time: " + (System.currentTimeMillis()
-                     - start));
-                    System.out.println("Root: " + astRoot);
                     support.unMarkErrors();
                     return true;
                 }
-                catch (IOException ex)
+                catch (ParseException ex)
                 {
                     ScriptSupport.ErrorMark mark = new ScriptSupport.ErrorMark(
-                            stripMsg(ex.getMessage()), -1, //ex.getLineNumber() - 1,
+                            stripMsg(ex.getMessage()), -1, // ex.getLineNumber()
+                                                           // - 1,
                             -1// ex.getColumnNumber()
-                            );
+                    );
                     support.markError(mark);
                     // System.err.println(ex.getClass() + ":" +
                     // ex.getMessage());
@@ -219,18 +235,17 @@ public class JSParser0 extends NBParser
         JTree astTree = new JTree();
         JSTreeModel treeModel = new JSTreeModel(astRoot);
         astTree.setModel(treeModel);
-        astTree.setCellRenderer(new JSNodeRenderer());
-        // astTree.collapsePath(new TreePath(astTree.getModel()
-        // .getRoot()));
+        // astTree.setCellRenderer(new JSNodeRenderer());
+
         return astTree;
     }
-    
+
     class JSTreeModel implements TreeModel
     {
-        ScriptOrFnNode root = null;
+        Node root = null;
         protected EventListenerList listenerList = new EventListenerList();
 
-        public JSTreeModel(ScriptOrFnNode t)
+        public JSTreeModel(Node t)
         {
             if (t == null) { throw new IllegalArgumentException("root is null"); }
             root = t;
@@ -240,37 +255,37 @@ public class JSParser0 extends NBParser
         {
             if (parent == null) { return null; }
             Node p = (Node) parent;
-            if(! p.hasChildren()) return null;
+            if (!p.hasChildren()) return null;
             Node c = (Node) p.getFirstChild();
-            if(index == 0) return c;
+            if (index == 0) return c;
             int i = 0;
             while (c != null && i <= index)
             {
                 c = (Node) c.getNext();
                 i++;
-                if(c != null && i == index) return c;
+                if (c != null && i == index) return c;
             }
-            //return c;
-            //if (index >= c.size())
-                throw new ArrayIndexOutOfBoundsException(
-                        "node " + p + " has no child with index: " + index);
-            //return c.get(index);
+            // return c;
+            // if (index >= c.size())
+            throw new ArrayIndexOutOfBoundsException("node " + p
+                    + " has no child with index: " + index);
+            // return c.get(index);
         }
-        
+
         public int getChildCount(Object parent)
         {
             if (parent == null) { throw new IllegalArgumentException(
                     "root is null"); }
             if (parent instanceof String) return 0;
             Node p = (Node) parent;
-            if(!p.hasChildren()) return 0;
+            if (!p.hasChildren()) return 0;
             Node n = p.getFirstChild();
             int count = 1;
-            if(n == p.getLastChild()) return count;
-            while(n != null)
+            if (n == p.getLastChild()) return count;
+            while (n != null)
             {
                 n = n.getNext();
-                if(n != null) count++;
+                if (n != null) count++;
             }
             return count;
 
@@ -305,7 +320,7 @@ public class JSParser0 extends NBParser
             else
             {
                 Node t = (Node) node;
-                return !t.hasChildren(); 
+                return !t.hasChildren();
             }
         }
 
@@ -432,36 +447,6 @@ public class JSParser0 extends NBParser
                 }
             }
             return retNodes;
-        }
-    }
-    
-    class JSNodeRenderer extends DefaultTreeCellRenderer 
-    {
-        public JSNodeRenderer() {
-        }
-
-        public Component getTreeCellRendererComponent(
-                            JTree tree,
-                            Object value,
-                            boolean sel,
-                            boolean expanded,
-                            boolean leaf,
-                            int row,
-                            boolean hasFocus) {
-
-            super.getTreeCellRendererComponent(
-                            tree, value, sel,
-                            expanded, leaf, row,
-                            hasFocus);
-            setText(getText(value));
-            //setToolTipText("...");
-            
-            return this;
-        }
-
-        protected String getText(Object value) {
-            Node jsNode = (Node)value;
-            return JSUtils0.toString(jsNode); //.toStringTree(astRoot);
         }
     }
 }

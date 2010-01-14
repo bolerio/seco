@@ -1,18 +1,10 @@
 package seco.notebook.javascript;
 
 import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -22,32 +14,31 @@ import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 
-import org.jruby.RubyClass;
-import org.jruby.RubyModule;
-import org.jruby.internal.runtime.methods.DynamicMethod;
+import org.mozilla.javascript.IdScriptableObject;
+import org.mozilla.javascript.NativeObject;
+import org.mozilla.javascript.ScriptableObject;
 
 import seco.notebook.NotebookDocument;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.AsyncCompletionQuery;
 import seco.notebook.syntax.completion.AsyncCompletionTask;
+import seco.notebook.syntax.completion.BaseAsyncCompletionQuery;
 import seco.notebook.syntax.completion.Completion;
 import seco.notebook.syntax.completion.CompletionDocumentation;
 import seco.notebook.syntax.completion.CompletionProvider;
-import seco.notebook.syntax.completion.CompletionQuery;
 import seco.notebook.syntax.completion.CompletionResultSet;
 import seco.notebook.syntax.completion.CompletionTask;
 import seco.notebook.syntax.completion.JavaDocManager;
 import seco.notebook.syntax.java.JavaPaintComponent;
 import seco.notebook.syntax.java.JavaResultItem;
-import seco.notebook.syntax.util.JMIUtils;
+import seco.notebook.syntax.java.JavaPaintComponent.MethodPaintComponent;
 import seco.notebook.util.DocumentUtilities;
 
 public class JSCompletionProvider implements CompletionProvider
 {
     public int getAutoQueryTypes(JTextComponent component, String typedText)
     {
-        if (".".equals(typedText)) // &&
-            // !sup.isCompletionDisabled(component.getCaret().getDot()))
+        if (".".equals(typedText)) 
             return COMPLETION_QUERY_TYPE;
         if (" ".equals(typedText)) return TOOLTIP_QUERY_TYPE;
         return 0;
@@ -59,36 +50,20 @@ public class JSCompletionProvider implements CompletionProvider
         ScriptSupport sup = ((NotebookDocument) component.getDocument())
                 .getScriptSupport(offset);
         if (sup.isCommentOrLiteral(offset - 1)) return null;
-        if (queryType == COMPLETION_QUERY_TYPE)
-            return new AsyncCompletionTask(new Query(component.getCaret()
-                    .getDot()), component);
-        else if (queryType == DOCUMENTATION_QUERY_TYPE)
-            return new AsyncCompletionTask(new DocQuery(null), component);
-        else if (queryType == TOOLTIP_QUERY_TYPE)
-            return new AsyncCompletionTask(new ToolTipQuery(), component);
+        if (queryType == COMPLETION_QUERY_TYPE) return new AsyncCompletionTask(
+                new Query(component.getCaret().getDot()), component);
+        //else if (queryType == DOCUMENTATION_QUERY_TYPE) return new AsyncCompletionTask(
+        //        new DocQuery(null), component);
+       // else if (queryType == TOOLTIP_QUERY_TYPE)
+        //    return new AsyncCompletionTask(new ToolTipQuery(), component);
         return null;
     }
 
-    static final class Query extends AsyncCompletionQuery
+    static final class Query extends BaseAsyncCompletionQuery
     {
-        private JTextComponent component;
-        private CompletionResultSet queryResult;
-        private int creationCaretOffset;
-        private int queryCaretOffset;
-        private int queryAnchorOffset;
-        private String filterPrefix;
-
-        Query(int caretOffset)
+        public Query(int caretOffset)
         {
-            this.creationCaretOffset = caretOffset;
-        }
-
-        protected void preQueryUpdate(JTextComponent component)
-        {
-            int caretOffset = component.getCaretPosition();
-            if (caretOffset >= creationCaretOffset)
-                    return;
-            Completion.get().hideCompletion();
+            super(caretOffset);
         }
 
         protected void query(CompletionResultSet resultSet,
@@ -98,258 +73,78 @@ public class JSCompletionProvider implements CompletionProvider
             queryCaretOffset = offset;
             queryAnchorOffset = offset;
             JSParser0 p = (JSParser0) sup.getParser();
-            try
+            String s = sup.getCommandBeforePt(offset);
+            // TODO: should consider inner scopes, etc.
+            if ("this".equals(s))
             {
-                String s = sup.getCommandBeforePt(offset);
-                Object obj = p.resolveVar(s, offset);
-                // if (obj != null)
-                //System.out.println("RubyCompProv - query - obj: " + obj);
-                // " cls:" + ((obj != null) ? obj.getClass(): "null") + ":" +
-                // p.evaled_or_guessed);
-                if (obj == null)
-                {
-                    resultSet.finish();
-                    return;
-                }
-                Class<?> cls = obj.getClass();
-//                if (obj instanceof RubyClass)
-//                {
-//                    populateRubyClass(resultSet, (RubyClass) obj);
-//                    return;
-//                }else if (obj instanceof RubyModule)
-//                {
-//                    populateRubyModule(resultSet, (RubyModule) obj);
-//                    return;
-//                }
-//                int mod = Modifier.PUBLIC;
-//                if (!p.evaled_or_guessed) cls = (Class<?>) obj;
-//                populateComplPopup(resultSet, cls, mod);
+                populateThis(resultSet);
+                queryResult = resultSet;
+                resultSet.finish();
+                return;
             }
-            catch (Exception ex)
+
+            Object obj = p.resolveVar(s, offset);
+            if (obj == null)
             {
-                // stay silent on eval error
-                // if (ex instanceof ScriptException)
-                ex.printStackTrace();
+                resultSet.finish();
+                return;
             }
+            // Class<?> cls = obj.getClass();
+            if (obj instanceof ScriptableObject)
+            {
+                String name = ((ScriptableObject) obj).getClassName();
+                if (BUILDINS.isBuiltInType(name)
+                        && !BUILDINS.OBJECT.equals(name)) populateBuiltInObject(
+                        resultSet, name);
+                else if (obj instanceof IdScriptableObject)
+                    populateNativeObject(resultSet, (IdScriptableObject) obj);
+            }
+
+            queryResult = resultSet;
             resultSet.finish();
         }
 
-        private void populateRubyClass(CompletionResultSet resultSet,
-                RubyClass t)
+        private void populateNativeObject(CompletionResultSet resultSet,
+                IdScriptableObject obj)
         {
-            // System.out.println("populateRubyClass: " + t);
-            while (t != null)
+            for (JavaResultItem item : BUILDINS.getParams(BUILDINS.OBJECT))
             {
-                for (Object key : t.getMethods().keySet())
+                item.setSubstituteOffset(queryCaretOffset);
+                resultSet.addItem(item);
+            }
+            Object[] ids = obj.getAllIds();
+            if (ids != null) for (Object id : ids)
+                resultSet.addItem(new JSProperty("" + id, "Object"));
+
+            resultSet.setTitle(obj.getClassName());
+        }
+
+        private void populateBuiltInObject(CompletionResultSet resultSet,
+                String class_name)
+        {
+            List<JavaResultItem> params = BUILDINS.getParams(class_name);
+            if (params != null)
+            {
+                for (JavaResultItem item : params)
                 {
-                    DynamicMethod m = (DynamicMethod) t.getMethods().get(key);
-                    if (m.getVisibility().isPrivate() || 
-                            m.getVisibility().isProtected()) continue;
-                    JavaResultItem item = new RubyMethodResultItem(
-                            (String) key, "void");
                     item.setSubstituteOffset(queryCaretOffset);
                     resultSet.addItem(item);
                 }
-                t = t.getSuperClass();
+                resultSet.setTitle(class_name);
             }
-            resultSet.finish();
-            queryResult = resultSet;
-        }
-        
-        private void populateRubyModule(CompletionResultSet resultSet,
-                RubyModule t)
-        {
-            resultSet.setTitle("RubyModule: " + t.getName());
-            System.out.println("populateRubyModule: " + t);
-            while (t != null)
-            {
-                for (Object key : t.getMethods().keySet())
-                {
-                    //DynamicMethod m = (DynamicMethod) t.getMethods().get(key);
-                    //if (m.getVisibility().isPublic()) continue;
-                    JavaResultItem item = new RubyMethodResultItem(
-                            (String) key, "void");
-                    item.setSubstituteOffset(queryCaretOffset);
-                    resultSet.addItem(item);
-                }
-                t = t.getSuperClass();
-            }
-            resultSet.finish();
-            
-            queryResult = resultSet;
         }
 
-        private void populateComplPopup(CompletionResultSet resultSet,
-                Class<?> cls, int modifiers)
+        private void populateThis(CompletionResultSet resultSet)
         {
-            // System.out.println("BshCompProv - populateComplPopup: " + cls);
-            resultSet.setTitle(cls.getCanonicalName());
-            resultSet.setAnchorOffset(queryAnchorOffset);
-            if (cls.isArray())
+            // TODO: add all vare from the RuntimeContext.
+            List<JavaResultItem> params = BUILDINS.getThisParams();
+
+            for (JavaResultItem item : params)
             {
-                JavaResultItem item = new JavaResultItem.FieldResultItem(
-                        "length", Integer.TYPE, Modifier.PUBLIC);
                 item.setSubstituteOffset(queryCaretOffset);
                 resultSet.addItem(item);
             }
-            for (Class<?> c : cls.getDeclaredClasses())
-            {
-                if (Modifier.isPrivate(c.getModifiers())) continue;
-                // anonymous inner classes have empty simple name
-                if (c.getSimpleName().length() == 0) continue;
-                // System.out.println("BshCompl - inner classes: " + c + ":" +
-                // c.getCanonicalName());
-                JavaResultItem item = new JavaResultItem.ClassResultItem(c,
-                        false, false, false);
-                item.setSubstituteOffset(queryCaretOffset);
-                resultSet.addItem(item);
-            }
-            for (Field f : getFields(cls, modifiers))
-            {
-                // when we show the static and private fields some ugly inner
-                // members arise too
-                if (f.getName().indexOf('$') >= 0) continue;
-                JavaResultItem item = new JavaResultItem.FieldResultItem(f, cls);
-                item.setSubstituteOffset(queryCaretOffset);
-                resultSet.addItem(item);
-            }
-            for (Method m : getMethods(cls, modifiers))
-            {
-                if (m.getName().indexOf('$') >= 0) continue;
-                JavaResultItem item = new JavaResultItem.MethodResultItem(m);
-                item.setSubstituteOffset(queryCaretOffset);
-                resultSet.addItem(item);
-            }
-            queryResult = resultSet;
-        }
-
-        private static Collection<Method> getMethods(Class<?> cls, int comp_mod)
-        {
-            Set<Method> set = new HashSet<Method>();
-            Method[] ms = cls.getDeclaredMethods();
-            for (int i = 0; i < ms.length; i++)
-                if (!filterMod(ms[i].getModifiers(), comp_mod)) set.add(ms[i]);
-            ms = cls.getMethods();
-            for (int i = 0; i < ms.length; i++)
-                if (!filterMod(ms[i].getModifiers(), comp_mod)) set.add(ms[i]);
-            return set;
-        }
-
-        private static Collection<Field> getFields(Class<?> cls, int comp_mod)
-        {
-            Set<Field> set = new HashSet<Field>();
-            Field[] ms = cls.getDeclaredFields();
-            for (int i = 0; i < ms.length; i++)
-                if (!filterMod(ms[i].getModifiers(), comp_mod)) set.add(ms[i]);
-            ms = cls.getFields();
-            for (int i = 0; i < ms.length; i++)
-                if (!filterMod(ms[i].getModifiers(), comp_mod)) set.add(ms[i]);
-            return set;
-        }
-
-        // needed because there's no package-private modifier,
-        // when comp_mod contains Modifier.PRIVATE, we allow
-        // everything to pass, otherwise only public members
-        private static boolean filterMod(int mod, int comp_mod)
-        {
-            boolean priv = (comp_mod & Modifier.PRIVATE) != 0;
-            boolean stat = (comp_mod & Modifier.STATIC) != 0;
-            if (stat && (mod & Modifier.STATIC) == 0) return true;
-            if (!priv && (mod & Modifier.PUBLIC) == 0) return true;
-            // if (!stat && (mod & Modifier.STATIC) != 0) return true;
-            return false;
-        }
-
-        protected void prepareQuery(JTextComponent component)
-        {
-            this.component = component;
-        }
-
-        protected boolean canFilter(JTextComponent component)
-        {
-            int caretOffset = component.getCaretPosition();
-            Document doc = component.getDocument();
-            filterPrefix = null;
-            if (caretOffset >= queryCaretOffset)
-            {
-                if (queryAnchorOffset > -1)
-                {
-                    try
-                    {
-                        filterPrefix = doc.getText(queryAnchorOffset,
-                                caretOffset - queryAnchorOffset);
-                        if (!isJavaIdentifierPart(filterPrefix))
-                        {
-                            filterPrefix = null;
-                        }
-                    }
-                    catch (BadLocationException e)
-                    {
-                        // filterPrefix stays null -> no filtering
-                    }
-                }
-            }
-            return (filterPrefix != null);
-        }
-
-        protected void filter(CompletionResultSet resultSet)
-        {
-            System.out.println("filter: " + filterPrefix + ":" + queryResult);
-            if (filterPrefix != null && queryResult != null)
-            {
-                // resultSet.setTitle(getFilteredTitle(queryResult.getTitle(),
-                // filterPrefix));
-                resultSet.setAnchorOffset(queryAnchorOffset);
-                resultSet.addAllItems(getFilteredData(queryResult.getData(),
-                        filterPrefix));
-            }
-            resultSet.finish();
-        }
-
-        private boolean isJavaIdentifierPart(CharSequence text)
-        {
-            for (int i = 0; i < text.length(); i++)
-            {
-                if (!(Character.isJavaIdentifierPart(text.charAt(i))))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private Collection getFilteredData(Collection data, String prefix)
-        {
-            List<CompletionQuery.ResultItem> ret = new ArrayList<CompletionQuery.ResultItem>();
-            boolean camelCase = prefix.length() > 1
-                    && prefix.equals(prefix.toUpperCase());
-            for (Iterator it = data.iterator(); it.hasNext();)
-            {
-                CompletionQuery.ResultItem itm = (CompletionQuery.ResultItem) it
-                        .next();
-                if (JMIUtils.startsWith(itm.getItemText(), prefix)
-                        || (camelCase
-                                && (itm instanceof JavaResultItem.ClassResultItem) && JMIUtils
-                                .matchesCamelCase(itm.getItemText(), prefix)))
-                {
-                    ret.add(itm);
-                }
-                // System.out.println("getFilteredData - in: " + itm + ":" +
-                // itm.getItemText());
-            }
-            // System.out.println("getFilteredData: " + ret.size());
-            return ret;
-        }
-
-        private String getFilteredTitle(String title, String prefix)
-        {
-            int lastIdx = title.lastIndexOf('.');
-            String ret = lastIdx == -1 ? prefix : title.substring(0,
-                    lastIdx + 1)
-                    + prefix;
-            if (title.endsWith("*")) // NOI18N
-                ret += "*"; // NOI18N
-            return ret;
+            resultSet.setTitle("Global");
         }
     }
 
@@ -360,8 +155,7 @@ public class JSCompletionProvider implements CompletionProvider
         private static Action goToSource = new AbstractAction() {
             public void actionPerformed(ActionEvent e)
             {
-                if (e != null)
-                    Completion.get().hideDocumentation();
+                if (e != null) Completion.get().hideDocumentation();
             }
         };
 
@@ -480,8 +274,7 @@ public class JSCompletionProvider implements CompletionProvider
             // Position oldPos = queryMethodParamsStartPos;
             queryMethodParamsStartPos = null;
             ScriptSupport sup = doc.getScriptSupport(caretOffset);
-            if (sup == null || !(sup.getParser() instanceof JSParser0))
-                return;
+            if (sup == null || !(sup.getParser() instanceof JSParser0)) return;
             JSParser0 p = (JSParser0) sup.getParser();
             // TODO:
             if (p.getRootNode() == null)
@@ -504,12 +297,12 @@ public class JSCompletionProvider implements CompletionProvider
             Document doc = component.getDocument();
             try
             {
-                if (caretOffset - queryCaretOffset > 0)
-                    text = DocumentUtilities.getText(doc, queryCaretOffset,
-                            caretOffset - queryCaretOffset);
-                else if (caretOffset - queryCaretOffset < 0)
-                    text = DocumentUtilities.getText(doc, caretOffset,
-                            queryCaretOffset - caretOffset);
+                if (caretOffset - queryCaretOffset > 0) text = DocumentUtilities
+                        .getText(doc, queryCaretOffset, caretOffset
+                                - queryCaretOffset);
+                else if (caretOffset - queryCaretOffset < 0) text = DocumentUtilities
+                        .getText(doc, caretOffset, queryCaretOffset
+                                - caretOffset);
                 else
                     textLength = 0;
             }
@@ -519,10 +312,8 @@ public class JSCompletionProvider implements CompletionProvider
             if (text != null)
             {
                 textLength = text.length();
-            } else if (textLength < 0)
-            {
-                return false;
             }
+            else if (textLength < 0) { return false; }
             boolean filter = true;
             int balance = 0;
             for (int i = 0; i < textLength; i++)
@@ -562,41 +353,76 @@ public class JSCompletionProvider implements CompletionProvider
         }
     }
 
-    static class RubyMethodResultItem extends JavaResultItem.MethodResultItem
+    static class JSMethod extends JavaResultItem.MethodResultItem
     {
         private static JavaPaintComponent.MethodPaintComponent mtdComponent = null;
 
-        public RubyMethodResultItem(String mtdName, String type)
+        public JSMethod(String mtdName, String type)
         {
             super(mtdName, type);
+            this.modifiers = Modifier.PUBLIC;
         }
 
-        protected boolean isAddParams(){
-            return false;
+        public JSMethod(String mtdName, String type, int modifiers)
+        {
+            super(mtdName, type);
+            this.modifiers = modifiers;
         }
-        
+
+        public JSMethod(String mtdName, String type, String[] types,
+                String[] names, int modifiers)
+        {
+            super(mtdName, type);
+            this.modifiers = modifiers;
+            populateParams(types, names);
+        }
+
+        public JSMethod(String mtdName, String type, String[] types,
+                String[] names)
+        {
+            this(mtdName, type, types, names, Modifier.PUBLIC);
+        }
+
+        protected boolean isAddParams()
+        {
+            return true;
+        }
+
         public Component getPaintComponent(boolean isSelected)
         {
             if (mtdComponent == null)
-            {
-                mtdComponent = new RubyMethodPaintComponent();
-            }
+                mtdComponent = new MethodPaintComponent();
+
             mtdComponent.setFeatureName(getName());
             mtdComponent.setModifiers(getModifiers());
             mtdComponent.setTypeName(getTypeName());
             mtdComponent.setTypeColor(getTypeColor());
-            // mtdComponent.setParams(getParams());
+            mtdComponent.setParams(getParams());
             // mtdComponent.setExceptions(getExceptions());
             return mtdComponent;
         }
+
+        void populateParams(String[] prms, String names[])
+        {
+            for (int i = 0; i < prms.length; i++)
+                params.add(new ParamStr(prms[i], prms[i], names[i], false,
+                        getTypeColor(prms[i])));
+        }
     }
 
-    public static class RubyMethodPaintComponent extends
-            JavaPaintComponent.MethodPaintComponent
+    static class JSProperty extends JavaResultItem.FieldResultItem
     {
-         protected void drawParameterList(Graphics g, List prmList) {
-                
-         }
-    }
-}
 
+        public JSProperty(String name, String type)
+        {
+            super(name, type, Modifier.PUBLIC);
+        }
+
+        public JSProperty(String name, String type, int modifiers)
+        {
+            super(name, type, modifiers);
+        }
+
+    }
+
+}

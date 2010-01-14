@@ -68,10 +68,8 @@ import seco.notebook.csl.ElementHandle;
 import seco.notebook.csl.GsfUtilities;
 import seco.notebook.csl.OffsetRange;
 import seco.notebook.csl.ParseException;
-import seco.notebook.csl.Parser;
 import seco.notebook.csl.ParserResult;
 import seco.notebook.csl.Severity;
-import seco.notebook.csl.Snapshot;
 
 
 /**
@@ -88,15 +86,16 @@ import seco.notebook.csl.Snapshot;
  * 
  * @author Tor Norbye
  */
-public class JsParser extends Parser {
+public class JsParser 
+{
+    /** For unit tests such that they can make sure we didn't have a parser abort */
+    static RuntimeException runtimeException;
 
-    // ------------------------------------------------------------------------
-    // o.n.m.p.spi.Parser implementation
-    // ------------------------------------------------------------------------
-
-    public @Override void parse(Snapshot snapshot/*, Task task, SourceModificationEvent event*/) throws ParseException 
+    private JsParseResult lastResult;
+    
+    public void parse(String source) throws ParseException 
     {
-        Context context = new Context(snapshot);//, event
+        Context context = new Context(source);
         final List<DefaultError> errors = new ArrayList<DefaultError>();
         context.errorHandler = new ParseErrorHandler() {
             public void error(DefaultError error) {
@@ -107,41 +106,20 @@ public class JsParser extends Parser {
         lastResult.setErrors(errors);
     }
 
-    public @Override Result getResult() throws ParseException {
-        assert lastResult != null : "getResult() called prior parse()"; //NOI18N
+
+    public JsParseResult getResult()
+    {
         return lastResult;
     }
 
-    public @Override void cancel() {
-    }
 
-    public @Override void addChangeListener(ChangeListener changeListener) {
-        // no-op, we don't support state changes
-    }
-
-    public @Override void removeChangeListener(ChangeListener changeListener) {
-        // no-op, we don't support state changes
-    }
-
-    /** For unit tests such that they can make sure we didn't have a parser abort */
-    static RuntimeException runtimeException;
-
-    private JsParseResult lastResult;
-    
     /**
      * Creates a new instance of JsParser
      */
     public JsParser() {
     }
 
-    private static String asString(CharSequence sequence) {
-        if (sequence instanceof String) {
-            return (String)sequence;
-        } else {
-            return sequence.toString();
-        }
-    }
-
+   
     /**
      * Try cleaning up the source buffer around the current offset to increase
      * likelihood of parse success. Initially this method had a lot of
@@ -325,21 +303,21 @@ public class JsParser extends Parser {
         return false;
     }
 
-    private final int lexToAst(Snapshot source, int offset) {
-        if (source != null) {
-            return source.getEmbeddedOffset(offset);
-        }
-
-        return offset;
-    }
-
-    private final int astToLex(Snapshot source, int offset) {
-        if (source != null) {
-            return source.getOriginalOffset(offset);
-        }
-
-        return offset;
-    }
+//    private final int lexToAst(Snapshot source, int offset) {
+//        if (source != null) {
+//            return source.getEmbeddedOffset(offset);
+//        }
+//
+//        return offset;
+//    }
+//
+//    private final int astToLex(Snapshot source, int offset) {
+//        if (source != null) {
+//            return source.getOriginalOffset(offset);
+//        }
+//
+//        return offset;
+//    }
 
 //    public JsParseResult parse(Snapshot snapshot, EditHistory history, ParserResult prevResult) {
 //        if (history == null) {
@@ -773,7 +751,7 @@ public class JsParser extends Parser {
 
         switch (sanitizing) {
         case NEVER:
-            return createParseResult(context.snapshot, null);
+            return createParseResult(context.source, null);
 
         case NONE:
 
@@ -823,7 +801,7 @@ public class JsParser extends Parser {
         case MISSING_END:
         default:
             // We're out of tricks - just return the failed parse result
-            return createParseResult(context.snapshot, null);
+            return createParseResult(context.source, null);
         }
     }
 
@@ -909,12 +887,6 @@ public class JsParser extends Parser {
             context.errorOffset = -1;
         }
 
-//        String fileName = "";
-//
-//        if ((context.file != null) && (context.file.getFileObject() != null)) {
-//            fileName = context.file.getFileObject().getNameExt();
-//        }
-
         int lineno = 0;
         ScriptOrFnNode root = null;
 
@@ -941,9 +913,8 @@ public class JsParser extends Parser {
             setParentRefs(root, null);
             context.sanitized = sanitizing;
             //AstRootElement rootElement = new AstRootElement(context.file.getFileObject(), root, result);
-
-            AstNodeAdapter ast = new AstNodeAdapter(null, root);
-            JsParseResult r = createParseResult(context.snapshot, root);
+           //AstNodeAdapter ast = new AstNodeAdapter(null, root);
+            JsParseResult r = createParseResult(context.source, root);
             r.setSanitized(context.sanitized, context.sanitizedRange, context.sanitizedContents);
             r.setSource(source);
             return r;
@@ -1022,11 +993,11 @@ public class JsParser extends Parser {
 //        }
 //    }
     
-    private JsParseResult createParseResult(Snapshot file, Node rootNode) {
+    private JsParseResult createParseResult(String source, Node rootNode) {
         if (rootNode != null) {
-            return new JsParseResult(this, file, rootNode);
+            return new JsParseResult(this, source, rootNode);
         } else {
-            return new JsParseResult(this, file, null);
+            return new JsParseResult(this, source, null);
         }
     }
     
@@ -1148,8 +1119,7 @@ public class JsParser extends Parser {
 
     /** Parsing context */
     public static class Context {
-        private final Snapshot snapshot;
-       //private final SourceModificationEvent event;
+      
         private /*final*/ String source;
         private /*final*/ int caretOffset;
         
@@ -1161,17 +1131,11 @@ public class JsParser extends Parser {
         private String sanitizedContents;
         private Sanitize sanitized = Sanitize.NONE;
         
-        public Context(Snapshot snapshot/*, SourceModificationEvent event*/) {
-            this.snapshot = snapshot;
-            //this.event = event;
-            this.source = asString(snapshot.getText());
+        public Context(String source) {
+          
+            this.source = source;
             this.caretOffset = -1; //TODO:???
                 //GsfUtilities.getLastKnownCaretOffset(snapshot, event);
-            
-            //recompute the caret offset relative to the embeddings if found
-            if(caretOffset >= 0) {
-                this.caretOffset = snapshot.getEmbeddedOffset(caretOffset);
-            }
         }
         
         @Override

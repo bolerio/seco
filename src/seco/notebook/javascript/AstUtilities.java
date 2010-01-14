@@ -65,48 +65,48 @@ public final class AstUtilities {
 
     public static final String DOT_PROTOTYPE = ".prototype"; // NOI18N
 
-    public static int getAstOffset(Parser.Result info, int lexOffset) {
-        JsParseResult result = getParseResult(info);
-        if (result != null) {
-            return result.getSnapshot().getEmbeddedOffset(lexOffset);
-        }
-        return lexOffset;
-    }
-
-    public static OffsetRange getAstOffsets(Parser.Result info, OffsetRange lexicalRange) {
-        JsParseResult result = getParseResult(info);
-        if (result != null) {
-            int rangeStart = lexicalRange.getStart();
-            int start = result.getSnapshot().getEmbeddedOffset(rangeStart);
-            if (start == rangeStart) {
-                return lexicalRange;
-            } else if (start == -1) {
-                return OffsetRange.NONE;
-            } else {
-                // Assumes the translated range maintains size
-                return new OffsetRange(start, start+lexicalRange.getLength());
-            }
-        }
-        return lexicalRange;
-    }
+//    public static int getAstOffset(Parser.Result info, int lexOffset) {
+//        JsParseResult result = getParseResult(info);
+//        if (result != null) {
+//            return result.getSnapshot().getEmbeddedOffset(lexOffset);
+//        }
+//        return lexOffset;
+//    }
+//
+//    public static OffsetRange getAstOffsets(Parser.Result info, OffsetRange lexicalRange) {
+//        JsParseResult result = getParseResult(info);
+//        if (result != null) {
+//            int rangeStart = lexicalRange.getStart();
+//            int start = result.getSnapshot().getEmbeddedOffset(rangeStart);
+//            if (start == rangeStart) {
+//                return lexicalRange;
+//            } else if (start == -1) {
+//                return OffsetRange.NONE;
+//            } else {
+//                // Assumes the translated range maintains size
+//                return new OffsetRange(start, start+lexicalRange.getLength());
+//            }
+//        }
+//        return lexicalRange;
+//    }
 
     /** SLOW - used from tests only right now */
-    public static boolean isGlobalVar(Parser.Result info, Node node) {
-        if (!isNameNode(node)) {
-            return false;
-        }
-        JsParseResult rpr = AstUtilities.getParseResult(info);
-        if (rpr == null) {
-            return false;
-        }
-        VariableVisitor v = rpr.getVariableVisitor();
-        List<Node> nodes = v.getVarOccurrences(node);
-        if (nodes == null) {
-            return true;
-        } else {
-            return nodes.contains(node);
-        }
-    }
+//    public static boolean isGlobalVar(Parser.Result info, Node node) {
+//        if (!isNameNode(node)) {
+//            return false;
+//        }
+//        JsParseResult rpr = AstUtilities.getParseResult(info);
+//        if (rpr == null) {
+//            return false;
+//        }
+//        VariableVisitor v = rpr.getVariableVisitor();
+//        List<Node> nodes = v.getVarOccurrences(node);
+//        if (nodes == null) {
+//            return true;
+//        } else {
+//            return nodes.contains(node);
+//        }
+//    }
     
     /** 
      * Return the comment sequence (if any) for the comment prior to the given offset.
@@ -145,7 +145,7 @@ public final class AstUtilities {
         }
     }
     
-    public static JsParseResult getParseResult(Parser.Result info) {
+    public static JsParseResult getParseResult(ParserResult info) {
         assert info instanceof JsParseResult : "Expecting JsParseResult, but have " + info; //NOI18N
         return (JsParseResult) info;
     }

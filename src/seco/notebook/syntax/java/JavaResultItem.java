@@ -341,17 +341,21 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
             this.typeName = JMIUtils.getTypeName(type, false, false);
             this.typeColor = getTypeColor(type);
         }
+        
+        public FieldResultItem(String name, String type, int modifiers) 
+        {
+            this.fldName = name;
+            this.modifiers = modifiers;
+            this.typeName = type;
+            this.typeColor = getTypeColor(type);
+        }
 
         public FieldResultItem(Field fld, Class<?> context)
         {
             this.fld = fld;
             this.fldName = fld.getName();
             this.modifiers = fld.getModifiers();
-            if (fld.getDeclaringClass() == // ???(context instanceof
-            // ParameterizedType ?
-            // ((ParameterizedType)context).getDefinition()
-            // :
-            context)// )
+            if (fld.getDeclaringClass() == context)
             {
                 this.modifiers |= JavaCompletion.LOCAL_MEMBER_BIT;
             }
@@ -1434,7 +1438,7 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         }
     }
 
-    static class ParamStr
+    public static class ParamStr
     {
         private String type, simpleType, prm;
         private boolean isVarArg;

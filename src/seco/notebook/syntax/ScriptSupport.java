@@ -125,9 +125,15 @@ public abstract class ScriptSupport
 	}
 
 	public String getCommandBeforePt(int caretOffset)
-			throws BadLocationException
+			
 	{
-		return getCommandBeforePt(caretOffset, true);
+	    try{
+		   return getCommandBeforePt(caretOffset, true);
+	    }
+	    catch(BadLocationException ex)
+	    {
+	        return null;
+	    }
 	}
 
 	public String getCommandBeforePt(int caretOffset, boolean lookahead)

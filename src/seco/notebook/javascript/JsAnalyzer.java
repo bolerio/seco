@@ -72,7 +72,8 @@ import seco.notebook.javascript.lexer.LexUtilities;
  *
  * @author Tor Norbye
  */
-public class JsAnalyzer implements StructureScanner {
+public class JsAnalyzer //implements StructureScanner 
+{
     public static final String NETBEANS_IMPORT_FILE = "__netbeans_import__"; // NOI18N
     private static final String DOT_CALL = ".call"; // NOI18N
     
@@ -158,8 +159,8 @@ public class JsAnalyzer implements StructureScanner {
                 }
             }
             
-            currentClass.begin = LexUtilities.getLexerOffset(result, firstAstOffset);
-            currentClass.end = LexUtilities.getLexerOffset(result, lastAstOffset);
+            currentClass.begin = firstAstOffset;
+            currentClass.end = lastAstOffset;
         }
 
         if (ar.e4xStrings != null) {
@@ -170,7 +171,7 @@ public class JsAnalyzer implements StructureScanner {
                 // and other info.
                 String xml = node.getString();
 
-                int startOffset = LexUtilities.getLexerOffset(result, node.getSourceStart());
+                int startOffset = node.getSourceStart();
                 if (startOffset == -1) {
                     startOffset = node.getSourceStart();
                 }
@@ -185,58 +186,58 @@ public class JsAnalyzer implements StructureScanner {
         return itemList;
     }
 
-    public Map<String, List<OffsetRange>> folds(ParserResult info) {
-        JsParseResult result = AstUtilities.getParseResult(info);
-        AnalysisResult ar = result.getStructure();
-
-        List<? extends AstElement> elements = ar.getElements();
-        //List<StructureItem> itemList = new ArrayList<StructureItem>(elements.size());
-
-        Map<String, List<OffsetRange>> folds = new HashMap<String, List<OffsetRange>>();
-        List<OffsetRange> codeblocks = new ArrayList<OffsetRange>();
-        folds.put("codeblocks", codeblocks); // NOI18N
-
-        CharSequence text = info.getSnapshot().getText();
-        try {
-            for (AstElement element : elements) {
-                ElementKind kind = element.getKind();
-                switch (kind) {
-                    case METHOD:
-                    case CONSTRUCTOR:
-                    case CLASS:
-                    case MODULE:
-                        Node node = element.getNode();
-                        OffsetRange range = AstUtilities.getRange(node);
-
-                        if (kind == ElementKind.METHOD || kind == ElementKind.CONSTRUCTOR ||
-                                // Only make nested classes/modules foldable, similar to what the java editor is doing
-                                (range.getStart() > GsfUtilities.getRowStart(text, Math.min(range.getStart(), text.length())))) {
-
-                            int start = range.getStart();
-                            // Start the fold at the END of the line
-                            start = GsfUtilities.getRowEnd(text, Math.min(start, text.length()));
-                            int end = range.getEnd();
-                            if (start != (-1) && end != (-1) && start < end && end <= text.length()) {
-                                int lexStart = result.getSnapshot().getOriginalOffset(start);
-                                int lexEnd = result.getSnapshot().getOriginalOffset(end);
-                                if (lexStart < lexEnd) {
-                                    //recalculate the range if we parsed the virtual source
-                                    range = new OffsetRange(lexStart, lexEnd);
-                                    codeblocks.add(range);
-                                }
-                            }
-                        break;
-                        }
-                }
-
-                assert element.getChildren().size() == 0;
-            }
-        } catch (BadLocationException ex) {
-            ex.printStackTrace();
-        }
-
-        return folds;
-    }
+//    public Map<String, List<OffsetRange>> folds(ParserResult info) {
+//        JsParseResult result = AstUtilities.getParseResult(info);
+//        AnalysisResult ar = result.getStructure();
+//
+//        List<? extends AstElement> elements = ar.getElements();
+//        //List<StructureItem> itemList = new ArrayList<StructureItem>(elements.size());
+//
+//        Map<String, List<OffsetRange>> folds = new HashMap<String, List<OffsetRange>>();
+//        List<OffsetRange> codeblocks = new ArrayList<OffsetRange>();
+//        folds.put("codeblocks", codeblocks); // NOI18N
+//
+//        CharSequence text = info.getSnapshot().getText();
+//        try {
+//            for (AstElement element : elements) {
+//                ElementKind kind = element.getKind();
+//                switch (kind) {
+//                    case METHOD:
+//                    case CONSTRUCTOR:
+//                    case CLASS:
+//                    case MODULE:
+//                        Node node = element.getNode();
+//                        OffsetRange range = AstUtilities.getRange(node);
+//
+//                        if (kind == ElementKind.METHOD || kind == ElementKind.CONSTRUCTOR ||
+//                                // Only make nested classes/modules foldable, similar to what the java editor is doing
+//                                (range.getStart() > GsfUtilities.getRowStart(text, Math.min(range.getStart(), text.length())))) {
+//
+//                            int start = range.getStart();
+//                            // Start the fold at the END of the line
+//                            start = GsfUtilities.getRowEnd(text, Math.min(start, text.length()));
+//                            int end = range.getEnd();
+//                            if (start != (-1) && end != (-1) && start < end && end <= text.length()) {
+//                                int lexStart = result.getSnapshot().getOriginalOffset(start);
+//                                int lexEnd = result.getSnapshot().getOriginalOffset(end);
+//                                if (lexStart < lexEnd) {
+//                                    //recalculate the range if we parsed the virtual source
+//                                    range = new OffsetRange(lexStart, lexEnd);
+//                                    codeblocks.add(range);
+//                                }
+//                            }
+//                        break;
+//                        }
+//                }
+//
+//                assert element.getChildren().size() == 0;
+//            }
+//        } catch (BadLocationException ex) {
+//            ex.printStackTrace();
+//        }
+//
+//        return folds;
+//    }
     
     static AnalysisResult analyze(JsParseResult result) {
         AnalysisResult analysisResult = new AnalysisResult(result);
@@ -252,10 +253,6 @@ public class JsAnalyzer implements StructureScanner {
         }
         analysisResult.postProcess(result);
         return analysisResult;
-    }
-
-    public Configuration getConfiguration() {
-        return null;
     }
 
     public static class AnalysisResult implements ParseTreeVisitor
@@ -1057,11 +1054,11 @@ public class JsAnalyzer implements StructureScanner {
         }
 
         public long getPosition() {
-            return LexUtilities.getLexerOffset(info, element.getNode().getSourceStart());
+            return element.getNode().getSourceStart();
         }
 
         public long getEndPosition() {
-            return LexUtilities.getLexerOffset(info, element.getNode().getSourceEnd());
+            return element.getNode().getSourceEnd();
         }
 
         @Override

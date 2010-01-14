@@ -1,8 +1,8 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- *
+ * 
  * Copyright 2008 Sun Microsystems, Inc. All rights reserved.
- *
+ * 
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common
  * Development and Distribution License("CDDL") (collectively, the
@@ -20,7 +20,7 @@
  * License Header, with the fields enclosed by brackets [] replaced by
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
- *
+ * 
  * If you wish your version of this file to be governed by only the CDDL
  * or only the GPL Version 2, indicate your decision by adding
  * "[Contributor] elects to include this software in this distribution
@@ -31,38 +31,18 @@
  * However, if you add GPL Version 2 code and therefore, elected the GPL
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
- *
+ * 
  * Contributor(s):
- *
+ * 
  * Portions Copyrighted 2008 Sun Microsystems, Inc.
  */
 
-package seco.notebook.csl; 
-
-import java.util.List;
+package seco.notebook.javascript;
 
 /**
  *
- * @author hanz
+ * @author tor
  */
-public abstract class ParserResult  
-{
-    private final String source;
-
-    protected ParserResult(String source)
-    {
-        this.source = source;
-    }
+public class IndexAttributes {
     
-    public String getSource () 
-    {
-        return source;
-    }
-
-    public abstract List<? extends DefaultError> getDiagnostics ();
-
 }
-
-
-
-

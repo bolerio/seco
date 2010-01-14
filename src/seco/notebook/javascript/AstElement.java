@@ -385,55 +385,55 @@ public class AstElement extends JsElement
         return type;
     }
 
-    @Override
-    public OffsetRange getOffsetRange(ParserResult result)
-    {
-        JsParseResult jspr = AstUtilities.getParseResult(result);
-        Element object = JsParser.resolveHandle(jspr, this);
-
-        if (object instanceof AstElement)
-        {
-            Node target = ((AstElement) object).getNode();
-            if (target != null)
-            {
-                return LexUtilities.getLexerOffsets(jspr, new OffsetRange(
-                        target.getSourceStart(), target.getSourceEnd()));
-            }
-            else
-            {
-                return OffsetRange.NONE;
-            }
-
-        }
-        else if (object != null)
-        {
-            Logger.global.log(Level.WARNING, "Foreign element: " + object
-                    + " of type " + // NOI18N
-                    ((object != null) ? object.getClass().getName() : "null")); // NOI18N
-
-        }
-        else
-        {
-            if (getNode() != null)
-            {
-                OffsetRange astRange = AstUtilities.getRange(getNode());
-                if (astRange != OffsetRange.NONE)
-                {
-                    JsParseResult oldInfo = info;
-                    if (oldInfo == null)
-                    {
-                        oldInfo = jspr;
-                    }
-                    return LexUtilities.getLexerOffsets(oldInfo, astRange);
-                }
-                else
-                {
-                    return OffsetRange.NONE;
-                }
-            }
-        }
-
-        return OffsetRange.NONE;
-    }
+//    @Override
+//    public OffsetRange getOffsetRange(ParserResult result)
+//    {
+//        JsParseResult jspr = AstUtilities.getParseResult(result);
+//        Element object = JsParser.resolveHandle(jspr, this);
+//
+//        if (object instanceof AstElement)
+//        {
+//            Node target = ((AstElement) object).getNode();
+//            if (target != null)
+//            {
+//                return LexUtilities.getLexerOffsets(jspr, new OffsetRange(
+//                        target.getSourceStart(), target.getSourceEnd()));
+//            }
+//            else
+//            {
+//                return OffsetRange.NONE;
+//            }
+//
+//        }
+//        else if (object != null)
+//        {
+//            Logger.global.log(Level.WARNING, "Foreign element: " + object
+//                    + " of type " + // NOI18N
+//                    ((object != null) ? object.getClass().getName() : "null")); // NOI18N
+//
+//        }
+//        else
+//        {
+//            if (getNode() != null)
+//            {
+//                OffsetRange astRange = AstUtilities.getRange(getNode());
+//                if (astRange != OffsetRange.NONE)
+//                {
+//                    JsParseResult oldInfo = info;
+//                    if (oldInfo == null)
+//                    {
+//                        oldInfo = jspr;
+//                    }
+//                    return LexUtilities.getLexerOffsets(oldInfo, astRange);
+//                }
+//                else
+//                {
+//                    return OffsetRange.NONE;
+//                }
+//            }
+//        }
+//
+//        return OffsetRange.NONE;
+//    }
 
 }

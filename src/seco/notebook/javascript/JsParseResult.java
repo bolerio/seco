@@ -53,11 +53,6 @@ import seco.notebook.csl.*;
 public class JsParseResult extends ParserResult 
 {
 
-    @Override
-    protected void invalidate() {
-        // XXX: what exactly should we do here?
-    }
-
     private final JsParser parser;
     private final Node rootNode;
 
@@ -72,8 +67,8 @@ public class JsParseResult extends ParserResult
     private boolean commentsAdded;
     private IncrementalParse incrementalParse;
 
-    public JsParseResult(JsParser parser, Snapshot snapshot, Node rootNode) {
-        super(snapshot);
+    public JsParseResult(JsParser parser, String source, Node rootNode) {
+        super(source);
         this.parser = parser;
         this.rootNode = rootNode;
     }
@@ -86,15 +81,6 @@ public class JsParseResult extends ParserResult
         this.errors = new ArrayList<DefaultError>(errors);
     }
     
-// XXX: parsingapi
-//    public ParserResult.AstTreeNode getAst() {
-//        return ast;
-//    }
-//
-//    public void setAst(AstTreeNode ast) {
-//        this.ast = ast;
-//    }
-
     /** The root node of the AST produced by the parser.
      * Later, rip out the getAst part etc.
      */
