@@ -44,13 +44,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mozilla.nb.javascript.FunctionNode;
 import org.mozilla.nb.javascript.Node;
 import org.mozilla.nb.javascript.Token;
-//import org.netbeans.api.lexer.TokenSequence;
-//import org.netbeans.modules.javascript.editing.lexer.JsCommentLexer;
-//import org.netbeans.modules.javascript.editing.lexer.JsCommentTokenId;
-//import org.netbeans.modules.parsing.spi.indexing.support.QuerySupport;
+
 
 
 /**
@@ -556,10 +552,6 @@ public class JsTypeAnalyzer {
             startTime = System.currentTimeMillis();
             types = new HashMap<String, String>();
 
-            //if (info.getSnapshot().getSource().getDocument(false) != null) {
-                initTypeAssertions();
-            //}
-
             analyze(root);
         }
     }
@@ -619,19 +611,5 @@ public class JsTypeAnalyzer {
         }
     }
     
-    /** Look at type assertions in the document and initialize name context */
-    private void initTypeAssertions() {
-        if (root.getType() == Token.FUNCTION) {
-            // Look for parameter hints 
-           // TokenSequence<? extends JsCommentTokenId> ts = AstUtilities.getCommentFor(info, (FunctionNode)root);
-            
-           // if (ts != null) {
-          //      Map<String, String> typeMap = JsCommentLexer.findFunctionTypes(ts);
-          //      for (Map.Entry<String,String> entry : typeMap.entrySet()) {
-                    // TODO - filter out @return name here. Doesn't cause any damage though.
-           //         types.put(entry.getKey(), entry.getValue());
-           //     }
-          //  }
-        }
-    }
+  
 }

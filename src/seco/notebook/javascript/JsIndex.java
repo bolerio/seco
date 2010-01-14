@@ -95,20 +95,6 @@ public final class JsIndex {
         this.querySupport = querySupport;
     }
 
-//    public static JsIndex get(Collection<FileObject> roots) {
-//        try {
-//            if (LOG.isLoggable(Level.FINE)) {
-//                LOG.fine("JsIndex for roots: " + roots); //NOI18N
-//            }
-//            return new JsIndex(QuerySupport.forRoots(JsIndexer.Factory.NAME,
-//                    JsIndexer.Factory.VERSION,
-//                    roots.toArray(new FileObject[roots.size()])));
-//        } catch (IOException ioe) {
-//            LOG.log(Level.WARNING, null, ioe);
-//            return EMPTY;
-//        }
-//    }
-
     private Collection<? extends IndexResult> query(
             final String fieldName, final String fieldValue,
             final QuerySupport.Kind kind, final String... fieldsToLoad
