@@ -809,9 +809,10 @@ public class NotebookEditorKit extends StyledEditorKit
             try
             {
                 Rectangle rect = editor.modelToView(pos);
-                Point pt = GUIHelper.computePoint(editor, new Point(rect.x,
-                        rect.y));
-                // SwingUtilities.convertPoint(editor, rect.x, rect.y, f);
+                Point pt = new Point(rect.x, rect.y);
+                //GUIHelper.computePoint(editor, new Point(rect.x, rect.y));
+                    
+                pt = SwingUtilities.convertPoint(editor, rect.x, rect.y, f);
                 Collection<JMenuItem> items = CellLangProvider
                         .getLanguages(editor);
                 JPopupMenu popupMenu = new JPopupMenu();
