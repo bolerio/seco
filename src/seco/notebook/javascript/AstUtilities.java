@@ -170,67 +170,6 @@ public final class AstUtilities {
 //        return null;
 //    }
 
-//    public static Node getForeignNode(final IndexedElement o, JsParseResult[] compilationInfoRet) {
-//        FileObject fo = o.getFileObject();
-//        if (fo == null) {
-//            return null;
-//        }
-//
-//        Source source = Source.create(fo);
-//        final Parser.Result [] infoHolder = new Parser.Result [1];
-//        try {
-//            ParserManager.parse(Collections.singleton(source), new UserTask() {
-//                @Override
-//                public void run(ResultIterator resultIterator) throws Exception {
-//                    infoHolder[0] = findJsParserResult(resultIterator);
-//                }
-//            });
-//        } catch (ParseException ex) {
-//            ex.printStackTrace();
-//            return null;
-//        }
-//
-//        if (infoHolder[0] == null) {
-//            return null;
-//        }
-//
-//        JsParseResult info = AstUtilities.getParseResult(infoHolder[0]);
-//
-//        if (compilationInfoRet != null) {
-//            compilationInfoRet[0] = info;
-//        }
-//
-//        Node root = info.getRootNode();
-//        if (root == null) {
-//            return null;
-//        }
-//
-//        String signature = o.getSignature();
-//
-//        if (signature == null) {
-//            return null;
-//        }
-////        Node node = AstUtilities.findBySignature(root, signature);
-//        boolean lookForFunction = o.getKind() == ElementKind.CONSTRUCTOR || o.getKind() == ElementKind.METHOD;
-//        if (lookForFunction) {
-//            for (AstElement element : info.getStructure().getElements()) {
-//                if (element instanceof FunctionAstElement) {
-//                    FunctionAstElement func = (FunctionAstElement) element;
-//                    if (signature.equals(func.getSignature())) {
-//                        return func.getNode();
-//                    }
-//                }
-//            }
-//        }
-//
-//        for (AstElement element : info.getStructure().getElements()) {
-//            if (signature.equals(element.getSignature())) {
-//                return element.getNode();
-//            }
-//        }
-//
-//        return null;
-//    }
 
     /**
      * Return a range that matches the given node's source buffer range

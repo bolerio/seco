@@ -73,8 +73,7 @@ public class JavaScriptParser extends NBParser
 //        Node n = ParserUtils.getASTNodeAtOffset(support.getElement(),
 //                getRootNode(), offset - 1);
 //       
-//        JsTypeAnalyzer a = new JsTypeAnalyzer(info, JsIndex.EMPTY,
-//                getRootNode(), n, offset - 1, offset - 1);
+//        JsTypeAnalyzer a = new JsTypeAnalyzer(info, getRootNode(), n, offset - 1, offset - 1);
 //        String type2 = a.getType(s);
 
       

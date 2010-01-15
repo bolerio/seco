@@ -97,11 +97,9 @@ import org.mozilla.nb.javascript.Token;
  */
 public class JsTypeAnalyzer {
 
-    private JsIndex index;
     /** Map from variable or field(etc) name to type. */
     private Map<String, String> types;
     private final int astOffset;
-    private final int lexOffset;
     private final Node root;
     /** Node we are looking for;  */
     private Node target;
@@ -134,13 +132,11 @@ public class JsTypeAnalyzer {
 
     /** Creates a new instance of JsTypeAnalyzer for a given position.
      * The {@link #analyze} method will do the rest. */
-    public JsTypeAnalyzer(JsParseResult info, JsIndex index, Node root, Node target, int astOffset, int lexOffset) {
+    public JsTypeAnalyzer(JsParseResult info, Node root, Node target, int astOffset, int lexOffset) {
         this.info = info;
-        this.index = index;
         this.root = root;
         this.target = target;
         this.astOffset = astOffset;
-        this.lexOffset = lexOffset;
     }
     
     /**
@@ -318,9 +314,6 @@ public class JsTypeAnalyzer {
                             jQuery = true;
                         }
                     }
-                    if (!jQuery && index != null) {
-                        jQuery = index.getType("jQuery") != null;
-                    }
                     if (jQuery) {
                         return "jQuery"; // NOI18N
                     } else {
@@ -328,7 +321,7 @@ public class JsTypeAnalyzer {
                     }
                 }
                 
-                return FunctionCache.INSTANCE.getType(s, index);
+                return FunctionCache.INSTANCE.getType(s);
             } else if (first.getType() == Token.GETPROP) {
                 // Chained - figure out the type of this call before
                 // continuing
@@ -340,7 +333,7 @@ public class JsTypeAnalyzer {
                         if (methodNode.getType() == Token.STRING) {
                             String method = methodNode.getString();
                             String fqn = lhs + "." + method; // NOI18N
-                            return FunctionCache.INSTANCE.getType(fqn, index);
+                            return FunctionCache.INSTANCE.getType(fqn);
                         }
                     }
                 } else if (grandChild.getType() == Token.NAME) {
@@ -348,7 +341,7 @@ public class JsTypeAnalyzer {
                     //String lhs = types.get(name);
                     String lhs = getTypeInternal(name);
                     if (lhs == null) {
-                        lhs = FunctionCache.INSTANCE.getType(name, index);
+                        lhs = FunctionCache.INSTANCE.getType(name);
                         if (lhs == null) {
                             lhs = name;
                         }
@@ -358,7 +351,7 @@ public class JsTypeAnalyzer {
                         if (methodNode.getType() == Token.STRING) {
                             String method = methodNode.getString();
                             String fqn = lhs + "." + method; // NOI18N
-                            return FunctionCache.INSTANCE.getType(fqn, index);
+                            return FunctionCache.INSTANCE.getType(fqn);
                         }
                     }
                 } else {
@@ -368,7 +361,7 @@ public class JsTypeAnalyzer {
                         if (methodNode.getType() == Token.STRING) {
                             String method = methodNode.getString();
                             String fqn = type + "." + method; // NOI18N
-                            return FunctionCache.INSTANCE.getType(fqn, index);
+                            return FunctionCache.INSTANCE.getType(fqn);
                         }
                     }
                 }
@@ -379,7 +372,7 @@ public class JsTypeAnalyzer {
                 }
                 String s = AstUtilities.getCallName(node, true);
                 if (s != null && s.length() > 0) {
-                    return FunctionCache.INSTANCE.getType(s, index);
+                    return FunctionCache.INSTANCE.getType(s);
                 }
             }
             break;
@@ -404,7 +397,7 @@ public class JsTypeAnalyzer {
                 String type = expressionType(first);
                 if (type != null) {
                     if (!Character.isUpperCase(type.charAt(0))) {
-                        String s = FunctionCache.INSTANCE.getType(type, index);
+                        String s = FunctionCache.INSTANCE.getType(type);
                         if (s != null) {
                             type = s;
                         }
@@ -430,7 +423,7 @@ public class JsTypeAnalyzer {
                 // Special handling for E4X
                 fqn = firstType;
             }
-            String type = FunctionCache.INSTANCE.getType(fqn, index);
+            String type = FunctionCache.INSTANCE.getType(fqn);
             if (type != null) {
                 return type;
             } else {
@@ -458,7 +451,6 @@ public class JsTypeAnalyzer {
     }
     
     public static String getCallFqn(JsParseResult info, Node callNode, boolean resolveLocals) {
-        JsIndex index = JsIndex.EMPTY;//get(QuerySupport.findRoots(info.getSnapshot().getSource().getFileObject(), null, Collections.singleton(JsClassPathProvider.BOOT_CP), Collections.<String>emptySet()));
         Node methodNode = callNode.getParentNode();
         while (methodNode != null) {
             if (methodNode.getType() == Token.FUNCTION) {
@@ -469,7 +461,7 @@ public class JsTypeAnalyzer {
         if (methodNode == null) {
             methodNode = info.getRootNode();
         }
-        JsTypeAnalyzer analyzer = new JsTypeAnalyzer(info, index, methodNode, callNode, 0, 0);
+        JsTypeAnalyzer analyzer = new JsTypeAnalyzer(info, methodNode, callNode, 0, 0);
         if (resolveLocals && analyzer.dependsOnLocals()) {
             analyzer.init();
         }
@@ -506,7 +498,7 @@ public class JsTypeAnalyzer {
                     //String lhs = types.get(name);
                     String lhs = getTypeInternal(name);
                     if (lhs == null) {
-                        lhs = FunctionCache.INSTANCE.getType(name, index);
+                        lhs = FunctionCache.INSTANCE.getType(name);
                         if (lhs == null) {
                             lhs = name;
                         }
@@ -569,10 +561,10 @@ public class JsTypeAnalyzer {
             type = BROWSER_BUILTINS.get(symbol);
             
             // Look in the index to see if this is a known type
-            if (type == null && index != null) {
+            if (type == null) {
                 // If the variable is local I shouldn't attempt to do this!!
                 // Stash the result in the node itself
-                type = FunctionCache.INSTANCE.getType(symbol, index);
+                type = FunctionCache.INSTANCE.getType(symbol);
 //                // TODO - only do this if the symbol is a global variable (and on the index side,
 //                // limit FQN matches to globals)
 //                type = index.getType(symbol);

@@ -47,42 +47,46 @@ import java.util.Map;
  * 
  * @author Tor Norbye
  */
-public class FunctionCache {
+public class FunctionCache
+{
     public static final FunctionCache INSTANCE = new FunctionCache();
     static final String NONE = new String("NONE");
-    
-    Map<String,String> cache = new HashMap<String,String>(500);
-    
-    public String getType(String fqn, JsIndex index) {
+
+    Map<String, String> cache = new HashMap<String, String>(500);
+
+    public String getType(String fqn)
+    {
         String type = cache.get(fqn);
-        if (type == NONE) {
+        if (type == NONE)
+        {
             return null;
-        } else if (type == null) {
-            type = index.getType(fqn);
-            if (type == null) {
-                // Special case checks
-                if (fqn.endsWith("Element.getContext")) { // NOI18N
-                    // Probably a call on the HTMLCanvasElement
-                    // TODO - check args - see if it's passing in "2d" etc.
-                    // At least see if it's an element...
-                    return "CanvasRenderingContext2D"; // NOI18N
-                }
-                
-                cache.put(fqn, NONE);
-                return null;
-            } else {
-                cache.put(fqn, type);
-            }
         }
-        
+        else if (type == null)
+        {
+            // Special case checks
+            if (fqn.endsWith("Element.getContext"))
+            { // NOI18N
+                // Probably a call on the HTMLCanvasElement
+                // TODO - check args - see if it's passing in "2d" etc.
+                // At least see if it's an element...
+                return "CanvasRenderingContext2D"; // NOI18N
+            }
+
+            cache.put(fqn, NONE);
+            return null;
+
+        }
+
         return type;
     }
-    
-    public void wipe(String fqn) {
+
+    public void wipe(String fqn)
+    {
         cache.remove(fqn);
     }
-    
-    boolean isEmpty() {
+
+    boolean isEmpty()
+    {
         return cache.size() == 0;
     }
 }

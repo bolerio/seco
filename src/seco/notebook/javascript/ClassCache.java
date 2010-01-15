@@ -53,20 +53,20 @@ public class ClassCache {
     public static final ClassCache INSTANCE = new ClassCache();
     private Map<String,String> superClasses;
     
-    private void initialize(JsIndex index) {
+    private void initialize() {
         if (superClasses == null) {
-            superClasses = index.getAllExtends();
+            superClasses = new HashMap<String, String>();
         }
     }
     
-    public String getExtends(String fqn, JsIndex index) {
-        initialize(index);
+    public String getExtends(String fqn) {
+        initialize();
         
         return superClasses.get(fqn);
     }
     
-    public List<String> getAncestors(String fqn, JsIndex index) {
-        initialize(index);
+    public List<String> getAncestors(String fqn) {
+        initialize();
         
         List<String> ancestors = new ArrayList<String>();
         for (String s = fqn; s != null; s = superClasses.get(s)) {

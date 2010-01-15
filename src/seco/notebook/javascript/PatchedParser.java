@@ -371,16 +371,7 @@ public class PatchedParser
 
     protected void notifyError(Context context, String message, String sourceName, int line,
                            String lineSource, int lineOffset, Sanitize sanitizing, Severity severity, String key, Object params) {
-        // Replace a common but unwieldy JRuby error message with a shorter one
         
-//        if (JsIndexer.PREINDEXING && severity == Severity.ERROR && context.snapshot.getSource().getFileObject().getNameExt().startsWith("stub_")) {
-//            // Ensure there are no code generator bugs in the stubs
-//            System.err.println("\n\n\n**********************************************************\n**********************************************************\n" + // NOI18N
-//                    "Parsing error for " + message + ", sourceName= " + sourceName + ", line= " + line + ", lineSource=" + lineSource + ", lineOffset=" + lineOffset + ", key=" + key + "\n" + // NOI18N
-//                    "**********************************************************\n**********************************************************\n"); // NOI18N
-//            System.exit(0);
-//        }
-
         int offset = context.parser.getTokenStream().getBufferOffset();
         
         if ("msg.unexpected.eof".equals(key) && offset > 0) { // NOI18N
