@@ -45,14 +45,14 @@ public class JSScriptSupport extends ScriptSupport
         return providers;
     }
 
-    private JSParser0 parser = null;
+    private JavaScriptParser parser = null;
 
     @Override
     public NBParser getParser()
     {
         if (parser == null)
         {
-            parser = new JSParser0(this);
+            parser = new JavaScriptParser(this);
         }
         return parser;
     }

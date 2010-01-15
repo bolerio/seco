@@ -80,7 +80,7 @@ public class JSCompletionProvider implements CompletionProvider
             ScriptSupport sup = doc.getScriptSupport(offset);
             queryCaretOffset = offset;
             queryAnchorOffset = offset;
-            JSParser0 p = (JSParser0) sup.getParser();
+            JavaScriptParser p = (JavaScriptParser) sup.getParser();
             String s = sup.getCommandBeforePt(offset);
             // TODO: should consider inner scopes, etc.
             if ("this".equals(s))
@@ -163,7 +163,7 @@ public class JSCompletionProvider implements CompletionProvider
             }
         }
 
-        private void populateThis(CompletionResultSet resultSet, JSParser0 p)
+        private void populateThis(CompletionResultSet resultSet, JavaScriptParser p)
         {
             // TODO: add all vare from the RuntimeContext.
             List<JavaResultItem> params = BUILDINS.getThisParams();
@@ -319,8 +319,8 @@ public class JSCompletionProvider implements CompletionProvider
             // Position oldPos = queryMethodParamsStartPos;
             queryMethodParamsStartPos = null;
             ScriptSupport sup = doc.getScriptSupport(caretOffset);
-            if (sup == null || !(sup.getParser() instanceof JSParser0)) return;
-            JSParser0 p = (JSParser0) sup.getParser();
+            if (sup == null || !(sup.getParser() instanceof JavaScriptParser)) return;
+            JavaScriptParser p = (JavaScriptParser) sup.getParser();
             // TODO:
             if (p.getRootNode() == null)
             {

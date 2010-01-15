@@ -53,7 +53,7 @@ import seco.notebook.csl.*;
 public class JsParseResult extends ParserResult 
 {
 
-    private final JsParser parser;
+    private final PatchedParser parser;
     private final Node rootNode;
 
     private String source;
@@ -61,13 +61,13 @@ public class JsParseResult extends ParserResult
     
     private OffsetRange sanitizedRange = OffsetRange.NONE;
     private String sanitizedContents;
-    private JsParser.Sanitize sanitized;
+    private PatchedParser.Sanitize sanitized;
 
     private JsAnalyzer.AnalysisResult analysisResult;
     private boolean commentsAdded;
     private IncrementalParse incrementalParse;
 
-    public JsParseResult(JsParser parser, String source, Node rootNode) {
+    public JsParseResult(PatchedParser parser, String source, Node rootNode) {
         super(source);
         this.parser = parser;
         this.rootNode = rootNode;
@@ -113,13 +113,13 @@ public class JsParseResult extends ParserResult
     /**
      * Set the range of source that was sanitized, if any.
      */
-    void setSanitized(JsParser.Sanitize sanitized, OffsetRange sanitizedRange, String sanitizedContents) {
+    void setSanitized(PatchedParser.Sanitize sanitized, OffsetRange sanitizedRange, String sanitizedContents) {
         this.sanitized = sanitized;
         this.sanitizedRange = sanitizedRange;
         this.sanitizedContents = sanitizedContents;
     }
 
-    public JsParser.Sanitize getSanitized() {
+    public PatchedParser.Sanitize getSanitized() {
         return sanitized;
     }    
 

@@ -1,48 +1,56 @@
-/*
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- *
- * Copyright 1997-2007 Sun Microsystems, Inc. All rights reserved.
- *
- * The contents of this file are subject to the terms of either the GNU
- * General Public License Version 2 only ("GPL") or the Common
- * Development and Distribution License("CDDL") (collectively, the
- * "License"). You may not use this file except in compliance with the
- * License. You can obtain a copy of the License at
- * http://www.netbeans.org/cddl-gplv2.html
- * or nbbuild/licenses/CDDL-GPL-2-CP. See the License for the
- * specific language governing permissions and limitations under the
- * License.  When distributing the software, include this License Header
- * Notice in each file and include the License file at
- * nbbuild/licenses/CDDL-GPL-2-CP.  Sun designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Sun in the GPL Version 2 section of the License file that
- * accompanied this code. If applicable, add the following below the
- * License Header, with the fields enclosed by brackets [] replaced by
- * your own identifying information:
- * "Portions Copyrighted [year] [name of copyright owner]"
- *
- * Contributor(s):
- *
- * Portions Copyrighted 2007 Sun Microsystems, Inc.
- */
 package seco.notebook.javascript;
 
-import javax.swing.text.Document;
-//import org.netbeans.modules.javascript.editing.lexer.JsTokenId;
-//import org.openide.filesystems.FileObject;
-//import org.openide.util.NbBundle;
+import java.util.Iterator;
 
-/**
- *
- * @author Tor Norbye
- */
-public class JsUtils {
+import org.mozilla.javascript.FunctionNode;
+import org.mozilla.javascript.Kit;
+import org.mozilla.javascript.Node;
+import org.mozilla.javascript.ObjToIntMap;
+import org.mozilla.javascript.ScriptOrFnNode;
+import org.mozilla.javascript.Token;
+import org.mozilla.javascript.Node.Jump;
 
-    private JsUtils() {
+public class JSUtils
+{
+       
+    static final String propToString(int propType)
+    {
+        if (Token.printTrees) {
+            // If Context.printTrees is false, the compiler
+            // can remove all these strings.
+            switch (propType) {
+                case Node.FUNCTION_PROP:      return "function";
+                case Node.LOCAL_PROP:         return "local";
+                case Node.LOCAL_BLOCK_PROP:   return "local_block";
+                case Node.REGEXP_PROP:        return "regexp";
+                case Node.CASEARRAY_PROP:     return "casearray";
+
+                case Node.TARGETBLOCK_PROP:   return "targetblock";
+                case Node.VARIABLE_PROP:      return "variable";
+                case Node.ISNUMBER_PROP:      return "isnumber";
+                case Node.DIRECTCALL_PROP:    return "directcall";
+
+                case Node.SPECIALCALL_PROP:   return "specialcall";
+                case Node.SKIP_INDEXES_PROP:  return "skip_indexes";
+                case Node.OBJECT_IDS_PROP:    return "object_ids_prop";
+                case Node.INCRDECR_PROP:      return "incrdecr_prop";
+                case Node.CATCH_SCOPE_PROP:   return "catch_scope_prop";
+                case Node.LABEL_ID_PROP:      return "label_id_prop";
+                case Node.MEMBER_TYPE_PROP:   return "member_type_prop";
+                case Node.NAME_PROP:          return "name_prop";
+                case Node.CONTROL_BLOCK_PROP: return "control_block_prop";
+                case Node.PARENTHESIZED_PROP: return "parenthesized_prop";
+                case Node.GENERATOR_END_PROP: return "generator_end";
+                case Node.DESTRUCTURING_ARRAY_LENGTH:
+                                         return "destructuring_array_length";
+                case Node.DESTRUCTURING_NAMES:return "destructuring_names";
+
+                default: Kit.codeBug();
+            }
+        }
+        return null;
     }
 
-    public static final String HTML_MIME_TYPE = "text/html"; // NOI18N
-    
     public static boolean isSafeIdentifierName(String name, int fromIndex) {
         int i = fromIndex;
 
