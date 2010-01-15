@@ -193,7 +193,7 @@ public class AstPath implements Iterable<Node> {
         sb.append(")=[");
 
         for (Node n : path) {
-            String name = TokenEx.name(n.getType());
+            String name = Token.fullName(n.getType());
             name = name.substring(name.lastIndexOf('.') + 1);
             sb.append(name);
             sb.append(":");
