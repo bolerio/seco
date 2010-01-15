@@ -371,7 +371,6 @@ public class PatchedParser
 
     protected void notifyError(Context context, String message, String sourceName, int line,
                            String lineSource, int lineOffset, Sanitize sanitizing, Severity severity, String key, Object params) {
-        
         int offset = context.parser.getTokenStream().getBufferOffset();
         
         if ("msg.unexpected.eof".equals(key) && offset > 0) { // NOI18N

@@ -72,7 +72,7 @@ import seco.notebook.csl.*;
  *
  * @author Tor Norbye
  */
-public class JsAnalyzer //implements StructureScanner 
+public class JsAnalyzer 
 {
     public static final String NETBEANS_IMPORT_FILE = "__netbeans_import__"; // NOI18N
     private static final String DOT_CALL = ".call"; // NOI18N
