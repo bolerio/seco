@@ -37,6 +37,7 @@ import seco.notebook.javascript.jsr.RhinoScriptEngine;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.NBParser;
 import seco.notebook.util.SegmentCache;
+import org.mozilla.javascript.UniqueTag;
 
 public class JSParser0 extends NBParser
 {
@@ -65,78 +66,45 @@ public class JSParser0 extends NBParser
     {
         if (s == null || s.length() == 0) return null;
         if (getRootNode() == null) return null;
-        
+
         Scriptable scope = engine.getRuntimeScope(engine.getContext());
         Object o = scope.get(s, scope);
-        if (o != null) return o;
-       
-        JsAnalyzer an = new JsAnalyzer();
-        JsParseResult info = parser.getResult();
-        List<? extends StructureItem> list = an.scan(info);
-        AnalysisResult res = JsAnalyzer.analyze(info);
-        // AstUtilities.getExpressionType(node)
-        // offset = offset - support.getElement().getStartOffset()-1;
-        // final AstPath path = new AstPath(astRoot, offset);
-        // final Node closest = path.leaf();
-        // String type = JsTypeAnalyzer.getCallFqn(info, closest, true);
-        // String type1 = AstUtilities.getExpressionType(closest);
+        if (o != null && !(o instanceof UniqueTag)) return o;
 
-        // {
-        Node n = ParserUtils.getASTNodeAtOffset(support.getElement(),
-                getRootNode(), offset - 1);
-        // AstPath ap = new AstPath();
-        // // Node n1 = ap.findPathTo(getRootNode(), offset-1);
-        // // System.out.println("RubyParser - resolveVar: " + n + ":" + n1
-        // // + ":" + (offset-1) + ":" + n.equals(n1));
-        // try
-        // {
-        JsTypeAnalyzer a = new JsTypeAnalyzer(info, JsIndex.EMPTY,
-                getRootNode(), n, offset - 1, offset - 1);
-        String type2 = a.getType(s);
+        try
+        {
+            if (s.indexOf("(") < 0)
+            {
+                o = support.getDocument().getEvaluationContext().eval(
+                        support.getScriptEngineName(), s);
+                if (o != null) return o;
+            }else
+                resolveMethod(s, offset);
+        }
+        catch (Exception err)
+        {
 
-        // System.out.println("Type: " + s + ":" + type);
-        // if (type == null)
-        // type = a.expressionType(n);
-        // System.out.println("Type1: " + n + ":" + type);
-        // if (type == null)
-        // return null;
-        // evaled_or_guessed = false;
-        // if(type.indexOf('.') > 0)
-        // {
-        // Class[] info = ClassRepository.getInstance()
-        // .findClass(type);
-        // // System.out.println("Info: " + info + ":" + info.length);
-        // return (info.length > 0) ? info[0] : null;
-        // }else{
-        // return evalType(type);
-        // }
-        // }
-        // catch (Exception ex)
-        // {
-        // ex.printStackTrace();
-        // }
-        // }
+        }
+
+//        JsAnalyzer an = new JsAnalyzer();
+//        JsParseResult info = parser.getResult();
+//      
+//        Node n = ParserUtils.getASTNodeAtOffset(support.getElement(),
+//                getRootNode(), offset - 1);
+//       
+//        JsTypeAnalyzer a = new JsTypeAnalyzer(info, JsIndex.EMPTY,
+//                getRootNode(), n, offset - 1, offset - 1);
+//        String type2 = a.getType(s);
+
+      
         return null;
     }
 
-    // Object evalType(String name)
-    // {
-    // System.out.println("evalType: " + name + ":" + astRoot);
-    // if(astRoot == null) return null;
-    // StaticScope scope = astRoot.getStaticScope();
-    // DynamicScope dyn = astRoot.getScope();
-    // if(dyn == null)
-    // dyn = new ManyVarsDynamicScope(scope, null);
-    // Node node = new ConstNode(new IDESourcePosition(), name);
-    // ThreadContext ctx = runtime.getCurrentContext();
-    // ctx.preEvalScriptlet(dyn);
-    // try{
-    // return engine.evalNode(node, new SimpleScriptContext());
-    // }catch(ScriptException ex){
-    // ex.printStackTrace();
-    // return null;
-    // }
-    // }
+    public Object resolveMethod(String s, int offset)
+    {
+        //TODO: big work with function/object indexing, doc parsing and stuff 
+        return Object.class;
+    }
 
     private JsParser getParser()
     {
@@ -178,14 +146,14 @@ public class JSParser0 extends NBParser
                     support.getDocument().getText(offset, length, seg);
                     // Reader r = makeReader(seg, offset, length);
                     parser = getParser();
-                    //System.out.println("parser.start()..." + length);
-                  //  long start = System.currentTimeMillis();
+                    // System.out.println("parser.start()..." + length);
+                    // long start = System.currentTimeMillis();
                     // astRoot = parser.parse(r, "<Unknown Source>", 1);
                     parser.parse(seg.toString());
                     astRoot = parser.getResult().getRootNode();
-                   // System.out.println("Time: "
-                   //         + (System.currentTimeMillis() - start));
-                   // System.out.println("Root: " + astRoot);
+                    // System.out.println("Time: "
+                    // + (System.currentTimeMillis() - start));
+                    // System.out.println("Root: " + astRoot);
 
                     support.unMarkErrors();
                     return true;
@@ -194,7 +162,7 @@ public class JSParser0 extends NBParser
                 {
                     ScriptSupport.ErrorMark mark = new ScriptSupport.ErrorMark(
                             stripMsg(ex.getMessage()), -1, // ex.getLineNumber()
-                                                           // - 1,
+                            // - 1,
                             -1// ex.getColumnNumber()
                     );
                     support.markError(mark);

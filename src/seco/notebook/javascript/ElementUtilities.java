@@ -54,7 +54,7 @@ import org.mozilla.nb.javascript.Node;
 //import org.openide.util.NbBundle;
 
 import seco.notebook.csl.ElementHandle;
-import seco.notebook.javascript.lexer.LexUtilities;
+
 
 /**
  *

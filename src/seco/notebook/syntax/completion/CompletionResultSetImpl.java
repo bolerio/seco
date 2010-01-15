@@ -35,13 +35,6 @@ import javax.swing.JToolTip;
 
 public final class CompletionResultSetImpl {
     
-    //static {
-        // Ensure the SPI accessor gets assigned
-    //    CompletionResultSet.class.getName();
-    //}
-   // private static final CompletionSpiPackageAccessor spi
-   //         = CompletionSpiPackageAccessor.get();
-
     private final Completion completionImpl;
     
     private final Object resultId;

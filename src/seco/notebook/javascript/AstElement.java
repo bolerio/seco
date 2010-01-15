@@ -50,7 +50,6 @@ import org.mozilla.nb.javascript.Token;
 import org.mozilla.nb.javascript.FunctionNode; 
 import seco.notebook.csl.*;
 import seco.notebook.javascript.JsAnalyzer.AnalysisResult;
-import seco.notebook.javascript.lexer.LexUtilities;
 
 //import org.netbeans.modules.javascript.editing.JsAnalyzer.AnalysisResult;
 

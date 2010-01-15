@@ -74,8 +74,6 @@ public abstract class BaseAsyncCompletionQuery extends AsyncCompletionQuery
 
     protected void filter(CompletionResultSet resultSet)
     {
-        // System.out.println("filter: " + filterPrefix + ":" +
-        // queryResult);
         if (filterPrefix != null && queryResult != null)
         {
             //resultSet.setTitle(
@@ -101,13 +99,12 @@ public abstract class BaseAsyncCompletionQuery extends AsyncCompletionQuery
 
     private Collection getFilteredData(Collection data, String prefix)
     {
-        List<CompletionQuery.ResultItem> ret = new ArrayList<CompletionQuery.ResultItem>();
+        List<JavaResultItem> ret = new ArrayList<JavaResultItem>();
         boolean camelCase = prefix.length() > 1
                 && prefix.equals(prefix.toUpperCase());
         for (Iterator it = data.iterator(); it.hasNext();)
         {
-            CompletionQuery.ResultItem itm = (CompletionQuery.ResultItem) it
-                    .next();
+            JavaResultItem itm = (JavaResultItem) it.next();
             if (JMIUtils.startsWith(itm.getItemText(), prefix)
                     || (camelCase
                             && (itm instanceof JavaResultItem.ClassResultItem) && JMIUtils

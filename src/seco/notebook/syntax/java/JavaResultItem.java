@@ -1,9 +1,9 @@
 /*
- * This file is part of the Scriba source distribution. This is free, open-source 
+ * This file is part of the Seco source distribution. This is free, open-source 
  * software. For full licensing information, please see the LicensingInformation file
  * at the root level of the distribution.
  *
- * Copyright (c) 2006-2007 Kobrix Software, Inc.
+ * Copyright (c) 2006-2010 Kobrix Software, Inc.
  */
 /*
  *                 Sun Public License Notice
@@ -46,7 +46,6 @@ import seco.notebook.storage.PackageInfo;
 import seco.notebook.syntax.completion.AsyncCompletionTask;
 import seco.notebook.syntax.completion.Completion;
 import seco.notebook.syntax.completion.CompletionItem;
-import seco.notebook.syntax.completion.CompletionQuery;
 import seco.notebook.syntax.completion.CompletionTask;
 import seco.notebook.syntax.util.JMIUtils;
 import seco.notebook.util.CharSequenceUtilities;
@@ -58,24 +57,22 @@ import bsh.BshCompletionProvider;
  * 
  * @author Dusan Balek
  */
-public abstract class JavaResultItem implements CompletionQuery.ResultItem,
-        CompletionItem
+public abstract class JavaResultItem implements CompletionItem
 {
     protected int selectionStartOffset = -1;
     protected int selectionEndOffset = -1;
     protected int substituteOffset = -1;
 
+    /** Says what text would this Element use if substituteText is called.
+     * @return the substitution text, usable e.g. for finding common text/its' length
+     */
     public abstract String getItemText();
 
     public abstract Object getAssociatedObject();
 
     protected static Color getTypeColor(Object typ)
     {
-        return /*
-                * ???(typ instanceof PrimitiveType) ?
-                * JavaPaintComponent.KEYWORD_COLOR :
-                */
-        JavaPaintComponent.TYPE_COLOR;
+        return JavaPaintComponent.TYPE_COLOR;
     }
 
     public void setSubstituteOffset(int substituteOffset)
@@ -83,6 +80,15 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         this.substituteOffset = substituteOffset;
     }
 
+    /** Update the text in response to pressing ENTER on this element.
+     * @param c the text component to operate on, enables implementation to
+     *        do things like movement of caret.
+     * @param offset the offset where the item should be placed
+     * @param len the length of recognized text which should be replaced
+     * @param shift the flag that instructs completion to behave somehow
+     *        differently - enables more kinds of invocation of substituteText
+     * @return whether the text was successfully updated
+     */
     public boolean substituteCommonText(JTextComponent c, int offset, int len,
             int subLen)
     {
@@ -92,6 +98,16 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         return false;
     }
 
+    /** Update the text in response to pressing TAB key (or any key mapped to
+     * this function) on this element
+     * @param c the text component to operate on, enables implementation to
+     *        do things like movement of caret.
+     * @param offset the offset where the item should be placed
+     * @param len the length of recognized text which should be replaced
+     * @param subLen the length of common part - the length of text that should
+     *        be inserted after removal of recognized text
+     * @return whether the text was successfully updated
+     */
     public boolean substituteText(JTextComponent c, int offset, int len,
             boolean shift)
     {
@@ -156,6 +172,14 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         return ret;
     }
 
+    /** Prepare proper component for painting value of <CODE>this</CODE>.
+     * @param JList the list this item will be drawn into, usefull e.g. for 
+     *        obtaining preferred colors.
+     * @param isSelected tells if this item is just selected, for using
+     *        proper color scheme.
+     * @param cellHasFocus tells it this item is just focused.
+     * @return the component usable for painting this value
+     */
     public abstract Component getPaintComponent(boolean isSelected);
 
     public int getPreferredWidth(Graphics g, Font defaultFont)
@@ -270,7 +294,7 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         private Color typeColor;
         private String varName;
         private int modifiers;
-        private static JavaPaintComponent.NbFieldPaintComponent fieldComponent = null;
+        private static JavaPaintComponent.FieldPaintComponent fieldComponent = null;
 
         public VarResultItem(String varName, Class<?> type, int modifiers)
         {
@@ -290,7 +314,7 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         {
             if (fieldComponent == null)
             {
-                fieldComponent = new JavaPaintComponent.NbFieldPaintComponent(
+                fieldComponent = new JavaPaintComponent.FieldPaintComponent(
                         true);
             }
             fieldComponent.setTypeName(typeName);
@@ -332,7 +356,7 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         private int modifiers;
         private boolean isDeprecated;
         private Class<?> context;
-        private static JavaPaintComponent.NbFieldPaintComponent fieldComponent = null;
+        private static JavaPaintComponent.FieldPaintComponent fieldComponent = null;
 
         public FieldResultItem(String name, Type type, int modifiers) 
         {
@@ -390,7 +414,7 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         {
             if (fieldComponent == null)
             {
-                fieldComponent = new JavaPaintComponent.NbFieldPaintComponent(
+                fieldComponent = new JavaPaintComponent.FieldPaintComponent(
                         false);
             }
             fieldComponent.setTypeName(typeName);
@@ -533,7 +557,7 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
 
     public static class ConstructorResultItem extends CallableFeatureResultItem
     {
-        private static JavaPaintComponent.NbConstructorPaintComponent ctrComponent = null;
+        private static JavaPaintComponent.ConstructorPaintComponent ctrComponent = null;
 
         public ConstructorResultItem(Constructor<?> con)
         {
@@ -556,7 +580,7 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         {
             if (ctrComponent == null)
             {
-                ctrComponent = new JavaPaintComponent.NbConstructorPaintComponent();
+                ctrComponent = new JavaPaintComponent.ConstructorPaintComponent();
             }
             ctrComponent.setFeatureName(getName());
             ctrComponent.setModifiers(getModifiers());
@@ -586,7 +610,7 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
     {
         protected Object cf;
         protected List<ParamStr> params = new ArrayList<ParamStr>();
-        protected List<ExcStr> excs = new ArrayList<ExcStr>();
+        protected List<ExceptionStr> excs = new ArrayList<ExceptionStr>();
         protected int modifiers;
         protected String cfName, typeName;
         protected Color typeColor;
@@ -654,7 +678,7 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
             return params;
         }
 
-        public List<ExcStr> getExceptions()
+        public List<ExceptionStr> getExceptions()
         {
             return excs;
         }
@@ -676,7 +700,7 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
                                 "arg" + i, false, getTypeColor(prms[i])));
             if (exceps != null)
                 for (int i = 0; i < exceps.length; i++)
-                    excs.add(new ExcStr(exceps[i].getSimpleName(),
+                    excs.add(new ExceptionStr(exceps[i].getSimpleName(),
                             getTypeColor(exceps[i])));
         }
 
@@ -876,9 +900,9 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
             if (excs.size() > 0)
             {
                 sb.append(" throws "); // NOI18N
-                for (Iterator<ExcStr> it = excs.iterator(); it.hasNext();)
+                for (Iterator<ExceptionStr> it = excs.iterator(); it.hasNext();)
                 {
-                    ExcStr ex = (ExcStr) it.next();
+                    ExceptionStr ex = (ExceptionStr) it.next();
                     sb.append(ex.getName());
                     if (it.hasNext())
                     {
@@ -895,7 +919,7 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         private boolean displayFullPackagePath;
         private PackageInfo pkg;
         private String pkgName;
-        private static JavaPaintComponent.NbPackagePaintComponent pkgComponent = null;
+        private static JavaPaintComponent.PackagePaintComponent pkgComponent = null;
 
         public PackageResultItem(PackageInfo pkg, boolean displayFullPackagePath)
         {
@@ -914,7 +938,7 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         {
             if (pkgComponent == null)
             {
-                pkgComponent = new JavaPaintComponent.NbPackagePaintComponent();
+                pkgComponent = new JavaPaintComponent.PackagePaintComponent();
             }
             pkgComponent.setSelected(isSelected);
             pkgComponent.setPackageName(pkgName);
@@ -983,8 +1007,8 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         boolean generateClassSkeleton;
         private String fqName = null;
         private String name = null;
-        private static JavaPaintComponent.NbInterfacePaintComponent interfaceComponent = null;
-        private static JavaPaintComponent.NbClassPaintComponent classComponent = null;
+        private static JavaPaintComponent.InterfacePaintComponent interfaceComponent = null;
+        private static JavaPaintComponent.ClassPaintComponent classComponent = null;
         private static final boolean autoImportDisabled = Boolean
                 .getBoolean("org.netbeans.java.editor.disableAutoImport"); // NOI18N
         private static final boolean autoGenerationDisabled = Boolean
@@ -1290,27 +1314,11 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
 
         public Component getPaintComponent(boolean isSelected)
         {
-            /*
-             * ??? if (cls instanceof AnnotationType) { if (annotationComponent
-             * == null) { annotationComponent = new
-             * JavaPaintComponent.NbAnnotationPaintComponent(); }
-             * annotationComponent.setSelected(isSelected);
-             * annotationComponent.setDeprecated(isDeprecated);
-             * annotationComponent.setSimpleClassName(name);
-             * annotationComponent.setFQName(fqName); if (displayFQN){
-             * annotationComponent.setCls(cls); } return annotationComponent; }
-             * else if (cls instanceof JavaEnum) { if (enumComponent == null) {
-             * enumComponent = new JavaPaintComponent.NbEnumPaintComponent(); }
-             * enumComponent.setSelected(isSelected);
-             * enumComponent.setDeprecated(isDeprecated);
-             * enumComponent.setSimpleClassName(name);
-             * enumComponent.setFQName(fqName); if (displayFQN){
-             * enumComponent.setCls(cls); } return enumComponent; } else
-             */if (isInterface)
+            if (isInterface)
             {
                 if (interfaceComponent == null)
                 {
-                    interfaceComponent = new JavaPaintComponent.NbInterfacePaintComponent();
+                    interfaceComponent = new JavaPaintComponent.InterfacePaintComponent();
                 }
                 interfaceComponent.setSelected(isSelected);
                 interfaceComponent.setDeprecated(isDeprecated);
@@ -1326,7 +1334,7 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
             {
                 if (classComponent == null)
                 {
-                    classComponent = new JavaPaintComponent.NbClassPaintComponent();
+                    classComponent = new JavaPaintComponent.ClassPaintComponent();
                 }
                 classComponent.setSelected(isSelected);
                 classComponent.setDeprecated(isDeprecated);
@@ -1351,60 +1359,10 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         }
     }
 
-    /*
-     * public static class AnnotationResultItem extends ClassResultItem {
-     * 
-     * private int size = 0; private int defaultMembersCnt = 0;
-     * 
-     * public AnnotationResultItem(AnnotationType annType, boolean displayFQN,
-     * boolean addImport) { super(annType, displayFQN, addImport, false); for
-     * (Iterator it = annType.getContents().iterator(); it.hasNext();) { Object
-     * o = it.next(); if (o instanceof Attribute) { Attribute attr = (Attribute)
-     * o; if (attr.getDefaultValueText() != null) defaultMembersCnt++; size++; }
-     * } }
-     * 
-     * public boolean substituteText(JTextComponent c, int offset, int len,
-     * boolean shift) { if (defaultMembersCnt != size) { if (toAdd.length() ==
-     * 0) { toAdd = "("; //NOI18N } else if (!"(".equals(toAdd)) { // NOI18N
-     * toAdd = "()" + toAdd; //NOI18N } } return super.substituteText(c, offset,
-     * len, shift); } }
-     */
-    /*
-     * public static class AttributeResultItem extends JavaResultItem {
-     * 
-     * private Attribute attr; private String attrName; private String typeName;
-     * private Color typeColor; private String defaultValueText; private static
-     * JavaPaintComponent.NbAttributePaintComponent attrComponent = null;
-     * 
-     * public AttributeResultItem(Attribute attr) { this.attr = attr;
-     * this.attrName = attr.getName(); Type type = attr.getType(); this.typeName
-     * = JMIUtils.getTypeName(type, false, false); this.typeColor =
-     * getTypeColor(type); this.defaultValueText = attr.getDefaultValueText(); }
-     * 
-     * public String getItemText() { return attrName + "="; //NOI18N }
-     * 
-     * public String getAttrName() { return attrName; }
-     * 
-     * public String getTypeName() { return typeName; }
-     * 
-     * public String getDefaultValueText() { return defaultValueText; }
-     * 
-     * public Component getPaintComponent(boolean isSelected) { if
-     * (attrComponent == null) { attrComponent = new
-     * JavaPaintComponent.NbAttributePaintComponent(); }
-     * attrComponent.setAttrName(attrName); attrComponent.setTypeName(typeName);
-     * attrComponent.setTypeColor(typeColor);
-     * attrComponent.setDefaultValueText(defaultValueText);
-     * attrComponent.setSelected(isSelected); return attrComponent; }
-     * 
-     * protected Object getAssociatedObject() { return attr; }
-     * 
-     * public int getSortPriority() { return 100; } }
-     */
     public static class StringResultItem extends JavaResultItem
     {
         private String str;
-        private static JavaPaintComponent.NbStringPaintComponent stringComponent = null;
+        private static JavaPaintComponent.StringPaintComponent stringComponent = null;
 
         public StringResultItem(String str)
         {
@@ -1420,7 +1378,7 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         {
             if (stringComponent == null)
             {
-                stringComponent = new JavaPaintComponent.NbStringPaintComponent();
+                stringComponent = new JavaPaintComponent.StringPaintComponent();
             }
             stringComponent.setSelected(isSelected);
             stringComponent.setString(str);
@@ -1480,12 +1438,12 @@ public abstract class JavaResultItem implements CompletionQuery.ResultItem,
         }
     }
 
-    static class ExcStr
+    public static class ExceptionStr
     {
         private String name;
         private Color typeColor;
 
-        public ExcStr(String name, Color typeColor)
+        public ExceptionStr(String name, Color typeColor)
         {
             this.name = name;
             this.typeColor = typeColor;

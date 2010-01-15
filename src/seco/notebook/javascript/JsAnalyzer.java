@@ -65,7 +65,7 @@ import seco.notebook.csl.*;
 //import org.netbeans.editor.Utilities;
 //import org.netbeans.modules.csl.spi.GsfUtilities;
 //import org.netbeans.modules.csl.spi.ParserResult;
-import seco.notebook.javascript.lexer.LexUtilities;
+
 
 
 /**

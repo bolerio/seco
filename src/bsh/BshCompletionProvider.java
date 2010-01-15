@@ -15,9 +15,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JToolTip;
@@ -37,13 +37,11 @@ import seco.notebook.syntax.completion.BaseAsyncCompletionQuery;
 import seco.notebook.syntax.completion.Completion;
 import seco.notebook.syntax.completion.CompletionDocumentation;
 import seco.notebook.syntax.completion.CompletionProvider;
-import seco.notebook.syntax.completion.CompletionQuery;
 import seco.notebook.syntax.completion.CompletionResultSet;
 import seco.notebook.syntax.completion.CompletionTask;
 import seco.notebook.syntax.completion.JavaDocManager;
 import seco.notebook.syntax.completion.MethodParamsTipPaintComponent;
 import seco.notebook.syntax.java.JavaResultItem;
-import seco.notebook.syntax.util.JMIUtils;
 import seco.notebook.util.DocumentUtilities;
 import bsh.BshAst.DBInfoEx;
 
@@ -177,11 +175,12 @@ public class BshCompletionProvider implements CompletionProvider
 						empty);
 				String[] var_names = (String[]) ns.getClass().getMethod(
 						"getVariableNames").invoke(ns, empty);
+				Method method = ns.getClass().getMethod("getVariable",
+                        new Class[] { String.class });
 				for (int i = 0; i < var_names.length; i++)
 				{
 					if (!var_names[i].matches(REGEX)) continue;
-					Object obj = ns.getClass().getMethod("getVariable",
-							new Class[] { String.class }).invoke(ns,
+					Object obj = method.invoke(ns,
 							new Object[] { var_names[i] });
 					Class<?> cls = (obj instanceof Primitive) ? ((Primitive) obj)
 							.getType() : obj.getClass();
@@ -195,6 +194,7 @@ public class BshCompletionProvider implements CompletionProvider
 				}
 				Object[] ms = (Object[]) ns.getClass().getMethod("getMethods")
 						.invoke(ns, empty);
+				
 				for (int i = 0; i < ms.length; i++)
 				{
 					String name = (String) ms[i].getClass()

@@ -51,7 +51,7 @@ import seco.notebook.csl.*;
 //import org.netbeans.modules.javascript.editing.lexer.JsCommentTokenId;
 //import org.netbeans.modules.javascript.editing.lexer.JsTokenId;
 //import org.netbeans.modules.javascript.editing.lexer.LexUtilities;
-import seco.notebook.javascript.lexer.LexUtilities;
+
 
 /**
  *

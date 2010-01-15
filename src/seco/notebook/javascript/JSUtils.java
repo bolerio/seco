@@ -79,19 +79,6 @@ public class JsUtils {
         return true;
     }
 
-    /** 
-     * Return null if the given identifier name is valid, otherwise a localized
-     * error message explaining the problem.
-     */
-    public static String getIdentifierWarning(String name, int fromIndex) {
-        if (isSafeIdentifierName(name, fromIndex)) {
-            return null;
-        } else {
-            return "Bad variable name"; 
-            //NbBundle.getMessage(JsUtils.class, "UnsafeIdentifierName");
-        }
-    }
-
     public static boolean isValidJsClassName(String name) {
         if (isJsKeyword(name)) {
             return false;
@@ -113,14 +100,6 @@ public class JsUtils {
         }
 
         return true;
-    }
-
-    public static boolean isValidJsMethodName(String name) {
-        return isSafeIdentifierName(name, 0);
-    }
-
-    public static boolean isValidJsIdentifier(String name) {
-        return isSafeIdentifierName(name, 0);
     }
 
     public static boolean isJsKeyword(String name) {

@@ -35,7 +35,7 @@ import java.util.*;
  * @author A. Sundararajan
  * @since 1.6
  */
-final class ExternalScriptable implements Scriptable {
+public final class ExternalScriptable implements Scriptable {
     /* Underlying ScriptContext that we use to store
      * named variables of this scope.
      */

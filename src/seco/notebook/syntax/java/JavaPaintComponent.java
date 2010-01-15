@@ -318,14 +318,14 @@ public class JavaPaintComponent extends JPanel {
 
     //.................. INNER CLASSES .......................
     
-    public static class NbPackagePaintComponent extends JavaPaintComponent {
+    public static class PackagePaintComponent extends JavaPaintComponent {
         
         private String pkgName;
         private boolean displayFullPackagePath;
         private Color PACKAGE_COLOR = Color.green.darker().darker().darker();
         private Icon icon;
 
-        public NbPackagePaintComponent(){
+        public PackagePaintComponent(){
             super();
         }
 
@@ -363,7 +363,7 @@ public class JavaPaintComponent extends JPanel {
         }
     }
     
-    public static class NbClassPaintComponent extends JavaPaintComponent {
+    public static class ClassPaintComponent extends JavaPaintComponent {
 
         private Color CLASS_COLOR = Color.red.darker().darker().darker();
         private Color PACKAGE_COLOR = Color.gray;
@@ -428,8 +428,8 @@ public class JavaPaintComponent extends JPanel {
         
     }
 
-    public static class NbInterfacePaintComponent extends NbClassPaintComponent {
-        
+    public static class InterfacePaintComponent extends ClassPaintComponent {
+                
         private Icon icon;
         private Color INTERFACE_COLOR = Color.darkGray;
         
@@ -444,7 +444,7 @@ public class JavaPaintComponent extends JPanel {
         
     }
 
-    public static class NbEnumPaintComponent extends NbClassPaintComponent {
+    public static class EnumPaintComponent extends ClassPaintComponent {
 
         private Icon icon;
 
@@ -454,7 +454,7 @@ public class JavaPaintComponent extends JPanel {
         }
 
     }
-    public static class NbAnnotationPaintComponent extends NbClassPaintComponent {
+    public static class AnnotationPaintComponent extends ClassPaintComponent {
 
         private Icon icon;
 
@@ -465,8 +465,8 @@ public class JavaPaintComponent extends JPanel {
 
     }
 
-    public static class NbFieldPaintComponent extends JavaPaintComponent {
-
+    public static class FieldPaintComponent extends JavaPaintComponent {
+        
         private String typeName;
         private Color typeColor;
         private String fldName;
@@ -478,7 +478,7 @@ public class JavaPaintComponent extends JPanel {
         private Color FIELD_COLOR = Color.blue.darker();
         private Color VAR_COLOR = Color.blue.darker().darker();
 
-        public NbFieldPaintComponent(boolean isLocalVar){
+        public FieldPaintComponent(boolean isLocalVar){
             super();
             this.isLocalVar = isLocalVar;
         }
@@ -679,7 +679,7 @@ public class JavaPaintComponent extends JPanel {
                 Color color = isEnclosingCall() ? ENCLOSING_CALL_COLOR : KEYWORD_COLOR;
                 drawString(g, THROWS, color, null, strike);
                 for (Iterator it = exc.iterator(); it.hasNext();) {
-                    JavaResultItem.ExcStr ex = (JavaResultItem.ExcStr) it.next();
+                    JavaResultItem.ExceptionStr ex = (JavaResultItem.ExceptionStr) it.next();
                     Color exColor = isEnclosingCall() ? ENCLOSING_CALL_COLOR : ex.getTypeColor();
                     drawString(g, ex.getName(), exColor, null, strike);
                     if (it.hasNext()) {
@@ -823,7 +823,7 @@ public class JavaPaintComponent extends JPanel {
 
     }
     
-    public static class NbConstructorPaintComponent extends CallableFeaturePaintComponent {
+    public static class ConstructorPaintComponent extends CallableFeaturePaintComponent {
 
         private Color CONSTRUCTOR_COLOR = Color.orange.darker();
         private Icon icon[] = new Icon[4];
@@ -868,7 +868,7 @@ public class JavaPaintComponent extends JPanel {
         }
     }
 
-    public static class NbAttributePaintComponent extends JavaPaintComponent {
+    public static class AttributePaintComponent extends JavaPaintComponent {
 
         private String typeName;
         private Color typeColor;
@@ -908,7 +908,7 @@ public class JavaPaintComponent extends JPanel {
         }
     }
 
-    public static class NbStringPaintComponent extends JavaPaintComponent {
+    public static class StringPaintComponent extends JavaPaintComponent {
 
         private String str;
 

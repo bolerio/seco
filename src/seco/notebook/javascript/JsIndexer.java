@@ -78,7 +78,7 @@ import org.mozilla.nb.javascript.Node;
 
 import seco.notebook.csl.GsfUtilities;
 import seco.notebook.csl.OffsetRange;
-import seco.notebook.javascript.lexer.LexUtilities;
+
 
 /**
  * Index Ruby structure into the persistent store for retrieval by

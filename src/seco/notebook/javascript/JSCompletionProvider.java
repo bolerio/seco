@@ -4,8 +4,11 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
+import javax.script.Bindings;
+import javax.script.ScriptContext;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JToolTip;
@@ -15,10 +18,13 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 
 import org.mozilla.javascript.IdScriptableObject;
+import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.NativeObject;
+import org.mozilla.javascript.Script;
 import org.mozilla.javascript.ScriptableObject;
 
 import seco.notebook.NotebookDocument;
+import seco.notebook.javascript.jsr.ExternalScriptable;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.AsyncCompletionQuery;
 import seco.notebook.syntax.completion.AsyncCompletionTask;
@@ -32,14 +38,14 @@ import seco.notebook.syntax.completion.JavaDocManager;
 import seco.notebook.syntax.java.JavaPaintComponent;
 import seco.notebook.syntax.java.JavaResultItem;
 import seco.notebook.syntax.java.JavaPaintComponent.MethodPaintComponent;
+import seco.notebook.syntax.util.JMIUtils;
 import seco.notebook.util.DocumentUtilities;
 
 public class JSCompletionProvider implements CompletionProvider
 {
     public int getAutoQueryTypes(JTextComponent component, String typedText)
     {
-        if (".".equals(typedText)) 
-            return COMPLETION_QUERY_TYPE;
+        if (".".equals(typedText)) return COMPLETION_QUERY_TYPE;
         if (" ".equals(typedText)) return TOOLTIP_QUERY_TYPE;
         return 0;
     }
@@ -50,12 +56,14 @@ public class JSCompletionProvider implements CompletionProvider
         ScriptSupport sup = ((NotebookDocument) component.getDocument())
                 .getScriptSupport(offset);
         if (sup.isCommentOrLiteral(offset - 1)) return null;
-        if (queryType == COMPLETION_QUERY_TYPE) return new AsyncCompletionTask(
-                new Query(component.getCaret().getDot()), component);
-        //else if (queryType == DOCUMENTATION_QUERY_TYPE) return new AsyncCompletionTask(
-        //        new DocQuery(null), component);
-       // else if (queryType == TOOLTIP_QUERY_TYPE)
-        //    return new AsyncCompletionTask(new ToolTipQuery(), component);
+        if (queryType == COMPLETION_QUERY_TYPE)
+            return new AsyncCompletionTask(new Query(component.getCaret()
+                    .getDot()), component);
+        // else if (queryType == DOCUMENTATION_QUERY_TYPE) return new
+        // AsyncCompletionTask(
+        // new DocQuery(null), component);
+        // else if (queryType == TOOLTIP_QUERY_TYPE)
+        // return new AsyncCompletionTask(new ToolTipQuery(), component);
         return null;
     }
 
@@ -77,12 +85,12 @@ public class JSCompletionProvider implements CompletionProvider
             // TODO: should consider inner scopes, etc.
             if ("this".equals(s))
             {
-                populateThis(resultSet);
+                populateThis(resultSet, p);
                 queryResult = resultSet;
                 resultSet.finish();
                 return;
             }
-
+            
             Object obj = p.resolveVar(s, offset);
             if (obj == null)
             {
@@ -98,10 +106,31 @@ public class JSCompletionProvider implements CompletionProvider
                         resultSet, name);
                 else if (obj instanceof IdScriptableObject)
                     populateNativeObject(resultSet, (IdScriptableObject) obj);
-            }
+            }else if(Object.class == obj)
+                populateBuiltInObject(resultSet, BUILDINS.OBJECT);
+            else if(jsEquivalent(obj, resultSet))
+                    ;
 
             queryResult = resultSet;
             resultSet.finish();
+        }
+        
+        private boolean jsEquivalent(Object o, CompletionResultSet resultSet)
+        {
+            String name = null;
+            if(o instanceof String) 
+               name = BUILDINS.STRING;
+            else if(o instanceof String) 
+                name = BUILDINS.NUM;
+            else if(o instanceof Date)
+                name = BUILDINS.DATE;
+            else if(o instanceof Boolean) 
+                name = BUILDINS.BOOL;
+            //else if(o.getClass().isArray())
+            //    name = BUILDINS.ARRAY;
+            if(name != null)
+                populateBuiltInObject(resultSet, name);
+            return name != null;
         }
 
         private void populateNativeObject(CompletionResultSet resultSet,
@@ -134,7 +163,7 @@ public class JSCompletionProvider implements CompletionProvider
             }
         }
 
-        private void populateThis(CompletionResultSet resultSet)
+        private void populateThis(CompletionResultSet resultSet, JSParser0 p)
         {
             // TODO: add all vare from the RuntimeContext.
             List<JavaResultItem> params = BUILDINS.getThisParams();
@@ -144,8 +173,24 @@ public class JSCompletionProvider implements CompletionProvider
                 item.setSubstituteOffset(queryCaretOffset);
                 resultSet.addItem(item);
             }
+
+            ScriptContext ctx = p.engine.getContext();
+           // ExternalScriptable scope = (ExternalScriptable) p.engine
+           //         .getRuntimeScope(ctx);
+            Bindings b = ctx.getBindings(ScriptContext.ENGINE_SCOPE);
+            for (String key : b.keySet())
+            {
+                Object o = b.get(key);
+                if (o instanceof NativeFunction) resultSet.addItem(BUILDINS
+                        .make_func(key, (NativeFunction) o));
+                else
+                    resultSet.addItem(new JSProperty(key, JMIUtils.getTypeName(
+                            o.getClass(), false, false)));
+            }
+
             resultSet.setTitle("Global");
         }
+
     }
 
     public static class DocQuery extends AsyncCompletionQuery

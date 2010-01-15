@@ -110,14 +110,14 @@ public class BshAst extends NBParser
 		//System.out.println("resolveMethod1: " + text + ":" + text.substring(0, dot));
 		Object var = resolveVar(text.substring(0, dot), offset);
 		if(var == null) return null;
-		Class[] types = resolveArgs(m.getArgsNode(), offset);
+		Class<?>[] types = resolveArgs(m.getArgsNode(), offset);
 		Method meth = findMethod(var.getClass(), 
 				text.substring(dot+1), types, false); //isPrivateAccessAllowed());
 		if(meth == null) return null;
 		if(lineCol[1] - 1 == m.getArgsNode().lastToken.endColumn)
 			return meth.getReturnType();
 		if(root.children.length > 1){
-			Class c = meth.getReturnType();
+			Class<?> c = meth.getReturnType();
 			for(int j = 1; j < root.children.length; j++)
 			{
 			    BSHPrimarySuffix suff = (BSHPrimarySuffix) root.getChild(j);
@@ -135,10 +135,10 @@ public class BshAst extends NBParser
 		return meth.getReturnType();
 	}
 	
-	private Class resolveSuffix(Class type, BSHPrimarySuffix suff, int offset)
+	private Class<?> resolveSuffix(Class<?> type, BSHPrimarySuffix suff, int offset)
 	{
 		if(suff.operation == BSHPrimarySuffix.NAME){
-			Class[] types = resolveArgs(((BSHArguments) suff.getChild(0)), offset);
+		    Class<?>[] types = resolveArgs(((BSHArguments) suff.getChild(0)), offset);
 			Method meth = findMethod(type, 
 					suff.field, types, false); //isPrivateAccessAllowed());
 			return (meth != null) ? meth.getReturnType(): null;
@@ -147,7 +147,7 @@ public class BshAst extends NBParser
 		return null;
 	}
 	
-	private Class[] resolveArgs(BSHArguments b, int offset){
+	private Class<?>[] resolveArgs(BSHArguments b, int offset){
 		int count = (b.children != null) ?	b.children.length : 0;
 		Object[] args = new Object[count];
 		for(int i =0; i<args.length; i++)
@@ -159,7 +159,7 @@ public class BshAst extends NBParser
 		return Types.getTypes(args);
 	}
 	
-	private static Method findMethod(Class baseClass, String methodName, Class[] types, boolean publicOnly){
+	private static Method findMethod(Class<?> baseClass, String methodName, Class<?>[] types, boolean publicOnly){
 		Method [] methods = Reflect.getCandidateMethods(
 				baseClass, methodName, types.length, publicOnly );
 		Method method = Reflect.findMostSpecificMethod( types, methods );

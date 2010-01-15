@@ -32,7 +32,6 @@ import java.io.StringReader;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,19 +74,15 @@ import bsh.BshCompletionProvider;
  * @author Dusan Balek, Miloslav Metelka
  */
 
-public class Completion extends MouseAdapter implements /*DocumentListener,*/
+public class Completion extends MouseAdapter implements 
 CaretListener, KeyListener, FocusListener, ListSelectionListener, ChangeListener
-//, SettingsChangeListener
 {
     
     private static final boolean debug = false;
      
     private static Completion singleton = null;
 
-    private static final String FOLDER_NAME = "CompletionProviders"; // NOI18N
-    private static final String NO_SUGGESTIONS = "No Suggestions";
     private static final String PLEASE_WAIT = "Please Wait";
-    private static final String POPUP_HIDE = "popup-hide";
     private static final String COMPLETION_SHOW = "completion-show"; 
     private static final String DOC_SHOW = "doc-show"; //NOI18N
     private static final String TOOLTIP_SHOW = "tooltip-show"; //NOI18N
@@ -118,10 +113,7 @@ CaretListener, KeyListener, FocusListener, ListSelectionListener, ChangeListener
     /* Completion providers registered for the active component (its mime-type). Changed in AWT only. */
     private CompletionProvider[] activeProviders = null;
     
-    /** Mapping of mime-type to array of providers. Changed in AWT only. */
-    private HashMap /*<String, CompletionProvider[]>*/ providersCache = new HashMap();
-
-    /**
+     /**
      * Result of the completion query.
      * <br>
      * It may be null which means that the query was cancelled.

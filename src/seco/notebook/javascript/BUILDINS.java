@@ -6,23 +6,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.mozilla.javascript.NativeFunction;
+
 import seco.notebook.javascript.JSCompletionProvider.JSMethod;
 import seco.notebook.javascript.JSCompletionProvider.JSProperty;
 import seco.notebook.syntax.java.JavaResultItem;
 
 public class BUILDINS
 {
+    public static final String DATE = "Date";
     public static final String REG_EXP = "RegExp";
     public static final String BOOL = "Boolean";
-    // private static final String FUNCTION = "Function";
     public static final String OBJECT = "Object";
     public static final String ARRAY = "Array";
     public static final String NUM = "Number";
-
+    public static final String STRING = "String";
+    
     private static final String VOID = "void";
-
+ // private static final String FUNCTION = "Function";
+    
     private static final String[] ARR_NUM = new String[] { NUM };
-    private static final String STRING = "String";
     private static final String[] ARR_STR = new String[] { STRING };
     static Map<String, List<JavaResultItem>> objectsMap;
 
@@ -51,7 +54,7 @@ public class BUILDINS
         if (objectsMap == null)
         {
             objectsMap = new HashMap<String, List<JavaResultItem>>();
-            objectsMap.put("Date", date());
+            objectsMap.put(DATE, date());
             objectsMap.put(STRING, string());
             objectsMap.put(ARRAY, array());
             objectsMap.put(BOOL, bool());
@@ -309,5 +312,17 @@ public class BUILDINS
             this_params = this_(); 
         return this_params;
     }
-
+    
+    static JavaResultItem make_func(String name, NativeFunction s)
+    {
+        int n = s.getArity();
+        String[] types = new String[n];
+        String[] params = new String[n];
+        for(int i = 0; i <n; i++){
+            types[i] = OBJECT;
+            params[i]= "arg" + i;
+        }
+        return new JSMethod(name, OBJECT, types, params);
+    }
+ 
 }
