@@ -16,6 +16,7 @@ import org.hypergraphdb.HGPersistentHandle;
 import seco.ThisNiche;
 import seco.boot.NicheManager;
 import seco.gui.layout.LayoutSettingsPanel;
+import seco.notebook.ActionManager;
 import seco.notebook.AppConfig;
 import seco.notebook.NotebookUI;
 import seco.notebook.gui.DialogDisplayer;
@@ -106,6 +107,7 @@ public class CommonActions
         ThisNiche.graph.remove(NotebookUI.POPUP_HANDLE, true);
         ThisNiche.graph.remove(ContextMenuHandler.GLOBAL_ACTION_SET_HANDLE, true);
         ThisNiche.graph.remove(ContextMenuHandler.NODE_ACTION_SET_HANDLE, true);
+        ThisNiche.graph.remove(ActionManager.HANDLE, true);
         
         GUIHelper.makeTopCellGroup(ThisNiche.graph);
         v.bind(group);

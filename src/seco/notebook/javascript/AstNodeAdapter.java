@@ -8,11 +8,6 @@
  */
 package seco.notebook.javascript;
 
-//import com.sun.phobos.script.javascript.lang.ast.AssignmentNode;
-//import com.sun.phobos.script.javascript.lang.ast.CallNode;
-//import com.sun.phobos.script.javascript.lang.ast.DeclarationNode;
-//import com.sun.phobos.script.javascript.lang.ast.ExprNode;
-//import com.sun.phobos.script.javascript.lang.ast.FunctionNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,17 +16,9 @@ import java.util.List;
 
 import javax.swing.tree.TreeNode;
 
-//import org.mozilla.nb.javascript.Node;
-//import com.sun.phobos.script.javascript.lang.ast.Node;
-//import com.sun.phobos.script.javascript.lang.ast.PropertyGetNode;
-//import com.sun.phobos.script.javascript.lang.ast.TreeWalker;
-//import com.sun.phobos.script.javascript.lang.ast.VariableNode;
-//import com.sun.semplice.javascript.AstNodeAdapter;
-//import org.netbeans.api.languages.parsing.ParserResult;
 import org.mozilla.nb.javascript.FunctionNode;
 import org.mozilla.nb.javascript.Node;
 import org.mozilla.nb.javascript.Token;
-//import org.openide.util.Enumerations;
 
 
 /** For debugging purposes only */

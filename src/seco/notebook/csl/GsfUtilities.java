@@ -57,27 +57,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.StyledDocument;
-//import org.netbeans.api.editor.EditorRegistry;
-//import org.netbeans.editor.BaseDocument;
-//import org.netbeans.editor.Utilities;
-//import org.netbeans.lib.editor.util.swing.DocumentUtilities;
-//import org.netbeans.modules.csl.api.DataLoadersBridge;
-//import org.netbeans.modules.editor.NbEditorUtilities;
-//import org.netbeans.modules.editor.indent.api.IndentUtils;
-//import org.netbeans.modules.parsing.api.Source;
-//import org.netbeans.modules.parsing.spi.CursorMovedSchedulerEvent;
-//import org.openide.ErrorManager;
-//import org.openide.cookies.EditorCookie;
-//import org.openide.cookies.LineCookie;
-//import org.openide.cookies.OpenCookie;
-//import org.openide.filesystems.FileLock;
-//import org.openide.filesystems.FileObject;
-//import org.openide.filesystems.FileSystem;
-//import org.openide.filesystems.FileUtil;
-//import org.openide.loaders.DataObject;
-//import org.openide.text.Line;
-//import org.openide.text.NbDocument;
-//import org.openide.util.UserQuestionException;
+
 
 /**
  * Misc utilities to avoid code duplication among the various language plugins

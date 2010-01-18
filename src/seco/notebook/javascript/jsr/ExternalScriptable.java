@@ -117,6 +117,31 @@ public final class ExternalScriptable implements Scriptable {
             }
         }
     }
+    
+    public synchronized Object get0(String name, Scriptable start) {
+        if (isEmpty(name)) {
+            if (indexedProps.containsKey(name)) {                
+                return indexedProps.get(name);
+            } else {
+                return null;
+            }
+        } else {
+            synchronized (context) {
+                int scope = context.getAttributesScope(name);
+                if (scope != -1) {
+                    Object value = context.getAttribute(name, scope);
+                    try{
+                    return Context.javaToJS(value, this);
+                    }catch(Throwable ex)
+                    {
+                        return value;
+                    }
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
 
     /**
      * Returns the value of the indexed property or NOT_FOUND.
@@ -179,7 +204,7 @@ public final class ExternalScriptable implements Scriptable {
                     synchronized (context) {
                         int scope = context.getAttributesScope(name);
                         if (scope == -1) {
-                            scope = ScriptContext.ENGINE_SCOPE;
+                            scope = ScriptContext.GLOBAL_SCOPE;//ENGINE_SCOPE;
                         }
                         context.setAttribute(name, jsToJava(value), scope);
                     }

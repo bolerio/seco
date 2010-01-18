@@ -10,8 +10,6 @@ package seco.notebook.storage;
 
 public class ClassInfo extends NamedInfo
 {
-	//private int modifiers;
-
 	public ClassInfo()
 	{
 	}
@@ -20,16 +18,5 @@ public class ClassInfo extends NamedInfo
 	{
 		super(name);
 	}
-	
-	/*
-	public int getModifiers()
-	{
-		return modifiers;
-	}
 
-	public void setModifiers(int modifiers)
-	{
-		this.modifiers = modifiers;
-	}*/
-	
 }

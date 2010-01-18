@@ -12,6 +12,8 @@ import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +28,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -94,7 +97,7 @@ public class NotebookEditorKit extends StyledEditorKit
     public static final String formatAction = "format";
     public static final String deleteCellAction = "Delete Cell";
     public static final String deleteSelectedElementsAction = "Delete Selection";
-    public static final String importAction = "Import";
+    public static final String importAction = "Import Package";
     public static final String htmlAction = "HTML Source";
     public static final String showInputTypePopup = "showInputTypePopup";
     public static final String clearEngineContextAction = "Clear Engine Context";
@@ -254,6 +257,8 @@ public class NotebookEditorKit extends StyledEditorKit
         public EvalAction()
         {
             super(evalAction);
+            putValue(ACCELERATOR_KEY, 
+                    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK));
         }
 
         protected void action(final NotebookUI ui) throws Exception
@@ -888,6 +893,7 @@ public class NotebookEditorKit extends StyledEditorKit
 
     public static class FindReplaceAction extends BaseAction
     {
+        private static final long serialVersionUID = -5658596134377861525L;
         private static FindDialog findDialog;
         private boolean findOrReplace;
 
@@ -911,6 +917,7 @@ public class NotebookEditorKit extends StyledEditorKit
             else
                 findDialog.setSelectedIndex(index);
             findDialog.setVisible(true);
+            GUIUtilities.centerOnScreen(findDialog);
         }
 
         public boolean isFindOrReplace()

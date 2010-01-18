@@ -17,11 +17,15 @@ import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 
+import org.mozilla.javascript.Context;
 import org.mozilla.javascript.IdScriptableObject;
 import org.mozilla.javascript.NativeFunction;
+import org.mozilla.javascript.NativeJavaPackage;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.ScriptableObject;
+
+import bsh.BshCompletionProvider;
 
 import seco.notebook.NotebookDocument;
 import seco.notebook.javascript.jsr.ExternalScriptable;
@@ -106,11 +110,17 @@ public class JSCompletionProvider implements CompletionProvider
                         resultSet, name);
                 else if (obj instanceof IdScriptableObject)
                     populateNativeObject(resultSet, (IdScriptableObject) obj);
+                else if (obj instanceof NativeJavaPackage)
+                    ;//TODO
             }else if(Object.class == obj)
                 populateBuiltInObject(resultSet, BUILDINS.OBJECT);
             else if(jsEquivalent(obj, resultSet))
                     ;
-
+            else {
+                Class<?> cls = (Class<?>) obj.getClass();
+                BshCompletionProvider.populateClass(resultSet, 
+                        cls, Modifier.PUBLIC, queryCaretOffset);
+            }
             queryResult = resultSet;
             resultSet.finish();
         }
@@ -165,7 +175,7 @@ public class JSCompletionProvider implements CompletionProvider
 
         private void populateThis(CompletionResultSet resultSet, JavaScriptParser p)
         {
-            // TODO: add all vare from the RuntimeContext.
+            // TODO: add all vars from the RuntimeContext.
             List<JavaResultItem> params = BUILDINS.getThisParams();
 
             for (JavaResultItem item : params)
@@ -175,19 +185,24 @@ public class JSCompletionProvider implements CompletionProvider
             }
 
             ScriptContext ctx = p.engine.getContext();
-           // ExternalScriptable scope = (ExternalScriptable) p.engine
-           //         .getRuntimeScope(ctx);
-            Bindings b = ctx.getBindings(ScriptContext.ENGINE_SCOPE);
-            for (String key : b.keySet())
+            ExternalScriptable scope = (ExternalScriptable) p.engine
+                    .getRuntimeScope(ctx);
+            Context.enter();
+//            Bindings b = ctx.getBindings(ScriptContext.ENGINE_SCOPE);
+//            for (String key : b.keySet())
+//            {
+//                Object o = b.get(key);
+            for (Object k : scope.getIds())
             {
-                Object o = b.get(key);
+                String key = "" + k;
+                Object o = scope.get(key, scope.getPrototype());
                 if (o instanceof NativeFunction) resultSet.addItem(BUILDINS
                         .make_func(key, (NativeFunction) o));
                 else
                     resultSet.addItem(new JSProperty(key, JMIUtils.getTypeName(
                             o.getClass(), false, false)));
             }
-
+            Context.exit();
             resultSet.setTitle("Global");
         }
 

@@ -17,10 +17,12 @@ import org.mozilla.javascript.UniqueTag;
 import org.mozilla.nb.javascript.Node;
 
 import seco.notebook.csl.ParseException;
+import seco.notebook.javascript.jsr.ExternalScriptable;
 import seco.notebook.javascript.jsr.RhinoScriptEngine;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.NBParser;
 import seco.notebook.util.SegmentCache;
+import sun.org.mozilla.javascript.internal.Context;
 
 public class JavaScriptParser extends NBParser
 {
@@ -48,12 +50,12 @@ public class JavaScriptParser extends NBParser
         if (s == null || s.length() == 0) return null;
         if (getRootNode() == null) return null;
 
-        Scriptable scope = engine.getRuntimeScope(engine.getContext());
-        Object o = scope.get(s, scope);
-        if (o != null && !(o instanceof UniqueTag)) return o;
-
+        ExternalScriptable scope = engine.getRuntimeScope(engine.getContext());
         try
         {
+            Context.enter();
+            Object o = scope.get0(s, scope);
+            if (o != null && !(o instanceof UniqueTag)) return o;
             if (s.indexOf("(") < 0)
             {
                 o = support.getDocument().getEvaluationContext().eval(
@@ -64,7 +66,12 @@ public class JavaScriptParser extends NBParser
         }
         catch (Exception err)
         {
-
+ 
+            err.printStackTrace();
+            
+        }finally
+        {
+            Context.exit();
         }
 
 //        JsAnalyzer an = new JsAnalyzer();
@@ -82,6 +89,9 @@ public class JavaScriptParser extends NBParser
 
     public Object resolveMethod(String s, int offset)
     {
+        //importPackage(javax.swing);
+        //importClass(java.awt.Frame);
+        
         //TODO: big work with function/object indexing, doc parsing and stuff 
         return Object.class;
     }

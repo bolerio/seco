@@ -35,6 +35,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -616,13 +618,12 @@ outer:      for (Iterator it = localCompletionResult.getResultSets().iterator();
         }
 
         // Collect and sort the gathered completion items
-        final List sortedResultItems = new ArrayList(sortedResultsSize);
+        final List<CompletionItem> sortedResultItems = new ArrayList<CompletionItem>(sortedResultsSize);
         String title = null;
         int anchorOffset = -1;
-        int addIndex = 0;
         for (int i = 0; i < completionResultSets.size(); i++) {
             CompletionResultSetImpl resultSet = (CompletionResultSetImpl)completionResultSets.get(i);
-            List resultItems = resultSet.getItems();
+            Set<CompletionItem> resultItems = resultSet.getItems();
             if (resultItems.size() > 0) {
                 sortedResultItems.addAll(resultItems);
                 if (title == null)
@@ -654,7 +655,7 @@ outer:      for (Iterator it = localCompletionResult.getResultSets().iterator();
                     }
                 }
 
-                List res = new ArrayList(sortedResultItems);
+                List<CompletionItem> res = new ArrayList(sortedResultItems);
                // boolean noSuggestions = false;
                 if (res.size() == 0) {
                 	hideCompletion();

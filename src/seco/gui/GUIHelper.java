@@ -4,6 +4,7 @@ import static seco.notebook.Actions.COPY;
 import static seco.notebook.Actions.CUT;
 import static seco.notebook.Actions.EXIT;
 import static seco.notebook.Actions.EXPORT;
+import static seco.notebook.Actions.IMPORT;
 import static seco.notebook.Actions.NEW;
 import static seco.notebook.Actions.OPEN;
 import static seco.notebook.Actions.PASTE;
@@ -290,7 +291,7 @@ public class GUIHelper
 
     public static class NewAction extends AbstractAction
     {
-        public NewAction()
+         public NewAction()
         {
             putValue(Action.NAME, NEW);
             putValue(Action.SMALL_ICON, IconManager.resolveIcon("New16.gif"));
@@ -821,47 +822,22 @@ public class GUIHelper
     // Create the edit menu.
     private static JMenu createEditMenu()
     {
-        ActionManager man = ActionManager.getInstance();
+       ActionManager man = ActionManager.getInstance();
         JMenu menu = new NBMenu("Edit");
         menu.setMnemonic('e');
-        menu.add(new JMenuItem(man.putAction(NotebookEditorKit.undo, KeyStroke
-                .getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK),
-                IconManager.resolveIcon("Undo16.gif"))));
-        menu.add(new JMenuItem(man.putAction(NotebookEditorKit.redo, KeyStroke
-                .getKeyStroke(KeyEvent.VK_Y, ActionEvent.CTRL_MASK),
-                IconManager.resolveIcon("Redo16.gif"))));
+        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.undoAction)));
+        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.redoAction)));
         menu.addSeparator();
         menu.addMenuListener(new EditMenuListener());
-        Action act = kit.getActionByName(DefaultEditorKit.cutAction);
-        act.putValue(Action.NAME, CUT);
-        act.putValue(Action.SHORT_DESCRIPTION, "Cut");
-        menu.add(new JMenuItem(man.putAction(act, KeyStroke.getKeyStroke(
-                KeyEvent.VK_X, ActionEvent.CTRL_MASK), IconManager
-                .resolveIcon("Cut16.gif"))));
-        act = kit.getActionByName(DefaultEditorKit.copyAction);
-        act.putValue(Action.SHORT_DESCRIPTION, "Copy");
-        act.putValue(Action.NAME, COPY);
-        menu.add(new JMenuItem(man.putAction(act, KeyStroke.getKeyStroke(
-                KeyEvent.VK_C, ActionEvent.CTRL_MASK), IconManager
-                .resolveIcon("Copy16.gif"))));
-        act = kit.getActionByName(DefaultEditorKit.pasteAction);
-        act.putValue(Action.NAME, PASTE);
-        act.putValue(Action.SHORT_DESCRIPTION, "Paste");
-        menu.add(new JMenuItem(man.putAction(act, KeyStroke.getKeyStroke(
-                KeyEvent.VK_V, ActionEvent.CTRL_MASK), IconManager
-                .resolveIcon("Paste16.gif"))));
+        
+        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.cutAction)));
+        menu.add(new JMenuItem(man.getAction(DefaultEditorKit.copyAction)));
+        menu.add(new JMenuItem(man.getAction(DefaultEditorKit.pasteAction)));
       
-        act = kit.getActionByName(DefaultEditorKit.selectAllAction);
-        act.putValue(Action.NAME, "Select All");
-        menu.add(new JMenuItem(man.putAction(act, KeyStroke.getKeyStroke(
-        KeyEvent.VK_A, ActionEvent.CTRL_MASK))));
+        menu.add(new JMenuItem(man.getAction(DefaultEditorKit.selectAllAction)));
         menu.addSeparator();
-        menu.add(new JMenuItem(man.putAction(kit
-                .getActionByName(NotebookEditorKit.findAction), KeyStroke
-                .getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK))));
-        menu.add(new JMenuItem(man.putAction(kit
-                .getActionByName(NotebookEditorKit.replaceAction), KeyStroke
-                .getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK))));
+        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.findAction)));
+        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.replaceAction)));
         return menu;
     }
 
@@ -870,13 +846,10 @@ public class GUIHelper
         ActionManager man = ActionManager.getInstance();
         JMenu menu = new NBMenu("Notebook");
         menu.setMnemonic('b');
-        menu.add(new JMenuItem(man.putAction(new NewAction(), KeyStroke
-                .getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK))));
-        menu.add(new JMenuItem(man.putAction(new OpenAction(), KeyStroke
-                .getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK))));
-        menu.add(new JMenuItem(man.putAction(new ImportAction(), KeyStroke
-                .getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK))));
-        menu.add(new JMenuItem(man.putAction(new ExportAction())));
+        menu.add(new JMenuItem(man.getAction(NEW)));
+        menu.add(new JMenuItem(man.getAction(OPEN)));
+        menu.add(new JMenuItem(man.getAction(IMPORT)));
+        menu.add(new JMenuItem(man.getAction(EXPORT)));
         menu.add(new JSeparator());
         menu.add(new EnhancedMenu("Recent Files", new RecentFilesProvider()));
         // menu.add(new JSeparator());
@@ -908,28 +881,17 @@ public class GUIHelper
     {
         JMenu menu = new NBMenu("Tools");
         menu.setMnemonic('t');
-        Action act = kit.getActionByName(NotebookEditorKit.evalAction);
-        menu.add(new JMenuItem(act));
-        act = kit.getActionByName(NotebookEditorKit.evalCellGroupAction);
-        menu.add(new JMenuItem(act));
-        act = kit.getActionByName(NotebookEditorKit.reEvalOutputCellsAction);
-        menu.add(new JMenuItem(act));
-        act = kit.getActionByName(NotebookEditorKit.removeOutputCellsAction);
-        menu.add(new JMenuItem(act));
+        ActionManager man = ActionManager.getInstance();
+        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.evalAction)));
+        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.evalCellGroupAction)));
+        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.reEvalOutputCellsAction)));
+        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.removeOutputCellsAction)));
 
-        act = ActionManager.getInstance().putAction(
-                kit.getActionByName(NotebookEditorKit.mergeCellsAction),
-                KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
-
-        menu.add(new JMenuItem(act));
-        act = kit.getActionByName(NotebookEditorKit.clearEngineContextAction);
-        menu.add(new JMenuItem(act));
-        // act = kit.getActionByName(NotebookEditorKit.resetCellNumAction);
-        // menu.add(new JMenuItem(act));
-        menu.add(new GlobMenuItem(kit
-                .getActionByName(NotebookEditorKit.javaDocManagerAction)));
-        menu.add(new JMenuItem(kit
-                .getActionByName(NotebookEditorKit.ctxInspectorAction)));
+        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.mergeCellsAction)));
+        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.clearEngineContextAction)));
+       
+        menu.add(new GlobMenuItem(man.getAction(NotebookEditorKit.javaDocManagerAction)));
+        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.ctxInspectorAction)));
         menu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
         menu.add(new EnhancedMenu("CellGroup", new CellGroupPropsProvider()));
         menu.add(new EnhancedMenu("Notebook", new NotebookPropsProvider()));

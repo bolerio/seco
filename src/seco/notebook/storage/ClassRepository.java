@@ -8,9 +8,6 @@
 package seco.notebook.storage;
 
 import java.io.File;
-import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;

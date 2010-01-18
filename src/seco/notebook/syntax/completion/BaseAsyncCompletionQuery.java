@@ -1,14 +1,8 @@
 package seco.notebook.syntax.completion;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -17,7 +11,7 @@ import javax.swing.text.JTextComponent;
 import seco.notebook.syntax.java.JavaResultItem;
 import seco.notebook.syntax.util.JMIUtils;
 
-//helper class with common functionality
+//Base class with common functionality
 public abstract class BaseAsyncCompletionQuery extends AsyncCompletionQuery
 {
     protected JTextComponent component;
@@ -97,14 +91,13 @@ public abstract class BaseAsyncCompletionQuery extends AsyncCompletionQuery
         return true;
     }
 
-    private Collection getFilteredData(Collection data, String prefix)
+    private Collection<CompletionItem> getFilteredData(Collection<CompletionItem> data, String prefix)
     {
-        List<JavaResultItem> ret = new ArrayList<JavaResultItem>();
+        List<CompletionItem> ret = new ArrayList<CompletionItem>();
         boolean camelCase = prefix.length() > 1
                 && prefix.equals(prefix.toUpperCase());
-        for (Iterator it = data.iterator(); it.hasNext();)
+        for (CompletionItem itm : data)
         {
-            JavaResultItem itm = (JavaResultItem) it.next();
             if (JMIUtils.startsWith(itm.getItemText(), prefix)
                     || (camelCase
                             && (itm instanceof JavaResultItem.ClassResultItem) && JMIUtils
@@ -112,21 +105,18 @@ public abstract class BaseAsyncCompletionQuery extends AsyncCompletionQuery
             {
                 ret.add(itm);
             }
-            // System.out.println("getFilteredData - in: " + itm + ":" +
-            // itm.getItemText());
         }
-        // System.out.println("getFilteredData: " + ret.size());
-        return ret;
+         return ret;
     }
 
-    private String getFilteredTitle(String title, String prefix)
-    {
-        int lastIdx = title.lastIndexOf('.');
-        String ret = lastIdx == -1 ? prefix : title.substring(0,
-                lastIdx + 1)
-                + prefix;
-        if (title.endsWith("*")) // NOI18N
-            ret += "*"; // NOI18N
-        return ret;
-    }
+//    private String getFilteredTitle(String title, String prefix)
+//    {
+//        int lastIdx = title.lastIndexOf('.');
+//        String ret = lastIdx == -1 ? prefix : title.substring(0,
+//                lastIdx + 1)
+//                + prefix;
+//        if (title.endsWith("*")) // NOI18N
+//            ret += "*"; // NOI18N
+//        return ret;
+//    }
 }

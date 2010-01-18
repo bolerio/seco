@@ -73,6 +73,87 @@ public class BshCompletionProvider implements CompletionProvider
 	}
 
 
+	public static void populateClass(CompletionResultSet resultSet,
+            Class<?> cls, int modifiers, int queryCaretOffset) 
+    {
+        // System.out.println("BshCompProv - populateComplPopup: " + cls);
+         
+        resultSet.setTitle(cls.getCanonicalName());
+        //resultSet.setAnchorOffset(queryAnchorOffset);
+        if (cls.isArray())
+        {
+            JavaResultItem item = new JavaResultItem.FieldResultItem(
+                    "length", Integer.TYPE, Modifier.PUBLIC);
+            item.setSubstituteOffset(queryCaretOffset);
+            resultSet.addItem(item);
+        }
+        for (Class<?> c: cls.getDeclaredClasses())
+        {
+            if(Modifier.isPrivate(c.getModifiers())) continue;
+            //anonymous inner classes have empty simple name
+            if(c.getSimpleName().length() == 0) continue;
+            //System.out.println("BshCompl - inner classes: " + c + ":" + c.getCanonicalName());
+            JavaResultItem item = new JavaResultItem.ClassResultItem(
+                    c, false, false, false);
+            item.setSubstituteOffset(queryCaretOffset);
+            resultSet.addItem(item);
+        }
+        for (Field f : getFields(cls, modifiers))
+        {
+            // when we show the static and private fields some ugly inner
+            // members arise too
+            if (f.getName().indexOf('$') >= 0) continue;
+            JavaResultItem item = new JavaResultItem.FieldResultItem(f, cls);
+            item.setSubstituteOffset(queryCaretOffset);
+            resultSet.addItem(item);
+        }
+        for (Method m : getMethods(cls, modifiers))
+        {
+            if (m.getName().indexOf('$') >= 0) continue;
+            JavaResultItem item = new JavaResultItem.MethodResultItem(m);
+            item.setSubstituteOffset(queryCaretOffset);
+            resultSet.addItem(item);
+        }
+    }
+
+    private static Collection<Method> getMethods(Class<?> cls, int comp_mod)
+    {
+        Set<Method> set = new HashSet<Method>();
+        Method[] ms = cls.getDeclaredMethods();
+        for (int i = 0; i < ms.length; i++)
+            if (!filterMod(ms[i].getModifiers(), comp_mod)) set.add(ms[i]);
+        ms = cls.getMethods();
+        for (int i = 0; i < ms.length; i++)
+            if (!filterMod(ms[i].getModifiers(), comp_mod)) set.add(ms[i]);
+        return set;
+    }
+
+    private static Collection<Field> getFields(Class<?> cls, int comp_mod)
+    {
+        Set<Field> set = new HashSet<Field>();
+        Field[] ms = cls.getDeclaredFields();
+        for (int i = 0; i < ms.length; i++)
+            if (!filterMod(ms[i].getModifiers(), comp_mod)) set.add(ms[i]);
+        ms = cls.getFields();
+        for (int i = 0; i < ms.length; i++)
+            if (!filterMod(ms[i].getModifiers(), comp_mod)) 
+                set.add(ms[i]);
+        return set;
+    }
+
+    // needed because there's no package-private modifier,
+    // when comp_mod contains Modifier.PRIVATE, we allow
+    // everything to pass, otherwise only public members
+    private static boolean filterMod(int mod, int comp_mod)
+    {
+        boolean priv = (comp_mod & Modifier.PRIVATE) != 0;
+        boolean stat = (comp_mod & Modifier.STATIC) != 0;
+        if (stat && (mod & Modifier.STATIC) == 0) return true;
+        if (!priv && (mod & Modifier.PUBLIC) == 0) return true;
+        //if (!stat && (mod & Modifier.STATIC) != 0) return true;
+        return false;
+    }
+    
 	static final class Query extends BaseAsyncCompletionQuery
 	{
 		public Query(int caretOffset)
@@ -118,7 +199,8 @@ public class BshCompletionProvider implements CompletionProvider
 				if (p.isPrivateAccessAllowed()) mod |= Modifier.PRIVATE;
 				if(!p.evaled_or_guessed)
 					cls = (Class<?>) obj;
-				populateComplPopup(resultSet, cls, mod);
+				populateClass(resultSet, cls, mod, queryCaretOffset);
+				queryResult = resultSet;
 			}
 			catch (Exception ex)
 			{
@@ -217,88 +299,6 @@ public class BshCompletionProvider implements CompletionProvider
 			{
 				ex.printStackTrace();
 			}
-		}
-
-		private void populateComplPopup(CompletionResultSet resultSet,
-				Class<?> cls, int modifiers)
-		{
-			// System.out.println("BshCompProv - populateComplPopup: " + cls);
-			 
-			resultSet.setTitle(cls.getCanonicalName());
-			resultSet.setAnchorOffset(queryAnchorOffset);
-			if (cls.isArray())
-			{
-				JavaResultItem item = new JavaResultItem.FieldResultItem(
-						"length", Integer.TYPE, Modifier.PUBLIC);
-				item.setSubstituteOffset(queryCaretOffset);
-				resultSet.addItem(item);
-			}
-			for (Class<?> c: cls.getDeclaredClasses())
-			{
-				if(Modifier.isPrivate(c.getModifiers())) continue;
-				//anonymous inner classes have empty simple name
-				if(c.getSimpleName().length() == 0) continue;
-				//System.out.println("BshCompl - inner classes: " + c + ":" + c.getCanonicalName());
-				JavaResultItem item = new JavaResultItem.ClassResultItem(
-						c, false, false, false);
-				item.setSubstituteOffset(queryCaretOffset);
-				resultSet.addItem(item);
-			}
-			for (Field f : getFields(cls, modifiers))
-			{
-				// when we show the static and private fields some ugly inner
-				// members arise too
-				if (f.getName().indexOf('$') >= 0) continue;
-				JavaResultItem item = new JavaResultItem.FieldResultItem(f, cls);
-				item.setSubstituteOffset(queryCaretOffset);
-				resultSet.addItem(item);
-			}
-			for (Method m : getMethods(cls, modifiers))
-			{
-				if (m.getName().indexOf('$') >= 0) continue;
-				JavaResultItem item = new JavaResultItem.MethodResultItem(m);
-				item.setSubstituteOffset(queryCaretOffset);
-				resultSet.addItem(item);
-			}
-			queryResult = resultSet;
-		}
-
-		private static Collection<Method> getMethods(Class<?> cls, int comp_mod)
-		{
-			Set<Method> set = new HashSet<Method>();
-			Method[] ms = cls.getDeclaredMethods();
-			for (int i = 0; i < ms.length; i++)
-				if (!filterMod(ms[i].getModifiers(), comp_mod)) set.add(ms[i]);
-			ms = cls.getMethods();
-			for (int i = 0; i < ms.length; i++)
-				if (!filterMod(ms[i].getModifiers(), comp_mod)) set.add(ms[i]);
-			return set;
-		}
-
-		private static Collection<Field> getFields(Class<?> cls, int comp_mod)
-		{
-			Set<Field> set = new HashSet<Field>();
-			Field[] ms = cls.getDeclaredFields();
-			for (int i = 0; i < ms.length; i++)
-				if (!filterMod(ms[i].getModifiers(), comp_mod)) set.add(ms[i]);
-			ms = cls.getFields();
-			for (int i = 0; i < ms.length; i++)
-				if (!filterMod(ms[i].getModifiers(), comp_mod)) 
-					set.add(ms[i]);
-			return set;
-		}
-
-		// needed because there's no package-private modifier,
-		// when comp_mod contains Modifier.PRIVATE, we allow
-		// everything to pass, otherwise only public members
-		private static boolean filterMod(int mod, int comp_mod)
-		{
-			boolean priv = (comp_mod & Modifier.PRIVATE) != 0;
-			boolean stat = (comp_mod & Modifier.STATIC) != 0;
-			if (stat && (mod & Modifier.STATIC) == 0) return true;
-			if (!priv && (mod & Modifier.PUBLIC) == 0) return true;
-			//if (!stat && (mod & Modifier.STATIC) != 0) return true;
-			return false;
 		}
 	}
 

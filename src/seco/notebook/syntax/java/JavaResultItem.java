@@ -484,6 +484,40 @@ public abstract class JavaResultItem implements CompletionItem
             String mods = Modifier.toString(modifiers) + " "; // NOI18N
             return (mods.length() > 1 ? mods : "") + typeName + " " + fldName; // NOI18N
         }
+        
+        @Override
+        public int hashCode()
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result
+                    + ((fldName == null) ? 0 : fldName.hashCode());
+            result = prime * result + modifiers;
+            result = prime * result
+                    + ((typeName == null) ? 0 : typeName.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            FieldResultItem other = (FieldResultItem) obj;
+            if (fldName == null)
+            {
+                if (other.fldName != null) return false;
+            }
+            else if (!fldName.equals(other.fldName)) return false;
+            if (modifiers != other.modifiers) return false;
+            if (typeName == null)
+            {
+                if (other.typeName != null) return false;
+            }
+            else if (!typeName.equals(other.typeName)) return false;
+            return true;
+        }
     }
 
     public static class MethodResultItem extends CallableFeatureResultItem

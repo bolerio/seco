@@ -167,8 +167,8 @@ public class RhinoScriptEngine extends AbstractScriptEngine
             // Modified to use the context
             // String filename = (String) get(ScriptEngine.FILENAME);
             String filename = null;
-            if (ctxt != null && ctxt.getBindings(ScriptContext.ENGINE_SCOPE) != null) {
-                filename = (String) ctxt.getBindings(ScriptContext.ENGINE_SCOPE).get(ScriptEngine.FILENAME);
+            if (ctxt != null && ctxt.getBindings(ScriptContext.GLOBAL_SCOPE/*ENGINE_SCOPE*/) != null) {
+                filename = (String) ctxt.getBindings(ScriptContext.GLOBAL_SCOPE/*ENGINE_SCOPE*/).get(ScriptEngine.FILENAME);
             }
             if (filename == null) {
                 filename = (String) get(ScriptEngine.FILENAME);
@@ -297,7 +297,7 @@ public class RhinoScriptEngine extends AbstractScriptEngine
             "    context.getWriter().println(String(str)); \n" +
             "}";
     
-    public Scriptable getRuntimeScope(ScriptContext ctxt) {
+    public ExternalScriptable getRuntimeScope(ScriptContext ctxt) {
         if (ctxt == null) {
             throw new NullPointerException("null script context");
         }
@@ -427,7 +427,7 @@ public class RhinoScriptEngine extends AbstractScriptEngine
             }
             if (arg instanceof ExternalScriptable) {
                 ScriptContext ctx = ((ExternalScriptable)arg).getContext();
-                Bindings bind = ctx.getBindings(ScriptContext.ENGINE_SCOPE);
+                Bindings bind = ctx.getBindings(ScriptContext.GLOBAL_SCOPE/*ENGINE_SCOPE*/);
                 return Context.javaToJS(bind, 
                            ScriptableObject.getTopLevelScope(thisObj));
             }
@@ -457,7 +457,7 @@ public class RhinoScriptEngine extends AbstractScriptEngine
             }
             if (arg instanceof Bindings) {
                 ScriptContext ctx = new SimpleScriptContext();
-                ctx.setBindings((Bindings)arg, ScriptContext.ENGINE_SCOPE);
+                ctx.setBindings((Bindings)arg, ScriptContext.GLOBAL_SCOPE/*ENGINE_SCOPE*/);
                 Scriptable res = new ExternalScriptable(ctx);
                 res.setPrototype(ScriptableObject.getObjectPrototype(thisObj));
                 res.setParentScope(ScriptableObject.getTopLevelScope(thisObj));

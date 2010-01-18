@@ -75,7 +75,7 @@ public final class CompletionResultSet
         return impl.getTitle();
     }
 
-    public Collection getData()
+    public Collection<CompletionItem> getData()
     {
         return impl.getItems();
     }
@@ -126,38 +126,6 @@ public final class CompletionResultSet
     public boolean addAllItems(Collection/* <CompletionItem> */items)
     {
         return impl.addAllItems(items);
-    }
-
-    /**
-     * Indicate that adding of the items to this result set will likely need a
-     * long time so the resulting number of items and their visual size should
-     * be estimated so that the completion infrastructure can estimate the size
-     * of the popup window and display the items added subsequently without
-     * changing its bound extensively. <br>
-     * Without calling of this method the completion infrastructure will wait
-     * until {@link #finish()} gets called on this result set before displaying
-     * any of the items added to this result set.
-     * 
-     * <p>
-     * By calling of this method the task also confirms that the items added by
-     * {@link #addItem(CompletionItem)} subsequently are already in the order
-     * corresponding to the {@link #getSortType()}.
-     * 
-     * @param estimatedItemCount
-     *            estimated number of the items that will be added to this
-     *            result set by {@link #addItem(CompletionItem)}. If the
-     *            estimate is significantly lower than the reality then the
-     *            vertical scrollbar granularity may be decreased or the
-     *            vertical scrollbar can be removed completely once the result
-     *            set is finished. If the estimate is significantly higher than
-     *            the reality then the vertical scrollbar granularity may be
-     *            increased once the result set is finished.
-     * @param estimatedItemWidth
-     *            estimated maximum visual width of a completion item.
-     */
-    public void estimateItems(int estimatedItemCount, int estimatedItemWidth)
-    {
-        impl.estimateItems(estimatedItemCount, estimatedItemWidth);
     }
 
     /**

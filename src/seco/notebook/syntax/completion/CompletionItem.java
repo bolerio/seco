@@ -151,6 +151,8 @@ public interface CompletionItem {
      * @since 1.4
      */
     CharSequence getInsertPrefix();
+    
+    public String getItemText();
 
 }
 

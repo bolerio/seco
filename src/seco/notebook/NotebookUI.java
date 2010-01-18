@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
@@ -310,40 +311,48 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     protected void initKeyBindings()
     {
         InputMap inputMap = getInputMap();
-        KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
-                InputEvent.SHIFT_DOWN_MASK);
-        inputMap.put(key, NotebookEditorKit.evalAction);
-        key = KeyStroke.getKeyStroke(KeyEvent.VK_TAB,
-                InputEvent.SHIFT_DOWN_MASK);
-        inputMap.put(key, NotebookEditorKit.removeTabAction);
-        key = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,
-                InputEvent.SHIFT_DOWN_MASK);
-        inputMap.put(key, NotebookEditorKit.deleteCellAction);
-        key = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_MASK);
-        inputMap.put(key, NotebookEditorKit.selectCellHandleAction);
-        key = KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.SHIFT_MASK
-                | InputEvent.CTRL_MASK);
-        inputMap.put(key, NotebookEditorKit.importAction);
-        key = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,
-                InputEvent.CTRL_DOWN_MASK);
-        inputMap.put(key, NotebookEditorKit.showInputTypePopup);
+        //KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
+        //        InputEvent.SHIFT_DOWN_MASK);
+       // inputMap.put(key, NotebookEditorKit.evalAction);
+        
+//        KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_TAB,
+//                InputEvent.SHIFT_DOWN_MASK);
+//        inputMap.put(key, NotebookEditorKit.removeTabAction);
+//        key = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,
+//                InputEvent.SHIFT_DOWN_MASK);
+//        inputMap.put(key, NotebookEditorKit.deleteCellAction);
+//        key = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_MASK);
+//        inputMap.put(key, NotebookEditorKit.selectCellHandleAction);
+//        key = KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.SHIFT_MASK
+//                | InputEvent.CTRL_MASK);
+//        inputMap.put(key, NotebookEditorKit.importAction);
+//        key = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,
+//                InputEvent.CTRL_DOWN_MASK);
+//        inputMap.put(key, NotebookEditorKit.showInputTypePopup);
 
         // UNDO, REDO
-        key = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK);
-        inputMap.put(key, NotebookEditorKit.undo);
-        key = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK);
-        inputMap.put(key, NotebookEditorKit.redo);
+//        key = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK);
+//        inputMap.put(key, NotebookEditorKit.undo);
+//        key = KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK);
+//        inputMap.put(key, NotebookEditorKit.redo);
+//
+//        // CUT, COPY, PASTE
+//        key = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK);
+//        inputMap.put(key, DefaultEditorKit.cutAction);
+//        key = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK);
+//        inputMap.put(key, DefaultEditorKit.copyAction);
+//        key = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK);
+//        inputMap.put(key, DefaultEditorKit.pasteAction);
 
-        // CUT, COPY, PASTE
-        key = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK);
-        inputMap.put(key, DefaultEditorKit.cutAction);
-        key = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK);
-        inputMap.put(key, DefaultEditorKit.copyAction);
-        key = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK);
-        inputMap.put(key, DefaultEditorKit.pasteAction);
-
-        key = KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK);
-        inputMap.put(key, DefaultEditorKit.selectAllAction);
+       // key = KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK);
+       // inputMap.put(key, NotebookEditorKit.findAction);
+       // key = KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK);
+       // inputMap.put(key, NotebookEditorKit.selectAllAction);
+        
+        for (Action a: ActionManager.getInstance().getActions())
+            if(a.getValue(Action.ACCELERATOR_KEY) != null)
+                inputMap.put((KeyStroke)a.getValue(Action.ACCELERATOR_KEY), a);
+        
     }
 
     void restoreCaret()

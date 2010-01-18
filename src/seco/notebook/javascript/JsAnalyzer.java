@@ -49,22 +49,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.ImageIcon;
-import javax.swing.text.BadLocationException;
 import org.mozilla.nb.javascript.FunctionNode;
 import org.mozilla.nb.javascript.Node;
 import org.mozilla.nb.javascript.Token;
 import seco.notebook.csl.*;
-//import org.netbeans.modules.csl.api.ElementHandle;
-//import org.netbeans.modules.csl.api.ElementKind;
-//import org.netbeans.modules.csl.api.HtmlFormatter;
-//import org.netbeans.modules.csl.api.Modifier;
-//import org.netbeans.modules.csl.api.OffsetRange;
-//import org.netbeans.modules.csl.api.StructureItem;
-//import org.netbeans.modules.csl.api.StructureScanner;
-//import org.netbeans.editor.BaseDocument;
-//import org.netbeans.editor.Utilities;
-//import org.netbeans.modules.csl.spi.GsfUtilities;
-//import org.netbeans.modules.csl.spi.ParserResult;
+
 
 
 
@@ -186,68 +175,12 @@ public class JsAnalyzer
         return itemList;
     }
 
-//    public Map<String, List<OffsetRange>> folds(ParserResult info) {
-//        JsParseResult result = AstUtilities.getParseResult(info);
-//        AnalysisResult ar = result.getStructure();
-//
-//        List<? extends AstElement> elements = ar.getElements();
-//        //List<StructureItem> itemList = new ArrayList<StructureItem>(elements.size());
-//
-//        Map<String, List<OffsetRange>> folds = new HashMap<String, List<OffsetRange>>();
-//        List<OffsetRange> codeblocks = new ArrayList<OffsetRange>();
-//        folds.put("codeblocks", codeblocks); // NOI18N
-//
-//        CharSequence text = info.getSnapshot().getText();
-//        try {
-//            for (AstElement element : elements) {
-//                ElementKind kind = element.getKind();
-//                switch (kind) {
-//                    case METHOD:
-//                    case CONSTRUCTOR:
-//                    case CLASS:
-//                    case MODULE:
-//                        Node node = element.getNode();
-//                        OffsetRange range = AstUtilities.getRange(node);
-//
-//                        if (kind == ElementKind.METHOD || kind == ElementKind.CONSTRUCTOR ||
-//                                // Only make nested classes/modules foldable, similar to what the java editor is doing
-//                                (range.getStart() > GsfUtilities.getRowStart(text, Math.min(range.getStart(), text.length())))) {
-//
-//                            int start = range.getStart();
-//                            // Start the fold at the END of the line
-//                            start = GsfUtilities.getRowEnd(text, Math.min(start, text.length()));
-//                            int end = range.getEnd();
-//                            if (start != (-1) && end != (-1) && start < end && end <= text.length()) {
-//                                int lexStart = result.getSnapshot().getOriginalOffset(start);
-//                                int lexEnd = result.getSnapshot().getOriginalOffset(end);
-//                                if (lexStart < lexEnd) {
-//                                    //recalculate the range if we parsed the virtual source
-//                                    range = new OffsetRange(lexStart, lexEnd);
-//                                    codeblocks.add(range);
-//                                }
-//                            }
-//                        break;
-//                        }
-//                }
-//
-//                assert element.getChildren().size() == 0;
-//            }
-//        } catch (BadLocationException ex) {
-//            ex.printStackTrace();
-//        }
-//
-//        return folds;
-//    }
     
     static AnalysisResult analyze(JsParseResult result) {
         AnalysisResult analysisResult = new AnalysisResult(result);
         ParseTreeWalker walker = new ParseTreeWalker(analysisResult);
         Node root = result.getRootNode();
-
-       //if(Boolean.getBoolean("debug.js.ast")) {
-       //      JsParser.dumpTree(root);
-       // }
-        
+       
         if (root != null) {
             walker.walk(root);
         }

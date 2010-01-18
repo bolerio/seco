@@ -187,7 +187,7 @@ public class FindDialog extends JDialog
 					counter++;
 				}
 				JOptionPane
-						.showMessageDialog(owner, counter
+						.showMessageDialog(GUIUtilities.getFrame(owner), counter
 								+ " replacement(s) have been done",
 								"Scriba",
 								JOptionPane.INFORMATION_MESSAGE);
@@ -371,7 +371,7 @@ public class FindDialog extends JDialog
 
 	protected void warning(String message)
 	{
-		JOptionPane.showMessageDialog(owner, message,"Scriba",
+		JOptionPane.showMessageDialog(GUIUtilities.getFrame(owner), message, "Seco",
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 	
