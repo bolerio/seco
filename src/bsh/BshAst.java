@@ -23,6 +23,7 @@ import javax.swing.tree.TreePath;
 import seco.notebook.storage.ClassRepository;
 import seco.notebook.storage.NamedInfo;
 import seco.notebook.syntax.ScriptSupport;
+import seco.notebook.syntax.completion.CompletionU;
 import seco.notebook.syntax.completion.NBParser;
 import seco.notebook.util.SegmentCache;
 import bsh.Parser;
@@ -68,7 +69,7 @@ public class BshAst extends NBParser
 			if(s.indexOf("(")< 0)
 			{
 			   NamedInfo[] info = ClassRepository.getInstance().findSubElements(s);
-			   return (info.length > 0) ? new DBInfoEx(info, s) : null;
+			   return (info.length > 0) ? new CompletionU.DBPackageInfo(info, s) : null;
 			}else //some method is present
 			{
 				Object res = resolveMethod(s, offset);
@@ -80,7 +81,7 @@ public class BshAst extends NBParser
 		{
 			//err.printStackTrace();
 			NamedInfo[] info = ClassRepository.getInstance().findSubElements(s);
-			return (info.length > 0) ? new DBInfoEx(info, s) : null;
+			return (info.length > 0) ? new CompletionU.DBPackageInfo(info, s) : null;
 		}
 	}
 	
@@ -316,26 +317,6 @@ public class BshAst extends NBParser
 		astTree.collapsePath(new TreePath(astTree.getModel()
 				.getRoot()));
 		return astTree;
-	}
-	
-	//Simple wrapper to query out the package info and simplify class instantiation 
-	static class DBInfoEx{
-		private NamedInfo[] info;
-		private String pack;
-		NamedInfo[] getInfo()
-		{
-			return info;
-		}
-		String getPackage()
-		{
-			return pack;
-		}
-		
-		public DBInfoEx(NamedInfo[] info, String pack)
-		{
-			this.info = info;
-			this.pack = pack;
-		}
 	}
 	
 }

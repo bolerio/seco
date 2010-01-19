@@ -8,15 +8,11 @@
 package bsh;
 
 import java.awt.event.ActionEvent;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -27,9 +23,6 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 
 import seco.notebook.NotebookDocument;
-import seco.notebook.storage.ClassInfo;
-import seco.notebook.storage.NamedInfo;
-import seco.notebook.storage.PackageInfo;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.AsyncCompletionQuery;
 import seco.notebook.syntax.completion.AsyncCompletionTask;
@@ -39,11 +32,12 @@ import seco.notebook.syntax.completion.CompletionDocumentation;
 import seco.notebook.syntax.completion.CompletionProvider;
 import seco.notebook.syntax.completion.CompletionResultSet;
 import seco.notebook.syntax.completion.CompletionTask;
+import seco.notebook.syntax.completion.CompletionU;
 import seco.notebook.syntax.completion.JavaDocManager;
 import seco.notebook.syntax.completion.MethodParamsTipPaintComponent;
+import seco.notebook.syntax.completion.CompletionU.DBPackageInfo;
 import seco.notebook.syntax.java.JavaResultItem;
 import seco.notebook.util.DocumentUtilities;
-import bsh.BshAst.DBInfoEx;
 
 public class BshCompletionProvider implements CompletionProvider
 {
@@ -73,87 +67,6 @@ public class BshCompletionProvider implements CompletionProvider
 	}
 
 
-	public static void populateClass(CompletionResultSet resultSet,
-            Class<?> cls, int modifiers, int queryCaretOffset) 
-    {
-        // System.out.println("BshCompProv - populateComplPopup: " + cls);
-         
-        resultSet.setTitle(cls.getCanonicalName());
-        //resultSet.setAnchorOffset(queryAnchorOffset);
-        if (cls.isArray())
-        {
-            JavaResultItem item = new JavaResultItem.FieldResultItem(
-                    "length", Integer.TYPE, Modifier.PUBLIC);
-            item.setSubstituteOffset(queryCaretOffset);
-            resultSet.addItem(item);
-        }
-        for (Class<?> c: cls.getDeclaredClasses())
-        {
-            if(Modifier.isPrivate(c.getModifiers())) continue;
-            //anonymous inner classes have empty simple name
-            if(c.getSimpleName().length() == 0) continue;
-            //System.out.println("BshCompl - inner classes: " + c + ":" + c.getCanonicalName());
-            JavaResultItem item = new JavaResultItem.ClassResultItem(
-                    c, false, false, false);
-            item.setSubstituteOffset(queryCaretOffset);
-            resultSet.addItem(item);
-        }
-        for (Field f : getFields(cls, modifiers))
-        {
-            // when we show the static and private fields some ugly inner
-            // members arise too
-            if (f.getName().indexOf('$') >= 0) continue;
-            JavaResultItem item = new JavaResultItem.FieldResultItem(f, cls);
-            item.setSubstituteOffset(queryCaretOffset);
-            resultSet.addItem(item);
-        }
-        for (Method m : getMethods(cls, modifiers))
-        {
-            if (m.getName().indexOf('$') >= 0) continue;
-            JavaResultItem item = new JavaResultItem.MethodResultItem(m);
-            item.setSubstituteOffset(queryCaretOffset);
-            resultSet.addItem(item);
-        }
-    }
-
-    private static Collection<Method> getMethods(Class<?> cls, int comp_mod)
-    {
-        Set<Method> set = new HashSet<Method>();
-        Method[] ms = cls.getDeclaredMethods();
-        for (int i = 0; i < ms.length; i++)
-            if (!filterMod(ms[i].getModifiers(), comp_mod)) set.add(ms[i]);
-        ms = cls.getMethods();
-        for (int i = 0; i < ms.length; i++)
-            if (!filterMod(ms[i].getModifiers(), comp_mod)) set.add(ms[i]);
-        return set;
-    }
-
-    private static Collection<Field> getFields(Class<?> cls, int comp_mod)
-    {
-        Set<Field> set = new HashSet<Field>();
-        Field[] ms = cls.getDeclaredFields();
-        for (int i = 0; i < ms.length; i++)
-            if (!filterMod(ms[i].getModifiers(), comp_mod)) set.add(ms[i]);
-        ms = cls.getFields();
-        for (int i = 0; i < ms.length; i++)
-            if (!filterMod(ms[i].getModifiers(), comp_mod)) 
-                set.add(ms[i]);
-        return set;
-    }
-
-    // needed because there's no package-private modifier,
-    // when comp_mod contains Modifier.PRIVATE, we allow
-    // everything to pass, otherwise only public members
-    private static boolean filterMod(int mod, int comp_mod)
-    {
-        boolean priv = (comp_mod & Modifier.PRIVATE) != 0;
-        boolean stat = (comp_mod & Modifier.STATIC) != 0;
-        if (stat && (mod & Modifier.STATIC) == 0) return true;
-        if (!priv && (mod & Modifier.PUBLIC) == 0) return true;
-        //if (!stat && (mod & Modifier.STATIC) != 0) return true;
-        return false;
-    }
-    
 	static final class Query extends BaseAsyncCompletionQuery
 	{
 		public Query(int caretOffset)
@@ -182,9 +95,10 @@ public class BshCompletionProvider implements CompletionProvider
 				{
 					populateXThisRef(resultSet, obj);
 				}
-				if (obj instanceof DBInfoEx)
+				if (obj instanceof CompletionU.DBPackageInfo)
 				{
-					populatePackages(resultSet, (DBInfoEx) obj);
+					CompletionU.populatePackage(resultSet, (CompletionU.DBPackageInfo) obj, queryCaretOffset);
+					queryResult = resultSet;
 					resultSet.finish();
 					return;
 				}
@@ -199,7 +113,7 @@ public class BshCompletionProvider implements CompletionProvider
 				if (p.isPrivateAccessAllowed()) mod |= Modifier.PRIVATE;
 				if(!p.evaled_or_guessed)
 					cls = (Class<?>) obj;
-				populateClass(resultSet, cls, mod, queryCaretOffset);
+				CompletionU.populateClass(resultSet, cls, mod, queryCaretOffset);
 				queryResult = resultSet;
 			}
 			catch (Exception ex)
@@ -211,40 +125,6 @@ public class BshCompletionProvider implements CompletionProvider
 			resultSet.finish();
 		}
 
-		private void populatePackages(CompletionResultSet resultSet,
-				DBInfoEx info)
-		{
-			resultSet.setTitle(info.getPackage());
-			resultSet.setAnchorOffset(queryAnchorOffset);
-			for (NamedInfo p : info.getInfo())
-			{
-				if (p instanceof PackageInfo)
-				{
-					JavaResultItem item = new JavaResultItem.PackageResultItem(
-							(PackageInfo) p, false);
-					item.setSubstituteOffset(queryCaretOffset);
-					resultSet.addItem(item);
-				} else if (p instanceof ClassInfo)
-				{
-					try
-					{
-						Class<?> cls = Thread.currentThread()
-								.getContextClassLoader().loadClass(
-										info.getPackage() + "." + p.getName());
-						JavaResultItem item = new JavaResultItem.ClassResultItem(
-								cls, false, false, false);
-						item.setSubstituteOffset(queryCaretOffset);
-						resultSet.addItem(item);
-					}
-					catch (Exception ex)
-					{
-						//ex.printStackTrace();
-						//System.err.println("WARNING: " + ex.toString());
-					}
-				}
-			}
-			queryResult = resultSet;
-		}
 		private static final Object[] empty = new Object[0];
 		private static final String REGEX = "[a-zA-Z_]+[a-zA-Z0-9_]*";
 

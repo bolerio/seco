@@ -830,9 +830,9 @@ public class GUIHelper
         menu.addSeparator();
         menu.addMenuListener(new EditMenuListener());
         
-        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.cutAction)));
-        menu.add(new JMenuItem(man.getAction(DefaultEditorKit.copyAction)));
-        menu.add(new JMenuItem(man.getAction(DefaultEditorKit.pasteAction)));
+        menu.add(new JMenuItem(man.getAction(Actions.CUT)));
+        menu.add(new JMenuItem(man.getAction(Actions.COPY)));
+        menu.add(new JMenuItem(man.getAction(Actions.PASTE)));
       
         menu.add(new JMenuItem(man.getAction(DefaultEditorKit.selectAllAction)));
         menu.addSeparator();

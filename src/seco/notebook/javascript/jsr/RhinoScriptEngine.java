@@ -303,7 +303,7 @@ public class RhinoScriptEngine extends AbstractScriptEngine
         }
 
         // we create a scope for the given ScriptContext
-        Scriptable newScope = new ExternalScriptable(ctxt, indexedProps);
+        ExternalScriptable newScope = new ExternalScriptable(ctxt, indexedProps);
 
         // Set the prototype of newScope to be 'topLevel' so that
         // JavaScript standard objects are visible from the scope.

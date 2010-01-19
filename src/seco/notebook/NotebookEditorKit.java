@@ -85,7 +85,7 @@ public class NotebookEditorKit extends StyledEditorKit
     public static final String evalAction = "Eval Cell";
     public static final String removeOutputCellsAction = "Remove Output Cells";
     public static final String reEvalOutputCellsAction = "Evaluate All Cells";
-    public static final String removeTabAction = "Untab";
+    public static final String removeTabAction = "UnTab";
     public static final String selectCellRangeAction = "Cell Range Selection";
     public static final String selectCellHandleAction = "Cell Handle Selection";
     public static final String evalCellGroupAction = "Eval CellGroup";
@@ -99,14 +99,14 @@ public class NotebookEditorKit extends StyledEditorKit
     public static final String deleteSelectedElementsAction = "Delete Selection";
     public static final String importAction = "Import Package";
     public static final String htmlAction = "HTML Source";
-    public static final String showInputTypePopup = "showInputTypePopup";
+    public static final String setCellLanguageAction = "Set Cell Language Action";
     public static final String clearEngineContextAction = "Clear Engine Context";
     public static final String resetCellNumAction = "Normalize Cell Numbering";
     public static final String javaDocManagerAction = "JavaDoc Manager";
     public static final String ctxInspectorAction = "RuntimeContext Inspector";
     public static final String replaceAction = "Replace...";
     public static final String findAction = "Find...";
-    public static final String mergeCellsAction = "Merge InputCells";
+    public static final String mergeCellsAction = "Merge Input Cells";
 
     static
     {
@@ -795,7 +795,7 @@ public class NotebookEditorKit extends StyledEditorKit
     {
         public ShowInputTypePopupAction()
         {
-            super(showInputTypePopup);
+            super(setCellLanguageAction);
         }
 
         public void actionPerformed(ActionEvent e)

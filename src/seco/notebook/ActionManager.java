@@ -210,7 +210,7 @@ public class ActionManager
                 false);
         key = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,
                 InputEvent.CTRL_DOWN_MASK);
-        putAction(kit.getActionByName(NotebookEditorKit.showInputTypePopup),
+        putAction(kit.getActionByName(NotebookEditorKit.setCellLanguageAction),
                 key, false);
 
     }

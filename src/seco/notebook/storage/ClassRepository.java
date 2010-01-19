@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -28,12 +29,15 @@ import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HGTypeSystem;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.IncidenceSet;
+import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.query.AtomTypeCondition;
+import org.hypergraphdb.HGQuery;
 
 import seco.U;
 import seco.notebook.AppConfig;
 import seco.notebook.util.RequestProcessor;
+
 
 public class ClassRepository
 {
@@ -55,12 +59,12 @@ public class ClassRepository
     private static final String JAR_PATH_PROP = "path";
     private static HGHandle[] EMPTY_HANDLE_ARRAY = new HGHandle[0];
     private static ClassRepository instance;
-    /* private */HyperGraph hg;
+    /* private */HyperGraph graph;
     boolean updateInProgress = false;
 
     private ClassRepository(final HyperGraph hg)
     {
-        this.hg = hg;
+        this.graph = hg;
         // Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
         // public void run()
         // {
@@ -113,15 +117,32 @@ public class ClassRepository
     {
         if (jarsMap == null)
         {
-            jarsMap = (Map<JarInfo, Boolean>) hg.get(JARS_MAP_HANDLE);
+            jarsMap = (Map<JarInfo, Boolean>) graph.get(JARS_MAP_HANDLE);
             if (jarsMap == null)
             {
                 jarsMap = new HashMap<JarInfo, Boolean>();
-                hg.define(JARS_MAP_HANDLE, jarsMap);
+                graph.define(JARS_MAP_HANDLE, jarsMap);
             }
         }
         return jarsMap;
     }
+    
+    private Set<PackageInfo> top_packages_cache;
+    public Set<PackageInfo> getTopPackages()
+    {
+        if(top_packages_cache != null)
+            return top_packages_cache;
+        top_packages_cache = new HashSet<PackageInfo>();
+        List<HGHandle> res = hg.findAll(graph, hg.type(JarInfo.class));
+        for(HGHandle h: res)
+        {
+            List<ParentOfLink> links = hg.getAll(graph, 
+                    hg.and(hg.type(ParentOfLink.class), hg.incident(h)));
+            for(ParentOfLink l: links)
+                top_packages_cache.add((PackageInfo)graph.get(l.getTargetAt(1)));
+        }
+        return top_packages_cache;
+    } 
 
     public static void main(String[] args)
     {
@@ -143,7 +164,7 @@ public class ClassRepository
     public void removeJar(String s)
     {
         HGHandle h = lookup(JAR_INDEX, JAR_PATH_PROP, s);
-        if (h != null) hg.remove(h);
+        if (h != null) graph.remove(h);
     }
 
     private boolean checkJarExistsAndUpToDate(String s)
@@ -151,7 +172,7 @@ public class ClassRepository
         HGHandle h = lookup(JAR_INDEX, JAR_PATH_PROP, s);
         if (h != null)
         {
-            JarInfo info = (JarInfo) hg.get(h);
+            JarInfo info = (JarInfo) graph.get(h);
             File f = new File(s);
             // System.out.println("Jar: " + s + " present: " +
             // (info.getDate() == f.lastModified()));
@@ -192,7 +213,7 @@ public class ClassRepository
         HGHandle[] handles = getJarHandles();
         Set<JarInfo> jars = new HashSet<JarInfo>();
         for (HGHandle h : handles)
-            jars.add((JarInfo) hg.get(h));
+            jars.add((JarInfo) graph.get(h));
         return jars.toArray(new JarInfo[jars.size()]);
     }
 
@@ -202,7 +223,7 @@ public class ClassRepository
         HGSearchResult<HGPersistentHandle> res = null;
         try
         {
-            res = hg.find(new AtomTypeCondition(JarInfo.class));
+            res = graph.find(new AtomTypeCondition(JarInfo.class));
             while (res.hasNext())
             {
                 HGHandle h = (HGHandle) res.next();
@@ -227,12 +248,12 @@ public class ClassRepository
         for (HGHandle h : handles)
         {
             HGHandle docH = getDocInfo(h);
-            Object info = (docH != null) ? hg.get(docH) : null;
+            Object info = (docH != null) ? graph.get(docH) : null;
             // if (info != null && (info instanceof DocInfo))
             // System.out.println("DocInfo: " + ((DocInfo) info).getName()
             // + ":" + "jar: " + ((JarInfo) hg.get(h)).getPath());
             if (info == null || !(info instanceof RtDocInfo))
-                res.put((JarInfo) hg.get(h), (DocInfo) info);
+                res.put((JarInfo) graph.get(h), (DocInfo) info);
         }
         return res;
     }
@@ -243,10 +264,10 @@ public class ClassRepository
         HGHandle h = getClsHandle(cl.getSimpleName(), false);
         if (h == null || cl.getPackage() == null) return null;
         String pack = cl.getPackage().getName();
-        HGHandle[] list = parentOfClass(hg, h);
+        HGHandle[] list = parentOfClass(graph, h);
         for (int j = 0; j < list.length; j++)
         {
-            String cls = ((PackageInfo) hg.get(list[j])).getFullName();
+            String cls = ((PackageInfo) graph.get(list[j])).getFullName();
             if (cls.equalsIgnoreCase(pack)) return getDocInfoForPackage(pack);
         }
         return null;
@@ -256,15 +277,15 @@ public class ClassRepository
     {
         HGHandle packH = findPackageByFullName(fullName);
         if (packH == null) return null;
-        HGSearchResult<HGHandle> res = hg.find(HGQuery.hg.and(HGQuery.hg
+        HGSearchResult<HGHandle> res = graph.find(HGQuery.hg.and(HGQuery.hg
                 .type(JarLink.class), HGQuery.hg.link(packH)));
         try
         {
             if (!res.hasNext()) return null;
-            JarLink link = (JarLink) hg.get(res.next());
+            JarLink link = (JarLink) graph.get(res.next());
             // System.out.println("Link: " + link);
             HGHandle docH = getDocInfo(link.getTargetAt(0));
-            return (docH != null) ? (DocInfo) hg.get(docH) : null;
+            return (docH != null) ? (DocInfo) graph.get(docH) : null;
         }
         finally
         {
@@ -274,13 +295,13 @@ public class ClassRepository
 
     private HGHandle getDocInfo(HGHandle h)
     {
-        HGSearchResult<HGHandle> res = hg.find(new AtomTypeCondition(
+        HGSearchResult<HGHandle> res = graph.find(new AtomTypeCondition(
                 DocLink.class));
         try
         {
             while (res.hasNext())
             {
-                DocLink link = (DocLink) hg.get((HGHandle) res.next());
+                DocLink link = (DocLink) graph.get((HGHandle) res.next());
                 if (link.getTargetAt(0).equals(h)) return link.getTargetAt(1);
             }
         }
@@ -298,16 +319,16 @@ public class ClassRepository
         {
             // System.out.println(hg.get(h));
             HGHandle d = getDocInfo(h);
-            if (d != null) hg.replace(d, new DocInfo(doc));
+            if (d != null) graph.replace(d, new DocInfo(doc));
             else
-                hg.add(new DocLink(
-                        new HGHandle[] { h, hg.add(new DocInfo(doc)) }));
+                graph.add(new DocLink(
+                        new HGHandle[] { h, graph.add(new DocInfo(doc)) }));
         }
     }
 
     public void setJavaDocPath(String doc)
     {
-        hg.replace(JAVADOC_HANDLE, new RtDocInfo(doc));
+        graph.replace(JAVADOC_HANDLE, new RtDocInfo(doc));
     }
 
     private HGHandle findTopPackage(HyperGraph hg, String s)
@@ -325,24 +346,24 @@ public class ClassRepository
     {
         if (s.indexOf('.') > -1)
             return findSubPackages(findPackageByFullName(s));
-        return findSubPackages(findTopPackage(hg, s));
+        return findSubPackages(findTopPackage(graph, s));
     }
 
     private HGHandle[] findSubPackages(HGHandle h)
     {
         if (h == null) return EMPTY_HANDLE_ARRAY;
-        IncidenceSet subs = hg.getIncidenceSet(h);
+        IncidenceSet subs = graph.getIncidenceSet(h);
         // System.out.println(s + ":" + subs.length);
         Set<HGHandle> res = new HashSet<HGHandle>();
         for (HGHandle ih : subs)
         {
-            Object o = hg.get(ih);
+            Object o = graph.get(ih);
             // System.out.println(i + ":" + o);
             if (o instanceof ParentOfLink)
             {
-                HGHandle par = hg.getPersistentHandle(((ParentOfLink) o)
+                HGHandle par = graph.getPersistentHandle(((ParentOfLink) o)
                         .getTargetAt(1));
-                Object parObject = hg.get(par);
+                Object parObject = graph.get(par);
                 if (!par.equals(h) && parObject instanceof NamedInfo)
                     res.add(par);
             }
@@ -358,7 +379,7 @@ public class ClassRepository
         // System.out.println("ClassRepository - findSubElements: " +
         // hs.length);
         for (int i = 0; i < hs.length; i++)
-            packs[i] = ((NamedInfo) hg.get(hs[i]));
+            packs[i] = ((NamedInfo) graph.get(hs[i]));
         // Arrays.sort(packs);
         return packs;
     }
@@ -368,13 +389,13 @@ public class ClassRepository
         if (s.indexOf('.') > 0) s = s.substring(s.lastIndexOf('.') + 1);
         HGHandle h = getClsHandle(s, false);
         if (h == null) return new Class[0];
-        String clsName = ((ClassInfo) hg.get(h)).getName();
+        String clsName = ((ClassInfo) graph.get(h)).getName();
         // System.out.println(clsName + ":" + h);
-        HGHandle[] list = parentOfClass(hg, h);
+        HGHandle[] list = parentOfClass(graph, h);
         Set<Class<?>> set = new HashSet<Class<?>>();
         for (int j = 0; j < list.length; j++)
         {
-            String cls = ((PackageInfo) hg.get(list[j])).getFullName() + "."
+            String cls = ((PackageInfo) graph.get(list[j])).getFullName() + "."
                     + clsName;
             try
             {
@@ -428,10 +449,10 @@ public class ClassRepository
         {
             JarFile jarFile = new JarFile(absPath);
             JarInfo info = new JarInfo(absPath, f.lastModified());
-            HGHandle jarHandle = hg.add(info);
+            HGHandle jarHandle = graph.add(info);
             if (lib)
             {
-                hg
+                graph
                         .add(new DocLink(new HGHandle[] { jarHandle,
                                 JAVADOC_HANDLE }));
             }
@@ -458,9 +479,9 @@ public class ClassRepository
                 String simple = classDes
                         .substring(classDes.lastIndexOf('.') + 1);
                 HGHandle clsH = getClsHandle(simple, true);
-                hg.add(new JarLink(new HGHandle[] { jarHandle, clsH }));
+                graph.add(new JarLink(new HGHandle[] { jarHandle, clsH }));
                 if (lastP != null)
-                    hg.add(new ParentOfLink(new HGHandle[] { lastP, clsH }));
+                    graph.add(new ParentOfLink(new HGHandle[] { lastP, clsH }));
             }
             System.out.println("Classes: " + n_cls + "(" + jarFile.size()
                     + ") packs: " + n_pack + " time: "
@@ -475,7 +496,7 @@ public class ClassRepository
 
     public RtDocInfo getJavaDocPath()
     {
-        return (RtDocInfo) hg.get(JAVADOC_HANDLE);
+        return (RtDocInfo) graph.get(JAVADOC_HANDLE);
     }
 
     private static Vector<Set<String>> cache = new Vector<Set<String>>();
@@ -528,18 +549,18 @@ public class ClassRepository
             HGHandle h = getPckHandle(jarHandle, packs[i], fpacks[i], true);
             if (i == 0)
             {
-                hg.add(new ParentOfLink(new HGHandle[] { jarHandle, h }));
+                graph.add(new ParentOfLink(new HGHandle[] { jarHandle, h }));
                 putInCache(fpacks[i], h, i);
                 continue;
             }
             HGHandle prev = getPckHandle(jarHandle, packs[i - 1],
                     fpacks[i - 1], true);
-            IncidenceSet set = hg.getIncidenceSet(prev);
+            IncidenceSet set = graph.getIncidenceSet(prev);
             // System.out.println("contains: " + pathElement + " in " +
             // prevElement + ":" + i);
             if (!set.contains(h))
             {
-                hg.add(new ParentOfLink(new HGHandle[] { prev, h }));
+                graph.add(new ParentOfLink(new HGHandle[] { prev, h }));
             }
             putInCache(fpacks[i], h, i);
         }
@@ -552,7 +573,7 @@ public class ClassRepository
             String fname, boolean search_db)
     {
         PackageInfo info = new PackageInfo(name, fname);
-        HGHandle h = hg.getHandle(info);
+        HGHandle h = graph.getHandle(info);
         if (h == null && search_db)
         {
             HGRandomAccessResult<HGPersistentHandle> res = null;
@@ -562,7 +583,7 @@ public class ClassRepository
                 while (res.hasNext())
                 {
                     HGHandle resH = (HGHandle) res.next();
-                    PackageInfo p = (PackageInfo) hg.get(resH);
+                    PackageInfo p = (PackageInfo) graph.get(resH);
                     if (fname.equals(p.getFullName())) return resH;
                 }
             }
@@ -573,8 +594,8 @@ public class ClassRepository
         }
         if (h == null)
         {
-            h = hg.add(info);
-            hg.add(new JarLink(new HGHandle[] { jarHandle, h }));
+            h = graph.add(info);
+            graph.add(new JarLink(new HGHandle[] { jarHandle, h }));
             // System.out.println("" + n_pack + " Adding package: " + name);
             ++n_pack;
         }
@@ -586,7 +607,7 @@ public class ClassRepository
     private HGHandle getClsHandle(String name, boolean add_in_db)
     {
         ClassInfo info = new ClassInfo(name);
-        HGHandle h = hg.getHandle(info);
+        HGHandle h = graph.getHandle(info);
         if (h == null)
         {
             h = lookup(CLS_INDEX, CLS_NAME_PROP, name);
@@ -594,7 +615,7 @@ public class ClassRepository
         }
         if (h == null && add_in_db)
         {
-            h = hg.add(info);
+            h = graph.add(info);
             // System.out.println("" + n_cls + " Adding class: " + name);
             ++n_cls;
         }
@@ -605,10 +626,10 @@ public class ClassRepository
             String keyValue)
     {
         // how could this can be null, but such an error was reported....
-        HGHandle h = hg.getTypeSystem().getTypeHandle(typeAlias);
+        HGHandle h = graph.getTypeSystem().getTypeHandle(typeAlias);
         if (h == null) return null;
-        HGPersistentHandle typeHandle = hg.getPersistentHandle(h);
-        HGIndex<Object, HGPersistentHandle> index = hg.getIndexManager()
+        HGPersistentHandle typeHandle = graph.getPersistentHandle(h);
+        HGIndex<Object, HGPersistentHandle> index = graph.getIndexManager()
                 .getIndex(
                         new ByPartIndexer(typeHandle,
                                 new String[] { keyProperty }));
@@ -619,9 +640,9 @@ public class ClassRepository
     private HGRandomAccessResult<HGPersistentHandle> lookupAll(
             String typeAlias, String keyProperty, String keyValue)
     {
-        HGPersistentHandle typeHandle = hg.getPersistentHandle(hg
+        HGPersistentHandle typeHandle = graph.getPersistentHandle(graph
                 .getTypeSystem().getTypeHandle(typeAlias));
-        HGIndex<Object, HGPersistentHandle> index = hg.getIndexManager()
+        HGIndex<Object, HGPersistentHandle> index = graph.getIndexManager()
                 .getIndex(
                         new ByPartIndexer(typeHandle,
                                 new String[] { keyProperty }));
@@ -641,26 +662,26 @@ public class ClassRepository
 
     private void createIndexes()
     {
-        HGTypeSystem ts = hg.getTypeSystem();
-        HGIndexManager im = hg.getIndexManager();
-        HGPersistentHandle typeH = hg.getPersistentHandle(ts
+        HGTypeSystem ts = graph.getTypeSystem();
+        HGIndexManager im = graph.getIndexManager();
+        HGPersistentHandle typeH = graph.getPersistentHandle(ts
                 .getTypeHandle(PackageInfo.class));
         // return if already created
-        if (!hg.getTypeSystem().findAliases(typeH).isEmpty()) return;
+        if (!graph.getTypeSystem().findAliases(typeH).isEmpty()) return;
 
         ts.addAlias(typeH, PCK_INDEX);
         im.register(new ByPartIndexer(typeH, new String[] { PCK_NAME_PROP }));
         im.register(new ByPartIndexer(typeH,
                 new String[] { PCK_FULL_NAME_PROP }));
-        typeH = hg.getPersistentHandle(ts.getTypeHandle(ClassInfo.class));
+        typeH = graph.getPersistentHandle(ts.getTypeHandle(ClassInfo.class));
         ts.addAlias(typeH, CLS_INDEX);
         im.register(new ByPartIndexer(typeH, new String[] { CLS_NAME_PROP }));
-        typeH = hg.getPersistentHandle(ts.getTypeHandle(JarInfo.class));
+        typeH = graph.getPersistentHandle(ts.getTypeHandle(JarInfo.class));
         ts.addAlias(typeH, JAR_INDEX);
         im.register(new ByPartIndexer(typeH, new String[] { JAR_PATH_PROP }));
 
-        if (hg.get(JAVADOC_HANDLE) == null)
-            hg.define(JAVADOC_HANDLE, new RtDocInfo(""));
+        if (graph.get(JAVADOC_HANDLE) == null)
+            graph.define(JAVADOC_HANDLE, new RtDocInfo(""));
     }
 
     public synchronized boolean isUpdateInProgress()

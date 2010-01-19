@@ -3,10 +3,14 @@ package seco.notebook.javascript;
 import java.util.LinkedList;
 import java.util.List;
 
+import seco.notebook.AppConfig;
+import seco.notebook.syntax.Formatter;
 import seco.notebook.syntax.Mode;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.CompletionProvider;
 import seco.notebook.syntax.completion.NBParser;
+import seco.notebook.syntax.java.JavaFormatter;
+import seco.notebook.syntax.java.JavaFormatterOptions;
 
 public class JSScriptSupport extends ScriptSupport
 {
@@ -57,6 +61,15 @@ public class JSScriptSupport extends ScriptSupport
         return parser;
     }
     
-    
+    private static Formatter formatter;
+    public Formatter getFormatter()
+    {
+        if(formatter == null){
+            formatter = new JavaFormatter((JavaFormatterOptions)
+                    AppConfig.getInstance().getProperty(
+                            AppConfig.FORMATTER_OPTIONS, new JavaFormatterOptions()));
+        }
+        return formatter;
+    }
 
 }

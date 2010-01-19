@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -21,14 +22,16 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.IdScriptableObject;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.NativeJavaPackage;
+import org.mozilla.javascript.NativeJavaTopPackage;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.ScriptableObject;
 
-import bsh.BshCompletionProvider;
-
 import seco.notebook.NotebookDocument;
 import seco.notebook.javascript.jsr.ExternalScriptable;
+import seco.notebook.storage.ClassRepository;
+import seco.notebook.storage.NamedInfo;
+import seco.notebook.storage.PackageInfo;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.AsyncCompletionQuery;
 import seco.notebook.syntax.completion.AsyncCompletionTask;
@@ -38,7 +41,9 @@ import seco.notebook.syntax.completion.CompletionDocumentation;
 import seco.notebook.syntax.completion.CompletionProvider;
 import seco.notebook.syntax.completion.CompletionResultSet;
 import seco.notebook.syntax.completion.CompletionTask;
+import seco.notebook.syntax.completion.CompletionU;
 import seco.notebook.syntax.completion.JavaDocManager;
+import seco.notebook.syntax.completion.CompletionU.DBPackageInfo;
 import seco.notebook.syntax.java.JavaPaintComponent;
 import seco.notebook.syntax.java.JavaResultItem;
 import seco.notebook.syntax.java.JavaPaintComponent.MethodPaintComponent;
@@ -94,7 +99,7 @@ public class JSCompletionProvider implements CompletionProvider
                 resultSet.finish();
                 return;
             }
-            
+
             Object obj = p.resolveVar(s, offset);
             if (obj == null)
             {
@@ -108,38 +113,53 @@ public class JSCompletionProvider implements CompletionProvider
                 if (BUILDINS.isBuiltInType(name)
                         && !BUILDINS.OBJECT.equals(name)) populateBuiltInObject(
                         resultSet, name);
-                else if (obj instanceof IdScriptableObject)
-                    populateNativeObject(resultSet, (IdScriptableObject) obj);
+                else if (obj instanceof IdScriptableObject) populateNativeObject(
+                        resultSet, (IdScriptableObject) obj);
                 else if (obj instanceof NativeJavaPackage)
-                    ;//TODO
-            }else if(Object.class == obj)
-                populateBuiltInObject(resultSet, BUILDINS.OBJECT);
-            else if(jsEquivalent(obj, resultSet))
-                    ;
-            else {
+                {
+                    NamedInfo[] info = null;
+                    if (s.startsWith("Packages"))
+                        s = (s.length() == 8) ? "" : s.substring(9);
+                    if (s.length() == 0)
+                    {
+                        Set<PackageInfo> set = ClassRepository.getInstance()
+                                .getTopPackages();
+                        info = set.toArray(new NamedInfo[set.size()]);
+                    }
+                    else
+                    {
+                        info = ClassRepository.getInstance().findSubElements(s);
+                    }
+
+                    if (info.length > 0)
+                        CompletionU.populatePackage(resultSet,
+                                new CompletionU.DBPackageInfo(info, s),
+                                queryCaretOffset);
+                }
+            }
+            else if (Object.class == obj) populateBuiltInObject(resultSet,
+                    BUILDINS.OBJECT);
+            else if (jsEquivalent(obj, resultSet)) ;
+            else
+            {
                 Class<?> cls = (Class<?>) obj.getClass();
-                BshCompletionProvider.populateClass(resultSet, 
-                        cls, Modifier.PUBLIC, queryCaretOffset);
+                CompletionU.populateClass(resultSet, cls, Modifier.PUBLIC,
+                        queryCaretOffset);
             }
             queryResult = resultSet;
             resultSet.finish();
         }
-        
+
         private boolean jsEquivalent(Object o, CompletionResultSet resultSet)
         {
             String name = null;
-            if(o instanceof String) 
-               name = BUILDINS.STRING;
-            else if(o instanceof String) 
-                name = BUILDINS.NUM;
-            else if(o instanceof Date)
-                name = BUILDINS.DATE;
-            else if(o instanceof Boolean) 
-                name = BUILDINS.BOOL;
-            //else if(o.getClass().isArray())
-            //    name = BUILDINS.ARRAY;
-            if(name != null)
-                populateBuiltInObject(resultSet, name);
+            if (o instanceof String) name = BUILDINS.STRING;
+            else if (o instanceof String) name = BUILDINS.NUM;
+            else if (o instanceof Date) name = BUILDINS.DATE;
+            else if (o instanceof Boolean) name = BUILDINS.BOOL;
+            // else if(o.getClass().isArray())
+            // name = BUILDINS.ARRAY;
+            if (name != null) populateBuiltInObject(resultSet, name);
             return name != null;
         }
 
@@ -173,7 +193,8 @@ public class JSCompletionProvider implements CompletionProvider
             }
         }
 
-        private void populateThis(CompletionResultSet resultSet, JavaScriptParser p)
+        private void populateThis(CompletionResultSet resultSet,
+                JavaScriptParser p)
         {
             // TODO: add all vars from the RuntimeContext.
             List<JavaResultItem> params = BUILDINS.getThisParams();
@@ -188,10 +209,10 @@ public class JSCompletionProvider implements CompletionProvider
             ExternalScriptable scope = (ExternalScriptable) p.engine
                     .getRuntimeScope(ctx);
             Context.enter();
-//            Bindings b = ctx.getBindings(ScriptContext.ENGINE_SCOPE);
-//            for (String key : b.keySet())
-//            {
-//                Object o = b.get(key);
+            // Bindings b = ctx.getBindings(ScriptContext.ENGINE_SCOPE);
+            // for (String key : b.keySet())
+            // {
+            // Object o = b.get(key);
             for (Object k : scope.getIds())
             {
                 String key = "" + k;
@@ -334,7 +355,8 @@ public class JSCompletionProvider implements CompletionProvider
             // Position oldPos = queryMethodParamsStartPos;
             queryMethodParamsStartPos = null;
             ScriptSupport sup = doc.getScriptSupport(caretOffset);
-            if (sup == null || !(sup.getParser() instanceof JavaScriptParser)) return;
+            if (sup == null || !(sup.getParser() instanceof JavaScriptParser))
+                return;
             JavaScriptParser p = (JavaScriptParser) sup.getParser();
             // TODO:
             if (p.getRootNode() == null)
