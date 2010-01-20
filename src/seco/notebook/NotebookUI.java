@@ -89,6 +89,7 @@ import seco.gui.TopFrame;
 import seco.gui.GUIHelper.CellTreeAction;
 import seco.gui.GUIHelper.ElementTreeAction;
 import seco.gui.GUIHelper.ParseTreeAction;
+import seco.notebook.groovy.GroovyScriptSupport;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.ScriptEngineProvider;
 import seco.notebook.gui.UpdatablePopupMenu;
@@ -99,6 +100,7 @@ import seco.notebook.gui.menu.EnhancedMenu;
 import seco.notebook.gui.menu.GroupingProvider;
 import seco.notebook.gui.menu.NotebookPropsProvider;
 import seco.notebook.html.HTMLEditor;
+import seco.notebook.javafx.JavaFxScriptSupport;
 import seco.notebook.javascript.JSScriptSupport;
 import seco.notebook.jscheme.JSchemeScriptSupport;
 import seco.notebook.ruby.RubyScriptSupport;
@@ -931,6 +933,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             registerScriptSupport(new HTMLScriptSupport(), false);
             registerScriptSupport(new PrologScriptSupport(), false);
             registerScriptSupport(new JSScriptSupport(), false);
+            registerScriptSupport(new GroovyScriptSupport(), false);
+            registerScriptSupport(new JavaFxScriptSupport(), false);
             ThisNiche.graph.define(SCRIPT_SUPPORTS_HANDLE, supports);
         }
         return supports;

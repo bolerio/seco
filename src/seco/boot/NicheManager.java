@@ -228,6 +228,15 @@ public class NicheManager
                 "javascript", 
                 "seco.notebook.javascript.jsr.RhinoScriptEngineFactory",
                 new String[] {}));
+        graph.add(new SEDescriptor(
+                "groovy", 
+                "com.sun.script.groovy.GroovyScriptEngineFactory",
+                new String[] {}));
+        graph.add(new SEDescriptor(
+                "javafx", 
+                "seco.notebook.javafx.jsr.JavaFXScriptEngineFactory",
+                new String[] {}));
+        //com/sun/tools/javafx/script/JavaFXScriptEngineFactory
         graph.add(new SEDescriptor("html", null, new String[0]));    	
     }
     
