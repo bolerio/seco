@@ -23,6 +23,8 @@ import seco.notebook.util.DocumentUtilities;
 
 public abstract class ScriptSupport
 {
+    protected ScriptSupportFactory factory;
+    
 	protected NotebookDocument doc;
 	protected Element el;
 	protected LineManager lineMgr;
@@ -30,20 +32,21 @@ public abstract class ScriptSupport
 	protected TokenMarker tokenMarker;
 	protected NBParser parser;
 
-	//script engine name
-    public abstract String getScriptEngineName();
-    
-	//list of Modes used for text highlighting
-	public abstract List<Mode> getModes();
-
-	//name of the main mode
-	public abstract String getModeName();
+    public ScriptSupport(ScriptSupportFactory factory, Element el)
+    {
+        init(factory, el);
+    }
 
 	//array of supported CompletionProviders
     public abstract CompletionProvider[] getCompletionProviders();
  
     //parser which will be called on every text change
     public abstract NBParser getParser();
+    
+    public ScriptSupportFactory getFactory()
+    {
+        return factory;
+    }
 
 	//formatter 
 	public Formatter getFormatter()
@@ -55,19 +58,20 @@ public abstract class ScriptSupport
 	{
 	}
 
-	public void init(NotebookDocument doc, Element el)
+	public void init(ScriptSupportFactory factory, Element el)
 	{
-		this.doc = doc;
+	    this.factory = factory;
+		this.doc = (NotebookDocument) el.getDocument();
 		this.el = el;
 		lineMgr = new LineManager();
 		lineMgr.contentInserted(0, 0, el.getElementCount(), el.getEndOffset()
 				- el.getStartOffset());
 		chunkCache = new ChunkCache(this);
-		Mode mode = NotebookUI.getMode(getModeName());
+		Mode mode = NotebookUI.getMode(getFactory().getModeName());
 		if(mode != null)
 		   tokenMarker = mode.getTokenMarker();
 		else
-		    System.err.println("Unable to find mode: " + getModeName());
+		    System.err.println("Unable to find mode: " + getFactory().getModeName());
 		notifyParser();
 	}
 

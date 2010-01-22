@@ -85,14 +85,14 @@ public class SyntaxUtilities
 	{
 		//System.out.println("getSyntaxStyles:" + scriptSupport);
 		return (ArrayList<SyntaxStyleBean>) 
-		AppConfig.getInstance().getProperty(scriptSupport.getScriptEngineName() + SyntaxUtilities.SYNTAX_STYLES,
+		AppConfig.getInstance().getProperty(scriptSupport.getFactory().getEngineName() + SyntaxUtilities.SYNTAX_STYLES,
 				getDefaultSyntaxStyles());
 	}
 	
 	public static void resetSyntaxStyles(ScriptSupport scriptSupport)
 	{
 		AppConfig.getInstance().setProperty(
-				scriptSupport.getScriptEngineName() + SyntaxUtilities.SYNTAX_STYLES,
+				scriptSupport.getFactory().getEngineName() + SyntaxUtilities.SYNTAX_STYLES,
 				SyntaxUtilities.getDefaultSyntaxStyles());
 	}
 	public static ArrayList<SyntaxStyleBean> getDefaultSyntaxStyles()

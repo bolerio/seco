@@ -64,6 +64,7 @@ import seco.events.handlers.AttributeChangeHandler;
 import seco.events.handlers.CellGroupChangeHandler;
 import seco.notebook.html.HTMLEditor;
 import seco.notebook.syntax.ScriptSupport;
+import seco.notebook.syntax.ScriptSupportFactory;
 import seco.notebook.syntax.SyntaxStyle;
 import seco.notebook.syntax.SyntaxStyleBean;
 import seco.notebook.syntax.SyntaxUtilities;
@@ -342,7 +343,6 @@ public class NotebookDocument extends DefaultStyledDocument
         String name = DocUtil.getEngineName(this, cell);
         el = getLowerElement(el, inputCellBox);
         Class<?> cls = NotebookUI.getScriptSupportClassesMap().get(name);
-        // MutableAttributeSet attrs = (MutableAttributeSet) el.getAttributes();
         if (cls == null)
         {
             if (force) removeAttribute(el, ATTR_SCRIPT_SUPPORT);
@@ -351,7 +351,8 @@ public class NotebookDocument extends DefaultStyledDocument
         sup = null;
         try
         {
-            sup = (ScriptSupport) cls.newInstance();
+            ScriptSupportFactory factory = (ScriptSupportFactory) cls.newInstance();
+            sup = factory.createScriptSupport(el.getElement(0));
         }
         catch (Exception ex)
         {
@@ -365,7 +366,6 @@ public class NotebookDocument extends DefaultStyledDocument
 
         addAttribute(el, ATTR_SCRIPT_SUPPORT, sup);
 
-        sup.init(this, el.getElement(0));
     }
 
     public void addAttribute(Element el, String name, Object value)
@@ -402,7 +402,7 @@ public class NotebookDocument extends DefaultStyledDocument
         if (sup == null) return;
         el = getLowerElement(el, inputCellBox);
         if (el == null) return;
-        sup.init(this, el.getElement(0));
+        sup = sup.getFactory().createScriptSupport(el.getElement(0));
     }
 
     public ScriptSupport getScriptSupport(int offset)
@@ -1425,7 +1425,7 @@ public class NotebookDocument extends DefaultStyledDocument
     public SyntaxStyle[] getSyntaxStyles(ScriptSupport support)
     {
         SyntaxStyle[] styles = syntaxStyleMap
-                .get(support.getScriptEngineName());
+                .get(support.getFactory().getEngineName());
         if (styles == null)
         {
             ArrayList<SyntaxStyleBean> main = SyntaxUtilities
@@ -1438,7 +1438,7 @@ public class NotebookDocument extends DefaultStyledDocument
                 SyntaxStyle s = main.get(i).makeSyntaxStyle(f);
                 styles[i] = s;
             }
-            syntaxStyleMap.put(support.getScriptEngineName(), styles);
+            syntaxStyleMap.put(support.getFactory().getEngineName(), styles);
         }
         return styles;
     }

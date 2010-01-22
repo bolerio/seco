@@ -43,7 +43,7 @@ public class SyntaxHiliteOptionPane extends AbstractOptionPane
 
 	public SyntaxHiliteOptionPane(ScriptSupport scriptSupport)
 	{
-		super("Syntax Styles For " + scriptSupport.getScriptEngineName());
+		super("Syntax Styles For " + scriptSupport.getFactory().getEngineName());
 		support = scriptSupport;
 	}
 

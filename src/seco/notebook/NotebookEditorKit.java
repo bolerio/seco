@@ -49,6 +49,7 @@ import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.JavaDocPanel;
 import seco.notebook.gui.NotifyDescriptor;
 import seco.notebook.gui.RuntimeContextPanel;
+import seco.notebook.gui.ShortcutPanel;
 import seco.notebook.gui.menu.CellLangProvider;
 import seco.notebook.html.HTMLUtils;
 import seco.notebook.storage.ClassRepository;
@@ -104,6 +105,7 @@ public class NotebookEditorKit extends StyledEditorKit
     public static final String resetCellNumAction = "Normalize Cell Numbering";
     public static final String javaDocManagerAction = "JavaDoc Manager";
     public static final String ctxInspectorAction = "RuntimeContext Inspector";
+    public static final String shortcutInspectorAction = "KeyStroke Inspector";
     public static final String replaceAction = "Replace...";
     public static final String findAction = "Find...";
     public static final String mergeCellsAction = "Merge Input Cells";
@@ -123,7 +125,8 @@ public class NotebookEditorKit extends StyledEditorKit
             new SelectCellHandleAction(), new ImportAction(), new HTMLAction(),
             new ShowInputTypePopupAction(), new ClearEngineContextAction(),
             new ResetCellNumAction(), new JavaDocManagerAction(),
-            new CtxInspectorAction(), new FindReplaceAction(true),
+            new CtxInspectorAction(),  new ShortcutInspectorAction(),
+            new FindReplaceAction(true),
             new FindReplaceAction(false), new RemoveTabAction(),
             new MergeCellsAction(), new SelectWordAction(),
             new SelectLineAction(), new SelectAllAction(), 
@@ -874,7 +877,7 @@ public class NotebookEditorKit extends StyledEditorKit
         }
     }
 
-    static final class CtxInspectorAction extends BaseAction
+    public static final class CtxInspectorAction extends BaseAction
     {
         public CtxInspectorAction()
         {
@@ -890,6 +893,24 @@ public class NotebookEditorKit extends StyledEditorKit
             dialog.setVisible(true);
         }
     }
+    
+    public static final class ShortcutInspectorAction extends AbstractAction
+    {
+        public ShortcutInspectorAction()
+        {
+            super(shortcutInspectorAction);
+        }
+
+        public void actionPerformed(ActionEvent e) 
+        {
+            JDialog dialog = new JDialog(TopFrame.getInstance(),
+                    shortcutInspectorAction);
+            dialog.setSize(500, 500);
+            dialog.add(new ShortcutPanel());
+            dialog.setVisible(true);
+        }
+    }
+
 
     public static class FindReplaceAction extends BaseAction
     {

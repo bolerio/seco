@@ -222,11 +222,11 @@ public class NicheManager
                 new String[] { "jsint", "jscheme", "jscheme.scriptingapi" }));
         graph.add(new SEDescriptor(
         		"jruby", 
-        		"seco.notebook.ruby.JRubyScriptEngineFactory",
+        		"seco.langs.ruby.JRubyScriptEngineFactory",
                 new String[] {}));
         graph.add(new SEDescriptor(
                 "javascript", 
-                "seco.notebook.javascript.jsr.RhinoScriptEngineFactory",
+                "seco.langs.javascript.jsr.RhinoScriptEngineFactory",
                 new String[] {}));
         graph.add(new SEDescriptor(
                 "groovy", 
@@ -234,7 +234,7 @@ public class NicheManager
                 new String[] {}));
         graph.add(new SEDescriptor(
                 "javafx", 
-                "seco.notebook.javafx.jsr.JavaFXScriptEngineFactory",
+                "seco.langs.javafx.jsr.JavaFXScriptEngineFactory",
                 new String[] {}));
         //com/sun/tools/javafx/script/JavaFXScriptEngineFactory
         graph.add(new SEDescriptor("html", null, new String[0]));    	

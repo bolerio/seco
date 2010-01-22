@@ -862,12 +862,9 @@ public class GUIHelper
     {
         JMenu menu = new NBMenu("Format");
         menu.setMnemonic('o');
-        // NOT USED
-        // final JCheckBoxMenuItem m = new JCheckBoxMenuItem("Cell Numbers");
-        // m.addItemListener(new CellNumItemListener());
-        // menu.add(m);
-        // menu.addSeparator();
+        ActionManager man = ActionManager.getInstance();
         menu.add(new EnhancedMenu("Visual Properties", new VisPropsProvider()));
+        menu.add(new GlobMenuItem(man.getAction(NotebookEditorKit.shortcutInspectorAction)));
         Action act = kit.getActionByName(NotebookEditorKit.formatAction);
         act.putValue(Action.NAME, "Format");
         JMenuItem mi = new JMenuItem(act);

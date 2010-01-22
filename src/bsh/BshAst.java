@@ -62,7 +62,7 @@ public class BshAst extends NBParser
 			if(implicitExecutionOn || s.indexOf("(")< 0)
 			{
 			   Object o = support.getDocument().getEvaluationContext().eval(
-						   support.getScriptEngineName(), s);
+						   support.getFactory().getEngineName(), s);
 			   if (o!= null) return o;
 			}
 			
@@ -174,7 +174,7 @@ public class BshAst extends NBParser
 		try
 		{
 			return ((Boolean) support.getDocument().getEvaluationContext().eval(
-						   support.getScriptEngineName(), ACCESSIBILITY_CHECK)).booleanValue();
+						   support.getFactory().getEngineName(), ACCESSIBILITY_CHECK)).booleanValue();
 		}
 		catch (Exception err)
 		{
@@ -231,7 +231,7 @@ public class BshAst extends NBParser
 						
 					if(implicitExecutionOn){
 					ScriptEngine eng = support.getDocument().getEvaluationContext().getEngine(
-							support.getScriptEngineName());
+							support.getFactory().getEngineName());
 					ScriptContext scriptContext = eng.getContext();
 					r = makeReader(seg, offset, length);
 					//r.reset();

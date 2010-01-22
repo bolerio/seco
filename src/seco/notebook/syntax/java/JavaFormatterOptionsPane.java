@@ -48,11 +48,6 @@ public class JavaFormatterOptionsPane extends PropertySheetPanel implements Opti
 	public void init()
 	{
 		setPreferredSize(new Dimension(250,200));
-		//setLayout(LookAndFeelTweaks.createVerticalPercentLayout());
-		//JTextArea message = new JTextArea();
-		//message.setText("Java Formatter Properties");
-		//LookAndFeelTweaks.makeMultilineLabel(message);
-		//add(message);
 		setDescriptionVisible(true);
 		setSortingCategories(true);
 		setSortingProperties(true);

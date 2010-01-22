@@ -108,7 +108,7 @@ public class CommonActions
         ThisNiche.graph.remove(ContextMenuHandler.GLOBAL_ACTION_SET_HANDLE, true);
         ThisNiche.graph.remove(ContextMenuHandler.NODE_ACTION_SET_HANDLE, true);
         ThisNiche.graph.remove(ActionManager.HANDLE, true);
-        
+                
         GUIHelper.makeTopCellGroup(ThisNiche.graph);
         v.bind(group);
     }

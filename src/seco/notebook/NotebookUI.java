@@ -25,15 +25,12 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.InputStream;
 import java.util.Collection;
@@ -42,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
@@ -66,7 +62,6 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.plaf.UIResource;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
-import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 import javax.swing.text.EditorKit;
@@ -89,7 +84,12 @@ import seco.gui.TopFrame;
 import seco.gui.GUIHelper.CellTreeAction;
 import seco.gui.GUIHelper.ElementTreeAction;
 import seco.gui.GUIHelper.ParseTreeAction;
-import seco.notebook.groovy.GroovyScriptSupport;
+import seco.langs.groovy.GroovyScriptSupportFactory;
+import seco.langs.javafx.JavaFxScriptSupportFactory;
+import seco.langs.javascript.JSScriptSupportFactory;
+import seco.langs.jscheme.JSchemeScriptSupportFactory;
+import seco.langs.prolog.PrologScriptSupportFactory;
+import seco.langs.ruby.RubyScriptSupportFactory;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.ScriptEngineProvider;
 import seco.notebook.gui.UpdatablePopupMenu;
@@ -100,23 +100,19 @@ import seco.notebook.gui.menu.EnhancedMenu;
 import seco.notebook.gui.menu.GroupingProvider;
 import seco.notebook.gui.menu.NotebookPropsProvider;
 import seco.notebook.html.HTMLEditor;
-import seco.notebook.javafx.JavaFxScriptSupport;
-import seco.notebook.javascript.JSScriptSupport;
-import seco.notebook.jscheme.JSchemeScriptSupport;
-import seco.notebook.ruby.RubyScriptSupport;
 import seco.notebook.syntax.Mode;
 import seco.notebook.syntax.ScriptSupport;
+import seco.notebook.syntax.ScriptSupportFactory;
 import seco.notebook.syntax.TokenMarker;
 import seco.notebook.syntax.XModeHandler;
 import seco.notebook.view.HtmlView;
-import seco.prolog.PrologScriptSupport;
 import seco.rtenv.EvaluationContext;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import sun.awt.AppContext;
-import bsh.BshScriptSupport;
+import bsh.BshScriptSupportFactory;
 
 import com.microstar.xml.XmlException;
 import com.microstar.xml.XmlParser;
@@ -896,17 +892,17 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         return array;
     }
 
-    public static void registerScriptSupport(ScriptSupport sup,
+    public static void registerScriptSupport(ScriptSupportFactory sup,
             boolean permanently)
     {
         if (sup == null)
             throw new NullPointerException(
                     "Attempt to register null ScriptSupport");
-        if (getScriptSupportClassesMap().containsKey(sup.getScriptEngineName()))
+        if (getScriptSupportClassesMap().containsKey(sup.getEngineName()))
             return;
         for (Mode m : sup.getModes())
             if (getMode(m.getName()) == null) addMode(m);
-        getScriptSupportClassesMap().put(sup.getScriptEngineName(),
+        getScriptSupportClassesMap().put(sup.getEngineName(),
                 sup.getClass());
         if (permanently) ThisNiche.graph.update(getScriptSupportClassesMap());
     }
@@ -922,19 +918,27 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                     .get(SCRIPT_SUPPORTS_HANDLE);
             if (supports != null)
             {
-                if (modes == null) init_modes();
-                return supports;
+                //legacy niche opened 
+                if(!supports.get("beanshell").isAssignableFrom(ScriptSupportFactory.class))
+                {
+                   ThisNiche.graph.remove(NotebookUI.SCRIPT_SUPPORTS_HANDLE);
+                   supports = null;
+                }else
+                {
+                   if (modes == null) init_modes();
+                     return supports;
+                 }
             }
             supports = new HashMap<String, Class<?>>();
             modes = new Vector<Mode>();
-            registerScriptSupport(new BshScriptSupport(), false);
-            registerScriptSupport(new JSchemeScriptSupport(), false);
-            registerScriptSupport(new RubyScriptSupport(), false);
-            registerScriptSupport(new HTMLScriptSupport(), false);
-            registerScriptSupport(new PrologScriptSupport(), false);
-            registerScriptSupport(new JSScriptSupport(), false);
-            registerScriptSupport(new GroovyScriptSupport(), false);
-            registerScriptSupport(new JavaFxScriptSupport(), false);
+            registerScriptSupport(new BshScriptSupportFactory(), false);
+            registerScriptSupport(new JSchemeScriptSupportFactory(), false);
+            registerScriptSupport(new RubyScriptSupportFactory(), false);
+            registerScriptSupport(new HTMLScriptSupportFactory(), false);
+            registerScriptSupport(new PrologScriptSupportFactory(), false);
+            registerScriptSupport(new JSScriptSupportFactory(), false);
+            registerScriptSupport(new GroovyScriptSupportFactory(), false);
+            registerScriptSupport(new JavaFxScriptSupportFactory(), false);
             ThisNiche.graph.define(SCRIPT_SUPPORTS_HANDLE, supports);
         }
         return supports;
@@ -955,7 +959,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 System.err.println("Unable to create ScriptSupport for: "
                         + c.getName());
             }
-            if (sup != null) for (Mode m : sup.getModes())
+            if (sup != null) for (Mode m : sup.getFactory().getModes())
                 if (getMode(m.getName()) == null) addMode(m);
         }
     }

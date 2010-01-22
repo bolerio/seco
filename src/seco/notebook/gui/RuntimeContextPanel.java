@@ -19,7 +19,8 @@ import com.l2fprod.common.propertysheet.PropertySheetTableModel;
 
 public class RuntimeContextPanel extends PropertySheetPanel
 {
-	private NotebookUI editor;
+	private static final long serialVersionUID = 3366217098891834776L;
+    private NotebookUI editor;
 	public RuntimeContextPanel(NotebookUI editor){
 		this.editor = editor;
 		init();
@@ -44,8 +45,8 @@ public class RuntimeContextPanel extends PropertySheetPanel
 	
 	class MyTableModel extends PropertySheetTableModel
 	{
-
-		private ArrayList<DefaultProperty> data;
+		private static final long serialVersionUID = 909365731401215416L;
+        private ArrayList<DefaultProperty> data;
 		public MyTableModel(final ArrayList<DefaultProperty> data){
 			this.data = data;
 			setProperties(data.toArray(new DefaultProperty[data.size()]));
@@ -64,7 +65,8 @@ public class RuntimeContextPanel extends PropertySheetPanel
 	
 	private static class MyProperty extends DefaultProperty
 	{
-		private String key;
+		private static final long serialVersionUID = 7256768642770306541L;
+        private String key;
 		private Object val;
 		public MyProperty(String key, Object val)
 		{
@@ -95,7 +97,7 @@ public class RuntimeContextPanel extends PropertySheetPanel
 		} 
 
 		@Override
-		public Class getType()
+		public Class<?> getType()
 		{
 			return (val != null) ? val.getClass() : null;
 		}

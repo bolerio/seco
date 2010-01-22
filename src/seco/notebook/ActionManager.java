@@ -172,6 +172,9 @@ public class ActionManager
                 KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK),
                 false);
 
+        //Format
+        putAction(kit.getActionByName(NotebookEditorKit.shortcutInspectorAction),
+                false);
         // Tools
         putAction(kit.getActionByName(NotebookEditorKit.evalAction), false);
         putAction(kit.getActionByName(NotebookEditorKit.mergeCellsAction),
