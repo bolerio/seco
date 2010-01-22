@@ -1,6 +1,4 @@
-package seco.langs.javafx;
-
-//package com.sun.tools.javafx.script;
+package seco.langs.javafx.jsr;
 
 import java.util.*;
 import javax.script.ScriptEngine;
@@ -8,12 +6,24 @@ import javax.script.ScriptEngineFactory;
 
 import com.sun.tools.javafx.script.JavaFXScriptEngineImpl;
 
-// Referenced classes of package com.sun.tools.javafx.script:
-//            JavaFXScriptEngineImpl
-
 public class JavaFXScriptEngineFactory
     implements ScriptEngineFactory
 {
+    private static List<String> names;
+    private static List<String> extensions;
+    private static List<String> mimeTypes;
+
+    static 
+    {
+        names = new ArrayList<String>(1);
+        names.add("fx");
+        extensions = Collections.unmodifiableList(names);
+        names.add("javafx");
+        names = Collections.unmodifiableList(names);
+        mimeTypes = new ArrayList<String>(0);
+        mimeTypes.add("application/x-javafx-source");
+        mimeTypes = Collections.unmodifiableList(mimeTypes);
+    }
 
     public JavaFXScriptEngineFactory()
     {
@@ -29,7 +39,7 @@ public class JavaFXScriptEngineFactory
         return "1.0";
     }
 
-    public List getExtensions()
+    public List<String> getExtensions()
     {
         return extensions;
     }
@@ -63,12 +73,12 @@ public class JavaFXScriptEngineFactory
         return buf.toString();
     }
 
-    public List getMimeTypes()
+    public List<String> getMimeTypes()
     {
         return mimeTypes;
     }
 
-    public List getNames()
+    public List<String> getNames()
     {
         return names;
     }
@@ -137,21 +147,5 @@ public class JavaFXScriptEngineFactory
         //engine.setFactory(this);
         return engine;
     }
-
-    private static long nextClassNum = 0L;
-    private static List names;
-    private static List extensions;
-    private static List mimeTypes;
-
-    static 
-    {
-        names = new ArrayList(1);
-        names.add("fx");
-        extensions = Collections.unmodifiableList(names);
-        names.add("javafx");
-        names = Collections.unmodifiableList(names);
-        mimeTypes = new ArrayList(0);
-        mimeTypes.add("application/x-javafx-source");
-        mimeTypes = Collections.unmodifiableList(mimeTypes);
-    }
+   
  }

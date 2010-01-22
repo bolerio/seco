@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.text.Element;
-
-import seco.langs.javafx.jsr.JavaFxScriptSupport;
 import seco.notebook.syntax.Mode;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.ScriptSupportFactory;
