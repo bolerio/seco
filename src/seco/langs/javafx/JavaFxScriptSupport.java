@@ -1,4 +1,4 @@
-package seco.langs.javafx.jsr;
+package seco.langs.javafx;
 
 import javax.swing.text.Element;
 
