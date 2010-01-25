@@ -230,7 +230,7 @@ public class NicheManager
                 new String[] {}));
         graph.add(new SEDescriptor(
                 "groovy", 
-                "com.sun.script.groovy.GroovyScriptEngineFactory",
+                "seco.langs.groovy.jsr.GroovyScriptEngineFactory",
                 new String[] {}));
         graph.add(new SEDescriptor(
                 "javafx", 

@@ -860,7 +860,7 @@ public abstract class JavaResultItem implements CompletionItem
             }
         }
 
-        List<String> createParamsList()
+        protected List<String> createParamsList()
         {
             List<String> ret = new ArrayList<String>();
             for (Iterator<ParamStr> it = params.iterator(); it.hasNext();)

@@ -10,9 +10,10 @@ import org.mozilla.javascript.NativeFunction;
 
 import seco.langs.javascript.JSCompletionProvider.JSMethod;
 import seco.langs.javascript.JSCompletionProvider.JSProperty;
+import seco.langs.javascript.JSCompletionProvider.JSVarArgMethod;
 import seco.notebook.syntax.java.JavaResultItem;
 
-public class BUILDINS
+public class BuiltIns
 {
     public static final String DATE = "Date";
     public static final String REG_EXP = "RegExp";
@@ -21,6 +22,7 @@ public class BUILDINS
     public static final String ARRAY = "Array";
     public static final String NUM = "Number";
     public static final String STRING = "String";
+    public static final String MATH = "Math";
     
     private static final String VOID = "void";
  // private static final String FUNCTION = "Function";
@@ -55,6 +57,7 @@ public class BUILDINS
         {
             objectsMap = new HashMap<String, List<JavaResultItem>>();
             objectsMap.put(DATE, date());
+            objectsMap.put(MATH, math());
             objectsMap.put(STRING, string());
             objectsMap.put(ARRAY, array());
             objectsMap.put(BOOL, bool());
@@ -266,6 +269,41 @@ public class BUILDINS
         params.add(PROP_TO_STRING);
         params.add(PROP_VALUE_OF);
 
+        return params;
+    }
+    
+    private static List<JavaResultItem> math()
+    {
+        List<JavaResultItem> params = new ArrayList<JavaResultItem>();
+        params.add(new JSProperty("E", NUM, Modifier.STATIC));
+        params.add(new JSProperty("LN2", NUM, Modifier.STATIC));
+        params.add(new JSProperty("LN10", NUM, Modifier.STATIC));
+        params.add(new JSProperty("LOG2E", NUM, Modifier.STATIC));
+        params.add(new JSProperty("LOG10E", NUM, Modifier.STATIC));
+        params.add(new JSProperty("PI", NUM, Modifier.STATIC));
+        params.add(new JSProperty("SQRT1_2", NUM, Modifier.STATIC));
+        params.add(new JSProperty("SQRT2", NUM, Modifier.STATIC));
+        
+        params.add(new JSMethod("abs", NUM, ARR_NUM,   new String[] { "x" }, Modifier.STATIC));
+        params.add(new JSMethod("acos", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
+        params.add(new JSMethod("asin", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
+        params.add(new JSMethod("atan", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
+        params.add(new JSMethod("atan2", NUM, new String[]{NUM, NUM},  new String[] { "y", "x" }, Modifier.STATIC));
+        params.add(new JSMethod("ceil", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
+        params.add(new JSMethod("cos", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
+        params.add(new JSMethod("exp", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
+        params.add(new JSMethod("floor", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
+        params.add(new JSMethod("log", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
+        
+        params.add(new JSVarArgMethod("max", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
+        params.add(new JSVarArgMethod("min", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
+        params.add(new JSMethod("pow", NUM, new String[]{NUM, NUM},  new String[] { "x", "y" }, Modifier.STATIC));
+        params.add(new JSMethod("random", NUM, Modifier.STATIC));
+        params.add(new JSMethod("round", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
+        params.add(new JSMethod("sin", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
+        params.add(new JSMethod("sqrt", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
+        params.add(new JSMethod("tan", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
+        
         return params;
     }
     

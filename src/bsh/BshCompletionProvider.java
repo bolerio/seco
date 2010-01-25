@@ -35,7 +35,6 @@ import seco.notebook.syntax.completion.CompletionTask;
 import seco.notebook.syntax.completion.CompletionU;
 import seco.notebook.syntax.completion.JavaDocManager;
 import seco.notebook.syntax.completion.MethodParamsTipPaintComponent;
-import seco.notebook.syntax.completion.CompletionU.DBPackageInfo;
 import seco.notebook.syntax.java.JavaResultItem;
 import seco.notebook.util.DocumentUtilities;
 
@@ -105,9 +104,7 @@ public class BshCompletionProvider implements CompletionProvider
 				int mod = Modifier.PUBLIC;
 				if (cls.getName().equals(ClassIdentifier.class.getName()))
 				{
-					Method method = obj.getClass().getMethod("getTargetClass",
-							(Class[]) null);
-					cls = (Class<?>) method.invoke(obj, (Object[]) null);
+					cls = BshAst.getClsFromClassIdentifier(obj);
 					mod = Modifier.STATIC;
 				}
 				if (p.isPrivateAccessAllowed()) mod |= Modifier.PRIVATE;

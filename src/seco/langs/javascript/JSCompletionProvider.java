@@ -106,8 +106,8 @@ public class JSCompletionProvider implements CompletionProvider
             if (obj instanceof ScriptableObject)
             {
                 String name = ((ScriptableObject) obj).getClassName();
-                if (BUILDINS.isBuiltInType(name)
-                        && !BUILDINS.OBJECT.equals(name)) populateBuiltInObject(
+                if (BuiltIns.isBuiltInType(name)
+                        && !BuiltIns.OBJECT.equals(name)) populateBuiltInObject(
                         resultSet, name);
                 else if (obj instanceof IdScriptableObject) populateNativeObject(
                         resultSet, (IdScriptableObject) obj);
@@ -134,7 +134,7 @@ public class JSCompletionProvider implements CompletionProvider
                 }
             }
             else if (Object.class == obj) populateBuiltInObject(resultSet,
-                    BUILDINS.OBJECT);
+                    BuiltIns.OBJECT);
             else if (jsEquivalent(obj, resultSet)) ;
             else
             {
@@ -149,10 +149,10 @@ public class JSCompletionProvider implements CompletionProvider
         private boolean jsEquivalent(Object o, CompletionResultSet resultSet)
         {
             String name = null;
-            if (o instanceof String) name = BUILDINS.STRING;
-            else if (o instanceof String) name = BUILDINS.NUM;
-            else if (o instanceof Date) name = BUILDINS.DATE;
-            else if (o instanceof Boolean) name = BUILDINS.BOOL;
+            if (o instanceof String) name = BuiltIns.STRING;
+            else if (o instanceof String) name = BuiltIns.NUM;
+            else if (o instanceof Date) name = BuiltIns.DATE;
+            else if (o instanceof Boolean) name = BuiltIns.BOOL;
             // else if(o.getClass().isArray())
             // name = BUILDINS.ARRAY;
             if (name != null) populateBuiltInObject(resultSet, name);
@@ -162,7 +162,7 @@ public class JSCompletionProvider implements CompletionProvider
         private void populateNativeObject(CompletionResultSet resultSet,
                 IdScriptableObject obj)
         {
-            for (JavaResultItem item : BUILDINS.getParams(BUILDINS.OBJECT))
+            for (JavaResultItem item : BuiltIns.getParams(BuiltIns.OBJECT))
             {
                 item.setSubstituteOffset(queryCaretOffset);
                 resultSet.addItem(item);
@@ -177,7 +177,7 @@ public class JSCompletionProvider implements CompletionProvider
         private void populateBuiltInObject(CompletionResultSet resultSet,
                 String class_name)
         {
-            List<JavaResultItem> params = BUILDINS.getParams(class_name);
+            List<JavaResultItem> params = BuiltIns.getParams(class_name);
             if (params != null)
             {
                 for (JavaResultItem item : params)
@@ -193,7 +193,7 @@ public class JSCompletionProvider implements CompletionProvider
                 JavaScriptParser p)
         {
             // TODO: add all vars from the RuntimeContext.
-            List<JavaResultItem> params = BUILDINS.getThisParams();
+            List<JavaResultItem> params = BuiltIns.getThisParams();
 
             for (JavaResultItem item : params)
             {
@@ -213,7 +213,7 @@ public class JSCompletionProvider implements CompletionProvider
             {
                 String key = "" + k;
                 Object o = scope.get(key, scope.getPrototype());
-                if (o instanceof NativeFunction) resultSet.addItem(BUILDINS
+                if (o instanceof NativeFunction) resultSet.addItem(BuiltIns
                         .make_func(key, (NativeFunction) o));
                 else
                     resultSet.addItem(new JSProperty(key, JMIUtils.getTypeName(
@@ -433,8 +433,6 @@ public class JSCompletionProvider implements CompletionProvider
 
     static class JSMethod extends JavaResultItem.MethodResultItem
     {
-        private static JavaPaintComponent.MethodPaintComponent mtdComponent = null;
-
         public JSMethod(String mtdName, String type)
         {
             super(mtdName, type);
@@ -466,20 +464,6 @@ public class JSCompletionProvider implements CompletionProvider
             return true;
         }
 
-        public Component getPaintComponent(boolean isSelected)
-        {
-            if (mtdComponent == null)
-                mtdComponent = new MethodPaintComponent();
-
-            mtdComponent.setFeatureName(getName());
-            mtdComponent.setModifiers(getModifiers());
-            mtdComponent.setTypeName(getTypeName());
-            mtdComponent.setTypeColor(getTypeColor());
-            mtdComponent.setParams(getParams());
-            // mtdComponent.setExceptions(getExceptions());
-            return mtdComponent;
-        }
-
         void populateParams(String[] prms, String names[])
         {
             for (int i = 0; i < prms.length; i++)
@@ -488,6 +472,34 @@ public class JSCompletionProvider implements CompletionProvider
         }
     }
 
+    static class JSVarArgMethod extends JavaResultItem.MethodResultItem
+    {
+        public JSVarArgMethod(String mtdName, String type, int modifiers)
+        {
+            super(mtdName, type);
+            this.modifiers = modifiers;
+        }
+
+        public JSVarArgMethod(String mtdName, String type, String[] types,
+                String[] names, int modifiers)
+        {
+            super(mtdName, type);
+            this.modifiers = modifiers;
+            populateParams(types, names);
+        }
+
+        protected boolean isAddParams()
+        {
+            return true;
+        }
+
+        void populateParams(String[] prms, String names[])
+        {
+            for (int i = 0; i < prms.length; i++)
+                params.add(new ParamStr(prms[i], prms[i], names[i], true,
+                        getTypeColor(prms[i])));
+        }
+    }
     static class JSProperty extends JavaResultItem.FieldResultItem
     {
 
@@ -500,7 +512,6 @@ public class JSCompletionProvider implements CompletionProvider
         {
             super(name, type, modifiers);
         }
-
     }
 
 }
