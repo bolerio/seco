@@ -48,7 +48,7 @@ public class GroovyScriptEngine
     private static boolean DEBUG = false;
 
     // script-string-to-generated Class map
-    private Map<String, Class> classMap;
+    private Map<String, Class<?>> classMap;
     // global closures map - this is used to simulate a single
     // global functions namespace 
     private Map<String, Closure> globalClosures;
@@ -65,7 +65,7 @@ public class GroovyScriptEngine
     }
     
     public GroovyScriptEngine() {    
-        classMap = Collections.synchronizedMap(new HashMap<String, Class>());
+        classMap = Collections.synchronizedMap(new HashMap<String, Class<?>>());
         globalClosures = Collections.synchronizedMap(new HashMap<String, Closure>());
         loader = new GroovyClassLoader(getParentLoader(),
                                        new CompilerConfiguration());
@@ -149,7 +149,7 @@ public class GroovyScriptEngine
     }
 
     // package-privates
-    Object eval(Class scriptClass, final ScriptContext ctx) throws ScriptException {
+    Object eval(Class<?> scriptClass, final ScriptContext ctx) throws ScriptException {
         //add context to bindings
         ctx.setAttribute("context", ctx, ScriptContext.GLOBAL_SCOPE/*ENGINE_SCOPE*/);
         
@@ -247,17 +247,17 @@ public class GroovyScriptEngine
         }
     }
 
-    Class getScriptClass(String script) 
+    Class<?> getScriptClass(String script) 
                          throws SyntaxException, 
                                 CompilationFailedException, 
                                 IOException {
-        Class clazz = classMap.get(script);
+        Class<?> clazz = classMap.get(script);
         if (clazz != null) {
             return clazz;
         }
        
-        InputStream stream = new ByteArrayInputStream(script.getBytes()); 
-        clazz = loader.parseClass(stream, generateScriptName());
+       /// InputStream stream = new ByteArrayInputStream(script.getBytes()); 
+        clazz = loader.parseClass(script, generateScriptName());
         classMap.put(script, clazz);
         return clazz;
     }
@@ -316,7 +316,7 @@ public class GroovyScriptEngine
         }
         return (T) Proxy.newProxyInstance(
             clazz.getClassLoader(),
-            new Class[] { clazz },
+            new Class<?>[] { clazz },
             new InvocationHandler() {
                 public Object invoke(Object proxy, Method m, Object[] args)
                                      throws Throwable {
@@ -331,7 +331,7 @@ public class GroovyScriptEngine
         // check whether thread context loader can "see" Groovy Script class
         ClassLoader ctxtLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Class c = ctxtLoader.loadClass("org.codehaus.groovy.Script");
+            Class<?> c = ctxtLoader.loadClass("org.codehaus.groovy.Script");
             if (c == Script.class) {
                 return ctxtLoader;
             }

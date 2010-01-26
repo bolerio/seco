@@ -47,11 +47,9 @@ public abstract class NBParser
 		up_to_date = false;
 		if(!scanning){
 			if(t!= null) t.cancel();
+			if(getParserRunnable() != null)
 		    t = SCANNING_RP.post(getParserRunnable(), 0, Thread.MIN_PRIORITY);
 		}
-		//if(last_f!=null)
-		//	last_f.cancel(true);
-		//last_f = executor.submit(getParserRunnable());
 	}
 	
 	//TODO: for testing purposes, remove later

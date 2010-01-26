@@ -336,11 +336,12 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         if (el == null) return;
         ScriptSupport sup = getScriptSupport(el.getStartOffset());
-        if (sup != null && !force) return;
         CellGroupMember nb = getNBElement(el);
         if (!(nb instanceof Cell)) return;
         Cell cell = (Cell) nb;
         String name = DocUtil.getEngineName(this, cell);
+        if (sup != null && sup.getFactory().getEngineName().equals(name)
+                && !force) return;
         el = getLowerElement(el, inputCellBox);
         Class<?> cls = NotebookUI.getScriptSupportClassesMap().get(name);
         if (cls == null)
@@ -1283,6 +1284,7 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         CellGroup book = (CellGroup) ThisNiche.graph.get(bookH);
         CellUtils.setEngine(book, name);
+        update(UpdateAction.tokenize);
     }
 
     public void attributeChanged(AttributeChangeEvent evt)

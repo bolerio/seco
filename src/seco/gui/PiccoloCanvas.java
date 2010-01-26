@@ -46,7 +46,7 @@ public class PiccoloCanvas extends PSwingCanvas
     PCSelectionHandler selectionHandler;
     ContextMenuHandler ctxMenuHandler;
     boolean nested;
-    boolean maximizedState;
+    PSwingNode maximizedNode;
     
     public PiccoloCanvas()
     {
@@ -159,7 +159,7 @@ public class PiccoloCanvas extends PSwingCanvas
         // System.out.println("PicCanvas - relayout(): " +
         // getCamera().getChildrenCount() +
         // ":" + this);
-        if(maximizedState) return;
+        if(maximizedNode != null) return;
         for (int i = 0; i < getCamera().getChildrenCount(); i++)
         {
             PNode o = getCamera().getChild(i);
@@ -179,6 +179,9 @@ public class PiccoloCanvas extends PSwingCanvas
 
     public void deleteSelection()
     {
+        if(selectionHandler.getSelection().isEmpty()) return;
+        if(maximizedNode != null)
+           unmaximizeNode(maximizedNode);
         for (PNode node : selectionHandler.getSelection())
         {
             if (!(node instanceof PSwingNode)) continue;
@@ -271,8 +274,8 @@ public class PiccoloCanvas extends PSwingCanvas
         {
             n.getCanvas().maximizeNode(n); return;
         }
-        if(maximizedState) return;
-        maximizedState = true;
+        if(maximizedNode != null) return;
+        maximizedNode = n;
         for (int i = 0; i < getNodes().size(); i++)
         {
             PNode o = getNode(i);
@@ -300,8 +303,8 @@ public class PiccoloCanvas extends PSwingCanvas
         {
             n.getCanvas().unmaximizeNode(n); return;
         }
-        if(!maximizedState) return;
-        maximizedState = false;
+        if(maximizedNode == null) return;
+        maximizedNode = null;
         showAllNodes();
         placeNode(n);
     }
