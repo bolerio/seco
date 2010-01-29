@@ -51,9 +51,9 @@ public class GroovyScriptEngine
     private Map<String, Class<?>> classMap;
     // global closures map - this is used to simulate a single
     // global functions namespace 
-    private Map<String, Closure> globalClosures;
+    public Map<String, Closure> globalClosures;
     // class loader for Groovy generated classes
-    private GroovyClassLoader loader;
+    public GroovyClassLoader loader;
     // lazily initialized factory
     private volatile GroovyScriptEngineFactory factory;
 
@@ -191,7 +191,7 @@ public class GroovyScriptEngine
 
             // create a Map of MethodClosures from this new script object
             Method[] methods = scriptClass.getMethods();
-            Map<String, Closure> closures = new HashMap<String, Closure>();
+            Map<String, MethodClosure> closures = new HashMap<String, MethodClosure>();
             for (Method m : methods) {
                 String name = m.getName();
                 closures.put(name, new MethodClosure(scriptObject, name));
@@ -201,6 +201,7 @@ public class GroovyScriptEngine
             globalClosures.putAll(closures);
 
             MetaClass oldMetaClass = scriptObject.getMetaClass();
+           // List<MetaProperty> props = oldMetaClass.getProperties();
 
             /*
              * We override the MetaClass of this script object so that we can
@@ -251,14 +252,14 @@ public class GroovyScriptEngine
                          throws SyntaxException, 
                                 CompilationFailedException, 
                                 IOException {
-        Class<?> clazz = classMap.get(script);
-        if (clazz != null) {
-            return clazz;
-        }
+        Class<?> clazz = null;//classMap.get(script);
+//        if (clazz != null) {
+//            return clazz;
+//        }
        
        /// InputStream stream = new ByteArrayInputStream(script.getBytes()); 
         clazz = loader.parseClass(script, generateScriptName());
-        classMap.put(script, clazz);
+       // classMap.put(script, clazz);
         return clazz;
     }
 
@@ -305,7 +306,7 @@ public class GroovyScriptEngine
     }
 
     // generate a unique name for top-level Script classes
-    private synchronized String generateScriptName() {
+    public synchronized String generateScriptName() {
         return "Script" + (++counter) + ".groovy";
     }
 

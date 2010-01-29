@@ -1,6 +1,7 @@
-package seco.langs.javascript;
+package seco.langs.groovy;
 
-import java.awt.Component;
+import groovy.lang.Closure;
+
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -8,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -17,14 +19,19 @@ import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 
+import org.codehaus.groovy.runtime.MethodClosure;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.IdScriptableObject;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.NativeJavaPackage;
 import org.mozilla.javascript.ScriptableObject;
 
-import seco.notebook.NotebookDocument;
+import seco.langs.groovy.GroovyScriptSupport.GroovyScriptParser;
+import seco.langs.groovy.jsr.GroovyScriptEngine;
+import seco.langs.javascript.BuiltIns;
+import seco.langs.javascript.JavaScriptParser;
 import seco.langs.javascript.jsr.ExternalScriptable;
+import seco.notebook.NotebookDocument;
 import seco.notebook.storage.ClassRepository;
 import seco.notebook.storage.NamedInfo;
 import seco.notebook.storage.PackageInfo;
@@ -34,19 +41,18 @@ import seco.notebook.syntax.completion.AsyncCompletionTask;
 import seco.notebook.syntax.completion.BaseAsyncCompletionQuery;
 import seco.notebook.syntax.completion.Completion;
 import seco.notebook.syntax.completion.CompletionDocumentation;
+import seco.notebook.syntax.completion.CompletionItem;
 import seco.notebook.syntax.completion.CompletionProvider;
 import seco.notebook.syntax.completion.CompletionResultSet;
 import seco.notebook.syntax.completion.CompletionTask;
 import seco.notebook.syntax.completion.CompletionU;
 import seco.notebook.syntax.completion.JavaDocManager;
-import seco.notebook.syntax.completion.CompletionU.DBPackageInfo;
-import seco.notebook.syntax.java.JavaPaintComponent;
 import seco.notebook.syntax.java.JavaResultItem;
-import seco.notebook.syntax.java.JavaPaintComponent.MethodPaintComponent;
+import seco.notebook.syntax.java.JavaResultItem.ParamStr;
 import seco.notebook.syntax.util.JMIUtils;
 import seco.notebook.util.DocumentUtilities;
 
-public class JSCompletionProvider implements CompletionProvider
+public class GroovyCompletionProvider implements CompletionProvider
 {
     public int getAutoQueryTypes(JTextComponent component, String typedText)
     {
@@ -85,145 +91,48 @@ public class JSCompletionProvider implements CompletionProvider
             ScriptSupport sup = doc.getScriptSupport(offset);
             queryCaretOffset = offset;
             queryAnchorOffset = offset;
-            JavaScriptParser p = (JavaScriptParser) sup.getParser();
+            GroovyScriptParser p = (GroovyScriptParser) sup.getParser();
             String s = sup.getCommandBeforePt(offset);
             // TODO: should consider inner scopes, etc.
             if ("this".equals(s))
             {
-                populateThis(resultSet, p);
+                populateThis(resultSet, p.engine);
                 queryResult = resultSet;
                 resultSet.finish();
                 return;
             }
 
-            Object obj = p.resolveVar(s, offset);
-            if (obj == null)
-            {
-                resultSet.finish();
-                return;
-            }
-            // Class<?> cls = obj.getClass();
-            if (obj instanceof ScriptableObject)
-            {
-                String name = ((ScriptableObject) obj).getClassName();
-                if (BuiltIns.isBuiltInType(name)
-                        && !BuiltIns.OBJECT.equals(name)) populateBuiltInObject(
-                        resultSet, name);
-                else if (obj instanceof IdScriptableObject) populateNativeObject(
-                        resultSet, (IdScriptableObject) obj);
-                else if (obj instanceof NativeJavaPackage)
-                {
-                    NamedInfo[] info = null;
-                    if (s.startsWith("Packages"))
-                        s = (s.length() == 8) ? "" : s.substring(9);
-                    if (s.length() == 0)
-                    {
-                        Set<PackageInfo> set = ClassRepository.getInstance()
-                                .getTopPackages();
-                        info = set.toArray(new NamedInfo[set.size()]);
-                    }
-                    else
-                    {
-                        info = ClassRepository.getInstance().findSubElements(s);
-                    }
-
-                    if (info.length > 0)
-                        CompletionU.populatePackage(resultSet,
-                                new CompletionU.DBPackageInfo(info, s),
-                                queryCaretOffset);
-                }
-            }
-            else if (Object.class == obj) populateBuiltInObject(resultSet,
-                    BuiltIns.OBJECT);
-            else if (jsEquivalent(obj, resultSet)) ;
-            else
-            {
-                Class<?> cls = (Class<?>) obj.getClass();
-                CompletionU.populateClass(resultSet, cls, Modifier.PUBLIC,
-                        queryCaretOffset);
-            }
+            CompletionHandler ch = new CompletionHandler();
+            List<CompletionItem> props =  ch.complete(p.parserResult, sup.getElement(), s, offset);
+            for(CompletionItem item: props)
+                resultSet.addItem(item);
+//            if (obj == null)
+//            {
+//                resultSet.finish();
+//                return;
+//            }
+             
             queryResult = resultSet;
             resultSet.finish();
         }
-
-        private boolean jsEquivalent(Object o, CompletionResultSet resultSet)
+        
+        private void populateThis(CompletionResultSet resultSet, GroovyScriptEngine engine)
         {
-            String name = null;
-            if (o instanceof String) name = BuiltIns.STRING;
-            else if (o instanceof String) name = BuiltIns.NUM;
-            else if (o instanceof Date) name = BuiltIns.DATE;
-            else if (o instanceof Boolean) name = BuiltIns.BOOL;
-            // else if(o.getClass().isArray())
-            // name = BUILDINS.ARRAY;
-            if (name != null) populateBuiltInObject(resultSet, name);
-            return name != null;
-        }
-
-        private void populateNativeObject(CompletionResultSet resultSet,
-                IdScriptableObject obj)
-        {
-            for (JavaResultItem item : BuiltIns.getParams(BuiltIns.OBJECT))
+            Bindings b = engine.getBindings(ScriptContext.GLOBAL_SCOPE);
+            for(String key : b.keySet())
             {
-                item.setSubstituteOffset(queryCaretOffset);
-                resultSet.addItem(item);
+                resultSet.addItem(new JavaResultItem.VarResultItem(
+                        key, b.get(key).getClass(), Modifier.PUBLIC));
             }
-            Object[] ids = obj.getAllIds();
-            if (ids != null) for (Object id : ids)
-                resultSet.addItem(new JSProperty("" + id, "Object"));
-
-            resultSet.setTitle(obj.getClassName());
-        }
-
-        private void populateBuiltInObject(CompletionResultSet resultSet,
-                String class_name)
-        {
-            List<JavaResultItem> params = BuiltIns.getParams(class_name);
-            if (params != null)
+            for(String s: engine.globalClosures.keySet())
             {
-                for (JavaResultItem item : params)
-                {
-                    item.setSubstituteOffset(queryCaretOffset);
-                    resultSet.addItem(item);
-                }
-                resultSet.setTitle(class_name);
+                Closure c = engine.globalClosures.get(s);
+                String m = (String) c.getProperty("method");
+                if(m == null || m.indexOf("$") > -1) continue;
+                resultSet.addItem(new ClosureItem(c));
             }
         }
-
-        private void populateThis(CompletionResultSet resultSet,
-                JavaScriptParser p)
-        {
-            // TODO: add all vars from the RuntimeContext.
-            List<JavaResultItem> params = BuiltIns.getThisParams();
-
-            for (JavaResultItem item : params)
-            {
-                item.setSubstituteOffset(queryCaretOffset);
-                resultSet.addItem(item);
-            }
-
-            ScriptContext ctx = p.engine.getContext();
-            ExternalScriptable scope = (ExternalScriptable) p.engine
-                    .getRuntimeScope(ctx);
-            Context.enter();
-            // Bindings b = ctx.getBindings(ScriptContext.ENGINE_SCOPE);
-            // for (String key : b.keySet())
-            // {
-            // Object o = b.get(key);
-            for (Object k : scope.getIds())
-            {
-                String key = "" + k;
-                Object o = scope.get(key, scope.getPrototype());
-                if (o instanceof NativeFunction) resultSet.addItem(BuiltIns
-                        .make_func(key, (NativeFunction) o));
-                else
-                    resultSet.addItem(new JSProperty(key, JMIUtils.getTypeName(
-                            o.getClass(), false, false)));
-            }
-            Context.exit();
-            resultSet.setTitle("Global");
-        }
-
-    }
+     }
 
     public static class DocQuery extends AsyncCompletionQuery
     {
@@ -431,87 +340,23 @@ public class JSCompletionProvider implements CompletionProvider
         }
     }
 
-    public static class JSMethod extends JavaResultItem.MethodResultItem
+    static class ClosureItem extends JavaResultItem.MethodResultItem
     {
-        public JSMethod(String mtdName, String type)
+        Closure closure;
+        public ClosureItem(Closure closure)
         {
-            super(mtdName, type);
+            super(closure instanceof MethodClosure ?
+                    ((MethodClosure) closure).getMethod(): "Closure", Object.class,
+                    closure.getParameterTypes(), null);
             this.modifiers = Modifier.PUBLIC;
         }
 
-        public JSMethod(String mtdName, String type, int modifiers)
-        {
-            super(mtdName, type);
-            this.modifiers = modifiers;
-        }
-
-        public JSMethod(String mtdName, String type, String[] types,
-                String[] names, int modifiers)
-        {
-            super(mtdName, type);
-            this.modifiers = modifiers;
-            populateParams(types, names);
-        }
-
-        public JSMethod(String mtdName, String type, String[] types,
-                String[] names)
-        {
-            this(mtdName, type, types, names, Modifier.PUBLIC);
-        }
-
         protected boolean isAddParams()
         {
             return true;
         }
-
-        void populateParams(String[] prms, String names[])
-        {
-            for (int i = 0; i < prms.length; i++)
-                params.add(new ParamStr(prms[i], prms[i], names[i], false,
-                        getTypeColor(prms[i])));
-        }
     }
 
-    static class JSVarArgMethod extends JavaResultItem.MethodResultItem
-    {
-        public JSVarArgMethod(String mtdName, String type, int modifiers)
-        {
-            super(mtdName, type);
-            this.modifiers = modifiers;
-        }
 
-        public JSVarArgMethod(String mtdName, String type, String[] types,
-                String[] names, int modifiers)
-        {
-            super(mtdName, type);
-            this.modifiers = modifiers;
-            populateParams(types, names);
-        }
-
-        protected boolean isAddParams()
-        {
-            return true;
-        }
-
-        void populateParams(String[] prms, String names[])
-        {
-            for (int i = 0; i < prms.length; i++)
-                params.add(new ParamStr(prms[i], prms[i], names[i], true,
-                        getTypeColor(prms[i])));
-        }
-    }
-    static class JSProperty extends JavaResultItem.FieldResultItem
-    {
-
-        public JSProperty(String name, String type)
-        {
-            super(name, type, Modifier.PUBLIC);
-        }
-
-        public JSProperty(String name, String type, int modifiers)
-        {
-            super(name, type, modifiers);
-        }
-    }
 
 }
