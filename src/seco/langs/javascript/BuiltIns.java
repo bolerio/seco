@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.mozilla.javascript.NativeFunction;
 
-import seco.langs.javascript.JSCompletionProvider.JSMethod;
 import seco.langs.javascript.JSCompletionProvider.JSProperty;
 import seco.langs.javascript.JSCompletionProvider.JSVarArgMethod;
 import seco.notebook.syntax.java.JavaResultItem;
@@ -23,10 +22,10 @@ public class BuiltIns
     public static final String NUM = "Number";
     public static final String STRING = "String";
     public static final String MATH = "Math";
-    
+
     private static final String VOID = "void";
- // private static final String FUNCTION = "Function";
-    
+    // private static final String FUNCTION = "Function";
+
     private static final String[] ARR_NUM = new String[] { NUM };
     private static final String[] ARR_STR = new String[] { STRING };
     static Map<String, List<JavaResultItem>> objectsMap;
@@ -36,10 +35,10 @@ public class BuiltIns
     private static final JSProperty PROP_CTR = new JSProperty("constructor",
             OBJECT);
     private static final JSProperty PROP_LENGHT = new JSProperty("length", NUM);
-    private static final JSMethod PROP_VALUE_OF = new JSMethod("valueOf",
-            OBJECT, Modifier.PUBLIC);
-    private static final JSMethod PROP_TO_STRING = new JSMethod("toString",
-            STRING, Modifier.PUBLIC);
+    private static final JavaResultItem.MethodItem PROP_VALUE_OF = new JavaResultItem.MethodItem(
+            "valueOf", OBJECT, Modifier.PUBLIC);
+    private static final JavaResultItem.MethodItem PROP_TO_STRING = new JavaResultItem.MethodItem(
+            "toString", STRING, Modifier.PUBLIC);
 
     static List<JavaResultItem> getParams(String class_name)
     {
@@ -74,101 +73,146 @@ public class BuiltIns
 
         params.add(PROP_CTR);
         params.add(PROP_TO_STRING);
-        params.add(new JSMethod("toTimeString", STRING, Modifier.PUBLIC));
-        params.add(new JSMethod("toDateString", STRING, Modifier.PUBLIC));
-        params.add(new JSMethod("toLocaleString", STRING, Modifier.PUBLIC));
-        params.add(new JSMethod("toLocaleTimeString", STRING, Modifier.PUBLIC));
-        params.add(new JSMethod("toLocaleDateString", STRING, Modifier.PUBLIC));
-        params.add(new JSMethod("toUTCString", "toLocaleTimeString",
+        params.add(new JavaResultItem.MethodItem("toTimeString", STRING,
                 Modifier.PUBLIC));
-        params.add(new JSMethod("toSource", STRING, Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("toDateString", STRING,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("toLocaleString", STRING,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("toLocaleTimeString", STRING,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("toLocaleDateString", STRING,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("toUTCString",
+                "toLocaleTimeString", Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("toSource", STRING,
+                Modifier.PUBLIC));
         params.add(PROP_VALUE_OF);
-        params.add(new JSMethod("getTime", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getYear", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getFullYear", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getUTCFullYear", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getMonth", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getUTCMonth", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getDate", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getUTCDate", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getDay", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getUTCDay", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getHours", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getUTCHours", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getMinutes", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getUTCMinutes", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getSeconds", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getUTCSeconds", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getMilliseconds", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getUTCMilliseconds", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("getTimezoneOffset", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setTime", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setMilliseconds", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setUTCMilliseconds", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setSeconds", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setUTCSeconds", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setMinutes", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setUTCMinutes", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setHours", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setUTCHours", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setDate", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setUTCDate", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setMonth", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setUTCMonth", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setFullYear", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setUTCFullYear", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("setYear", NUM, Modifier.PUBLIC));
-        params.add(new JSMethod("parse", NUM, ARR_STR,
+        params.add(new JavaResultItem.MethodItem("getTime", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getYear", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getFullYear", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getUTCFullYear", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getMonth", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getUTCMonth", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getDate", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getUTCDate", NUM,
+                Modifier.PUBLIC));
+        params
+                .add(new JavaResultItem.MethodItem("getDay", NUM,
+                        Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getUTCDay", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getHours", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getUTCHours", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getMinutes", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getUTCMinutes", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getSeconds", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getUTCSeconds", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getMilliseconds", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getUTCMilliseconds", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("getTimezoneOffset", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setTime", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setMilliseconds", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setUTCMilliseconds", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setSeconds", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setUTCSeconds", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setMinutes", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setUTCMinutes", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setHours", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setUTCHours", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setDate", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setUTCDate", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setMonth", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setUTCMonth", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setFullYear", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setUTCFullYear", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("setYear", NUM,
+                Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("parse", NUM, ARR_STR,
                 new String[] { "dateString" }, Modifier.STATIC));
-        params.add(new JSMethod("UTC", NUM, new String[] { NUM, NUM, NUM, NUM,
-                NUM }, new String[] { "year", "month", "date", "hrs", "min",
-                "sec", "ms" }, Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("UTC", NUM, new String[] {
+                NUM, NUM, NUM, NUM, NUM }, new String[] { "year", "month",
+                "date", "hrs", "min", "sec", "ms" }, Modifier.STATIC));
         return params;
     }
 
     private static List<JavaResultItem> string()
     {
         List<JavaResultItem> params = new ArrayList<JavaResultItem>();
-        params.add(new JSMethod("anchor", STRING, ARR_STR,
+        params.add(new JavaResultItem.MethodItem("anchor", STRING, ARR_STR,
                 new String[] { "name" }));
-        params.add(new JSMethod("big", STRING));
-        params.add(new JSMethod("blink", STRING));
-        params.add(new JSMethod("bold", STRING));
-        params.add(new JSMethod("charAt", NUM, ARR_NUM,
+        params.add(new JavaResultItem.MethodItem("big", STRING));
+        params.add(new JavaResultItem.MethodItem("blink", STRING));
+        params.add(new JavaResultItem.MethodItem("bold", STRING));
+        params.add(new JavaResultItem.MethodItem("charAt", NUM, ARR_NUM,
                 new String[] { "index" }));
-        params.add(new JSMethod("charCodeAt", NUM, ARR_NUM,
+        params.add(new JavaResultItem.MethodItem("charCodeAt", NUM, ARR_NUM,
                 new String[] { "index" }));
-        params.add(new JSMethod("concat", STRING, ARR_STR,
+        params.add(new JavaResultItem.MethodItem("concat", STRING, ARR_STR,
                 new String[] { "string2" }));
-        params.add(new JSMethod("fixed", STRING));
-        params.add(new JSMethod("fontcolor", STRING, ARR_STR,
+        params.add(new JavaResultItem.MethodItem("fixed", STRING));
+        params.add(new JavaResultItem.MethodItem("fontcolor", STRING, ARR_STR,
                 new String[] { "color" }));
-        params.add(new JSMethod("fontsize", STRING, ARR_STR,
+        params.add(new JavaResultItem.MethodItem("fontsize", STRING, ARR_STR,
                 new String[] { "size" }));
-        params.add(new JSMethod("fromCharCode", STRING));
-        params.add(new JSMethod("indexOf", NUM, new String[] { STRING, NUM },
-                new String[] { "searchString", "startPositionIndex" }));
-        params.add(new JSMethod("italics", STRING));
-        params.add(new JSMethod("lastIndexOf", NUM,
+        params.add(new JavaResultItem.MethodItem("fromCharCode", STRING));
+        params.add(new JavaResultItem.MethodItem("indexOf", NUM, new String[] {
+                STRING, NUM }, new String[] { "searchString",
+                "startPositionIndex" }));
+        params.add(new JavaResultItem.MethodItem("italics", STRING));
+        params.add(new JavaResultItem.MethodItem("lastIndexOf", NUM,
                 new String[] { STRING, NUM }, new String[] { "searchString",
                         "startPositionIndex" }));
-        params
-                .add(new JSMethod("link", STRING, ARR_STR,
-                        new String[] { "url" }));
-        params.add(new JSMethod("slice", STRING, new String[] { NUM, NUM },
-                new String[] { "startPositionIndex", "endPositionIndex" }));
-        params.add(new JSMethod("small", STRING));
-        params.add(new JSMethod("split", ARRAY, ARR_STR,
+        params.add(new JavaResultItem.MethodItem("link", STRING, ARR_STR,
+                new String[] { "url" }));
+        params.add(new JavaResultItem.MethodItem("slice", STRING, new String[] {
+                NUM, NUM }, new String[] { "startPositionIndex",
+                "endPositionIndex" }));
+        params.add(new JavaResultItem.MethodItem("small", STRING));
+        params.add(new JavaResultItem.MethodItem("split", ARRAY, ARR_STR,
                 new String[] { "delimiter" }));
-        params.add(new JSMethod("strike", STRING));
-        params.add(new JSMethod("sub", STRING));
-        params.add(new JSMethod("substr", STRING, new String[] { NUM, NUM },
-                new String[] { "startPositionIndex", "length" }));
-        params.add(new JSMethod("substring", STRING, new String[] { NUM, NUM },
-                new String[] { "startPositionIndex", "endPositionIndex" }));
-        params.add(new JSMethod("sup", STRING));
-        params.add(new JSMethod("toLowerCase", STRING));
-        params.add(new JSMethod("toUpperCase", STRING));
+        params.add(new JavaResultItem.MethodItem("strike", STRING));
+        params.add(new JavaResultItem.MethodItem("sub", STRING));
+        params.add(new JavaResultItem.MethodItem("substr", STRING,
+                new String[] { NUM, NUM }, new String[] { "startPositionIndex",
+                        "length" }));
+        params.add(new JavaResultItem.MethodItem("substring", STRING,
+                new String[] { NUM, NUM }, new String[] { "startPositionIndex",
+                        "endPositionIndex" }));
+        params.add(new JavaResultItem.MethodItem("sup", STRING));
+        params.add(new JavaResultItem.MethodItem("toLowerCase", STRING));
+        params.add(new JavaResultItem.MethodItem("toUpperCase", STRING));
         return params;
     }
 
@@ -178,21 +222,21 @@ public class BuiltIns
         params.add(PROP_CTR);
         params.add(PROP_LENGHT);
         params.add(PROP_PROTO);
-        params.add(new JSMethod("concat", ARRAY, new String[] { ARRAY },
-                new String[] { "array2" }));
-        params.add(new JSMethod("join", OBJECT, ARR_STR,
+        params.add(new JavaResultItem.MethodItem("concat", ARRAY,
+                new String[] { ARRAY }, new String[] { "array2" }));
+        params.add(new JavaResultItem.MethodItem("join", OBJECT, ARR_STR,
                 new String[] { "delimiterString" }));
-        params.add(new JSMethod("pop", OBJECT));
-        params.add(new JSMethod("push", OBJECT, new String[] { OBJECT },
-                new String[] { "value" }));
-        params.add(new JSMethod("reverse", ARRAY));
-        params.add(new JSMethod("shift", OBJECT));
-        params.add(new JSMethod("slice", ARRAY, new String[] { NUM, NUM },
-                new String[] { "startIndex", "endIndex" }));
-        params.add(new JSMethod("sort", ARRAY, new String[] { OBJECT },
-                new String[] { "compareFunction" }));
-        params.add(new JSMethod("unshift", NUM, new String[] { OBJECT },
-                new String[] { "value" }));
+        params.add(new JavaResultItem.MethodItem("pop", OBJECT));
+        params.add(new JavaResultItem.MethodItem("push", OBJECT,
+                new String[] { OBJECT }, new String[] { "value" }));
+        params.add(new JavaResultItem.MethodItem("reverse", ARRAY));
+        params.add(new JavaResultItem.MethodItem("shift", OBJECT));
+        params.add(new JavaResultItem.MethodItem("slice", ARRAY, new String[] {
+                NUM, NUM }, new String[] { "startIndex", "endIndex" }));
+        params.add(new JavaResultItem.MethodItem("sort", ARRAY,
+                new String[] { OBJECT }, new String[] { "compareFunction" }));
+        params.add(new JavaResultItem.MethodItem("unshift", NUM,
+                new String[] { OBJECT }, new String[] { "value" }));
 
         return params;
     }
@@ -218,12 +262,12 @@ public class BuiltIns
         params.add(new JSProperty("NEGATIVE_INFINITY", NUM));
         params.add(new JSProperty("POSITIVE_INFINITY", NUM));
 
-        params.add(new JSMethod("toExponential", STRING, ARR_NUM,
+        params.add(new JavaResultItem.MethodItem("toExponential", STRING,
+                ARR_NUM, new String[] { "x" }));
+        params.add(new JavaResultItem.MethodItem("toFixed", STRING, ARR_NUM,
                 new String[] { "x" }));
-        params.add(new JSMethod("toFixed", STRING, ARR_NUM,
-                new String[] { "x" }));
-        params.add(new JSMethod("toPrecision", STRING, ARR_NUM,
-                new String[] { "x" }));
+        params.add(new JavaResultItem.MethodItem("toPrecision", STRING,
+                ARR_NUM, new String[] { "x" }));
 
         params.add(PROP_TO_STRING);
         params.add(PROP_VALUE_OF);
@@ -240,9 +284,9 @@ public class BuiltIns
         params.add(new JSProperty("multiline", BOOL));
         params.add(new JSProperty("source", STRING));
 
-        params.add(new JSMethod("compile", VOID));
-        params.add(new JSMethod("exec", VOID));
-        params.add(new JSMethod("test", BOOL));
+        params.add(new JavaResultItem.MethodItem("compile", VOID));
+        params.add(new JavaResultItem.MethodItem("exec", VOID));
+        params.add(new JavaResultItem.MethodItem("test", BOOL));
 
         return params;
     }
@@ -254,24 +298,24 @@ public class BuiltIns
         params.add(PROP_CTR);
         params.add(PROP_PROTO);
 
-        params.add(new JSMethod("hasOwnProperty", BOOL, ARR_STR,
+        params.add(new JavaResultItem.MethodItem("hasOwnProperty", BOOL,
+                ARR_STR, new String[] { "prop" }));
+        params.add(new JavaResultItem.MethodItem("isPrototypeOf", BOOL,
+                new String[] { OBJECT }, new String[] { "object" }));
+        params.add(new JavaResultItem.MethodItem("propertyIsEnumerable", BOOL,
+                ARR_STR, new String[] { "prop" }));
+        params.add(new JavaResultItem.MethodItem("toLocaleString", STRING));
+        params.add(new JavaResultItem.MethodItem("toSource", STRING));
+        params.add(new JavaResultItem.MethodItem("unwatch", VOID, ARR_STR,
                 new String[] { "prop" }));
-        params.add(new JSMethod("isPrototypeOf", BOOL, new String[] { OBJECT },
-                new String[] { "object" }));
-        params.add(new JSMethod("propertyIsEnumerable", BOOL, ARR_STR,
-                new String[] { "prop" }));
-        params.add(new JSMethod("toLocaleString", STRING));
-        params.add(new JSMethod("toSource", STRING));
-        params.add(new JSMethod("unwatch", VOID, ARR_STR,
-                new String[] { "prop" }));
-        params.add(new JSMethod("watch", VOID, new String[] { STRING, OBJECT },
-                new String[] { "prop", "handler" }));
+        params.add(new JavaResultItem.MethodItem("watch", VOID, new String[] {
+                STRING, OBJECT }, new String[] { "prop", "handler" }));
         params.add(PROP_TO_STRING);
         params.add(PROP_VALUE_OF);
 
         return params;
     }
-    
+
     private static List<JavaResultItem> math()
     {
         List<JavaResultItem> params = new ArrayList<JavaResultItem>();
@@ -283,84 +327,105 @@ public class BuiltIns
         params.add(new JSProperty("PI", NUM, Modifier.STATIC));
         params.add(new JSProperty("SQRT1_2", NUM, Modifier.STATIC));
         params.add(new JSProperty("SQRT2", NUM, Modifier.STATIC));
-        
-        params.add(new JSMethod("abs", NUM, ARR_NUM,   new String[] { "x" }, Modifier.STATIC));
-        params.add(new JSMethod("acos", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
-        params.add(new JSMethod("asin", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
-        params.add(new JSMethod("atan", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
-        params.add(new JSMethod("atan2", NUM, new String[]{NUM, NUM},  new String[] { "y", "x" }, Modifier.STATIC));
-        params.add(new JSMethod("ceil", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
-        params.add(new JSMethod("cos", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
-        params.add(new JSMethod("exp", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
-        params.add(new JSMethod("floor", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
-        params.add(new JSMethod("log", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
-        
-        params.add(new JSVarArgMethod("max", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
-        params.add(new JSVarArgMethod("min", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
-        params.add(new JSMethod("pow", NUM, new String[]{NUM, NUM},  new String[] { "x", "y" }, Modifier.STATIC));
-        params.add(new JSMethod("random", NUM, Modifier.STATIC));
-        params.add(new JSMethod("round", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
-        params.add(new JSMethod("sin", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
-        params.add(new JSMethod("sqrt", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
-        params.add(new JSMethod("tan", NUM, ARR_NUM,  new String[] { "x" }, Modifier.STATIC));
-        
+
+        params.add(new JavaResultItem.MethodItem("abs", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("acos", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("asin", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("atan", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("atan2", NUM, new String[] {
+                NUM, NUM }, new String[] { "y", "x" }, Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("ceil", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("cos", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("exp", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("floor", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("log", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+
+        params.add(new JSVarArgMethod("max", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+        params.add(new JSVarArgMethod("min", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("pow", NUM, new String[] {
+                NUM, NUM }, new String[] { "x", "y" }, Modifier.STATIC));
+        params
+                .add(new JavaResultItem.MethodItem("random", NUM,
+                        Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("round", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("sin", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("sqrt", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+        params.add(new JavaResultItem.MethodItem("tan", NUM, ARR_NUM,
+                new String[] { "x" }, Modifier.STATIC));
+
         return params;
     }
-    
+
     private static List<JavaResultItem> this_()
     {
         List<JavaResultItem> params = new ArrayList<JavaResultItem>();
-        
+
         params.add(new JSProperty("Infinity", NUM));
         params.add(new JSProperty("NaN", NUM));
         params.add(new JSProperty("undefined", OBJECT));
-        
-        params.add(new JSMethod("decodeURI", STRING, ARR_STR,
+
+        params.add(new JavaResultItem.MethodItem("decodeURI", STRING, ARR_STR,
                 new String[] { "str" }));
-        params.add(new JSMethod("decodeURIComponent", STRING, ARR_STR,
-                        new String[] { "str" }));
-        params.add(new JSMethod("encodeURI", STRING, ARR_STR,
-                                new String[] { "str" }));
-        params.add(new JSMethod("encodeURIComponent", STRING, ARR_STR,
-                                        new String[] { "str" }));
-        params.add(new JSMethod("escape", STRING, ARR_STR,
+        params.add(new JavaResultItem.MethodItem("decodeURIComponent", STRING,
+                ARR_STR, new String[] { "str" }));
+        params.add(new JavaResultItem.MethodItem("encodeURI", STRING, ARR_STR,
                 new String[] { "str" }));
-        params.add(new JSMethod("eval", VOID, ARR_STR, new String[] {"str"}));
-        params.add(new JSMethod("isFinite", BOOL, new String[]{OBJECT},
-                new String[] { "obj" }));
-        params.add(new JSMethod("isNaN", BOOL, new String[]{OBJECT},
-                new String[] { "obj" }));
-        params.add(new JSMethod("Number", NUM, new String[]{OBJECT},
-                new String[] { "obj" }));
-        params.add(new JSMethod("parseFloat", NUM, ARR_STR,
+        params.add(new JavaResultItem.MethodItem("encodeURIComponent", STRING,
+                ARR_STR, new String[] { "str" }));
+        params.add(new JavaResultItem.MethodItem("escape", STRING, ARR_STR,
                 new String[] { "str" }));
-        params.add(new JSMethod("parseInt", NUM, ARR_STR,
+        params.add(new JavaResultItem.MethodItem("eval", VOID, ARR_STR,
                 new String[] { "str" }));
-        params.add(new JSMethod("String", STRING, new String[]{OBJECT},
-                new String[] { "obj" }));
-        params.add(new JSMethod("unescape", STRING, ARR_STR,
+        params.add(new JavaResultItem.MethodItem("isFinite", BOOL,
+                new String[] { OBJECT }, new String[] { "obj" }));
+        params.add(new JavaResultItem.MethodItem("isNaN", BOOL,
+                new String[] { OBJECT }, new String[] { "obj" }));
+        params.add(new JavaResultItem.MethodItem("Number", NUM,
+                new String[] { OBJECT }, new String[] { "obj" }));
+        params.add(new JavaResultItem.MethodItem("parseFloat", NUM, ARR_STR,
+                new String[] { "str" }));
+        params.add(new JavaResultItem.MethodItem("parseInt", NUM, ARR_STR,
+                new String[] { "str" }));
+        params.add(new JavaResultItem.MethodItem("String", STRING,
+                new String[] { OBJECT }, new String[] { "obj" }));
+        params.add(new JavaResultItem.MethodItem("unescape", STRING, ARR_STR,
                 new String[] { "str" }));
         return params;
     }
-    
+
     static List<JavaResultItem> this_params;
+
     static List<JavaResultItem> getThisParams()
     {
-        if(this_params == null)
-            this_params = this_(); 
+        if (this_params == null) this_params = this_();
         return this_params;
     }
-    
+
     static JavaResultItem make_func(String name, NativeFunction s)
     {
         int n = s.getArity();
         String[] types = new String[n];
         String[] params = new String[n];
-        for(int i = 0; i <n; i++){
+        for (int i = 0; i < n; i++)
+        {
             types[i] = OBJECT;
-            params[i]= "arg" + i;
+            params[i] = "arg" + i;
         }
-        return new JSMethod(name, OBJECT, types, params);
+        return new JavaResultItem.MethodItem(name, OBJECT, types, params);
     }
- 
+
 }

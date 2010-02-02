@@ -152,7 +152,9 @@ public interface CompletionItem {
      */
     CharSequence getInsertPrefix();
     
-    public String getItemText();
+    String getItemText();
+    
+    void setSubstituteOffset(int substituteOffset);
 
 }
 

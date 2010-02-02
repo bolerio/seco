@@ -201,7 +201,7 @@ public class RubyCompletionProvider implements CompletionProvider
 			for (Method m : getMethods(cls, modifiers))
 			{
 				if (m.getName().indexOf('$') >= 0) continue;
-				JavaResultItem item = new JavaResultItem.MethodResultItem(m);
+				JavaResultItem item = new JavaResultItem.MethodItem(m);
 				item.setSubstituteOffset(queryCaretOffset);
 				resultSet.addItem(item);
 			}
@@ -455,7 +455,7 @@ public class RubyCompletionProvider implements CompletionProvider
 		}
 	}
 
-	static class RubyMethodResultItem extends JavaResultItem.MethodResultItem
+	static class RubyMethodResultItem extends JavaResultItem.MethodItem
 	{
 		private static JavaPaintComponent.MethodPaintComponent mtdComponent = null;
 

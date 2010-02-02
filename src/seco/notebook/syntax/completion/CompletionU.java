@@ -109,7 +109,7 @@ public class CompletionU
         for (Method m : CompletionU.getMethods(cls, modifiers))
         {
             if (m.getName().indexOf('$') >= 0) continue;
-            JavaResultItem item = new JavaResultItem.MethodResultItem(m);
+            JavaResultItem item = new JavaResultItem.MethodItem(m);
             item.setSubstituteOffset(queryCaretOffset);
             resultSet.addItem(item);
         }

@@ -49,38 +49,49 @@ import org.codehaus.groovy.ast.expr.BinaryExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.ConstructorCallExpression;
 import org.codehaus.groovy.ast.expr.Expression;
+import org.codehaus.groovy.ast.expr.ListExpression;
+import org.codehaus.groovy.ast.expr.MapExpression;
+import org.codehaus.groovy.ast.expr.RangeExpression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.syntax.Types;
 
 /**
- *
+ * 
  * @author Petr Hejl
  */
-public class TypeInferenceVisitor extends TypeVisitor 
+public class TypeInferenceVisitor extends TypeVisitor
 {
 
     private ClassNode guessedType;
 
-    private boolean leafReached = false; // flag saying if visiting reached the node that we are investigating
+    private boolean leafReached = false; // flag saying if visiting reached the
+    // node that we are investigating
 
-    public TypeInferenceVisitor(SourceUnit sourceUnit, AstPath path, Element doc, int cursorOffset) {
+    private String var;
+
+    public TypeInferenceVisitor(SourceUnit sourceUnit, AstPath path,
+            Element doc, int cursorOffset, String var)
+    {
         // we don't want to visit all classes in module
-        super(sourceUnit, path, doc, cursorOffset, false);
+        super(sourceUnit, path, doc, cursorOffset, true);
+        this.var = var;
     }
 
     /**
      * Tries to guess the type from the last assignment expression before actual
      * position of the leaf
-     *
+     * 
      * @return guessed type or null if there is no way to calculate it
      */
-    public ClassNode getGuessedType() {
+    public ClassNode getGuessedType()
+    {
         return guessedType;
     }
 
     @Override
-    public void collect() {
+    public void collect()
+    {
         guessedType = null;
         leafReached = false;
 
@@ -88,53 +99,71 @@ public class TypeInferenceVisitor extends TypeVisitor
     }
 
     @Override
-    protected void visitParameters(Parameter[] parameters, Variable variable) {
-        if (!leafReached) {
-            for (Parameter param : parameters) {
-                if (sameVariableName(param, variable)) {
-                    guessedType = param.getType();
-                    break;
-                }
-            }
-        }
-    }
-
-    @Override
-    public void visitVariableExpression(VariableExpression expression) {
-        if (expression == leaf) {
-            leafReached = true;
-        }
+    public void visitVariableExpression(VariableExpression expression)
+    {
+        if (expression == leaf) leafReached = true;
         super.visitVariableExpression(expression);
     }
 
     @Override
-    public void visitBinaryExpression(BinaryExpression expression) {
-        if (!leafReached) {
+    public void visitBinaryExpression(BinaryExpression expression)
+    {
+        if (!leafReached)
+        {
             // have a look at assignment and try to get type from its right side
             Expression leftExpression = expression.getLeftExpression();
-            if (leftExpression instanceof VariableExpression) {
-                if (expression.getOperation().isA(Types.EQUAL) && sameVariableName(leaf, leftExpression)) {
-                    Expression rightExpression = expression.getRightExpression();
+            if (leftExpression instanceof VariableExpression)
+            {
+                if (var.equals(((VariableExpression) leftExpression).getName()))
+                {
+                    Expression rightExpression = expression
+                            .getRightExpression();
                     if (rightExpression instanceof ConstantExpression
-                            && !rightExpression.getText().equals("null")) { // NOI18N
-                        guessedType = ((ConstantExpression) rightExpression).getType();
-                    } else if (rightExpression instanceof ConstructorCallExpression) {
-                        guessedType = ((ConstructorCallExpression) rightExpression).getType();
+                            && !rightExpression.getText().equals("null"))
+                    {
+                        guessedType = rightExpression.getType();
+                    }
+                    else if (rightExpression instanceof ConstructorCallExpression)
+                    {
+                        guessedType = rightExpression.getType();
+                    }
+                    else if (rightExpression instanceof ListExpression
+                            || rightExpression instanceof MapExpression)
+                    {
+                        guessedType = rightExpression.getType();
+                    }
+                    else if (rightExpression instanceof RangeExpression)
+                    {
+                        try
+                        {
+                            guessedType = (new ClassNode(Class
+                                    .forName("groovy.lang.Range")));
+                        }
+                        catch (ClassNotFoundException ex)
+                        {
+                            guessedType = new ClassNode("groovy.lang.Range",
+                                    ClassNode.ACC_PUBLIC
+                                            | ClassNode.ACC_INTERFACE, null);
+                        }
                     }
                 }
+
             }
         }
         super.visitBinaryExpression(expression);
     }
 
-    private static boolean sameVariableName(Parameter param, Variable variable) {
+    private static boolean sameVariableName(Parameter param, Variable variable)
+    {
         return param.getName().equals(variable.getName());
     }
 
-    private static boolean sameVariableName(ASTNode node1, ASTNode node2) {
-        return node1 instanceof VariableExpression && node2 instanceof VariableExpression
-                && ((VariableExpression) node1).getName().equals(((VariableExpression) node2).getName());
+    private static boolean sameVariableName(ASTNode node1, ASTNode node2)
+    {
+        return node1 instanceof VariableExpression
+                && node2 instanceof VariableExpression
+                && ((VariableExpression) node1).getName().equals(
+                        ((VariableExpression) node2).getName());
     }
 
 }
-

@@ -1,11 +1,13 @@
 package seco.langs.groovy;
 
 import groovy.lang.Closure;
+import groovy.lang.GroovyObject;
 
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -16,21 +18,22 @@ import javax.swing.Action;
 import javax.swing.JToolTip;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 
+import org.codehaus.groovy.GroovyBugError;
+import org.codehaus.groovy.ast.ASTNode;
+import org.codehaus.groovy.ast.ClassNode;
+import org.codehaus.groovy.ast.FieldNode;
+import org.codehaus.groovy.ast.MethodNode;
+import org.codehaus.groovy.ast.ModuleNode;
+import org.codehaus.groovy.ast.Parameter;
+import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.codehaus.groovy.runtime.MethodClosure;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.IdScriptableObject;
-import org.mozilla.javascript.NativeFunction;
-import org.mozilla.javascript.NativeJavaPackage;
-import org.mozilla.javascript.ScriptableObject;
 
 import seco.langs.groovy.GroovyScriptSupport.GroovyScriptParser;
 import seco.langs.groovy.jsr.GroovyScriptEngine;
-import seco.langs.javascript.BuiltIns;
-import seco.langs.javascript.JavaScriptParser;
-import seco.langs.javascript.jsr.ExternalScriptable;
 import seco.notebook.NotebookDocument;
 import seco.notebook.storage.ClassRepository;
 import seco.notebook.storage.NamedInfo;
@@ -54,6 +57,8 @@ import seco.notebook.util.DocumentUtilities;
 
 public class GroovyCompletionProvider implements CompletionProvider
 {
+    private static final String JAVA_LANG_OBJECT = "java.lang.Object";
+    
     public int getAutoQueryTypes(JTextComponent component, String typedText)
     {
         if (".".equals(typedText)) return COMPLETION_QUERY_TYPE;
@@ -80,6 +85,10 @@ public class GroovyCompletionProvider implements CompletionProvider
 
     static final class Query extends BaseAsyncCompletionQuery
     {
+        GroovyScriptParser p;
+        ScriptSupport sup;
+        String prefix;
+       
         public Query(int caretOffset)
         {
             super(caretOffset);
@@ -88,51 +97,171 @@ public class GroovyCompletionProvider implements CompletionProvider
         protected void query(CompletionResultSet resultSet,
                 NotebookDocument doc, int offset)
         {
-            ScriptSupport sup = doc.getScriptSupport(offset);
+            sup = doc.getScriptSupport(offset);
             queryCaretOffset = offset;
             queryAnchorOffset = offset;
-            GroovyScriptParser p = (GroovyScriptParser) sup.getParser();
-            String s = sup.getCommandBeforePt(offset);
+            p = (GroovyScriptParser) sup.getParser();
+            prefix = sup.getCommandBeforePt(offset);
             // TODO: should consider inner scopes, etc.
-            if ("this".equals(s))
+            if ("this".equals(prefix))
             {
                 populateThis(resultSet, p.engine);
                 queryResult = resultSet;
                 resultSet.finish();
                 return;
             }
-
-            CompletionHandler ch = new CompletionHandler();
-            List<CompletionItem> props =  ch.complete(p.parserResult, sup.getElement(), s, offset);
-            for(CompletionItem item: props)
-                resultSet.addItem(item);
-//            if (obj == null)
-//            {
-//                resultSet.finish();
-//                return;
-//            }
-             
+            if(p.parserResult == null) return;
+            complete(resultSet);
             queryResult = resultSet;
             resultSet.finish();
         }
-        
-        private void populateThis(CompletionResultSet resultSet, GroovyScriptEngine engine)
+
+        private void populateThis(CompletionResultSet resultSet,
+                GroovyScriptEngine engine)
         {
             Bindings b = engine.getBindings(ScriptContext.GLOBAL_SCOPE);
-            for(String key : b.keySet())
+            for (String key : b.keySet())
             {
-                resultSet.addItem(new JavaResultItem.VarResultItem(
-                        key, b.get(key).getClass(), Modifier.PUBLIC));
+                resultSet.addItem(new JavaResultItem.VarResultItem(key, b.get(
+                        key).getClass(), Modifier.PUBLIC));
             }
-            for(String s: engine.globalClosures.keySet())
+            for (String s : engine.globalClosures.keySet())
             {
                 Closure c = engine.globalClosures.get(s);
                 String m = (String) c.getProperty("method");
-                if(m == null || m.indexOf("$") > -1) continue;
+                if (m == null || m.indexOf("$") > -1) continue;
                 resultSet.addItem(new ClosureItem(c));
             }
+            add_metas(resultSet);
         }
-     }
+        
+        private void add_metas(CompletionResultSet resultSet)
+        {
+            for(CompletionItem i: BuiltIns.getGroovyMetas())
+            {
+                i.setSubstituteOffset(queryCaretOffset);
+                resultSet.addItem(i);
+            }
+        }
+
+        private boolean complete(final CompletionResultSet resultSet)
+        {
+            ASTNode root = p.parserResult.getRootElement();
+            AstPath realPath = new AstPath(root, queryCaretOffset, sup.getElement());
+            ClassNode declaringClass = getDeclaringClass(realPath);
+            if (declaringClass == null) return false;
+            resultSet.setTitle(declaringClass.getName());
+            populateObject(resultSet, getSurroundingClassNode(realPath),
+                    declaringClass, prefix, queryCaretOffset);
+
+            return true;
+        }
+        
+         private void populateObject(CompletionResultSet resultSet,
+                ClassNode source, ClassNode node, String prefix, int anchor)
+        {
+
+            Class<?> type = node.isResolved() ? node.getTypeClass() : null;
+            
+            System.out.println("populateObject: " + node.getName() + ":" + type);
+            if (type != null)
+            {
+                CompletionU.populateClass(resultSet, type, Modifier.PRIVATE, anchor);
+                add_metas(resultSet);
+                return;
+            }
+
+            for (ClassNode inter : node.getInterfaces())
+            {
+                System.out.println("interface: " + inter.getName());
+                if(inter.getName().equals("groovy.lang.GroovyObject"))
+                    add_metas(resultSet);
+                // populateObject(resultSet, source, inter, prefix, anchor);
+            }
+
+            for (MethodNode m : node.getMethods())
+            {
+                if(m.getName().indexOf('$') > -1 ||
+                        m.getName().indexOf('<') > -1)
+                    continue;
+                ClassNode cn = m.getReturnType();
+                Parameter[] ps = m.getParameters();
+                String types[] = new String[ps.length];
+                String names[] = new String[ps.length];
+                for (int i = 0; i < ps.length; i++)
+                {
+                    types[i] = get_cls_name(ps[i].getDeclaringClass());
+                    names[i] = ps[i].getName();
+                }
+                JavaResultItem item = new JavaResultItem.MethodItem(
+                        m.getName(), get_cls_name(cn), types, names, m
+                                .getModifiers());
+                item.setSubstituteOffset(queryCaretOffset);
+                resultSet.addItem(item);
+            }
+            
+            for (FieldNode f : node.getFields())
+            {
+                if(f.getName().indexOf('$') > -1 ||
+                        f.getName().indexOf('<') > -1) continue;
+                JavaResultItem item = new JavaResultItem.FieldResultItem(
+                        f.getName(), get_cls_name(f.getType()), 
+                                f.getModifiers());
+                item.setSubstituteOffset(queryCaretOffset);
+                resultSet.addItem(item);
+            }
+            
+           // if(JAVA_LANG_OBJECT.equals(node.getName()))
+           //     add_metas(resultSet);
+        }
+
+        private static String get_cls_name(ClassNode n)
+        {
+            return n != null ? n.getName() : "Object";
+        }
+        
+        private ClassNode getDeclaringClass(AstPath realPath)
+        {
+            ModuleNode moduleNode = (ModuleNode) realPath.root();
+            TypeInferenceVisitor typeVisitor = new TypeInferenceVisitor(moduleNode.getContext(),
+                    realPath, sup.getElement(), queryCaretOffset, prefix);
+            typeVisitor.collect();
+            ClassNode guessedType = typeVisitor.getGuessedType();
+            if (guessedType != null) 
+                return guessedType;
+          
+            if (realPath.leaf() instanceof VariableExpression)
+            {
+                VariableExpression variable = (VariableExpression) realPath.leaf();
+                if ("this".equals(variable.getName()))
+                { 
+                    return getSurroundingClassNode(realPath);
+                }
+                if ("super".equals(variable.getName()))
+                { 
+                    ClassNode thisClass = getSurroundingClassNode(realPath);
+                    ClassNode superC = thisClass.getSuperClass();
+                    if (superC == null) { 
+                        superC = new ClassNode(JAVA_LANG_OBJECT, ClassNode.ACC_PUBLIC, null); }
+                    return superC;
+                }
+            }
+            return null;
+        }
+        
+        private static ClassNode getSurroundingClassNode(AstPath path)
+        {
+            if (path == null) return null;
+            for (Iterator<ASTNode> it = path.iterator(); it.hasNext();)
+            {
+                ASTNode current = it.next();
+                if (current instanceof ClassNode)
+                    return (ClassNode) current;
+            }
+            return null;
+        }
+
+    }
 
     public static class DocQuery extends AsyncCompletionQuery
     {
@@ -260,15 +389,15 @@ public class GroovyCompletionProvider implements CompletionProvider
             // Position oldPos = queryMethodParamsStartPos;
             queryMethodParamsStartPos = null;
             ScriptSupport sup = doc.getScriptSupport(caretOffset);
-            if (sup == null || !(sup.getParser() instanceof JavaScriptParser))
+            if (sup == null || !(sup.getParser() instanceof GroovyScriptParser))
                 return;
-            JavaScriptParser p = (JavaScriptParser) sup.getParser();
+            GroovyScriptParser p = (GroovyScriptParser) sup.getParser();
             // TODO:
-            if (p.getRootNode() == null)
-            {
-                resultSet.finish();
-                return;
-            }
+            //if (p.getRootNode() == null)
+           // {
+           //     resultSet.finish();
+           //     return;
+           // }
         }
 
         protected void prepareQuery(JTextComponent component)
@@ -340,14 +469,15 @@ public class GroovyCompletionProvider implements CompletionProvider
         }
     }
 
-    static class ClosureItem extends JavaResultItem.MethodResultItem
+    static class ClosureItem extends JavaResultItem.MethodItem
     {
         Closure closure;
+
         public ClosureItem(Closure closure)
         {
-            super(closure instanceof MethodClosure ?
-                    ((MethodClosure) closure).getMethod(): "Closure", Object.class,
-                    closure.getParameterTypes(), null);
+            super(closure instanceof MethodClosure ? ((MethodClosure) closure)
+                    .getMethod() : "Closure", Object.class, closure
+                    .getParameterTypes(), null);
             this.modifiers = Modifier.PUBLIC;
         }
 
@@ -356,7 +486,5 @@ public class GroovyCompletionProvider implements CompletionProvider
             return true;
         }
     }
-
-
 
 }

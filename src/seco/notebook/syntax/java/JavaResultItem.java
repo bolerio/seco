@@ -520,11 +520,11 @@ public abstract class JavaResultItem implements CompletionItem
         }
     }
 
-    public static class MethodResultItem extends CallableFeatureResultItem
+    public static class MethodItem extends CallableFeatureResultItem
     {
         private static JavaPaintComponent.MethodPaintComponent mtdComponent = null;
 
-        public MethodResultItem(Method mtd)
+        public MethodItem(Method mtd)
         {
             super(mtd);
             modifiers = mtd.getModifiers(); // Modifier.PUBLIC;
@@ -537,7 +537,7 @@ public abstract class JavaResultItem implements CompletionItem
                     .getExceptionTypes());
         }
 
-        public MethodResultItem(String mtdName, Class<?> type,
+        public MethodItem(String mtdName, Class<?> type,
                 Class<?>[] params, Class<?>[] exc)
         {
             super(mtdName);
@@ -548,14 +548,40 @@ public abstract class JavaResultItem implements CompletionItem
             populateParamsAndExceptions(params, exc);
         }
 
-        public MethodResultItem(String mtdName, String type)
+        public MethodItem(String mtdName, String type)
         {
             super(mtdName);
             modifiers = Modifier.PUBLIC;
             cfName = mtdName;
             typeName = type;
             typeColor = getTypeColor(mtdName);
-            // populateParamsAndExceptions(params, exc);
+        }
+        
+        public MethodItem(String mtdName, String type, int modifiers)
+        {
+            this(mtdName, type);
+            this.modifiers = modifiers;
+        }
+
+        public MethodItem(String mtdName, String type, String[] types,
+                String[] names, int modifiers)
+        {
+            this(mtdName, type);
+            this.modifiers = modifiers;
+            populateParams(types, names);
+        }
+
+        public MethodItem(String mtdName, String type, String[] types,
+                String[] names)
+        {
+            this(mtdName, type, types, names, Modifier.PUBLIC);
+        }
+
+        void populateParams(String[] prms, String names[])
+        {
+            for (int i = 0; i < prms.length; i++)
+                params.add(new ParamStr(prms[i], prms[i], names[i], false,
+                        getTypeColor(prms[i])));
         }
 
         public Component getPaintComponent(boolean isSelected)
@@ -587,6 +613,8 @@ public abstract class JavaResultItem implements CompletionItem
             return (mods.length() > 1 ? mods : "") + getTypeName() + " "
                     + getName() + printParams(true) + printExceptions(); // NOI18N
         }
+        
+       
     }
 
     public static class ConstructorResultItem extends CallableFeatureResultItem
@@ -729,9 +757,12 @@ public abstract class JavaResultItem implements CompletionItem
             if (prms != null)
                 for (int i = 0; i < prms.length; i++)
                     if (params != null)
+                    {
+                        String arg_name = (prms.length == 1) ? "arg" : "arg" + (i + 1);
                         params.add(new ParamStr(prms[i].getSimpleName(),
                                 JMIUtils.getTypeName(prms[i], false, false),
-                                "arg" + i, false, getTypeColor(prms[i])));
+                                arg_name, false, getTypeColor(prms[i])));
+                    }
             if (exceps != null)
                 for (int i = 0; i < exceps.length; i++)
                     excs.add(new ExceptionStr(exceps[i].getSimpleName(),
@@ -946,6 +977,48 @@ public abstract class JavaResultItem implements CompletionItem
             }
             return sb.toString();
         }
+
+        @Override
+        public int hashCode()
+        {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result
+                    + ((cfName == null) ? 0 : cfName.hashCode());
+            result = prime * result + modifiers;
+            result = prime * result
+                    + ((params == null) ? 0 : params.hashCode());
+            result = prime * result
+                    + ((typeName == null) ? 0 : typeName.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            CallableFeatureResultItem other = (CallableFeatureResultItem) obj;
+            if (cfName == null)
+            {
+                if (other.cfName != null) return false;
+            }
+            else if (!cfName.equals(other.cfName)) return false;
+            if (params == null)
+            {
+                if (other.params != null) return false;
+            }
+            else if (params.size() != other.params.size()) return false;
+            if (typeName == null)
+            {
+                if (other.typeName != null) return false;
+            }
+            else if (!typeName.equals(other.typeName)) return false;
+            return true;
+        }
+        
+        
     }
 
     public static class PackageResultItem extends JavaResultItem
@@ -1267,21 +1340,6 @@ public abstract class JavaResultItem implements CompletionItem
             });
             return ret;
         }
-
-        //private boolean useFQN(Class<?> cls, Class<?> ctx, Map cache)
-        //{
-            /*
-             * ??? cls = (Class)JMIUtils.getDefintion(cls); if (cls instanceof
-             * TypeParameter) cls = ((TypeParameter)cls).getSuperClass();
-             * Boolean b = (Boolean)cache.get(cls); if (b == null) { if (ctx !=
-             * null) { MultipartId mpid =
-             * JavaModelUtil.resolveImportsForClass(ctx, cls); b =
-             * Boolean.valueOf(!cls.getSimpleName().equals(mpid.getName())); }
-             * else { b = Boolean.FALSE; } cache.put(cls, b); } return
-             * b.booleanValue();
-             */
-        //    return false;
-        //}
 
         public boolean substituteTextSimple(final JTextComponent c, int offset,
                 int len, boolean shift)

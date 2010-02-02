@@ -431,48 +431,7 @@ public class JSCompletionProvider implements CompletionProvider
         }
     }
 
-    public static class JSMethod extends JavaResultItem.MethodResultItem
-    {
-        public JSMethod(String mtdName, String type)
-        {
-            super(mtdName, type);
-            this.modifiers = Modifier.PUBLIC;
-        }
-
-        public JSMethod(String mtdName, String type, int modifiers)
-        {
-            super(mtdName, type);
-            this.modifiers = modifiers;
-        }
-
-        public JSMethod(String mtdName, String type, String[] types,
-                String[] names, int modifiers)
-        {
-            super(mtdName, type);
-            this.modifiers = modifiers;
-            populateParams(types, names);
-        }
-
-        public JSMethod(String mtdName, String type, String[] types,
-                String[] names)
-        {
-            this(mtdName, type, types, names, Modifier.PUBLIC);
-        }
-
-        protected boolean isAddParams()
-        {
-            return true;
-        }
-
-        void populateParams(String[] prms, String names[])
-        {
-            for (int i = 0; i < prms.length; i++)
-                params.add(new ParamStr(prms[i], prms[i], names[i], false,
-                        getTypeColor(prms[i])));
-        }
-    }
-
-    static class JSVarArgMethod extends JavaResultItem.MethodResultItem
+    static class JSVarArgMethod extends JavaResultItem.MethodItem
     {
         public JSVarArgMethod(String mtdName, String type, int modifiers)
         {
