@@ -165,7 +165,7 @@ public class BshCompletionProvider implements CompletionProvider
 							"getParameterTypes").invoke(ms[i], empty);
 					// System.out.println("XThis - methods: " + name + ":" +
 					// ((retType != null) ? retType.getName(): "null"));
-					JavaResultItem item = new JavaResultItem.MethodResultItem(
+					JavaResultItem item = new JavaResultItem.MethodItem(
 							name, retType, params, null);
 					item.setSubstituteOffset(queryCaretOffset);
 					resultSet.addItem(item);
@@ -397,7 +397,7 @@ public class BshCompletionProvider implements CompletionProvider
 			{
 				if (ms[i].getModifiers() != modifiers) continue;
 				if (!ms[i].getName().equals(name)) continue;
-				JavaResultItem item = new JavaResultItem.MethodResultItem(ms[i]);
+				JavaResultItem item = new JavaResultItem.MethodItem(ms[i]);
 				List<String> parms = new ArrayList<String>();
 				parms.add(item.toString());
 				list.add(parms);
