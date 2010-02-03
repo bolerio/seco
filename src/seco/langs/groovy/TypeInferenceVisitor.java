@@ -39,18 +39,30 @@ package seco.langs.groovy;
  * Portions Copyrighted 2009 Sun Microsystems, Inc.
  */
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import javax.swing.text.Element;
 
 import org.codehaus.groovy.ast.ASTNode;
+import org.codehaus.groovy.ast.ClassHelper;
 import org.codehaus.groovy.ast.ClassNode;
+import org.codehaus.groovy.ast.FieldNode;
+import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.Parameter;
+import org.codehaus.groovy.ast.PropertyNode;
 import org.codehaus.groovy.ast.Variable;
+import org.codehaus.groovy.ast.expr.ArgumentListExpression;
 import org.codehaus.groovy.ast.expr.BinaryExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.ConstructorCallExpression;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.ListExpression;
 import org.codehaus.groovy.ast.expr.MapExpression;
+import org.codehaus.groovy.ast.expr.MethodCallExpression;
+import org.codehaus.groovy.ast.expr.PropertyExpression;
 import org.codehaus.groovy.ast.expr.RangeExpression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.codehaus.groovy.control.SourceUnit;
@@ -62,39 +74,27 @@ import org.codehaus.groovy.syntax.Types;
  */
 public class TypeInferenceVisitor extends TypeVisitor
 {
-
-    private ClassNode guessedType;
+    private static final String JAVA_LANG_OBJECT = "java.lang.Object";
+   // private ClassNode guessedType;
 
     private boolean leafReached = false; // flag saying if visiting reached the
     // node that we are investigating
 
-    private String var;
+    Map<String, ClassNode> vars = new HashMap<String, ClassNode>(); 
 
     public TypeInferenceVisitor(SourceUnit sourceUnit, AstPath path,
             Element doc, int cursorOffset, String var)
     {
         // we don't want to visit all classes in module
         super(sourceUnit, path, doc, cursorOffset, true);
-        this.var = var;
-    }
-
-    /**
-     * Tries to guess the type from the last assignment expression before actual
-     * position of the leaf
-     * 
-     * @return guessed type or null if there is no way to calculate it
-     */
-    public ClassNode getGuessedType()
-    {
-        return guessedType;
     }
 
     @Override
     public void collect()
     {
-        guessedType = null;
+       // guessedType = null;
         leafReached = false;
-
+        vars.clear();
         super.collect();
     }
 
@@ -111,59 +111,121 @@ public class TypeInferenceVisitor extends TypeVisitor
         if (!leafReached)
         {
             // have a look at assignment and try to get type from its right side
-            Expression leftExpression = expression.getLeftExpression();
-            if (leftExpression instanceof VariableExpression)
+            Expression left = expression.getLeftExpression();
+            if (left instanceof VariableExpression)
             {
-                if (var.equals(((VariableExpression) leftExpression).getName()))
-                {
-                    Expression rightExpression = expression
-                            .getRightExpression();
-                    if (rightExpression instanceof ConstantExpression
-                            && !rightExpression.getText().equals("null"))
-                    {
-                        guessedType = rightExpression.getType();
-                    }
-                    else if (rightExpression instanceof ConstructorCallExpression)
-                    {
-                        guessedType = rightExpression.getType();
-                    }
-                    else if (rightExpression instanceof ListExpression
-                            || rightExpression instanceof MapExpression)
-                    {
-                        guessedType = rightExpression.getType();
-                    }
-                    else if (rightExpression instanceof RangeExpression)
-                    {
-                        try
-                        {
-                            guessedType = (new ClassNode(Class
-                                    .forName("groovy.lang.Range")));
-                        }
-                        catch (ClassNotFoundException ex)
-                        {
-                            guessedType = new ClassNode("groovy.lang.Range",
-                                    ClassNode.ACC_PUBLIC
-                                            | ClassNode.ACC_INTERFACE, null);
-                        }
-                    }
-                }
-
+                
+                //if (var.equals(((VariableExpression) leftExpression).getName()))
+               // {
+                    Expression right = expression.getRightExpression();
+                    ClassNode n = resolveExpression(right);
+                    if(n != null) 
+                        vars.put(((VariableExpression) left).getName(), n);
+                        //guessedType = n;
+               // }
             }
         }
         super.visitBinaryExpression(expression);
     }
 
-    private static boolean sameVariableName(Parameter param, Variable variable)
+    ClassNode resolveExpression(Expression exp)
     {
-        return param.getName().equals(variable.getName());
+        
+        if (exp instanceof ConstantExpression && !exp.getText().equals("null"))
+        {
+            return exp.getType();
+        }else if(exp instanceof VariableExpression)
+        {
+            String name = ((VariableExpression) exp).getName();
+          if ("this".equals(name))
+          { 
+              return getSurroundingClassNode(path);
+          }
+          if ("super".equals(name))
+          { 
+              ClassNode thisClass = getSurroundingClassNode(path);
+              ClassNode superC = thisClass.getSuperClass();
+              if (superC == null) { 
+                  superC = new ClassNode(JAVA_LANG_OBJECT, ClassNode.ACC_PUBLIC, null); }
+              return superC;
+          }
+            ClassNode redef = vars.get(name);
+            return redef != null ? redef : exp.getType();
+        }
+        else if (exp instanceof ConstructorCallExpression)
+        {
+            return exp.getType();
+        }
+        else if (exp instanceof ListExpression || exp instanceof MapExpression)
+        {
+            return exp.getType();
+        }
+        else if (exp instanceof RangeExpression)
+        {
+            try
+            {
+                return (new ClassNode(Class.forName("groovy.lang.Range")));
+            }
+            catch (ClassNotFoundException ex)
+            {
+                return new ClassNode("groovy.lang.Range", ClassNode.ACC_PUBLIC
+                        | ClassNode.ACC_INTERFACE, null);
+            }
+        }
+        else if (exp instanceof MethodCallExpression)
+        {
+            ClassNode n = resolveMethod((MethodCallExpression) exp);
+            if (n != null) return n;
+        }
+        else if (exp instanceof PropertyExpression)
+        {
+            return resolveProperty((PropertyExpression) exp);
+        }
+        return exp.getType();
+    }
+    
+    ClassNode resolveProperty(PropertyExpression pe)
+    {
+        ClassNode cls = resolveExpression(pe.getObjectExpression());
+        PropertyNode pn = cls.getProperty(pe.getPropertyAsString());
+        FieldNode f = (pn!= null) ? pn.getField(): cls.getField(pe.getPropertyAsString()); 
+        return (f!= null) ? f.getType() : null;
     }
 
-    private static boolean sameVariableName(ASTNode node1, ASTNode node2)
+    ClassNode resolveMethod(MethodCallExpression mce)
     {
-        return node1 instanceof VariableExpression
-                && node2 instanceof VariableExpression
-                && ((VariableExpression) node1).getName().equals(
-                        ((VariableExpression) node2).getName());
+        ClassNode cls = resolveExpression(mce.getObjectExpression());//.getType();
+        List<MethodNode> meths = cls.getMethods(mce.getMethodAsString());
+        if (meths.isEmpty()) return null;
+        ArgumentListExpression args = (ArgumentListExpression) mce
+                .getArguments();
+        int arity = args.getExpressions().size();
+        for (MethodNode mn : meths)
+        {
+            // for now we take the first method with the same number of params
+            if (mn.getParameters().length == arity)
+            {
+                ClassNode ret = mn.getReturnType();
+                if (ClassHelper.VOID_TYPE == ret) continue;
+                System.out.println("Resolve: " + 
+                        mce.getMethodAsString() +
+                        ":" + cls + ":" + ret);
+                return ret;
+            }
+        }
+        return null;
     }
-
+    
+    static ClassNode getSurroundingClassNode(AstPath path)
+    {
+        if (path == null) return null;
+        for (Iterator<ASTNode> it = path.iterator(); it.hasNext();)
+        {
+            ASTNode current = it.next();
+            if (current instanceof ClassNode)
+                return (ClassNode) current;
+        }
+        return null;
+    }
+   
 }

@@ -29,6 +29,8 @@ import org.codehaus.groovy.ast.FieldNode;
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.ModuleNode;
 import org.codehaus.groovy.ast.Parameter;
+import org.codehaus.groovy.ast.expr.ConstantExpression;
+import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.codehaus.groovy.runtime.MethodClosure;
 
@@ -57,8 +59,6 @@ import seco.notebook.util.DocumentUtilities;
 
 public class GroovyCompletionProvider implements CompletionProvider
 {
-    private static final String JAVA_LANG_OBJECT = "java.lang.Object";
-    
     public int getAutoQueryTypes(JTextComponent component, String typedText)
     {
         if (".".equals(typedText)) return COMPLETION_QUERY_TYPE;
@@ -111,30 +111,11 @@ public class GroovyCompletionProvider implements CompletionProvider
                 return;
             }
             if(p.parserResult == null) return;
-            complete(resultSet);
+            if(!complete(resultSet)) return;
             queryResult = resultSet;
             resultSet.finish();
         }
 
-        private void populateThis(CompletionResultSet resultSet,
-                GroovyScriptEngine engine)
-        {
-            Bindings b = engine.getBindings(ScriptContext.GLOBAL_SCOPE);
-            for (String key : b.keySet())
-            {
-                resultSet.addItem(new JavaResultItem.VarResultItem(key, b.get(
-                        key).getClass(), Modifier.PUBLIC));
-            }
-            for (String s : engine.globalClosures.keySet())
-            {
-                Closure c = engine.globalClosures.get(s);
-                String m = (String) c.getProperty("method");
-                if (m == null || m.indexOf("$") > -1) continue;
-                resultSet.addItem(new ClosureItem(c));
-            }
-            add_metas(resultSet);
-        }
-        
         private void add_metas(CompletionResultSet resultSet)
         {
             for(CompletionItem i: BuiltIns.getGroovyMetas())
@@ -146,19 +127,19 @@ public class GroovyCompletionProvider implements CompletionProvider
 
         private boolean complete(final CompletionResultSet resultSet)
         {
-            ASTNode root = p.parserResult.getRootElement();
-            AstPath realPath = new AstPath(root, queryCaretOffset, sup.getElement());
+            ModuleNode root = p.parserResult.getRootElement();
+            AstPath realPath = new AstPath(root, queryCaretOffset-1, sup.getElement());
             ClassNode declaringClass = getDeclaringClass(realPath);
             if (declaringClass == null) return false;
             resultSet.setTitle(declaringClass.getName());
-            populateObject(resultSet, getSurroundingClassNode(realPath),
-                    declaringClass, prefix, queryCaretOffset);
+            populateObject(resultSet, TypeInferenceVisitor.getSurroundingClassNode(realPath),
+                    declaringClass, prefix);
 
             return true;
         }
         
          private void populateObject(CompletionResultSet resultSet,
-                ClassNode source, ClassNode node, String prefix, int anchor)
+                ClassNode source, ClassNode node, String prefix)
         {
 
             Class<?> type = node.isResolved() ? node.getTypeClass() : null;
@@ -166,7 +147,7 @@ public class GroovyCompletionProvider implements CompletionProvider
             System.out.println("populateObject: " + node.getName() + ":" + type);
             if (type != null)
             {
-                CompletionU.populateClass(resultSet, type, Modifier.PRIVATE, anchor);
+                CompletionU.populateClass(resultSet, type, Modifier.PRIVATE, queryCaretOffset);
                 add_metas(resultSet);
                 return;
             }
@@ -214,6 +195,25 @@ public class GroovyCompletionProvider implements CompletionProvider
            // if(JAVA_LANG_OBJECT.equals(node.getName()))
            //     add_metas(resultSet);
         }
+         
+         private void populateThis(CompletionResultSet resultSet,
+                 GroovyScriptEngine engine)
+         {
+             Bindings b = engine.getBindings(ScriptContext.GLOBAL_SCOPE);
+             for (String key : b.keySet())
+             {
+                 resultSet.addItem(new JavaResultItem.VarResultItem(key, b.get(
+                         key).getClass(), Modifier.PUBLIC));
+             }
+             for (String s : engine.globalClosures.keySet())
+             {
+                 Closure c = engine.globalClosures.get(s);
+                 String m = (String) c.getProperty("method");
+                 if (m == null || m.indexOf("$") > -1) continue;
+                 resultSet.addItem(new ClosureItem(c));
+             }
+             add_metas(resultSet);
+         } 
 
         private static String get_cls_name(ClassNode n)
         {
@@ -226,41 +226,23 @@ public class GroovyCompletionProvider implements CompletionProvider
             TypeInferenceVisitor typeVisitor = new TypeInferenceVisitor(moduleNode.getContext(),
                     realPath, sup.getElement(), queryCaretOffset, prefix);
             typeVisitor.collect();
-            ClassNode guessedType = typeVisitor.getGuessedType();
-            if (guessedType != null) 
-                return guessedType;
-          
-            if (realPath.leaf() instanceof VariableExpression)
+           
+            if(prefix.indexOf(".") < 0)  //simple var
             {
-                VariableExpression variable = (VariableExpression) realPath.leaf();
-                if ("this".equals(variable.getName()))
-                { 
-                    return getSurroundingClassNode(realPath);
-                }
-                if ("super".equals(variable.getName()))
-                { 
-                    ClassNode thisClass = getSurroundingClassNode(realPath);
-                    ClassNode superC = thisClass.getSuperClass();
-                    if (superC == null) { 
-                        superC = new ClassNode(JAVA_LANG_OBJECT, ClassNode.ACC_PUBLIC, null); }
-                    return superC;
-                }
+                ClassNode guessedType = typeVisitor.vars.get(prefix);
+                if (guessedType != null) return guessedType;
+            }
+            
+            ASTNode leaf = realPath.leaf();
+            if (leaf instanceof Expression)
+            {
+                //prop invocation ends with ConstantExpression
+                if(leaf instanceof ConstantExpression)
+                    leaf = realPath.leafParent();
+                return typeVisitor.resolveExpression((Expression) leaf);
             }
             return null;
         }
-        
-        private static ClassNode getSurroundingClassNode(AstPath path)
-        {
-            if (path == null) return null;
-            for (Iterator<ASTNode> it = path.iterator(); it.hasNext();)
-            {
-                ASTNode current = it.next();
-                if (current instanceof ClassNode)
-                    return (ClassNode) current;
-            }
-            return null;
-        }
-
     }
 
     public static class DocQuery extends AsyncCompletionQuery

@@ -86,7 +86,7 @@ public class AstPath implements Iterable<ASTNode>
         // make sure offset is not higher than document length, see #138353
         int[] lineCol = offsetToLineCol(el, caretOffset);
 
-        this.lineNumber = lineCol[0];
+        this.lineNumber = lineCol[0] + 1;
         this.columnNumber = lineCol[1];
 
         findPathTo(root, lineNumber, columnNumber);

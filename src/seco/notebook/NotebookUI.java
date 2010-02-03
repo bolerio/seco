@@ -949,17 +949,17 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         modes = new Vector<Mode>();
         for (Class<?> c : getScriptSupportClassesMap().values())
         {
-            ScriptSupport sup = null;
+            ScriptSupportFactory sup = null;
             try
             {
-                sup = (ScriptSupport) c.newInstance();
+                sup = (ScriptSupportFactory) c.newInstance();
             }
             catch (Exception ex)
             {
                 System.err.println("Unable to create ScriptSupport for: "
                         + c.getName());
             }
-            if (sup != null) for (Mode m : sup.getFactory().getModes())
+            if (sup != null) for (Mode m : sup.getModes())
                 if (getMode(m.getName()) == null) addMode(m);
         }
     }
