@@ -30,17 +30,14 @@
 
 package seco.notebook.syntax;
 
-import gnu.regexp.*;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
-
-import seco.notebook.NotebookUI;
 
 import com.microstar.xml.XmlException;
 import com.microstar.xml.XmlParser;
 
+import seco.ThisNiche;
 
 /**
  * An edit mode defines specific settings for editing some type of file.
@@ -52,10 +49,68 @@ import com.microstar.xml.XmlParser;
 public class Mode
 {
 	private String name;
+	private ScriptSupportFactory supportFactory;
 	private Map<String, Object> props = new HashMap<String, Object>();
 	//private RE firstlineRE;
 	//private RE filenameRE;
 	private TokenMarker marker;
+	
+    private void loadMe()
+    {
+        final String fileName = (String) getProperty("file");
+        System.out.println("Loading edit mode " + fileName);
+        final XmlParser parser = new XmlParser();
+        XModeHandler xmh = new XModeHandler(getName()) {
+            public void error(String what, Object subst)
+            {
+                int line = parser.getLineNumber();
+                int column = parser.getColumnNumber();
+                String msg;
+                if (subst == null) msg = "xmode-error." + what;
+                else
+                {
+                    msg = subst.toString();
+                    if (subst instanceof Throwable)
+                        System.out.println("ERROR: " + subst);
+                }
+                System.err.println("XMode error: " + msg + " file: " + fileName
+                        + " line: " + line + " column: " + column);
+            }
+
+            public TokenMarker getTokenMarker(String modeName)
+            {
+                Mode mode = supportFactory.getMode(modeName);
+                return (mode == null) ? null : mode.getTokenMarker();
+            }
+        };
+        setTokenMarker(xmh.getTokenMarker());
+        parser.setHandler(xmh);
+        try
+        {
+            InputStream is = supportFactory.getClass().getResourceAsStream(fileName);
+//            if (is == null)
+//                is = Thread.currentThread().getContextClassLoader()
+//                        .getResourceAsStream(fileName);
+            // System.out.println("NotebookUI - loadMode: " + is);
+            parser.parse(null, null, is, null); // grammar);
+
+            setTokenMarker(xmh.getTokenMarker());
+            setProperties(xmh.getModeProperties());
+        }
+        catch (Throwable e)
+        {
+            System.err.println("ERROR" + e);
+            e.printStackTrace();
+            if (e instanceof XmlException)
+            {
+                XmlException xe = (XmlException) e;
+                int line = xe.getLine();
+                String message = xe.getMessage();
+                System.err.println("XMode error: " + message + " file: "
+                        + fileName + " line: " + line);
+            }
+        }
+    }
 	
 	/**
 	 * Creates a new edit mode.
@@ -64,47 +119,12 @@ public class Mode
 	 * properties
 	 * @see #getProperty(String)
 	 */
-	public Mode(String name, String fileName)
+	public Mode(String name, String fileName, ScriptSupportFactory supportFactory)
 	{
 		this.name = name;
+		this.supportFactory = supportFactory;
 		setProperty("file", fileName);
 	} 
-
-	/*
-    public void init()
-	{
-		try
-		{
-			String filenameGlob = (String)getProperty("filenameGlob");
-			if(filenameGlob != null && filenameGlob.length() != 0)
-			{
-				filenameRE = new RE(MiscUtilities.globToRE(
-					filenameGlob),RE.REG_ICASE);
-			}
-
-			String firstlineGlob = (String)getProperty("firstlineGlob");
-			if(firstlineGlob != null && firstlineGlob.length() != 0)
-			{
-				firstlineRE = new RE(MiscUtilities.globToRE(
-					firstlineGlob),RE.REG_ICASE);
-			}
-		}
-		catch(REException re)
-		{
-			Log.log(Log.ERROR,this,"Invalid filename/firstline"
-				+ " globs in mode " + name);
-			Log.log(Log.ERROR,this,re);
-		}
-
-		// Fix for this bug:
-		// -- Put a mode into the user dir with the same name as one
-		//    on the system dir.
-		// -- Reload edit modes.
-		// -- Old mode from system dir still used for highlighting
-		//    until jEdit restart.
-		marker = null;
-	} 
-	*/
 
 	/**
 	 * Returns the token marker for this mode.
@@ -131,8 +151,7 @@ public class Mode
 	public void loadIfNecessary()
 	{
 		 if(marker == null) 
-			 NotebookUI.loadMode(this);
-	       
+			 loadMe();	       
 	} 
 
 	/**
@@ -232,7 +251,5 @@ public class Mode
 	public String toString()
 	{
 		return name;
-	} 
-
-	
+	} 	
 }

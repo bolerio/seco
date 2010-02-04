@@ -7,7 +7,6 @@
  */
 package seco.notebook.syntax;
 
-import java.util.List;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.Element;
@@ -15,7 +14,6 @@ import javax.swing.text.Segment;
 import javax.swing.text.*;
 
 import seco.notebook.NotebookDocument;
-import seco.notebook.NotebookUI;
 import seco.notebook.syntax.completion.Completion;
 import seco.notebook.syntax.completion.CompletionProvider;
 import seco.notebook.syntax.completion.NBParser;
@@ -67,11 +65,11 @@ public abstract class ScriptSupport
 		lineMgr.contentInserted(0, 0, el.getElementCount(), el.getEndOffset()
 				- el.getStartOffset());
 		chunkCache = new ChunkCache(this);
-		Mode mode = NotebookUI.getMode(getFactory().getModeName());
+		Mode mode = getFactory().getDefaultMode();
 		if(mode != null)
 		   tokenMarker = mode.getTokenMarker();
 		else
-		    System.err.println("Unable to find mode: " + getFactory().getModeName());
+		    System.err.println("Unable to find default mode for language " + getFactory().getEngineName());
 		notifyParser();
 	}
 

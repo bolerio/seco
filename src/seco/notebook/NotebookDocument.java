@@ -343,16 +343,18 @@ public class NotebookDocument extends DefaultStyledDocument
         if (sup != null && sup.getFactory().getEngineName().equals(name)
                 && !force) return;
         el = getLowerElement(el, inputCellBox);
-        Class<?> cls = NotebookUI.getScriptSupportClassesMap().get(name);
-        if (cls == null)
-        {
-            if (force) removeAttribute(el, ATTR_SCRIPT_SUPPORT);
-            return;
-        }
+//        Class<?> cls = NotebookUI.getScriptSupportClassesMap().get(name);
+//        if (cls == null)
+//        {
+//            if (force) removeAttribute(el, ATTR_SCRIPT_SUPPORT);
+//            return;
+//        }
         sup = null;
         try
         {
-            ScriptSupportFactory factory = (ScriptSupportFactory) cls.newInstance();
+            ScriptSupportFactory factory = 
+                getEvaluationContext().getLanguageDescriptor(name).getEditSupportFactory();
+                //(ScriptSupportFactory) cls.newInstance();
             sup = factory.createScriptSupport(el.getElement(0));
         }
         catch (Exception ex)

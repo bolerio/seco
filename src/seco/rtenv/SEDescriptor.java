@@ -7,6 +7,9 @@
  */
 package seco.rtenv;
 
+import seco.ThisNiche;
+import seco.notebook.syntax.ScriptSupportFactory;
+
 /**
  * <p>
  * A descriptor bean for a script engine. It holds the engine
@@ -28,16 +31,30 @@ public class SEDescriptor
 	private String language;
     private String factoryClassName;
     private String [] packageNames;
+    private String editSupportClassName;
+    private transient ScriptSupportFactory editSupportFactory;
     
     public SEDescriptor()
     {        
     }
     
-    public SEDescriptor(String language, String factoryClassName, String [] packageNames)
+    /**
+     * @param language The name of the scripting language.
+     * @param factoryClassName The name of the class implementing the ScriptEngineFactory interface.
+     * @param packageNames Names of packages of the code implementing the script engine: each class loader
+     * redefines explicitly classes from those packages.
+     * @param editSupportClassName The name of the class implementing the ScriptSupportFactory (for 
+     * editing support - syntax highlight and code completion).
+     */
+    public SEDescriptor(String language, 
+                        String factoryClassName, 
+                        String [] packageNames, 
+                        String editSupportClassName)
     {
     	this.language = language;
         this.factoryClassName = factoryClassName;
         this.packageNames = packageNames;
+        this.editSupportClassName = editSupportClassName;
     }
     
     public String getLanguage()
@@ -68,5 +85,34 @@ public class SEDescriptor
     public void setPackageNames(String[] packageNames)
     {
         this.packageNames = packageNames;
-    }   
+    }
+
+    public String getEditSupportClassName()
+    {
+        return editSupportClassName;
+    }
+
+    public void setEditSupportClassName(String editSupportClassName)
+    {
+        this.editSupportClassName = editSupportClassName;
+    }
+    
+    public ScriptSupportFactory getEditSupportFactory()
+    {
+        // no need to synchronize here, it's ok if multiple factories get created
+        // concurrently, only the last one will remain
+        if (editSupportFactory == null)
+        {
+            try
+            {
+                if (editSupportClassName != null)
+                    editSupportFactory = (ScriptSupportFactory)ThisNiche.graph.getTypeSystem().loadClass(editSupportClassName).newInstance();
+            }
+            catch (Exception ex)
+            {
+                throw new RuntimeException(ex);
+            }
+        }
+        return editSupportFactory;
+    }
 }

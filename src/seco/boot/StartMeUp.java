@@ -9,6 +9,9 @@ package seco.boot;
 
 import java.io.*;
 import java.util.*;
+
+import javax.swing.UIManager;
+
 import seco.classloader.AdaptiveClassLoader;
 import seco.notebook.storage.ClassRepository;
 
@@ -22,6 +25,14 @@ public class StartMeUp
         NicheSelectDialog dlg = new NicheSelectDialog();
         dlg.setNiches(niches);
         dlg.setVisible(true);
+//        try
+//        {
+//            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+//        }
+//        catch (Exception ex)
+//        {
+//            ex.printStackTrace();
+//        }        
         if (dlg.getSucceeded())
         {
         	String nicheLocation = niches.get(dlg.getSelectedNiche()).getAbsolutePath();

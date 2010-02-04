@@ -63,8 +63,6 @@ public interface StructureItem {
     /** Icon to use instead of the default implied by the ElementKind */
     ImageIcon getCustomIcon();
     
-    @Override
     public abstract boolean equals(Object o);
-    @Override
     public abstract int hashCode();
 }

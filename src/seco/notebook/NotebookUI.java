@@ -801,64 +801,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         }
     }
 
-    public static void loadMode(Mode mode)
-    {
-        final String fileName = (String) mode.getProperty("file");
-        System.out.println("Loading edit mode " + fileName);
-        final XmlParser parser = new XmlParser();
-        XModeHandler xmh = new XModeHandler(mode.getName()) {
-            public void error(String what, Object subst)
-            {
-                int line = parser.getLineNumber();
-                int column = parser.getColumnNumber();
-                String msg;
-                if (subst == null) msg = "xmode-error." + what;
-                else
-                {
-                    msg = subst.toString();
-                    if (subst instanceof Throwable)
-                        System.out.println("ERROR: " + subst);
-                }
-                System.err.println("XMode error: " + msg + " file: " + fileName
-                        + " line: " + line + " column: " + column);
-            }
-
-            public TokenMarker getTokenMarker(String modeName)
-            {
-                Mode mode = getMode(modeName);
-                if (mode == null) return null;
-                else
-                    return mode.getTokenMarker();
-            }
-        };
-        mode.setTokenMarker(xmh.getTokenMarker());
-        parser.setHandler(xmh);
-        try
-        {
-            InputStream is = NotebookUI.class.getResourceAsStream(fileName);
-            if (is == null)
-                is = Thread.currentThread().getContextClassLoader()
-                        .getResourceAsStream(fileName);
-            // System.out.println("NotebookUI - loadMode: " + is);
-            parser.parse(null, null, is, null); // grammar);
-
-            mode.setTokenMarker(xmh.getTokenMarker());
-            mode.setProperties(xmh.getModeProperties());
-        }
-        catch (Throwable e)
-        {
-            System.err.println("ERROR" + e);
-            e.printStackTrace();
-            if (e instanceof XmlException)
-            {
-                XmlException xe = (XmlException) e;
-                int line = xe.getLine();
-                String message = xe.getMessage();
-                System.err.println("XMode error: " + message + " file: "
-                        + fileName + " line: " + line);
-            }
-        }
-    }
 
     /**
      * Returns the edit mode with the specified name.
@@ -866,103 +808,103 @@ public class NotebookUI extends JTextPane implements DocumentListener,
      * @param name
      *            The edit mode
      */
-    public static Mode getMode(String name)
-    {
-        getScriptSupportClassesMap();
-        for (int i = 0; i < modes.size(); i++)
-        {
-            Mode mode = (Mode) modes.elementAt(i);
-            if (mode.getName().equals(name)) return mode;
-        }
-        return null;
-    }
+//    public static Mode getMode(String name)
+//    {
+////        getScriptSupportClassesMap();
+//        for (int i = 0; i < modes.size(); i++)
+//        {
+//            Mode mode = (Mode) modes.elementAt(i);
+//            if (mode.getName().equals(name)) return mode;
+//        }
+//        return null;
+//    }
 
-    private static void addMode(Mode mode)
-    {
-        modes.addElement(mode);
-    }
+//    private static void addMode(Mode mode)
+//    {
+//        modes.addElement(mode);
+//    }
 
     /**
      * Returns an array of installed edit modes.
      */
-    public static Mode[] getModes()
-    {
-        Mode[] array = new Mode[modes.size()];
-        modes.copyInto(array);
-        return array;
-    }
+//    public static Mode[] getModes()
+//    {
+//        Mode[] array = new Mode[modes.size()];
+//        modes.copyInto(array);
+//        return array;
+//    }
 
-    public static void registerScriptSupport(ScriptSupportFactory sup,
-            boolean permanently)
-    {
-        if (sup == null)
-            throw new NullPointerException(
-                    "Attempt to register null ScriptSupport");
-        if (getScriptSupportClassesMap().containsKey(sup.getEngineName()))
-            return;
-        for (Mode m : sup.getModes())
-            if (getMode(m.getName()) == null) addMode(m);
-        getScriptSupportClassesMap().put(sup.getEngineName(),
-                sup.getClass());
-        if (permanently) ThisNiche.graph.update(getScriptSupportClassesMap());
-    }
+//    public static void registerScriptSupport(ScriptSupportFactory sup,
+//            boolean permanently)
+//    {
+//        if (sup == null)
+//            throw new NullPointerException(
+//                    "Attempt to register null ScriptSupport");
+//        if (getScriptSupportClassesMap().containsKey(sup.getEngineName()))
+//            return;
+//        for (Mode m : sup.getModes())
+//            if (getMode(m.getName()) == null) addMode(m);
+//        getScriptSupportClassesMap().put(sup.getEngineName(),
+//                sup.getClass());
+//        if (permanently) ThisNiche.graph.update(getScriptSupportClassesMap());
+//    }
 
-    private static Map<String, Class<?>> supports = null;
+//    private static Map<String, Class<?>> supports = null;
+    
     private static Vector<Mode> modes = null;
 
-    static Map<String, Class<?>> getScriptSupportClassesMap()
-    {
-        if (supports == null)
-        {
-            supports = (Map<String, Class<?>>) ThisNiche.graph
-                    .get(SCRIPT_SUPPORTS_HANDLE);
-            if (supports != null)
-            {
-                //legacy niche opened 
-                if(!supports.get("beanshell").isAssignableFrom(ScriptSupportFactory.class))
-                {
-                   ThisNiche.graph.remove(NotebookUI.SCRIPT_SUPPORTS_HANDLE);
-                   supports = null;
-                }else
-                {
-                   if (modes == null) init_modes();
-                     return supports;
-                 }
-            }
-            supports = new HashMap<String, Class<?>>();
-            modes = new Vector<Mode>();
-            registerScriptSupport(new BshScriptSupportFactory(), false);
-            registerScriptSupport(new JSchemeScriptSupportFactory(), false);
-            registerScriptSupport(new RubyScriptSupportFactory(), false);
-            registerScriptSupport(new HTMLScriptSupportFactory(), false);
-            registerScriptSupport(new PrologScriptSupportFactory(), false);
-            registerScriptSupport(new JSScriptSupportFactory(), false);
-            registerScriptSupport(new GroovyScriptSupportFactory(), false);
-            registerScriptSupport(new JavaFxScriptSupportFactory(), false);
-            ThisNiche.graph.define(SCRIPT_SUPPORTS_HANDLE, supports);
-        }
-        return supports;
-    }
+//    static Map<String, Class<?>> getScriptSupportClassesMap()
+//    {
+//        if (supports == null)
+//        {
+//            supports = (Map<String, Class<?>>) ThisNiche.graph.get(SCRIPT_SUPPORTS_HANDLE);
+//            if (supports != null)
+//            {
+//                //legacy niche opened 
+//                if(!supports.get("beanshell").isAssignableFrom(ScriptSupportFactory.class))
+//                {
+//                   ThisNiche.graph.remove(NotebookUI.SCRIPT_SUPPORTS_HANDLE);
+//                   supports = null;
+//                }else
+//                {
+//                   if (modes == null) init_modes();
+//                     return supports;
+//                 }
+//            }
+//            supports = new HashMap<String, Class<?>>();
+//            modes = new Vector<Mode>();
+//            registerScriptSupport(new BshScriptSupportFactory(), false);
+//            registerScriptSupport(new JSchemeScriptSupportFactory(), false);
+//            registerScriptSupport(new RubyScriptSupportFactory(), false);
+//            registerScriptSupport(new HTMLScriptSupportFactory(), false);
+//            registerScriptSupport(new PrologScriptSupportFactory(), false);
+//            registerScriptSupport(new JSScriptSupportFactory(), false);
+//            registerScriptSupport(new GroovyScriptSupportFactory(), false);
+//            registerScriptSupport(new JavaFxScriptSupportFactory(), false);
+//            ThisNiche.graph.define(SCRIPT_SUPPORTS_HANDLE, supports);
+//        }
+//        return supports;
+//    }
 
-    static void init_modes()
-    {
-        modes = new Vector<Mode>();
-        for (Class<?> c : getScriptSupportClassesMap().values())
-        {
-            ScriptSupportFactory sup = null;
-            try
-            {
-                sup = (ScriptSupportFactory) c.newInstance();
-            }
-            catch (Exception ex)
-            {
-                System.err.println("Unable to create ScriptSupport for: "
-                        + c.getName());
-            }
-            if (sup != null) for (Mode m : sup.getModes())
-                if (getMode(m.getName()) == null) addMode(m);
-        }
-    }
+//    static void init_modes()
+//    {
+//        modes = new Vector<Mode>();
+//        for (Class<?> c : getScriptSupportClassesMap().values())
+//        {
+//            ScriptSupportFactory sup = null;
+//            try
+//            {
+//                sup = (ScriptSupportFactory) c.newInstance();
+//            }
+//            catch (Exception ex)
+//            {
+//                System.err.println("Unable to create ScriptSupport for: "
+//                        + c.getName());
+//            }
+//            if (sup != null) for (Mode m : sup.getModes())
+//                if (getMode(m.getName()) == null) addMode(m);
+//        }
+//    }
 
     // the vertical scrolls don't work as expected, so we need to force them...
     // by the next 2 methods

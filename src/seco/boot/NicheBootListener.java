@@ -8,6 +8,7 @@
 package seco.boot;
 
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.event.HGEvent;
@@ -40,6 +41,14 @@ public class NicheBootListener implements HGListener
             GUIHelper.makeTopCellGroup(hg);
         final CellGroup group = (CellGroup) hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         final CellVisual v = (CellVisual) hg.get(group.getVisual());
+//        try
+//        {
+//            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+//        }
+//        catch (Exception ex)
+//        {
+//            ex.printStackTrace();
+//        }
         SwingUtilities.invokeLater(new Runnable(){
             public void run()
             {

@@ -128,6 +128,11 @@ public class EvaluationContext
         engineFactories.put(desc.getLanguage(), desc);
     }
     
+    public SEDescriptor getLanguageDescriptor(String language)
+    {
+        return engineFactories.get(language);
+    }
+    
     public Iterator<String> getLanguages()
     {
     	return engineFactories.keySet().iterator();
