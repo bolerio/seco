@@ -37,8 +37,6 @@ import java.util.Map;
 import com.microstar.xml.XmlException;
 import com.microstar.xml.XmlParser;
 
-import seco.ThisNiche;
-
 /**
  * An edit mode defines specific settings for editing some type of file.
  * One instance of this class is created for each supported edit mode.
@@ -88,10 +86,6 @@ public class Mode
         try
         {
             InputStream is = supportFactory.getClass().getResourceAsStream(fileName);
-//            if (is == null)
-//                is = Thread.currentThread().getContextClassLoader()
-//                        .getResourceAsStream(fileName);
-            // System.out.println("NotebookUI - loadMode: " + is);
             parser.parse(null, null, is, null); // grammar);
 
             setTokenMarker(xmh.getTokenMarker());
