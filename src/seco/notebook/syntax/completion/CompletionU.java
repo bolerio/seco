@@ -59,7 +59,7 @@ public class CompletionU
                             .getContextClassLoader().loadClass(
                                     info.getPackage() + "." + p.getName());
                     JavaResultItem item = new JavaResultItem.ClassResultItem(
-                            cls, false, false, false);
+                            cls, false);
                     item.setSubstituteOffset(queryCaretOffset);
                     resultSet.addItem(item);
                 }
@@ -75,10 +75,7 @@ public class CompletionU
     public static void populateClass(CompletionResultSet resultSet,
             Class<?> cls, int modifiers, int queryCaretOffset) 
     {
-        // System.out.println("BshCompProv - populateComplPopup: " + cls);
-         
         resultSet.setTitle(cls.getCanonicalName());
-        //resultSet.setAnchorOffset(queryAnchorOffset);
         if (cls.isArray())
         {
             JavaResultItem item = new JavaResultItem.FieldResultItem(
@@ -93,7 +90,7 @@ public class CompletionU
             if(c.getSimpleName().length() == 0) continue;
             //System.out.println("BshCompl - inner classes: " + c + ":" + c.getCanonicalName());
             JavaResultItem item = new JavaResultItem.ClassResultItem(
-                    c, false, false, false);
+                    c, false);
             item.setSubstituteOffset(queryCaretOffset);
             resultSet.addItem(item);
         }

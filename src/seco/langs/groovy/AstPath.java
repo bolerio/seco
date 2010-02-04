@@ -52,6 +52,7 @@ import javax.swing.text.Element;
 
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.ClassNode;
+import org.codehaus.groovy.ast.ImportNode;
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.ast.ModuleNode;
 import org.codehaus.groovy.ast.Parameter;
@@ -237,15 +238,15 @@ public class AstPath implements Iterable<ASTNode>
         ModuleNode moduleNode = (ModuleNode) node;
         PathFinderVisitor pathFinder = new PathFinderVisitor(moduleNode
                 .getContext(), line, column);
-
-        for (Object object : moduleNode.getClasses())
+        
+        for (ClassNode object : moduleNode.getClasses())
         {
-            pathFinder.visitClass((ClassNode) object);
+            pathFinder.visitClass(object);
         }
 
-        for (Object object : moduleNode.getMethods())
+        for (MethodNode object : moduleNode.getMethods())
         {
-            pathFinder.visitMethod((MethodNode) object);
+            pathFinder.visitMethod(object);
         }
 
         return pathFinder.getPath();

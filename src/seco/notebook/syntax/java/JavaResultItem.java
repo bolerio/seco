@@ -36,7 +36,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.EditorKit;
 import javax.swing.text.JTextComponent;
 
@@ -63,8 +62,11 @@ public abstract class JavaResultItem implements CompletionItem
     protected int selectionEndOffset = -1;
     protected int substituteOffset = -1;
 
-    /** Says what text would this Element use if substituteText is called.
-     * @return the substitution text, usable e.g. for finding common text/its' length
+    /**
+     * Says what text would this Element use if substituteText is called.
+     * 
+     * @return the substitution text, usable e.g. for finding common text/its'
+     *         length
      */
     public abstract String getItemText();
 
@@ -80,32 +82,20 @@ public abstract class JavaResultItem implements CompletionItem
         this.substituteOffset = substituteOffset;
     }
 
-    /** Update the text in response to pressing ENTER on this element.
-     * @param c the text component to operate on, enables implementation to
-     *        do things like movement of caret.
-     * @param offset the offset where the item should be placed
-     * @param len the length of recognized text which should be replaced
-     * @param shift the flag that instructs completion to behave somehow
-     *        differently - enables more kinds of invocation of substituteText
-     * @return whether the text was successfully updated
-     */
-    public boolean substituteCommonText(JTextComponent c, int offset, int len,
-            int subLen)
-    {
-        // [PENDING] not enough info in parameters...
-        // commonText
-        // substituteExp
-        return false;
-    }
-
-    /** Update the text in response to pressing TAB key (or any key mapped to
+    /**
+     * Update the text in response to pressing TAB key (or any key mapped to
      * this function) on this element
-     * @param c the text component to operate on, enables implementation to
-     *        do things like movement of caret.
-     * @param offset the offset where the item should be placed
-     * @param len the length of recognized text which should be replaced
-     * @param subLen the length of common part - the length of text that should
-     *        be inserted after removal of recognized text
+     * 
+     * @param c
+     *            the text component to operate on, enables implementation to do
+     *            things like movement of caret.
+     * @param offset
+     *            the offset where the item should be placed
+     * @param len
+     *            the length of recognized text which should be replaced
+     * @param subLen
+     *            the length of common part - the length of text that should be
+     *            inserted after removal of recognized text
      * @return whether the text was successfully updated
      */
     public boolean substituteText(JTextComponent c, int offset, int len,
@@ -128,13 +118,9 @@ public abstract class JavaResultItem implements CompletionItem
                 EditorKit kit = c.getUI().getEditorKit(c);
                 if (len > 0) doc.remove(offset, len);
                 kit.read(new StringReader(text), doc, offset);
-                // System.out.println("JavaResultItem - substituteText: " + text
-                // + ":" + kit);
                 if (selectionStartOffset >= 0)
-                {
                     c.select(offset + selectionStartOffset, offset
                             + selectionEndOffset);
-                }
             }
             catch (Exception e)
             {
@@ -172,12 +158,17 @@ public abstract class JavaResultItem implements CompletionItem
         return ret;
     }
 
-    /** Prepare proper component for painting value of <CODE>this</CODE>.
-     * @param JList the list this item will be drawn into, usefull e.g. for 
-     *        obtaining preferred colors.
-     * @param isSelected tells if this item is just selected, for using
-     *        proper color scheme.
-     * @param cellHasFocus tells it this item is just focused.
+    /**
+     * Prepare proper component for painting value of <CODE>this</CODE>.
+     * 
+     * @param JList
+     *            the list this item will be drawn into, usefull e.g. for
+     *            obtaining preferred colors.
+     * @param isSelected
+     *            tells if this item is just selected, for using proper color
+     *            scheme.
+     * @param cellHasFocus
+     *            tells it this item is just focused.
      * @return the component usable for painting this value
      */
     public abstract Component getPaintComponent(boolean isSelected);
@@ -358,15 +349,15 @@ public abstract class JavaResultItem implements CompletionItem
         private Class<?> context;
         private static JavaPaintComponent.FieldPaintComponent fieldComponent = null;
 
-        public FieldResultItem(String name, Type type, int modifiers) 
+        public FieldResultItem(String name, Type type, int modifiers)
         {
             this.fldName = name;
             this.modifiers = modifiers;
             this.typeName = JMIUtils.getTypeName(type, false, false);
             this.typeColor = getTypeColor(type);
         }
-        
-        public FieldResultItem(String name, String type, int modifiers) 
+
+        public FieldResultItem(String name, String type, int modifiers)
         {
             this.fldName = name;
             this.modifiers = modifiers;
@@ -426,49 +417,6 @@ public abstract class JavaResultItem implements CompletionItem
             return fieldComponent;
         }
 
-        public boolean substituteText(final JTextComponent c, final int offset,
-                final int len, final boolean shift)
-        {
-            if (context == null)
-                return super.substituteText(c, offset, len, shift);
-            RequestProcessor.getDefault().post(new Runnable() {
-                public void run()
-                {
-                    final NotebookDocument doc = (NotebookDocument) c
-                            .getDocument();
-                    final StringBuffer sb = new StringBuffer();
-                    sb.append(fldName);
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run()
-                        {
-                            String text = sb.toString();
-                            if (text != null && text.length() > 0)
-                            {
-                                int offset = c.getCaret().getDot() - len;
-                                doc.atomicLock();
-                                try
-                                {
-                                    EditorKit kit = c.getUI().getEditorKit(c);
-                                    if (len > 0) doc.remove(offset, len);
-                                    kit.read(new StringReader(text), doc,
-                                            offset);
-                                }
-                                catch (Exception e)
-                                {
-                                    // Can't update
-                                }
-                                finally
-                                {
-                                    doc.atomicUnlock();
-                                }
-                            }
-                        }
-                    });
-                }
-            });
-            return true;
-        }
-
         public Object getAssociatedObject()
         {
             return fld;
@@ -484,7 +432,7 @@ public abstract class JavaResultItem implements CompletionItem
             String mods = Modifier.toString(modifiers) + " "; // NOI18N
             return (mods.length() > 1 ? mods : "") + typeName + " " + fldName; // NOI18N
         }
-        
+
         @Override
         public int hashCode()
         {
@@ -527,9 +475,9 @@ public abstract class JavaResultItem implements CompletionItem
         public MethodItem(Method mtd)
         {
             super(mtd);
-            modifiers = mtd.getModifiers(); // Modifier.PUBLIC;
-            cfName = mtd.getName();// : (String) mtd;
-            Object obj = mtd.getReturnType(); // : "void";
+            modifiers = mtd.getModifiers(); 
+            cfName = mtd.getName();
+            Object obj = mtd.getReturnType();
             typeName = JMIUtils.getTypeName(obj, false, false);
             typeColor = getTypeColor(cf);
             isDeprecated = mtd.getAnnotation(Deprecated.class) != null;
@@ -537,8 +485,8 @@ public abstract class JavaResultItem implements CompletionItem
                     .getExceptionTypes());
         }
 
-        public MethodItem(String mtdName, Class<?> type,
-                Class<?>[] params, Class<?>[] exc)
+        public MethodItem(String mtdName, Class<?> type, Class<?>[] params,
+                Class<?>[] exc)
         {
             super(mtdName);
             modifiers = Modifier.PUBLIC;
@@ -556,7 +504,7 @@ public abstract class JavaResultItem implements CompletionItem
             typeName = type;
             typeColor = getTypeColor(mtdName);
         }
-        
+
         public MethodItem(String mtdName, String type, int modifiers)
         {
             this(mtdName, type);
@@ -613,8 +561,7 @@ public abstract class JavaResultItem implements CompletionItem
             return (mods.length() > 1 ? mods : "") + getTypeName() + " "
                     + getName() + printParams(true) + printExceptions(); // NOI18N
         }
-        
-       
+
     }
 
     public static class ConstructorResultItem extends CallableFeatureResultItem
@@ -758,7 +705,8 @@ public abstract class JavaResultItem implements CompletionItem
                 for (int i = 0; i < prms.length; i++)
                     if (params != null)
                     {
-                        String arg_name = (prms.length == 1) ? "arg" : "arg" + (i + 1);
+                        String arg_name = (prms.length == 1) ? "arg" : "arg"
+                                + (i + 1);
                         params.add(new ParamStr(prms[i].getSimpleName(),
                                 JMIUtils.getTypeName(prms[i], false, false),
                                 arg_name, false, getTypeColor(prms[i])));
@@ -1017,8 +965,7 @@ public abstract class JavaResultItem implements CompletionItem
             else if (!typeName.equals(other.typeName)) return false;
             return true;
         }
-        
-        
+
     }
 
     public static class PackageResultItem extends JavaResultItem
@@ -1110,235 +1057,32 @@ public abstract class JavaResultItem implements CompletionItem
         private Class<?> cls;
         private boolean isInterface;
         private boolean isDeprecated;
-        boolean addImport;
-        boolean generateClassSkeleton;
         private String fqName = null;
         private String name = null;
         private static JavaPaintComponent.InterfacePaintComponent interfaceComponent = null;
         private static JavaPaintComponent.ClassPaintComponent classComponent = null;
-        private static final boolean autoImportDisabled = Boolean
-                .getBoolean("org.netbeans.java.editor.disableAutoImport"); // NOI18N
-        private static final boolean autoGenerationDisabled = Boolean
-                .getBoolean("org.netbeans.java.editor.disableAutoClassSkeletonGeneration"); // NOI18N
         private boolean displayFQN;
 
-        public ClassResultItem(Class<?> cls, boolean displayFQN,
-                boolean addImport, boolean generateClassSkeleton)
+        public ClassResultItem(Class<?> cls, boolean displayFQN)
         {
             this.cls = cls;
-            this.addImport = addImport && !autoImportDisabled;
             this.name = cls.getSimpleName();
             this.displayFQN = displayFQN;
-            if (displayFQN || this.addImport)
+            if (displayFQN)
             {
                 this.fqName = cls.getName();
-                int idx = this.fqName.indexOf('<'); // NOI18N
+                int idx = this.fqName.indexOf('<'); 
                 if (idx >= 0) this.fqName = this.fqName.substring(0, idx);
-                idx = this.fqName.lastIndexOf('.'); // NOI18N
+                idx = this.fqName.lastIndexOf('.'); 
                 this.fqName = idx >= 0 ? " (" + this.fqName.substring(0, idx)
-                        + ")" : ""; // NOI18N
+                        + ")" : ""; 
             }
             else
             {
-                this.fqName = ""; // NOI18N
+                this.fqName = ""; 
             }
             this.isInterface = cls.isInterface();
             this.isDeprecated = cls.getAnnotation(Deprecated.class) != null;
-            this.addImport = addImport && !autoImportDisabled;
-            this.generateClassSkeleton = generateClassSkeleton
-                    && !autoGenerationDisabled;
-        }
-
-        public boolean substituteText(final JTextComponent c, final int offset,
-                final int len, final boolean shift)
-        {
-            final NotebookDocument doc = (NotebookDocument) c.getDocument();
-            String text = // ???generateClassSkeleton && cls instanceof
-            // ParameterizedType ? null :
-            getItemText();
-            //int toAddDelta = 0;
-            final boolean makeConstructor = "(".equals(toAdd); // NOI18N
-            boolean ret = true;
-            if (text != null)
-            {
-                if (toAdd != null && !toAdd.equals("\n"))
-                { // NOI18N
-                    text += toAdd;
-                    if (makeConstructor)
-                    {
-                        text += ")"; // NOI18N
-                    }
-                   //toAddDelta = toAdd.length();
-                }
-                // Update the text
-                doc.atomicLock();
-                try
-                {
-                    CharSequence textToReplace = DocumentUtilities.getText(doc,
-                            offset, len);
-                    if (CharSequenceUtilities.textEquals(text, textToReplace))
-                    {
-                        ret = false;
-                    }
-                    else
-                    {
-                        EditorKit kit = c.getUI().getEditorKit(c);
-                        if (len > 0) doc.remove(offset, len);
-                        kit.read(new StringReader(text), doc, offset);
-                        if (makeConstructor)
-                            c.setCaretPosition(c.getCaretPosition() - 1);
-                    }
-                }
-                catch (Exception e)
-                {
-                    // Can't update
-                }
-                finally
-                {
-                    doc.atomicUnlock();
-                }
-            }
-           // final int toAddDeltaResult = toAddDelta;
-            RequestProcessor.getDefault().post(new Runnable() {
-                public void run()
-                {
-                    final StringBuffer sb = new StringBuffer();
-                    // JMIUtils jmiUtils = JMIUtils.get(doc);
-                    // jmiUtils.beginTrans(true);
-                    try
-                    {
-                        // if (cls.isValid()) {
-                        //Map cache = new HashMap();
-                        // NbJavaJMISyntaxSupport ssup =
-                        // (NbJavaJMISyntaxSupport)doc.getSyntaxSupport().get(NbJavaJMISyntaxSupport.class);
-                        // JavaClass ctx =
-                        // ssup.getJavaClass(c.getCaretPosition());
-                        /*
-                         * if (addImport && ctx != null && !cls.isInner()) {
-                         * Class jc = cls instanceof ParameterizedType ?
-                         * ((ParameterizedType)cls).getDefinition() : cls;
-                         * MultipartId mpid =
-                         * JavaModelUtil.resolveImportsForClass(ctx, jc); if
-                         * (!jc.getSimpleName().equals(mpid.getName())) {
-                         * doc.atomicLock(); try { int pos =
-                         * c.getCaretPosition() - toAddDeltaResult -
-                         * name.length(); doc.remove(pos, name.length());
-                         * doc.insertString(pos, mpid.getName(), null); } catch
-                         * (BadLocationException ble) { } finally {
-                         * doc.atomicUnlock(); } cache.put(jc, Boolean.TRUE); }
-                         * else { cache.put(jc, Boolean.FALSE); } }
-                         */
-                        if (!makeConstructor
-                                && checkClassSkeletonAutoGeneration())
-                        {
-                            sb.append("() {\n"); // NOI18N
-                            // ???List methods = jmiUtils.findMethods(cls, "",
-                            // false, false, null, false, false, null, false,
-                            // true); //NOI18N
-                            // for (Iterator it = methods.iterator();
-                            // it.hasNext();) {
-                            // Method mtd = (Method)it.next();
-                            Method[] mtds = cls.getMethods();
-                            for (int j = 0; j < mtds.length; j++)
-                            {
-                                Method mtd = mtds[j];
-                                int mods = mtd.getModifiers();
-                                if (Modifier.isAbstract(mods))
-                                {
-                                    sb
-                                            .append(Modifier
-                                                    .toString(mods
-                                                            & ~(Modifier.NATIVE
-                                                                    | Modifier.ABSTRACT | Modifier.SYNCHRONIZED)));
-                                    sb.append(' '); // NOI18N
-                                    // Type typ = mtd.getType();
-                                    sb.append(mtd.getReturnType().getName());// JMIUtils.getTypeName(typ,
-                                    // typ
-                                    // instanceof
-                                    // Class
-                                    // &&
-                                    // useFQN((Class)typ,
-                                    // ctx,
-                                    // cache),
-                                    // true));
-                                    sb.append(' '); // NOI18N
-                                    sb.append(mtd.getName());
-                                    sb.append('('); // NOI18N
-                                    Class<?>[] params = mtd.getParameterTypes();
-                                    for (int i = 0; i < params.length; i++)
-                                    {
-                                        // Parameter prm = (Parameter)
-                                        // itt.next();
-                                        // typ = prm.getType();
-                                        sb.append(params[i].getName());// JMIUtils.getTypeName(typ,
-                                        // typ
-                                        // instanceof
-                                        // Class
-                                        // &&
-                                        // useFQN((Class)typ,
-                                        // ctx,
-                                        // cache),
-                                        // true));
-                                        sb.append(' '); // NOI18N
-                                        sb.append("arg" + i);// prm.getName());
-                                        // if (prm.isVarArg())
-                                        // sb.append("..."); //NOI18N
-                                        if (i < params.length - 1)
-                                            sb.append(", "); // NOI18N
-                                    }
-                                    sb.append(')'); // NOI18N
-                                    Class<?>[] exs = mtd.getExceptionTypes();
-                                    if (exs.length > 0) sb.append(" throws "); // NOI18N
-                                    for (int i = 0; i < exs.length; i++)
-                                    {
-                                        sb.append(exs[i].getName()); // JMIUtils.getTypeName(ex,
-                                        // useFQN(ex,
-                                        // ctx,
-                                        // cache),
-                                        // true));
-                                        if (i < exs.length - 1) sb.append(','); // NOI18N
-                                    }
-                                    sb.append(" {\n}\n"); // NOI18N
-                                }
-                            }
-                            sb.append('}'); // NOI18N
-                        }
-                        // }
-                    }
-                    finally
-                    {
-                        // jmiUtils.endTrans(false);
-                    }
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run()
-                        {
-                            String skeleton = sb.toString();
-                            if (skeleton != null && skeleton.length() > 0)
-                            {
-                                doc.atomicLock();
-                                try
-                                {
-                                    int startOffset = c.getCaret().getDot();
-                                    doc.insertString(startOffset, skeleton,
-                                            null);
-                                    //int endOffset = c.getCaret().getDot();
-                                    // ???doc.getFormatter().reformat(doc,
-                                    // startOffset, endOffset);
-                                }
-                                catch (BadLocationException e)
-                                {
-                                    // Can't update
-                                }
-                                finally
-                                {
-                                    doc.atomicUnlock();
-                                }
-                            }
-                        }
-                    });
-                }
-            });
-            return ret;
         }
 
         public boolean substituteTextSimple(final JTextComponent c, int offset,
@@ -1372,31 +1116,9 @@ public abstract class JavaResultItem implements CompletionItem
             Completion.get().hideCompletion();
         }
 
-        public boolean checkAutoImport(final JTextComponent c)
-        {
-            // ??? if (addImport)
-            // return new
-            // NbJavaJMIFastImport(c).checkAutoImport(ClassResultItem.this);
-            return false;
-        }
-
-        private boolean checkClassSkeletonAutoGeneration()
-        {
-            return generateClassSkeleton
-                    && (Modifier.isAbstract(cls.getModifiers()) || Modifier
-                            .isInterface(cls.getModifiers()));
-        }
-
         public String getItemText()
         {
             return name;
-        }
-
-        public boolean instantSubstitution(JTextComponent c)
-        {
-            boolean ret = !(checkAutoImport(c) || checkClassSkeletonAutoGeneration());
-            if (ret) super.instantSubstitution(c);
-            return ret;
         }
 
         public CharSequence getSortText()

@@ -185,7 +185,7 @@ public class RubyCompletionProvider implements CompletionProvider
 				// System.out.println("BshCompl - inner classes: " + c + ":" +
 				// c.getCanonicalName());
 				JavaResultItem item = new JavaResultItem.ClassResultItem(c,
-						false, false, false);
+						false);
 				item.setSubstituteOffset(queryCaretOffset);
 				resultSet.addItem(item);
 			}

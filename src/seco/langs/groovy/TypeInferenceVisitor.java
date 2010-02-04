@@ -44,6 +44,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.script.ScriptContext;
 import javax.swing.text.Element;
 
 import org.codehaus.groovy.ast.ASTNode;
@@ -56,6 +57,7 @@ import org.codehaus.groovy.ast.PropertyNode;
 import org.codehaus.groovy.ast.Variable;
 import org.codehaus.groovy.ast.expr.ArgumentListExpression;
 import org.codehaus.groovy.ast.expr.BinaryExpression;
+import org.codehaus.groovy.ast.expr.ClassExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.ConstructorCallExpression;
 import org.codehaus.groovy.ast.expr.Expression;
@@ -75,24 +77,27 @@ import org.codehaus.groovy.syntax.Types;
 public class TypeInferenceVisitor extends TypeVisitor
 {
     private static final String JAVA_LANG_OBJECT = "java.lang.Object";
-   // private ClassNode guessedType;
 
     private boolean leafReached = false; // flag saying if visiting reached the
     // node that we are investigating
 
-    Map<String, ClassNode> vars = new HashMap<String, ClassNode>(); 
+    Map<String, ClassNode> vars = new HashMap<String, ClassNode>();
+
+    ScriptContext scriptContext;
+    
+    boolean isStatic; 
 
     public TypeInferenceVisitor(SourceUnit sourceUnit, AstPath path,
-            Element doc, int cursorOffset, String var)
+            Element doc, int cursorOffset, ScriptContext ctx)
     {
         // we don't want to visit all classes in module
         super(sourceUnit, path, doc, cursorOffset, true);
+        this.scriptContext = ctx;
     }
 
     @Override
     public void collect()
     {
-       // guessedType = null;
         leafReached = false;
         vars.clear();
         super.collect();
@@ -114,15 +119,10 @@ public class TypeInferenceVisitor extends TypeVisitor
             Expression left = expression.getLeftExpression();
             if (left instanceof VariableExpression)
             {
-                
-                //if (var.equals(((VariableExpression) leftExpression).getName()))
-               // {
-                    Expression right = expression.getRightExpression();
-                    ClassNode n = resolveExpression(right);
-                    if(n != null) 
-                        vars.put(((VariableExpression) left).getName(), n);
-                        //guessedType = n;
-               // }
+                Expression right = expression.getRightExpression();
+                ClassNode n = resolveExpression(right);
+                if (n != null)
+                    vars.put(((VariableExpression) left).getName(), n);
             }
         }
         super.visitBinaryExpression(expression);
@@ -130,25 +130,26 @@ public class TypeInferenceVisitor extends TypeVisitor
 
     ClassNode resolveExpression(Expression exp)
     {
-        
+        isStatic = false;
         if (exp instanceof ConstantExpression && !exp.getText().equals("null"))
         {
             return exp.getType();
-        }else if(exp instanceof VariableExpression)
+        }
+        else if (exp instanceof VariableExpression)
         {
             String name = ((VariableExpression) exp).getName();
-          if ("this".equals(name))
-          { 
-              return getSurroundingClassNode(path);
-          }
-          if ("super".equals(name))
-          { 
-              ClassNode thisClass = getSurroundingClassNode(path);
-              ClassNode superC = thisClass.getSuperClass();
-              if (superC == null) { 
-                  superC = new ClassNode(JAVA_LANG_OBJECT, ClassNode.ACC_PUBLIC, null); }
-              return superC;
-          }
+            if ("this".equals(name)) { return getSurroundingClassNode(path); }
+            if ("super".equals(name))
+            {
+                ClassNode thisClass = getSurroundingClassNode(path);
+                ClassNode superC = thisClass.getSuperClass();
+                if (superC == null)
+                {
+                    superC = new ClassNode(JAVA_LANG_OBJECT,
+                            ClassNode.ACC_PUBLIC, null);
+                }
+                return superC;
+            }
             ClassNode redef = vars.get(name);
             return redef != null ? redef : exp.getType();
         }
@@ -181,20 +182,34 @@ public class TypeInferenceVisitor extends TypeVisitor
         {
             return resolveProperty((PropertyExpression) exp);
         }
+        else if (exp instanceof ClassExpression)
+        {
+            isStatic = true; 
+            return exp.getType();
+        }
         return exp.getType();
     }
-    
+
     ClassNode resolveProperty(PropertyExpression pe)
     {
         ClassNode cls = resolveExpression(pe.getObjectExpression());
-        PropertyNode pn = cls.getProperty(pe.getPropertyAsString());
-        FieldNode f = (pn!= null) ? pn.getField(): cls.getField(pe.getPropertyAsString()); 
-        return (f!= null) ? f.getType() : null;
+        if(cls == null) return null;
+        String name = pe.getPropertyAsString();
+        PropertyNode pn = cls.getProperty(name);
+        FieldNode f = (pn != null) ? pn.getField() : cls.getField(name);
+        return (f != null) ? f.getType() : getFromScriptContext(name);
+    }
+
+    ClassNode getFromScriptContext(String name)
+    {
+       Object o = scriptContext.getAttribute(name, ScriptContext.GLOBAL_SCOPE);
+       return (o != null) ? new ClassNode(o.getClass()) : null;
+           
     }
 
     ClassNode resolveMethod(MethodCallExpression mce)
     {
-        ClassNode cls = resolveExpression(mce.getObjectExpression());//.getType();
+        ClassNode cls = resolveExpression(mce.getObjectExpression());// .getType();
         List<MethodNode> meths = cls.getMethods(mce.getMethodAsString());
         if (meths.isEmpty()) return null;
         ArgumentListExpression args = (ArgumentListExpression) mce
@@ -207,25 +222,23 @@ public class TypeInferenceVisitor extends TypeVisitor
             {
                 ClassNode ret = mn.getReturnType();
                 if (ClassHelper.VOID_TYPE == ret) continue;
-                System.out.println("Resolve: " + 
-                        mce.getMethodAsString() +
-                        ":" + cls + ":" + ret);
+                System.out.println("Resolve: " + mce.getMethodAsString() + ":"
+                        + cls + ":" + ret);
                 return ret;
             }
         }
         return null;
     }
-    
+
     static ClassNode getSurroundingClassNode(AstPath path)
     {
         if (path == null) return null;
         for (Iterator<ASTNode> it = path.iterator(); it.hasNext();)
         {
             ASTNode current = it.next();
-            if (current instanceof ClassNode)
-                return (ClassNode) current;
+            if (current instanceof ClassNode) return (ClassNode) current;
         }
         return null;
     }
-   
+
 }

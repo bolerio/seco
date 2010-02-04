@@ -169,7 +169,11 @@ public class JSCompletionProvider implements CompletionProvider
             }
             Object[] ids = obj.getAllIds();
             if (ids != null) for (Object id : ids)
-                resultSet.addItem(new JSProperty("" + id, "Object"));
+            {
+                JSProperty item = new JSProperty("" + id, "Object");
+                item.setSubstituteOffset(queryCaretOffset);
+                resultSet.addItem(item);
+            }
 
             resultSet.setTitle(obj.getClassName());
         }
@@ -205,19 +209,16 @@ public class JSCompletionProvider implements CompletionProvider
             ExternalScriptable scope = (ExternalScriptable) p.engine
                     .getRuntimeScope(ctx);
             Context.enter();
-            // Bindings b = ctx.getBindings(ScriptContext.ENGINE_SCOPE);
-            // for (String key : b.keySet())
-            // {
-            // Object o = b.get(key);
             for (Object k : scope.getIds())
             {
                 String key = "" + k;
                 Object o = scope.get(key, scope.getPrototype());
-                if (o instanceof NativeFunction) resultSet.addItem(BuiltIns
-                        .make_func(key, (NativeFunction) o));
-                else
-                    resultSet.addItem(new JSProperty(key, JMIUtils.getTypeName(
-                            o.getClass(), false, false)));
+                JavaResultItem item = (o instanceof NativeFunction) ?
+                    BuiltIns.make_func(key, (NativeFunction) o):
+                    new JSProperty(key, JMIUtils.getTypeName(
+                            o.getClass(), false, false));
+                item.setSubstituteOffset(queryCaretOffset);
+                resultSet.addItem(item);   
             }
             Context.exit();
             resultSet.setTitle("Global");
@@ -348,7 +349,6 @@ public class JSCompletionProvider implements CompletionProvider
         protected void query(CompletionResultSet resultSet,
                 NotebookDocument doc, int caretOffset)
         {
-            // Position oldPos = queryMethodParamsStartPos;
             queryMethodParamsStartPos = null;
             ScriptSupport sup = doc.getScriptSupport(caretOffset);
             if (sup == null || !(sup.getParser() instanceof JavaScriptParser))
@@ -444,7 +444,7 @@ public class JSCompletionProvider implements CompletionProvider
         {
             super(mtdName, type);
             this.modifiers = modifiers;
-            populateParams(types, names);
+            populateParams0(types, names);
         }
 
         protected boolean isAddParams()
@@ -452,7 +452,7 @@ public class JSCompletionProvider implements CompletionProvider
             return true;
         }
 
-        void populateParams(String[] prms, String names[])
+        void populateParams0(String[] prms, String names[])
         {
             for (int i = 0; i < prms.length; i++)
                 params.add(new ParamStr(prms[i], prms[i], names[i], true,

@@ -655,14 +655,11 @@ outer:      for (Iterator it = localCompletionResult.getResultSets().iterator();
                     }
                 }
 
-                List<CompletionItem> res = new ArrayList(sortedResultItems);
-               // boolean noSuggestions = false;
+                List<CompletionItem> res = new ArrayList<CompletionItem>(sortedResultItems);
                 if (res.size() == 0) {
                 	hideCompletion();
                 	hideDocumentation();
                 	return;
-                    //res.add(NO_SUGGESTIONS);
-                    //noSuggestions = true;
                 }
                 layout.showCompletion(res, displayTitle, displayAnchorOffset, Completion.this);
 

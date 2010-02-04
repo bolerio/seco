@@ -102,16 +102,9 @@ public class GroovyCompletionProvider implements CompletionProvider
             queryAnchorOffset = offset;
             p = (GroovyScriptParser) sup.getParser();
             prefix = sup.getCommandBeforePt(offset);
-            // TODO: should consider inner scopes, etc.
-            if ("this".equals(prefix))
-            {
-                populateThis(resultSet, p.engine);
-                queryResult = resultSet;
-                resultSet.finish();
-                return;
-            }
             if(p.parserResult == null) return;
             if(!complete(resultSet)) return;
+            
             queryResult = resultSet;
             resultSet.finish();
         }
@@ -124,35 +117,44 @@ public class GroovyCompletionProvider implements CompletionProvider
                 resultSet.addItem(i);
             }
         }
-
+        
         private boolean complete(final CompletionResultSet resultSet)
         {
             ModuleNode root = p.parserResult.getRootElement();
-            AstPath realPath = new AstPath(root, queryCaretOffset-1, sup.getElement());
-            ClassNode declaringClass = getDeclaringClass(realPath);
-            if (declaringClass == null) return false;
-            resultSet.setTitle(declaringClass.getName());
-            populateObject(resultSet, TypeInferenceVisitor.getSurroundingClassNode(realPath),
-                    declaringClass, prefix);
+            
+            if(packageCompletion(resultSet)) return true;
+            
+            AstPath realPath = new AstPath(root, queryCaretOffset - 1, sup.getElement());
+            ClassNodePair pair = resolve(realPath);
+            if (pair == null) return false;
+            //
+            if(root.getScriptClassDummy().equals(pair.node))
+            {
+                populateThis(resultSet, p.engine);
+                return true;
+            }
+            resultSet.setTitle(pair.node.getName());
+            populateObject(resultSet, pair, prefix);
 
             return true;
         }
         
          private void populateObject(CompletionResultSet resultSet,
-                ClassNode source, ClassNode node, String prefix)
+                ClassNodePair pair, String prefix)
         {
 
-            Class<?> type = node.isResolved() ? node.getTypeClass() : null;
+            Class<?> type = pair.node.isResolved() ? pair.node.getTypeClass() : null;
             
-            System.out.println("populateObject: " + node.getName() + ":" + type);
+            System.out.println("populateObject: " + pair.node.getName() + ":" + type);
             if (type != null)
             {
-                CompletionU.populateClass(resultSet, type, Modifier.PRIVATE, queryCaretOffset);
+                int mod = (pair.isStatic) ? Modifier.STATIC : Modifier.PRIVATE;
+                CompletionU.populateClass(resultSet, type, mod, queryCaretOffset);
                 add_metas(resultSet);
                 return;
             }
 
-            for (ClassNode inter : node.getInterfaces())
+            for (ClassNode inter : pair.node.getInterfaces())
             {
                 System.out.println("interface: " + inter.getName());
                 if(inter.getName().equals("groovy.lang.GroovyObject"))
@@ -160,7 +162,7 @@ public class GroovyCompletionProvider implements CompletionProvider
                 // populateObject(resultSet, source, inter, prefix, anchor);
             }
 
-            for (MethodNode m : node.getMethods())
+            for (MethodNode m : pair.node.getMethods())
             {
                 if(m.getName().indexOf('$') > -1 ||
                         m.getName().indexOf('<') > -1)
@@ -181,7 +183,7 @@ public class GroovyCompletionProvider implements CompletionProvider
                 resultSet.addItem(item);
             }
             
-            for (FieldNode f : node.getFields())
+            for (FieldNode f : pair.node.getFields())
             {
                 if(f.getName().indexOf('$') > -1 ||
                         f.getName().indexOf('<') > -1) continue;
@@ -191,46 +193,45 @@ public class GroovyCompletionProvider implements CompletionProvider
                 item.setSubstituteOffset(queryCaretOffset);
                 resultSet.addItem(item);
             }
-            
-           // if(JAVA_LANG_OBJECT.equals(node.getName()))
-           //     add_metas(resultSet);
         }
          
          private void populateThis(CompletionResultSet resultSet,
                  GroovyScriptEngine engine)
          {
+             resultSet.setTitle("Global Context");
              Bindings b = engine.getBindings(ScriptContext.GLOBAL_SCOPE);
              for (String key : b.keySet())
              {
-                 resultSet.addItem(new JavaResultItem.VarResultItem(key, b.get(
-                         key).getClass(), Modifier.PUBLIC));
+                 JavaResultItem item = new JavaResultItem.VarResultItem(key, b.get(
+                         key).getClass(), Modifier.PUBLIC);
+                 item.setSubstituteOffset(queryCaretOffset);
+                 resultSet.addItem(item);
              }
              for (String s : engine.globalClosures.keySet())
              {
                  Closure c = engine.globalClosures.get(s);
                  String m = (String) c.getProperty("method");
                  if (m == null || m.indexOf("$") > -1) continue;
-                 resultSet.addItem(new ClosureItem(c));
+                
+                 JavaResultItem item = new ClosureItem(c);
+                 item.setSubstituteOffset(queryCaretOffset);
+                 resultSet.addItem(item);
              }
              add_metas(resultSet);
          } 
-
-        private static String get_cls_name(ClassNode n)
-        {
-            return n != null ? n.getName() : "Object";
-        }
-        
-        private ClassNode getDeclaringClass(AstPath realPath)
+         
+        private ClassNodePair resolve(AstPath realPath)
         {
             ModuleNode moduleNode = (ModuleNode) realPath.root();
             TypeInferenceVisitor typeVisitor = new TypeInferenceVisitor(moduleNode.getContext(),
-                    realPath, sup.getElement(), queryCaretOffset, prefix);
+                    realPath, sup.getElement(), queryCaretOffset, p.engine.getContext());
             typeVisitor.collect();
            
             if(prefix.indexOf(".") < 0)  //simple var
             {
                 ClassNode guessedType = typeVisitor.vars.get(prefix);
-                if (guessedType != null) return guessedType;
+                if (guessedType != null)
+                    return new ClassNodePair(guessedType, typeVisitor.isStatic);
             }
             
             ASTNode leaf = realPath.leaf();
@@ -239,9 +240,41 @@ public class GroovyCompletionProvider implements CompletionProvider
                 //prop invocation ends with ConstantExpression
                 if(leaf instanceof ConstantExpression)
                     leaf = realPath.leafParent();
-                return typeVisitor.resolveExpression((Expression) leaf);
+                ClassNode n = typeVisitor.resolveExpression((Expression) leaf);
+                if(n != null) return new ClassNodePair(n, typeVisitor.isStatic);
             }
             return null;
+        }
+        
+        private boolean packageCompletion(CompletionResultSet resultSet)
+        {
+            if(prefix.indexOf("(") > -1) return false;
+            NamedInfo[]info = ClassRepository.getInstance().findSubElements(prefix);
+            if (info.length > 0)
+            {
+              CompletionU.populatePackage(resultSet,
+                    new CompletionU.DBPackageInfo(info, prefix),
+                    queryCaretOffset);
+              return true;
+            }
+            return false;
+        }
+
+       private static String get_cls_name(ClassNode n)
+       {
+           return n != null ? n.getName() : "Object";
+       }
+       
+    }
+    
+    private static class ClassNodePair
+    {
+        ClassNode node;
+        boolean isStatic;
+        public ClassNodePair(ClassNode node, boolean isStatic)
+        {
+            this.node = node;
+            this.isStatic = isStatic;
         }
     }
 

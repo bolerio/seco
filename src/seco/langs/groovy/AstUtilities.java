@@ -115,180 +115,15 @@ public class AstUtilities {
     private static final Logger LOGGER = Logger.getLogger(AstUtilities.class.getName());
 
   
-//    public static ModuleNode getRoot(ParserResult r) {
-//        assert r instanceof GroovyParserResult;
-//
-//        GroovyParserResult result = (GroovyParserResult)r;
-//
-//        if (result.getRootElement() == null) {
-//            return null;
-//        }
-//        
-//        return result.getRootElement().getModuleNode();
-//    }
-
-//    public static OffsetRange getRangeFull(ASTNode node, BaseDocument doc) {
-//            if (node.getLineNumber() < 0 || node.getColumnNumber() < 0 || node.getLastLineNumber() < 0 || node.getLastColumnNumber() < 0) {
-//                return OffsetRange.NONE;
-//            }
-//            int start = getOffset(doc, node.getLineNumber(), node.getColumnNumber());
-//            if (start < 0) {
-//                start = 0;
-//            }
-//            int end = getOffset(doc, node.getLastLineNumber(), node.getLastColumnNumber());
-//            if (end < 0) {
-//                end = 0;
-//            }
-//            if (start > end) {
-//                return OffsetRange.NONE;
-//            }
-//            return new OffsetRange(start, end);
-//    }
-
-    
-//    public static OffsetRange getRange(ASTNode node, BaseDocument doc) {
-//
-//        // Warning! The implicit class and some other nodes has line/column numbers below 1
-//        // if line is wrong, let's invalidate also column and vice versa
-//        int lineNumber = node.getLineNumber();
-//        int columnNumber = node.getColumnNumber();
-//        if (lineNumber < 1 || columnNumber < 1) {
-//            return OffsetRange.NONE;
-//        }
-//        if (doc == null) {
-//            LOGGER.log(Level.INFO, "Null document in getRange()");
-//            return OffsetRange.NONE;
-//        }
-//
-//        if (node instanceof FieldNode) {
-//            int start = getOffset(doc, lineNumber, columnNumber);
-//            FieldNode fieldNode = (FieldNode) node;
-//            return getNextIdentifierByName(doc, fieldNode.getName(), start);
-//        } else if (node instanceof ClassNode) {
-//            // ok, here we have to move the Range to the first character
-//            // after the "class" keyword, plus an indefinite nuber of spaces
-//            // FIXME: have to check what happens with other whitespaces between
-//            // the keyword and the identifier (like newline)
-//
-//            // happens in some cases when groovy source uses some non-imported java class
-//            if (doc != null) {
-//
-//                // if we are dealing with an empty groovy-file, we have take into consideration,
-//                // that even though we're running on an ClassNode, there is no "class " String
-//                // in the sourcefile. So take doc.getLength() as maximum.
-//
-//                int docLength = doc.getLength();
-//                int start = getOffset(doc, lineNumber, columnNumber);
-//                int limit = getLimit(node, doc, docLength);
-//
-//                try {
-//                    // we have to really search for class keyword other keyword
-//                    // (such as abstract) can precede class
-//                    start = doc.find(new FinderFactory.StringFwdFinder("class", true), start, limit) + "class".length(); // NOI18N
-//                } catch (BadLocationException ex) {
-//                    Exceptions.printStackTrace(ex);
-//                }
-//
-//                if (start > docLength) {
-//                    start = docLength;
-//                }
-//
-//                try {
-//                    start = Utilities.getFirstNonWhiteFwd(doc, start);
-//                } catch (BadLocationException ex) {
-//                    Exceptions.printStackTrace(ex);
-//                }
-//
-//                // This seems to happen every now and then ...
-//                if (start < 0) {
-//                    start = 0;
-//                }
-//
-//                ClassNode classNode = (ClassNode) node;
-//
-//                int end = start + classNode.getNameWithoutPackage().length();
-//
-//                if (end > docLength) {
-//                    end = docLength;
-//                }
-//
-//                if (start == end) {
-//                    return OffsetRange.NONE;
-//                }
-//                return new OffsetRange(start, end);
-//            }
-//        } else if (node instanceof ConstructorNode) {
-//            int start = getOffset(doc, lineNumber, columnNumber);
-//            ConstructorNode constructorNode = (ConstructorNode) node;
-//            return getNextIdentifierByName(doc, constructorNode.getDeclaringClass().getNameWithoutPackage(), start);
-//        } else if (node instanceof MethodNode) {
-//            int start = getOffset(doc, lineNumber, columnNumber);
-//            MethodNode methodNode = (MethodNode) node;
-//            return getNextIdentifierByName(doc, methodNode.getName(), start);
-//        } else if (node instanceof VariableExpression) {
-//            int start = getOffset(doc, lineNumber, columnNumber);
-//            VariableExpression variableExpression = (VariableExpression) node;
-//            return getNextIdentifierByName(doc, variableExpression.getName(), start);
-//        } else if (node instanceof Parameter) {
-//
-//            int docLength = doc.getLength();
-//            int start = getOffset(doc, node.getLineNumber(), node.getColumnNumber());
-//            int limit = getLimit(node, doc, docLength);
-//
-//            Parameter parameter = (Parameter) node;
-//            String name = parameter.getName();
-//
-//            try {
-//                // we have to really search for the name
-//                start = doc.find(new FinderFactory.StringFwdFinder(name, true), start, limit);
-//            } catch (BadLocationException ex) {
-//                Exceptions.printStackTrace(ex);
-//            }
-//
-//            int end = start + name.length();
-//            if (end > docLength) {
-//                return OffsetRange.NONE;
-//            }
-//            return new OffsetRange(start, end);
-//        } else if (node instanceof MethodCallExpression) {
-//            MethodCallExpression methodCall = (MethodCallExpression) node;
-//            Expression method = methodCall.getMethod();
-//            lineNumber = method.getLineNumber();
-//            columnNumber = method.getColumnNumber();
-//            if (lineNumber < 1 || columnNumber < 1) {
-//                lineNumber = 1;
-//                columnNumber = 1;
-//            }
-//            int start = getOffset(doc, lineNumber, columnNumber);
-//            return new OffsetRange(start, start + methodCall.getMethodAsString().length());
-//        } else if (node instanceof ConstructorCallExpression) {
-//            ConstructorCallExpression methodCall = (ConstructorCallExpression) node;
-//            String name = methodCall.getType().getNameWithoutPackage();
-//            int start = getOffset(doc, lineNumber, columnNumber);
-//            return getNextIdentifierByName(doc, name, start);
-//        } else if (node instanceof ClassExpression) {
-//            ClassExpression clazz = (ClassExpression) node;
-//            String name = clazz.getType().getNameWithoutPackage();
-//            int start = getOffset(doc, lineNumber, columnNumber);
-//            return getNextIdentifierByName(doc, name, start);
-//        } else if (node instanceof ConstantExpression) {
-//            ConstantExpression constantExpression = (ConstantExpression) node;
-//            int start = getOffset(doc, lineNumber, columnNumber);
-//            return new OffsetRange(start, start + constantExpression.getText().length());
-//        }
-//        return OffsetRange.NONE;
-//    }
 
     @SuppressWarnings("unchecked")
     public static List<ASTNode> children(ASTNode root) {
-
-        // Logger PRIV_LOG = Logger.getLogger(AstUtilities.class.getName());
-        // PRIV_LOG.log(Level.FINEST, "children(ASTNode):Name" + root.getClass().getName() +":"+ root.getText());
 
         List<ASTNode> children = new ArrayList<ASTNode>();
 
         if (root instanceof ModuleNode) {
             ModuleNode moduleNode = (ModuleNode) root;
+            //children.addAll(moduleNode.getImports());
             children.addAll(moduleNode.getClasses());
             children.add(moduleNode.getStatementBlock());
         } else if (root instanceof ClassNode) {
@@ -342,7 +177,6 @@ public class AstUtilities {
                 if (constructor.getLineNumber() >= 0) {
                     children.add(constructor);
                 }
-                // PRIV_LOG.log(Level.FINEST, "Constructor found: " + constructor.toString());
             }
 
 
@@ -368,157 +202,10 @@ public class AstUtilities {
             children = astChildrenSupport.children();
         }
 
-        // PRIV_LOG.log(Level.FINEST, "List:" + children.toString());
         return children;
     }
 
-    /**
-     * Find offset in text for given line and column
-     * Never returns negative number
-     */
-//    public static int getOffset(Element doc, int lineNumber, int columnNumber) {
-//        assert lineNumber > 0 : "Line number must be at least 1 and was: " + lineNumber;
-//        assert columnNumber > 0 : "Column number must be at least 1 ans was: " + columnNumber;
-//
-//        int offset = Utilities.getRowStartFromLineOffset(doc, lineNumber - 1);
-//        offset += (columnNumber - 1);
-//
-//        // some sanity checks
-//        if (offset < 0){
-//            offset = 0;
-//        }
-//
-//        return offset;
-//    }
-
-//    public static ASTNode getForeignNode(final IndexedElement o/*, ASTNode[] foreignRootRet*/) {
-//
-//        final ASTNode[] nodes = new ASTNode[1];
-//        FileObject fileObject = o.getFileObject();
-//        assert fileObject != null : "null FileObject for IndexedElement " + o;
-//
-//        try {
-//            Source source = Source.create(fileObject);
-//            // FIXME can we move this out of task (?)
-//            ParserManager.parse(Collections.singleton(source), new UserTask() {
-//                @Override
-//                public void run(ResultIterator resultIterator) throws Exception {
-//                    GroovyParserResult result = AstUtilities.getParseResult(resultIterator.getParserResult());
-//
-//                    String signature = o.getSignature();
-//                    if (signature == null) {
-//                        return;
-//                    }
-//                    // strip class name from signature: Foo#method1() -> method1()
-//                    int index = signature.indexOf('#');
-//                    if (index != -1) {
-//                        signature = signature.substring(index + 1);
-//                    }
-//                    for (AstElement element : result.getStructure().getElements()) {
-//                        ASTNode node = findBySignature(element, signature);
-//                        if (node != null) {
-//                            nodes[0] = node;
-//                            return;
-//                        }
-//                    }
-//                }
-//            });
-////            SourceUtils.runUserActionTask(fileObject, new CancellableTask<GroovyParserResult>() {
-////                public void run(GroovyParserResult result) throws Exception {
-////                    String signature = o.getSignature();
-////                    if (signature == null) {
-////                        return;
-////                    }
-////                    // strip class name from signature: Foo#method1() -> method1()
-////                    int index = signature.indexOf('#');
-////                    if (index != -1) {
-////                        signature = signature.substring(index + 1);
-////                    }
-////                    for (AstElement element : result.getStructure().getElements()) {
-////                        ASTNode node = findBySignature(element, signature);
-////                        if (node != null) {
-////                            nodes[0] = node;
-////                            return;
-////                        }
-////                    }
-////
-////                }
-////                public void cancel() {}
-////            });
-//        } catch (ParseException ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
-//        return nodes[0];
-//    }
-//
-//    private static ASTNode findBySignature(AstElement root, String signature) {
-//
-//        if (signature.equals(root.getSignature())) {
-//            return root.getNode();
-//        } else {
-//            for (AstElement element : root.getChildren()) {
-//                ASTNode node = findBySignature(element, signature);
-//                if (node != null) {
-//                    return node;
-//                }
-//            }
-//        }
-//        return null;
-//    }
-
-//    public static String getDefSignature(MethodNode node) {
-//        StringBuilder sb = new StringBuilder();
-//        sb.append(node.getName());
-//
-//        Parameter[] parameters = node.getParameters();
-//        if (parameters.length > 0) {
-//            sb.append('('); // NOI18N
-//            Iterator<Parameter> it = Arrays.asList(parameters).iterator();
-//            sb.append(Utilities.translateClassLoaderTypeName(
-//                    it.next().getType().getName()));
-//
-//            while (it.hasNext()) {
-//                sb.append(','); // NOI18N
-//                sb.append(Utilities.translateClassLoaderTypeName(
-//                        it.next().getType().getName()));
-//            }
-//            sb.append(')'); // NOI18N
-//        }
-//
-//        return sb.toString();
-//    }
-
-    public static OffsetRange getNextIdentifierByName(final Element doc, final String fieldName, final int startOffset) {
-        // since Groovy 1.5.6 the start offset is on 'def' on field/method declaration:
-        // ^def foo = ...
-        // ^Map bar = ...
-        // find first token that is identifier and that matches given name
-        final OffsetRange[] result = new OffsetRange[] { OffsetRange.NONE };
-//        doc.render(new Runnable() {
-//            public void run() {
-//                TokenSequence<? extends GroovyTokenId> ts = LexUtilities.getPositionedSequence(doc, startOffset);
-//                if (ts != null) {
-//                    Token<? extends GroovyTokenId> token = ts.token();
-//                    if (token != null && token.id() == GroovyTokenId.IDENTIFIER && TokenUtilities.equals(token.text(), fieldName)) {
-//                        int offset = ts.offset();
-//                        result[0] = new OffsetRange(offset, offset + fieldName.length());
-//                        return;
-//                    }
-//                    while (ts.moveNext()) {
-//                        token = ts.token();
-//                        if (token != null && token.id() == GroovyTokenId.IDENTIFIER && TokenUtilities.equals(token.text(), fieldName)) {
-//                            int offset = ts.offset();
-//                            result[0] = new OffsetRange(offset, offset + fieldName.length());
-//                            return;
-//                        }
-//                    }
-//                }
-//            }
-//        });
-        return result[0];
-    }
-
-    /**
+     /**
      * Compute the surrounding class name for the given node path or empty string
      * if none was found
      */
@@ -726,17 +413,6 @@ public class AstUtilities {
         }
         return null;
     }
-
-//    private static int getLimit(ASTNode node, BaseDocument doc, int docLength) {
-//        int limit = (node.getLastLineNumber() > 0 && node.getLastColumnNumber() > 0)
-//                ? getOffset(doc, node.getLastLineNumber(), node.getLastColumnNumber())
-//                : docLength;
-//
-//        if (limit > docLength) {
-//            limit = docLength;
-//        }
-//        return limit;
-//    }
 
     /**
      * Use this if you need some part of node that is not available as node.

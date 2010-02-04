@@ -60,7 +60,7 @@ public final class CompletionLayout
 
     private Reference editorComponentRef;
 
-    private final CompletionPopup completionPopup;
+    final CompletionPopup completionPopup;
     private final DocPopup docPopup;
     private final TipPopup tipPopup;
 

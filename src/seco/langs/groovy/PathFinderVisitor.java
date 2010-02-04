@@ -397,7 +397,7 @@ public class PathFinderVisitor extends ClassCodeVisitorSupport {
 
         // XXX PropertyExpression has wrong offsets, e.g. 4-4 for 'this.field1 = 77'
         // and was never added to path,
-        // therefore let's check if its children are wraping given position
+        // therefore let's check if its children are wrapping given position
         // and add it then
 
         Expression objectExpression = node.getObjectExpression();

@@ -48,7 +48,7 @@ public class GroovyScriptEngine
     private static boolean DEBUG = false;
 
     // script-string-to-generated Class map
-    private Map<String, Class<?>> classMap;
+   // private Map<String, Class<?>> classMap;
     // global closures map - this is used to simulate a single
     // global functions namespace 
     public Map<String, Closure> globalClosures;
@@ -65,7 +65,7 @@ public class GroovyScriptEngine
     }
     
     public GroovyScriptEngine() {    
-        classMap = Collections.synchronizedMap(new HashMap<String, Class<?>>());
+        //classMap = Collections.synchronizedMap(new HashMap<String, Class<?>>());
         globalClosures = Collections.synchronizedMap(new HashMap<String, Closure>());
         loader = new GroovyClassLoader(getParentLoader(),
                                        new CompilerConfiguration());
