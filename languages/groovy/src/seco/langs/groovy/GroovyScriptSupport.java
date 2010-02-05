@@ -29,13 +29,9 @@ import org.codehaus.groovy.control.Phases;
 import org.codehaus.groovy.control.messages.Message;
 import org.codehaus.groovy.control.messages.SyntaxErrorMessage;
 import org.codehaus.groovy.syntax.SyntaxException;
-import org.mozilla.javascript.UniqueTag;
 import org.codehaus.groovy.control.*;
 
 import seco.langs.groovy.jsr.GroovyScriptEngine;
-import seco.langs.javascript.jsr.ExternalScriptable;
-import seco.langs.javascript.jsr.RhinoScriptEngine;
-import seco.langs.ruby.RubyTreeModel;
 import seco.notebook.AppConfig;
 import seco.notebook.syntax.Formatter;
 import seco.notebook.syntax.Mode;
@@ -47,7 +43,6 @@ import seco.notebook.syntax.completion.NBParser.ParserRunnable;
 import seco.notebook.syntax.java.JavaFormatter;
 import seco.notebook.syntax.java.JavaFormatterOptions;
 import seco.notebook.util.SegmentCache;
-import sun.org.mozilla.javascript.internal.Context;
 
 public class GroovyScriptSupport extends ScriptSupport
 {
@@ -182,11 +177,9 @@ public class GroovyScriptSupport extends ScriptSupport
         public Object resolveVar(String s, int offset)
         {
             if (s == null || s.length() == 0) return null;
-           // if (getRootNode() == null) return null;
             try
             {
                 Object o = null;//scope.get0(s, scope);
-                if (o != null && !(o instanceof UniqueTag)) return o;
                 if (s.indexOf("(") < 0)
                 {
                     o = support.getDocument().getEvaluationContext().eval(
