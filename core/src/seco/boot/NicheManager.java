@@ -222,28 +222,31 @@ public class NicheManager
                 "jscheme.scriptingapi.JSchemeScriptEngineFactory",
                 new String[] { "jsint", "jscheme", "jscheme.scriptingapi" },
                 "seco.langs.jscheme.JSchemeSupportFactory"));
-        graph.add(new SEDescriptor(
-        		"jruby", 
-        		"seco.langs.ruby.JRubyScriptEngineFactory",
-                new String[] {},
-                "seco.langs.ruby.RubyScriptSupportFactory"));
-        graph.add(new SEDescriptor(
-                "javascript", 
-                "seco.langs.javascript.jsr.RhinoScriptEngineFactory",
-                new String[] {},
-                "seco.langs.javascript.JSScriptSupportFactory"));
-        graph.add(new SEDescriptor(
-                "groovy", 
-                "seco.langs.groovy.jsr.GroovyScriptEngineFactory",
-                new String[] {},
-                "seco.langs.groovy.GroovyScriptSupportFactory"));
-        graph.add(new SEDescriptor(
-                "javafx", 
-                "seco.langs.javafx.jsr.JavaFXScriptEngineFactory",
-                new String[] {},
-                "seco.langs.javafx.JavaFxScriptSupportFactory"));
+        
+        graph.add(new SEDescriptor("html", null, new String[0], "seco.notebook.HTMLScriptSupportFactory"));       
+        
+      
+//        graph.add(new SEDescriptor(
+//        		"jruby", 
+//        		"seco.langs.ruby.JRubyScriptEngineFactory",
+//                new String[] {},
+//                "seco.langs.ruby.RubyScriptSupportFactory"));
+//        graph.add(new SEDescriptor(
+//                "javascript", 
+//                "seco.langs.javascript.jsr.RhinoScriptEngineFactory",
+//                new String[] {},
+//                "seco.langs.javascript.JSScriptSupportFactory"));
+//        graph.add(new SEDescriptor(
+//                "groovy", 
+//                "seco.langs.groovy.jsr.GroovyScriptEngineFactory",
+//                new String[] {},
+//                "seco.langs.groovy.GroovyScriptSupportFactory"));
+//        graph.add(new SEDescriptor(
+//                "javafx", 
+//                "seco.langs.javafx.jsr.JavaFXScriptEngineFactory",
+//                new String[] {},
+//                "seco.langs.javafx.JavaFxScriptSupportFactory"));
         //com/sun/tools/javafx/script/JavaFXScriptEngineFactory
-        graph.add(new SEDescriptor("html", null, new String[0], "seco.notebook.HTMLScriptSupportFactory"));    	
     }
     
     static void populateDefaultVisuals(HyperGraph graph)

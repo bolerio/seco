@@ -32,11 +32,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
-import java.io.InputStream;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.Action;
@@ -84,12 +81,6 @@ import seco.gui.TopFrame;
 import seco.gui.GUIHelper.CellTreeAction;
 import seco.gui.GUIHelper.ElementTreeAction;
 import seco.gui.GUIHelper.ParseTreeAction;
-import seco.langs.groovy.GroovyScriptSupportFactory;
-import seco.langs.javafx.JavaFxScriptSupportFactory;
-import seco.langs.javascript.JSScriptSupportFactory;
-import seco.langs.jscheme.JSchemeScriptSupportFactory;
-import seco.langs.prolog.PrologScriptSupportFactory;
-import seco.langs.ruby.RubyScriptSupportFactory;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.ScriptEngineProvider;
 import seco.notebook.gui.UpdatablePopupMenu;
@@ -102,9 +93,6 @@ import seco.notebook.gui.menu.NotebookPropsProvider;
 import seco.notebook.html.HTMLEditor;
 import seco.notebook.syntax.Mode;
 import seco.notebook.syntax.ScriptSupport;
-import seco.notebook.syntax.ScriptSupportFactory;
-import seco.notebook.syntax.TokenMarker;
-import seco.notebook.syntax.XModeHandler;
 import seco.notebook.view.HtmlView;
 import seco.rtenv.EvaluationContext;
 import seco.things.Cell;
@@ -112,10 +100,7 @@ import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import sun.awt.AppContext;
-import bsh.BshScriptSupportFactory;
 
-import com.microstar.xml.XmlException;
-import com.microstar.xml.XmlParser;
 
 public class NotebookUI extends JTextPane implements DocumentListener,
         AdjustmentListener, NotebookDocument.CaretMoveListener
