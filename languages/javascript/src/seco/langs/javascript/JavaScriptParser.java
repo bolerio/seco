@@ -12,6 +12,7 @@ import javax.swing.text.Segment;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.UniqueTag;
 import org.mozilla.nb.javascript.Node;
@@ -22,7 +23,7 @@ import seco.langs.javascript.jsr.RhinoScriptEngine;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.NBParser;
 import seco.notebook.util.SegmentCache;
-import sun.org.mozilla.javascript.internal.Context;
+
 
 public class JavaScriptParser extends NBParser
 {
