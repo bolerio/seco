@@ -1,0 +1,63 @@
+<notebook title="F:\kosta\ticl\seco\languages\InstallLanguages.nb">
+    <cell-group name="CG4" collapsed="true">
+        <cell initialization="true" engine="null">
+            <data><![CDATA[import seco.rtenv.*;
+]]>            </data>
+        </cell>
+
+    </cell-group>
+    <cell-group name="CG0">
+        <cell html-preview="true" engine="html">
+            <data><![CDATA[<h2>JRuby
+</h2>
+]]>            </data>
+        </cell>
+        <cell engine="null">
+            <data><![CDATA[seco.langs.ruby.JRubyScriptEngineFactory.class;
+niche.add(new SEDescriptor( "jruby",  "seco.langs.ruby.JRubyScriptEngineFactory",
+                new String[] {},   "seco.langs.ruby.RubyScriptSupportFactory"));
+]]>            </data>
+        </cell>
+
+    </cell-group>
+    <cell-group name="CG1">
+        <cell html-preview="true" engine="html">
+            <data><![CDATA[JavaScript]]>            </data>
+        </cell>
+        <cell engine="null">
+            <data><![CDATA[seco.langs.javascript.jsr.RhinoScriptEngineFactory.class;
+niche.add(new SEDescriptor( "javascript",   "seco.langs.javascript.jsr.RhinoScriptEngineFactory",
+                new String[] {},  "seco.langs.javascript.JSScriptSupportFactory"));
+]]>            </data>
+        </cell>
+
+    </cell-group>
+    <cell-group name="CG2">
+        <cell html-preview="true" engine="html">
+            <data><![CDATA[<h2>Groovy
+</h2>
+]]>            </data>
+        </cell>
+        <cell engine="null">
+            <data><![CDATA[seco.langs.groovy.jsr.GroovyScriptEngineFactory.class;
+niche.add(new SEDescriptor( "groovy",  "seco.langs.groovy.jsr.GroovyScriptEngineFactory",
+                new String[] {},  "seco.langs.groovy.GroovyScriptSupportFactory"));
+]]>            </data>
+        </cell>
+
+    </cell-group>
+    <cell-group name="CG3">
+        <cell html-preview="true" engine="html">
+            <data><![CDATA[
+<h2>JavaFX
+</h2>]]>            </data>
+        </cell>
+        <cell engine="null">
+            <data><![CDATA[seco.langs.javafx.jsr.JavaFXScriptEngineFactory.class;
+niche.add(new SEDescriptor( "javafx",   "seco.langs.javafx.jsr.JavaFXScriptEngineFactory",   
+       new String[] {},      "seco.langs.javafx.JavaFxScriptSupportFactory"));
+]]>            </data>
+        </cell>
+
+    </cell-group>
+</notebook>
