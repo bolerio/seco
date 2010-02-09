@@ -811,10 +811,10 @@ public class GUIHelper
         CellGroupMember book = ThisNiche.graph.get(h);
         String name = CellUtils.getName(book);
         if (name == null) name = "";
-        RuntimeContext rcInstance = (RuntimeContext) ThisNiche.graph.get(TopFrame
-                .getInstance().getCurrentRuntimeContext());
+       // RuntimeContext rcInstance = (RuntimeContext) ThisNiche.graph.get(TopFrame
+       //         .getInstance().getCurrentRuntimeContext());
         String title = "[" + ThisNiche.graph.getLocation() + "] "
-                + rcInstance.getName() + " " + name;
+                /*+ rcInstance.getName() + " "*/ + name;
         TopFrame.getInstance().setTitle(title);
         TopFrame.getInstance().showHTMLToolBar(false);
     }

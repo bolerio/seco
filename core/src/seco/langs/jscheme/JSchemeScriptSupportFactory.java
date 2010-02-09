@@ -10,12 +10,17 @@ public class JSchemeScriptSupportFactory extends ScriptSupportFactory
 {
     public JSchemeScriptSupportFactory()
     {
-        addMode("schme", new Mode("scheme","/modes/scheme.xml",this));
+        addMode("scheme", new Mode("scheme","/modes/scheme.xml",this));
     }
     
     public String getEngineName()
     {
         return "jscheme";
+    }
+    
+    public Mode getDefaultMode()
+    {
+        return getMode("scheme");
     }
 
     public ScriptSupport createScriptSupport(Element el)

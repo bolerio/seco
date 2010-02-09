@@ -221,7 +221,7 @@ public class NicheManager
         		"jscheme",
                 "jscheme.scriptingapi.JSchemeScriptEngineFactory",
                 new String[] { "jsint", "jscheme", "jscheme.scriptingapi" },
-                "seco.langs.jscheme.JSchemeSupportFactory"));
+                "seco.langs.jscheme.JSchemeScriptSupportFactory"));
         
         graph.add(new SEDescriptor("html", null, new String[0], "seco.notebook.HTMLScriptSupportFactory"));       
     }

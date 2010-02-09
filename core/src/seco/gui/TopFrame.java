@@ -12,18 +12,17 @@ import javax.swing.event.CaretListener;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
-import seco.notebook.NotebookUI;
 import seco.notebook.util.Log;
-import seco.rtenv.RuntimeContext;
 import seco.talk.ConnectionManager;
 import seco.things.CellUtils;
 
 public abstract class TopFrame extends JFrame
 {
+    private static final long serialVersionUID = -4693003403767961820L; 
+    
     public static boolean PICCOLO = true;
     public static boolean AUTO_BACKUP = true;
-    // current RuntimeContext
-    public static HGHandle currentRC = ThisNiche.TOP_CONTEXT_HANDLE;
+   
     private static TopFrame instance;
 
     protected HGHandle focusedContainerHandle = ThisNiche.TOP_CELL_GROUP_HANDLE;
@@ -173,24 +172,6 @@ public abstract class TopFrame extends JFrame
         ConnectionManager.stopConnections(false);
         CellUtils.removeBackupedCells();
         System.exit(0);
-    }
-
-    // TODO: legacy - called in .scm scripts
-    public HGHandle getCurrentRuntimeContext()
-    {
-        return currentRC;
-    }
-
-    public static void setCurrentRuntimeContext(HGHandle ch)
-    {
-        if (ch == null) return;
-        NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-        if (ui == null) return;
-        currentRC = ch;
-        RuntimeContext rcInstance = (RuntimeContext) ThisNiche.graph
-                .get(currentRC);
-        rcInstance.getBindings().put("notebook", ui.getDoc().getBook());
-        ui.getDoc().setEvaluationContext(ThisNiche.getEvaluationContext(ch));
     }
 
     public HGHandle getFocusedContainerHandle()

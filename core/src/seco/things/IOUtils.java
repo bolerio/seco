@@ -439,7 +439,7 @@ public class IOUtils
             s += " " + XMLConstants.ATTR_READONLY + "=\"true\"";
         if(CellUtils.isCollapsed(gr))
             s += " " + XMLConstants.ATTR_COLLAPSED + "=\"true\"";
-       // if (engine != null)
+        if (CellUtils.getEngine(gr) != null)
             s += " " + XMLConstants.ATTR_ENGINE + "=\"" + CellUtils.getEngine(gr) + "\"";
         s += ">\n";
         String ind = XMLConstants.makeIndent(depth + 1);

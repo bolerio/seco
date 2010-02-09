@@ -63,6 +63,7 @@ import seco.notebook.NotebookUI;
 import seco.notebook.StyleAttribs;
 import seco.notebook.StyleType;
 import seco.notebook.XMLConstants;
+import seco.rtenv.ContextLink;
 import seco.rtenv.EvaluationContext;
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolox.pswing.PSwing;
@@ -474,15 +475,25 @@ public class CellUtils
 
     public static String getEngine(CellGroupMember c)
     {
-        String eng = (String) c.getAttribute(XMLConstants.ATTR_ENGINE);
-        return eng;
+        return (String) c.getAttribute(XMLConstants.ATTR_ENGINE);
     }
 
     public static void setEngine(CellGroupMember c, String s)
     {
         c.setAttribute(XMLConstants.ATTR_ENGINE, s);
     }
-
+    
+    public static HGHandle getEvalContextH(CellGroupMember c)
+    {
+        HGHandle ctxH = ThisNiche.findContextLink(ThisNiche.handleOf(c));
+        return ctxH;
+    }
+    
+    public static void setEvalContextH(CellGroupMember c, HGHandle h)
+    {
+         ThisNiche.setContextFor(ThisNiche.handleOf(c), h);
+    }
+   
     public static void setBounds(CellGroupMember c, Rectangle r)
     {
         c.setAttribute(VisualAttribs.rect, r);

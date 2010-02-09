@@ -57,16 +57,16 @@ public class NBUIVisual implements CellVisual
                 ui.requestFocusInWindow();
             }
         });
-        // if(scrollPane.isVisible())
+        
         scrollPane.setViewportView(ui);
-        HGHandle ctxH = ThisNiche.getContextHandleFor(doc.getBookHandle());
-        if(ThisNiche.TOP_CONTEXT_HANDLE.equals(ctxH))
-        {
-           ThisNiche.graph.add(new ContextLink(doc.getBookHandle(), 
-                   TopFrame.getInstance().getCurrentRuntimeContext()));
-           ctxH = ThisNiche.getContextHandleFor(doc.getBookHandle());
-        }
-        TopFrame.setCurrentRuntimeContext(ctxH);
+//        HGHandle ctxH = ThisNiche.findContextLink(doc.getBookHandle());
+//        if(ctxH == null)
+//        {
+//           HGHandle rtH = TopFrame.getInstance().getCurrentRuntimeContext(); 
+//           CellUtils.setEvalContext(doc.getBook(), rtH);
+//           ctxH = rtH;
+//        }
+//        TopFrame.setCurrentRuntimeContext(ctxH);
         scrollPane.setName(TabbedPaneU.makeTabTitle(doc.getTitle()));
         scrollPane.updateUI();
         return scrollPane;

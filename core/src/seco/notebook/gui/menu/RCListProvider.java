@@ -57,7 +57,6 @@ public class RCListProvider implements DynamicMenuProvider
                     {
                         ThisNiche.setContextFor(bh, rh);
                         item.setSelected(true);
-                        TopFrame.setCurrentRuntimeContext(rh);
                     }
                 };
                 act.putValue(Action.NAME, rc.getName());

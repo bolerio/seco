@@ -46,7 +46,7 @@ public final class ThisNiche
 
     // we assume for now that an entity can only belong to a single context
     // this obviously doesn't make much sense "philosophically" ;)
-    static HGHandle findContextLink(HGHandle entityHandle)
+    public static HGHandle findContextLink(HGHandle entityHandle)
     {
         HGSearchResult<HGHandle> rs = null;
         try

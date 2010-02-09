@@ -265,8 +265,6 @@ abstract public class DocUtil
     static void eval_result_in_aux_thread(final NotebookDocument doc,
             final Cell cell)
     {
-        // EvalResult res = new EvalResult();
-        // res.setText("Evaluating");
         Runnable r = new Runnable() {
             @Override
             public void run()

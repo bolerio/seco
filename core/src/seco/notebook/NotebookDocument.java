@@ -62,6 +62,7 @@ import seco.events.EventDispatcher;
 import seco.events.CellTextChangeEvent.EventType;
 import seco.events.handlers.AttributeChangeHandler;
 import seco.events.handlers.CellGroupChangeHandler;
+import seco.gui.TopFrame;
 import seco.notebook.html.HTMLEditor;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.ScriptSupportFactory;
@@ -133,7 +134,7 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         if (inited) return;
 
-        CellGroup book = (CellGroup) ThisNiche.graph.get(bookH);
+        CellGroup book = ThisNiche.graph.get(bookH);
         Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) book
                 .getAttribute(XMLConstants.CELL_STYLE);
         if (map != null) for (NBStyle s : map.values())
@@ -232,13 +233,20 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public EvaluationContext getEvaluationContext()
     {
+        if(evalContext == null)
+        {
+            HGHandle ctxH = CellUtils.getEvalContextH(getBook());
+            if(ctxH == null)
+               ctxH = ThisNiche.TOP_CONTEXT_HANDLE; 
+           evalContext = ThisNiche.getEvaluationContext(ctxH);
+        }
         return evalContext;
     }
 
-    public void setEvaluationContext(EvaluationContext ctx)
-    {
-        evalContext = ctx;
-    }
+//    public void setEvaluationContext(EvaluationContext ctx)
+//    {
+//        evalContext = ctx;
+//    }
 
     public CellGroupMember getBook()
     {
@@ -343,18 +351,12 @@ public class NotebookDocument extends DefaultStyledDocument
         if (sup != null && sup.getFactory().getEngineName().equals(name)
                 && !force) return;
         el = getLowerElement(el, inputCellBox);
-//        Class<?> cls = NotebookUI.getScriptSupportClassesMap().get(name);
-//        if (cls == null)
-//        {
-//            if (force) removeAttribute(el, ATTR_SCRIPT_SUPPORT);
-//            return;
-//        }
+
         sup = null;
         try
         {
             ScriptSupportFactory factory = 
                 getEvaluationContext().getLanguageDescriptor(name).getEditSupportFactory();
-                //(ScriptSupportFactory) cls.newInstance();
             sup = factory.createScriptSupport(el.getElement(0));
         }
         catch (Exception ex)

@@ -14,6 +14,7 @@ import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
 import seco.U;
+import seco.notebook.NotebookUI;
 import seco.things.Scriptlet;
 
 
@@ -176,6 +177,8 @@ public class EvaluationContext
             Thread.currentThread().setContextClassLoader(getClassLoader());
             ScriptEngine engine = getEngine(language);
             if(engine == null) return null;
+            if(NotebookUI.getFocusedNotebookUI() != null)
+              runtimeContext.getBindings().put("notebook", NotebookUI.getFocusedNotebookUI());
     		Object result = engine.eval(expression); //, runtimeContext.getBindings());
     		return result;
         }
