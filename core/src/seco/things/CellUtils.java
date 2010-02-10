@@ -121,6 +121,9 @@ public class CellUtils
         String name = CellUtils.getEngine(group);
         if (name == null) name = inherited_engine_name;
         if (name == null) name = defaultEngineName;
+        HGHandle new_ctxH = CellUtils.getEvalContextH(group);
+        if(new_ctxH != null)
+            ctx = ThisNiche.graph.get(new_ctxH);
         for (int i = 0; i < group.getArity(); i++)
         {
             CellGroupMember cgm = group.getElement(i);
@@ -140,6 +143,9 @@ public class CellUtils
         String name = CellUtils.getEngine(group);
         if (name == null) name = inherited_engine_name;
         if (name == null) name = defaultEngineName;
+        HGHandle new_ctxH = CellUtils.getEvalContextH(group);
+        if(new_ctxH != null)
+            ctx = ThisNiche.graph.get(new_ctxH);
         for (int i = 0; i < group.getArity(); i++)
         {
             CellGroupMember cgm = group.getElement(i);
@@ -160,6 +166,9 @@ public class CellUtils
             String inherited_engine_name, EvaluationContext ctx)
     {
         HGHandle cellH = ThisNiche.handleOf(cell);
+        HGHandle new_ctxH = CellUtils.getEvalContextH(cell);
+        if(new_ctxH != null)
+            ctx = ThisNiche.graph.get(new_ctxH);
         EvalResult res = eval_result(cell, inherited_engine_name, ctx);
         EvalCellEvent e = create_eval_event(cellH, res);
         // check if we already have an output cell. if not, add one

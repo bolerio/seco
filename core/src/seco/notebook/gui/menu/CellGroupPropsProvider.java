@@ -78,6 +78,9 @@ public class CellGroupPropsProvider extends CellPropsProvider
                 }
             });
             menu.add(m);
+            
+            menu.add(new EnhancedMenu("Set Runtime Context",
+                    new RCListProvider(nb)));
         }
     }
 }

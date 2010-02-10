@@ -135,6 +135,8 @@ public class CellPropsProvider implements DynamicMenuProvider
                 }
             });
             menu.add(mi);
+            menu.add(new EnhancedMenu("Set Runtime Context",
+                    new RCListProvider(nb)));
         }
     }
     

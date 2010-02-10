@@ -32,6 +32,7 @@ import seco.events.handlers.CellGroupChangeHandler;
 import seco.events.handlers.CellTextChangeHandler;
 import seco.events.handlers.EvalCellHandler;
 import seco.notebook.util.RequestProcessor;
+import seco.rtenv.EvaluationContext;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -270,90 +271,29 @@ abstract public class DocUtil
             public void run()
             {
                 EvalResult res = CellUtils.eval_result(cell, getEngineName(doc,
-                        cell), doc.getEvaluationContext());
+                        cell), getEvalContext(doc.getBook(), cell));
                 doc.handle_delayed_evaluation(res, ThisNiche.handleOf(cell));
             }
         };
         RequestProcessor.getDefault().post(r);
-        // SwingUtilities.invokeLater(r);
-        // r.run();
-        // return res;
+     }
+    
+    static EvaluationContext getEvalContext(CellGroupMember top, CellGroupMember cell)
+    {
+        HGHandle res = CellUtils.getEvalContextH(cell);
+        if(res != null) return ThisNiche.getEvaluationContext(res);
+        CellGroup par = CellUtils.getParentGroup(ThisNiche.handleOf(cell));
+        if(par == top || par == null)
+        {
+            if(par != null)
+               res = CellUtils.getEvalContextH(par);
+            if(res == null) 
+                res = ThisNiche.TOP_CONTEXT_HANDLE;
+            return ThisNiche.getEvaluationContext(res);
+        }
+        return getEvalContext(top, par);
     }
-
-    // static EvalResult eval_result(final NotebookDocument doc, final Cell
-    // cell)
-    // {
-    // EvalResult res = new EvalResult();
-    // try
-    // {
-    // String name = getEngineName(doc, cell);
-    // if (ThisNiche.getHyperGraph() == null) // are we running a niche or
-    // // some other testing/development mode?
-    // {
-    // ScriptEngine eng = doc.scriptManager.getEngineByName(name);
-    // if (eng != null)
-    // {
-    // Object o = eng.eval(CellUtils.getText(cell), doc.context);
-    // if (o instanceof Component) res
-    // .setComponent(maybe_clone((Component) o));
-    // else
-    // res.setText("" + o);
-    // }
-    // else
-    // {
-    // res.setError(true);
-    // res.setText("Unknown scripting engine: " + name);
-    // }
-    // }
-    // else
-    // {
-    // if (doc.evalContext == null)
-    // doc.evalContext = ThisNiche.getTopContext();
-    // if (doc.evalContext == null)
-    // doc.evalContext = ThisNiche
-    // .getEvaluationContext(ThisNiche.TOP_CONTEXT_HANDLE);
-    // Object o = doc.evalContext.eval(name, CellUtils.getText(cell));
-    // if (o instanceof Component)
-    // {
-    // Component c = (Component) o;
-    // if (c instanceof Window)
-    // {
-    // res.setText("Window: " + c);
-    // }
-    // else if (c.getParent() != null)
-    // {
-    // // If this component is displayed in some output cell,
-    // // detach it from there,
-    // // otherwise we don't own the component so we
-    // // don't display it.
-    // if (c.getParent() instanceof seco.notebook.view.ResizableComponent)
-    // {
-    // c.getParent().remove(c);
-    // res.setComponent(c);
-    // }
-    // else
-    // res.setText("AWT Component - " + c.toString()
-    // + " -- belongs to parent component "
-    // + c.getParent().toString());
-    // }
-    // else
-    // res.setComponent(c);
-    // }
-    // else
-    // res.setText(CellUtils.eval_to_string(o, doc.evalContext));
-    // }
-    // }
-    // catch (Throwable ex)
-    // {
-    // res.setError(true);
-    // StringWriter w = new StringWriter();
-    // PrintWriter writer = new PrintWriter(w);
-    // ex.printStackTrace(writer);
-    // res.setText(w.toString());
-    // }
-    // return res;
-    // }
-
+    
     public static Component maybe_clone(Component c)
     {
         if (c.getParent() != null)

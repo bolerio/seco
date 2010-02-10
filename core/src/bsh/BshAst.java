@@ -23,7 +23,6 @@ import javax.swing.tree.TreePath;
 
 import seco.notebook.storage.ClassRepository;
 import seco.notebook.storage.NamedInfo;
-import seco.notebook.storage.swing.RefUtils;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.CompletionU;
 import seco.notebook.syntax.completion.NBParser;

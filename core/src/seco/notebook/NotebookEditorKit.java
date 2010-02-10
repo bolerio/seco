@@ -124,7 +124,7 @@ public class NotebookEditorKit extends StyledEditorKit
             new DeleteCellAction(), new DeleteSelectedElementsAction(),
             new SelectCellHandleAction(), new ImportAction(), new HTMLAction(),
             new ShowInputTypePopupAction(), new ClearEngineContextAction(),
-            new ResetCellNumAction(), new JavaDocManagerAction(),
+            /*new ResetCellNumAction(),*/ new JavaDocManagerAction(),
             new CtxInspectorAction(),  new ShortcutInspectorAction(),
             new FindReplaceAction(true),
             new FindReplaceAction(false), new RemoveTabAction(),
@@ -132,8 +132,6 @@ public class NotebookEditorKit extends StyledEditorKit
             new SelectLineAction(), new SelectAllAction(), 
             new VerticalPageAction(pageUpAction, -1, false), 
             new VerticalPageAction(pageDownAction, 1, false),
-                //new VerticalPageAction(selectionPageUpAction, -1, true), 
-                //new VerticalPageAction(selectionPageDownAction, 1, true)
             };
     private static HashMap<String, Action> actions;
 
@@ -847,18 +845,18 @@ public class NotebookEditorKit extends StyledEditorKit
         }
     }
 
-    static final class ResetCellNumAction extends BaseAction
-    {
-        public ResetCellNumAction()
-        {
-            super(resetCellNumAction);
-        }
-
-        protected void action(NotebookUI ui) throws Exception
-        {
-            // ui.getDoc().reNumberCells();
-        }
-    }
+//    static final class ResetCellNumAction extends BaseAction
+//    {
+//        public ResetCellNumAction()
+//        {
+//            super(resetCellNumAction);
+//        }
+//
+//        protected void action(NotebookUI ui) throws Exception
+//        {
+//            // ui.getDoc().reNumberCells();
+//        }
+//    }
 
     static final class JavaDocManagerAction extends AbstractAction
     {

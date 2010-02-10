@@ -24,29 +24,41 @@ import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
 import seco.U;
-import seco.gui.TopFrame;
 import seco.notebook.NotebookUI;
 import seco.rtenv.RuntimeContext;
+import seco.things.CellGroupMember;
 
 public class RCListProvider implements DynamicMenuProvider
 {
     private static final long serialVersionUID = 3127888958558526166L;
 
+    private CellGroupMember owner;
+    public RCListProvider()
+    {
+        
+    }
+    
+    public RCListProvider(CellGroupMember owner)
+    {
+        this.owner = owner;
+    }
+    
     public void update(JMenu m)
     {
-        if (NotebookUI.getFocusedNotebookUI() == null) return;
+        if (owner == null && NotebookUI.getFocusedNotebookUI() == null) return;
+        if(owner == null)
+           owner = NotebookUI.getFocusedNotebookUI().getDoc().getBook();
         ButtonGroup group = new ButtonGroup();
         HGSearchResult<HGHandle> rs = hfind(hg.type(RuntimeContext.class));
         try
         {
+            final HGHandle bh = ThisNiche.getHyperGraph().getHandle(owner);
             while (rs.hasNext())
             {
                 final HGHandle rh = rs.next();
                 RuntimeContext rc = (RuntimeContext) hget(rh);
                 final JRadioButtonMenuItem item = new JRadioButtonMenuItem(rc
                         .getName());
-                final HGHandle bh = ThisNiche.getHyperGraph().getHandle(
-                        NotebookUI.getFocusedNotebookUI().getDoc().getBook());
                 if (ThisNiche.getContextHandleFor(bh).equals(rh))
                     item.setSelected(true);
                 group.add(item);
