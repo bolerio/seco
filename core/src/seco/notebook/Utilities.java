@@ -422,8 +422,9 @@ public class Utilities
 		}
 	}
 
-	static int[] getSelectionStartOffsets(NotebookUI target, int tab_length)
+	static int[] getSelectionStartOffsets(NotebookUI target, String tab)
 	{
+	    int tab_length = (tab != null) ? tab.length() : 0;
 		NotebookDocument doc = ((NotebookUI) target).getDoc();
 		int start = target.getSelectionStart();
 		int end = target.getSelectionEnd();
@@ -442,7 +443,7 @@ public class Utilities
 				{
 					String s = doc.getText(res[i - st_idx], tab_length);
 					for (int j = 0; j < tab_length; j++)
-						if (s.charAt(j) != ' ') return null;
+						if (s.charAt(j) != tab.charAt(j)) return null;
 				}
 			}
 		}
@@ -454,7 +455,7 @@ public class Utilities
 
 	static int[] getSelectionStartOffsets(NotebookUI target)
 	{
-		return getSelectionStartOffsets(target, 0);
+		return getSelectionStartOffsets(target, null);
 	}
 
 	static int getTabSpacesCount()

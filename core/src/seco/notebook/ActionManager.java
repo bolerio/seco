@@ -199,6 +199,10 @@ public class ActionManager
         putAction(kit.getActionByName(NotebookEditorKit.removeTabAction),
                 KeyStroke.getKeyStroke(KeyEvent.VK_TAB,
                         InputEvent.SHIFT_DOWN_MASK), false);
+        putAction(kit.getActionByName(NotebookEditorKit.addRemoveCommentsAction),
+                KeyStroke.getKeyStroke(KeyEvent.VK_C,
+                        InputEvent.SHIFT_MASK
+                        | InputEvent.CTRL_MASK), false);
         KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,
                 InputEvent.SHIFT_DOWN_MASK);
         putAction(kit.getActionByName(NotebookEditorKit.deleteCellAction), key,

@@ -33,6 +33,7 @@ import seco.events.handlers.CellTextChangeHandler;
 import seco.events.handlers.EvalCellHandler;
 import seco.notebook.util.RequestProcessor;
 import seco.rtenv.EvaluationContext;
+import seco.rtenv.RuntimeContext;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -271,17 +272,18 @@ abstract public class DocUtil
             public void run()
             {
                 EvalResult res = CellUtils.eval_result(cell, getEngineName(doc,
-                        cell), getEvalContext(doc.getBook(), cell));
+                        cell), calc_eval_ctx(doc.getBook(), cell));
                 doc.handle_delayed_evaluation(res, ThisNiche.handleOf(cell));
             }
         };
         RequestProcessor.getDefault().post(r);
      }
     
-    static EvaluationContext getEvalContext(CellGroupMember top, CellGroupMember cell)
+    private static EvaluationContext calc_eval_ctx(CellGroupMember top, CellGroupMember cell)
     {
         HGHandle res = CellUtils.getEvalContextH(cell);
-        if(res != null) return ThisNiche.getEvaluationContext(res);
+        if(res != null &&  ThisNiche.graph.get(res) instanceof RuntimeContext) 
+            return ThisNiche.getEvaluationContext(res);
         CellGroup par = CellUtils.getParentGroup(ThisNiche.handleOf(cell));
         if(par == top || par == null)
         {
@@ -291,7 +293,7 @@ abstract public class DocUtil
                 res = ThisNiche.TOP_CONTEXT_HANDLE;
             return ThisNiche.getEvaluationContext(res);
         }
-        return getEvalContext(top, par);
+        return calc_eval_ctx(top, par);
     }
     
     public static Component maybe_clone(Component c)

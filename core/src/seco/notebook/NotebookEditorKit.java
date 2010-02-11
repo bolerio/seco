@@ -109,6 +109,7 @@ public class NotebookEditorKit extends StyledEditorKit
     public static final String replaceAction = "Replace...";
     public static final String findAction = "Find...";
     public static final String mergeCellsAction = "Merge Input Cells";
+    public static final String addRemoveCommentsAction = "Comment/Uncomment";
 
     static
     {
@@ -132,7 +133,7 @@ public class NotebookEditorKit extends StyledEditorKit
             new SelectLineAction(), new SelectAllAction(), 
             new VerticalPageAction(pageUpAction, -1, false), 
             new VerticalPageAction(pageDownAction, 1, false),
-            };
+            new AddRemoveCommentsAction()};
     private static HashMap<String, Action> actions;
 
     /** Creates a new instance of NotebookEditorKit */
@@ -733,7 +734,7 @@ public class NotebookEditorKit extends StyledEditorKit
         protected void action(NotebookUI ui) throws Exception
         {
             int count = Utilities.getTabSpacesCount();
-            int[] offs = Utilities.getSelectionStartOffsets(ui, count);
+            int[] offs = Utilities.getSelectionStartOffsets(ui, Utilities.getTabSubstitute());
             if (offs == null) return;
             NotebookDocument doc = ui.getDoc();
             try
@@ -741,6 +742,50 @@ public class NotebookEditorKit extends StyledEditorKit
                 doc.beginCompoundEdit("UnTab");
                 for (int i = 0; i < offs.length; i++)
                     doc.remove(offs[i] - i * count, count);
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+            finally
+            {
+                doc.endCompoundEdit();
+            }
+        }
+    }
+    
+    public static class AddRemoveCommentsAction extends BaseAction
+    {
+        public AddRemoveCommentsAction()
+        {
+            super(addRemoveCommentsAction);
+        }
+        
+        protected void action(NotebookUI ui) throws Exception
+        {
+            String comment = "//";
+            int count = comment.length();
+            
+            int[] offs = Utilities.getSelectionStartOffsets(ui);
+            if (offs == null || offs.length == 0) return;
+            NotebookDocument doc = ui.getDoc();
+            try
+            {
+                boolean addOrRemove = !comment.equals(doc.getText(offs[0], count));
+                if(!addOrRemove)
+                {
+                    //check if all lines are commented
+                    offs = Utilities.getSelectionStartOffsets(ui, comment);
+                    if (offs == null || offs.length == 0) return;
+                }
+                doc.beginCompoundEdit("Comment");
+                for (int i = 0; i < offs.length; i++)
+                {
+                    if(addOrRemove)
+                      doc.insertString(offs[i] + i * count, comment, null);  
+                    else
+                      doc.remove(offs[i] - i * count, count);
+                }
             }
             catch (Exception ex)
             {

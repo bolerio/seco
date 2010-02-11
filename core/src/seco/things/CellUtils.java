@@ -65,6 +65,7 @@ import seco.notebook.StyleType;
 import seco.notebook.XMLConstants;
 import seco.rtenv.ContextLink;
 import seco.rtenv.EvaluationContext;
+import seco.rtenv.RuntimeContext;
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolox.pswing.PSwing;
 
@@ -122,8 +123,9 @@ public class CellUtils
         if (name == null) name = inherited_engine_name;
         if (name == null) name = defaultEngineName;
         HGHandle new_ctxH = CellUtils.getEvalContextH(group);
-        if(new_ctxH != null)
-            ctx = ThisNiche.graph.get(new_ctxH);
+        if(new_ctxH != null && 
+                ThisNiche.graph.get(new_ctxH) instanceof RuntimeContext)
+            ctx = ThisNiche.getEvaluationContext(new_ctxH);
         for (int i = 0; i < group.getArity(); i++)
         {
             CellGroupMember cgm = group.getElement(i);
@@ -144,8 +146,9 @@ public class CellUtils
         if (name == null) name = inherited_engine_name;
         if (name == null) name = defaultEngineName;
         HGHandle new_ctxH = CellUtils.getEvalContextH(group);
-        if(new_ctxH != null)
-            ctx = ThisNiche.graph.get(new_ctxH);
+        if(new_ctxH != null && 
+                ThisNiche.graph.get(new_ctxH) instanceof RuntimeContext)
+            ctx = ThisNiche.getEvaluationContext(new_ctxH);
         for (int i = 0; i < group.getArity(); i++)
         {
             CellGroupMember cgm = group.getElement(i);
@@ -168,7 +171,7 @@ public class CellUtils
         HGHandle cellH = ThisNiche.handleOf(cell);
         HGHandle new_ctxH = CellUtils.getEvalContextH(cell);
         if(new_ctxH != null)
-            ctx = ThisNiche.graph.get(new_ctxH);
+            ctx = ThisNiche.getEvaluationContext(new_ctxH);
         EvalResult res = eval_result(cell, inherited_engine_name, ctx);
         EvalCellEvent e = create_eval_event(cellH, res);
         // check if we already have an output cell. if not, add one

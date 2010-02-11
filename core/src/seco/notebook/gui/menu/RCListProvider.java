@@ -52,7 +52,7 @@ public class RCListProvider implements DynamicMenuProvider
         HGSearchResult<HGHandle> rs = hfind(hg.type(RuntimeContext.class));
         try
         {
-            final HGHandle bh = ThisNiche.getHyperGraph().getHandle(owner);
+            final HGHandle bh = ThisNiche.graph.getHandle(owner);
             while (rs.hasNext())
             {
                 final HGHandle rh = rs.next();
