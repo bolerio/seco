@@ -37,7 +37,6 @@ import seco.notebook.NotebookDocument.UpdateAction;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.html.HTMLEditor;
 import seco.things.Cell;
-import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
 
@@ -76,10 +75,10 @@ public class HtmlView extends HidableComponentView
         {
             final NotebookUI ui = (NotebookUI) getContainer();
             String fn = ui.getDoc().getTitle();
-            view = new InnerHTMLEditor(fn); // HTMLEditor(fn);
+            view = new InnerHTMLEditor(fn); 
             Cell cell = (Cell) NotebookDocument.getNBElement(getElement());
             view.setContent(CellUtils.getText(cell));
-            view.setEditable(ui.getDoc().isReadOnlyEl(getElement()));//!CellUtils.isReadonly(cell));
+            view.setEditable(!ui.getDoc().isReadOnlyEl(getElement()));
 
             SwingUtilities.invokeLater(new Runnable() {
                 public void run()
@@ -114,12 +113,9 @@ public class HtmlView extends HidableComponentView
                     ui.getSelectionManager().clearSelections();
                     NotebookUI.setFocusedHTMLEditor(editor);
                     editor = InnerHTMLEditor.this;
-                    //CellGroupMember cgm = NotebookDocument.getNBElement(getElement());
-                    //if(CellUtils.isReadonly(cgm))
                     if(ui.getDoc().isReadOnlyEl(getElement()))
                         return;
                     TopFrame.getInstance().showHTMLToolBar(true);
-                    // System.out.println("InnerHTMLEditor -focusGained: " + ui.getCaretPosition());
                 }
 
                 public void focusLost(FocusEvent e)
@@ -131,17 +127,13 @@ public class HtmlView extends HidableComponentView
                     {
                         ex.printStackTrace();
                     }
-                     //System.out.println("InnerHTMLEditor -focusLost: " + e.getOppositeComponent());
-                    //TopFrame.getInstance().showHTMLToolBar(false);
-                }
+               }
             });
             
            addCaretListener(new CaretListener(){
 
                 public void caretUpdate(CaretEvent e)
                 {
-                    //CellGroupMember cgm = NotebookDocument.getNBElement(getElement());
-                   // if(CellUtils.isReadonly(cgm))  return;
                     if(getNotebookUI().getDoc().isReadOnlyEl(getElement())) return;
                     GUIHelper.getHTMLToolBar().showAttributes(editor, e.getDot());
                 }
@@ -187,8 +179,6 @@ public class HtmlView extends HidableComponentView
                     } else
                     {
                         int off = ui.viewToModel(e.getPoint());
-                        //getNotebookUI().setCaretPosition(
-                        //        getElement().getStartOffset() + 1);
                         if (off != -1) ui.setCaretPosition(off);
                         getPopup().update();
                         Frame f = GUIUtilities.getFrame(e.getComponent());
