@@ -7,7 +7,6 @@ import javax.swing.undo.CannotUndoException;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
-import org.safehaus.uuid.UUIDGenerator;
 
 import seco.ThisNiche;
 import seco.things.CellGroupMember;

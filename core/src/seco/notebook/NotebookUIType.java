@@ -6,7 +6,6 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.IncidenceSetRef;
 import org.hypergraphdb.LazyRef;
 import org.hypergraphdb.type.HGAtomTypeBase;
-import org.safehaus.uuid.UUIDGenerator;
 
 public class NotebookUIType extends HGAtomTypeBase 
 {
@@ -31,8 +30,4 @@ public class NotebookUIType extends HGAtomTypeBase
         return graph.getStore().store(layout);
     }
     
-    public static void main(String args[]){
-        System.out.println(UUIDGenerator.getInstance().generateTimeBasedUUID());
-        System.out.println(UUIDGenerator.getInstance().generateTimeBasedUUID());
-    }
 }

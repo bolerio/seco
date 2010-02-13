@@ -454,7 +454,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
 
     JLabel logoLabel = new JLabel();
     JLabel copyrightLabel = new JLabel(
-            "Copyright (c) 2006-2007 by Kobrix Software Inc. and others.");
+            "Copyright (c) 2006-2010 by Kobrix Software Inc. and others.");
     String helpText = "<html><p><b>Welcome to Seco!</b></p><p align='left'>If this is the first time you are running Seco, you need to create a workspace. A workspace is called a <i>niche</i> in Seco lingo. A niche is a dedicated directory on your computer where Seco data will be managed. You can have many niches, but each running instance is bound to only one of them. </html>";
     JLabel helpLabel = new JLabel();
     JButton btnEdit = new JButton("Edit Niche");

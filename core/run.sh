@@ -16,29 +16,24 @@ CYGWIN*)
 esac
 
 
-SCRIBA_BIN_DIR=`dirname $0`
-cd $SCRIBA_BIN_DIR
-export SCRIBA_HOME="`pwd`"
-echo "Using Scriba home directory '$SCRIBA_HOME'"
+SECO_BIN_DIR=`dirname $0`
+cd $SECO_BIN_DIR
+export SECO_HOME="`pwd`"
+echo "Using Scriba home directory '$SECO_HOME'"
 
 JAVA_EXEC=java
 
-#SCRIBA_CLASSPATH="/usr/local/classpath/share/classpath:$SCRIBA_HOME/bin"
-SCRIBA_CLASSPATH="$SCRIBA_HOME/bin"
+SECO_CLASSPATH="$SECO_HOME/seco.jar"
 
 for f in lib/*.jar; do
-  SCRIBA_CLASSPATH="$SCRIBA_CLASSPATH$pathsep$f"
+  SECO_CLASSPATH="$SECO_CLASSPATH$pathsep$f"
 done;
 
-SCRIBA_NATIVE=$SCRIBA_HOME/lib/native/$systemname
+SECO_NATIVE=$SECO_HOME/lib/native/$systemname
 
 if $cygwin; then
-  [ -n "$SCRIBA_HOME" ] && SCRIBA_CLASSPATH=`cygpath --absolute --path --windows "$SCRIBA_CLASSPATH"`
-  [ -n "$SCRIBA_NATIVE" ] && SCRIBA_NATIVE=`cygpath --path --windows "$SCRIBA_NATIVE"`
+  [ -n "$SECO_HOME" ] && SECO_CLASSPATH=`cygpath --absolute --path --windows "$SECO_CLASSPATH"`
+  [ -n "$SECO_NATIVE" ] && SECO_NATIVE=`cygpath --path --windows "$SECO_NATIVE"`
 fi
 
-#export LD_LIBRARY_PATH=/usr/local/classpath/lib/classpath:/usr/local/BerkeleyDB.4.7/lib:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=/usr/local/BerkeleyDB.4.7/lib:$LD_LIBRARY_PATH
-#NATIVE=/usr/local/classpath/lib/classpath:/usr/local/BerkeleyDB.4.7/lib
-
-exec $JAVA_EXEC -cp $SCRIBA_CLASSPATH  seco.boot.StartMeUp
+exec $JAVA_EXEC -cp $SECO_CLASSPATH  -Djava.library.path=$SECO_NATIVE seco.boot.StartMeUp
