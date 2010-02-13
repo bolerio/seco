@@ -142,9 +142,13 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
                 scroll.setTransferHandler(canvas.getTransferHandler());
             }
             else
-               top_canvas.addComponent(comp, x);
+            {
+                PSwingNode ps = top_canvas.getPSwingNodeForHandle(childH);
+                if (ps != null)
+                    ps.removeFromParent(); 
+                 top_canvas.addComponent(comp, x);
+            }
            // if(title != null) GUIHelper.handleTitle(x,  comp);
-               
         }
         CellUtils.addEventPubSub(EvalCellEvent.HANDLE, childH, getHandle(),
                 getHandle());
@@ -158,8 +162,6 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
         CellGroup group = CellUtils.getParentGroup(h);
         //System.out.println("rebind: " + h + ":" + group);
         PiccoloCanvas canvas = getCanvas(group);
-        PSwingNode ps = canvas.getPSwingNodeForHandle(h);
-        if (ps != null) ps.removeFromParent();
         addChild(canvas, h);
     }
     
