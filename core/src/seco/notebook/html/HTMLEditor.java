@@ -976,7 +976,9 @@ public class HTMLEditor extends JTextPane
                     doc.processHTMLFrameHyperlinkEvent(evt);
                 } else {
                     try {
-                        BrowserLauncher.openURL(e.getURL().toString());
+                        String url =  e.getURL() != null ? e.getURL().toString():
+                            e.getDescription();
+                        BrowserLauncher.openURL(url);
                     } catch (Throwable t) {
                         t.printStackTrace();
                     }
