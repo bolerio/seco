@@ -113,8 +113,10 @@ public class HtmlView extends HidableComponentView
                     ui.getSelectionManager().clearSelections();
                     NotebookUI.setFocusedHTMLEditor(editor);
                     editor = InnerHTMLEditor.this;
-                    if(ui.getDoc().isReadOnlyEl(getElement()))
-                        return;
+                    boolean readonly =
+                      ui.getDoc().isReadOnlyEl(getElement());
+                    editor .setEditable(readonly);
+                    if(readonly)  return;
                     TopFrame.getInstance().showHTMLToolBar(true);
                 }
 
