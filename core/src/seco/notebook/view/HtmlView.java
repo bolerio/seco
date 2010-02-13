@@ -115,7 +115,7 @@ public class HtmlView extends HidableComponentView
                     editor = InnerHTMLEditor.this;
                     boolean readonly =
                       ui.getDoc().isReadOnlyEl(getElement());
-                    editor .setEditable(readonly);
+                    editor .setEditable(!readonly);
                     if(readonly)  return;
                     TopFrame.getInstance().showHTMLToolBar(true);
                 }

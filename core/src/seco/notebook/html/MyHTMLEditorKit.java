@@ -17,6 +17,7 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.HashMap;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -50,15 +51,20 @@ import javax.swing.undo.UndoManager;
 
 import seco.notebook.FontEx;
 import seco.notebook.NotebookDocument;
+import seco.notebook.NotebookUI;
 import seco.notebook.XMLConstants;
+import seco.notebook.NotebookEditorKit.BaseAction;
+import seco.notebook.NotebookEditorKit.FindReplaceAction;
 import seco.notebook.gui.DialogDescriptor;
 import seco.notebook.gui.DialogDisplayer;
+import seco.notebook.gui.FindDialog;
 import seco.notebook.gui.FontDialog;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.NotifyDescriptor;
 import seco.notebook.gui.menu.CellLangProvider;
 import seco.notebook.html.view.HTMLTableView;
 import seco.notebook.html.view.InvisibleView;
+import seco.notebook.util.IconManager;
 import seco.notebook.view.HtmlView;
 import seco.things.CellUtils;
 
@@ -92,6 +98,9 @@ public class MyHTMLEditorKit extends HTMLEditorKit
     public static final String redoAction = "Redo";
     public static final String insertSymbolAction = "Insert Special Symbol";
     public static final String showInputTypePopup = "showInputTypePopup";
+    public static final String replaceAction = "Replace...";
+    public static final String findAction = "Find...";
+    
     static UndoAction undo = new UndoAction();
     static RedoAction redo = new RedoAction();
     private static final Action[] defaultActions = { undo, redo,
@@ -107,7 +116,9 @@ public class MyHTMLEditorKit extends HTMLEditorKit
             new IndentAction(true), new IndentAction(false),
             new ClearFormatAction(), new ElementsTreeAction(),
             new DeleteNextCharAction(), new DeletePrevCharAction(),
-            new InsertBreakAction(), new ShowInputTypePopupAction(), };
+            new InsertBreakAction(), new ShowInputTypePopupAction(),  
+            new FindReplaceAction(true),
+            new FindReplaceAction(false)};
     private static HashMap<String, Action> actions;
 
     public MyHTMLEditorKit()
@@ -1201,6 +1212,50 @@ public class MyHTMLEditorKit extends HTMLEditorKit
             catch (BadLocationException ex)
             {
             }
+        }
+    }
+    
+    public static class FindReplaceAction extends BaseAction
+    {
+        private static final long serialVersionUID = -5658596134377861525L;
+        private static FindDialog findDialog;
+        private boolean findOrReplace;
+
+        public FindReplaceAction()
+        {
+            super(findAction);
+        }
+
+        public FindReplaceAction(boolean find_replace)
+        {
+            super((find_replace) ? findAction : replaceAction);
+            setFindOrReplace(find_replace);
+            putValue(Action.SHORT_DESCRIPTION, find_replace ? "Find"
+                    : "Find And Replace");
+        }
+
+        protected void action(HTMLEditor ui) throws Exception
+        {
+            int index = findOrReplace ? 0 : 1;
+            if (findDialog == null) findDialog = new FindDialog(ui, index);
+            else
+                findDialog.setSelectedIndex(index);
+            findDialog.setVisible(true);
+            GUIUtilities.centerOnScreen(findDialog);
+        }
+
+        public boolean isFindOrReplace()
+        {
+            return findOrReplace;
+        }
+
+        public void setFindOrReplace(boolean findOrReplace)
+        {
+            this.findOrReplace = findOrReplace;
+            putValue(Action.NAME, (findOrReplace) ? findAction : replaceAction);
+            putValue(Action.SMALL_ICON, IconManager
+                    .resolveIcon((findOrReplace) ? "Find16.gif"
+                            : "Replace16.gif"));
         }
     }
 }

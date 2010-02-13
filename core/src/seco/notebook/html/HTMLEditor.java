@@ -53,6 +53,7 @@ import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 import javax.swing.undo.UndoManager;
 
+import seco.notebook.ActionManager;
 import seco.notebook.NotebookEditorKit;
 import seco.notebook.XMLConstants;
 import seco.notebook.gui.GUIUtilities;
@@ -142,6 +143,8 @@ public class HTMLEditor extends JTextPane
 				.getActionByName(MyHTMLEditorKit.listFormatAction));
 		key = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.CTRL_DOWN_MASK);
 		inputMap.put(key, MyHTMLEditorKit.showInputTypePopup);
+		key = KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK);
+		inputMap.put(key, MyHTMLEditorKit.findAction);
 	}
 
 	UndoManager getUndoManager()
