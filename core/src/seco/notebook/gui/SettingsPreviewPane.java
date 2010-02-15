@@ -118,6 +118,8 @@ public class SettingsPreviewPane extends JSplitPane
 		{
 			InputStream is = getClass().getClassLoader()
 					.getResourceAsStream(TEMPLATE);
+			if(is == null) throw new Exception("Resource: " + TEMPLATE + 
+			         " could not be found");
 			InputStreamReader in = new InputStreamReader(is);
 			char[] buff = new char[1024];
 			StringBuffer sbuff = new StringBuffer();
