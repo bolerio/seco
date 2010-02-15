@@ -1148,6 +1148,7 @@ public class MyHTMLEditorKit extends HTMLEditorKit
                 int p2 = editor.getSelectionEnd();
                 action(editor);
                 editor.select(p1, p2);
+                editor.requestFocusInWindow();
             }
             catch (Exception ex)
             {

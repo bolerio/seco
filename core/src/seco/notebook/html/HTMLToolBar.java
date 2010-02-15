@@ -367,11 +367,6 @@ public class HTMLToolBar extends JToolBar
             addMouseListener(this);
         }
 
-        // public MyToggleButton(Action a)
-        // {
-        // this(a, (String) a.getValue(Action.SHORT_DESCRIPTION));
-        // }
-
         public MyToggleButton(String name, Action a, String tip)
         {
             super(a);
