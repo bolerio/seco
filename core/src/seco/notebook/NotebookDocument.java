@@ -46,6 +46,7 @@ import javax.swing.text.Position;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.DefaultStyledDocument.ElementBuffer;
 import javax.swing.undo.CompoundEdit;
 import javax.swing.undo.UndoableEdit;
 
@@ -133,7 +134,6 @@ public class NotebookDocument extends DefaultStyledDocument
     public void init()
     {
         if (inited) return;
-
         CellGroup book = ThisNiche.graph.get(bookH);
         Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) book
                 .getAttribute(XMLConstants.CELL_STYLE);
@@ -193,6 +193,7 @@ public class NotebookDocument extends DefaultStyledDocument
         try
         {
             super.create(data);
+            indexes.clear();
             indexes.put(bookH, TOP_INDEX_POS = createPosition(0));
         }
         catch (Exception ex)
@@ -646,11 +647,15 @@ public class NotebookDocument extends DefaultStyledDocument
         {
             Element el = elements.get(i);
             HGHandle child = getNBElementH(el);
-            if (isInsP) insPointInsert(offset, CellUtils.makeCopy(child));
+            HGHandle copy = child;
+            if(!CellUtils.isBackuped(child)) 
+                CellUtils.makeCopy(child);
+            else
+                CellUtils.restoreCell(child, false);
+            if (isInsP) insPointInsert(offset, copy);
             else
                 fireCellGroupChanged(new CellGroupChangeEvent(ThisNiche
-                        .handleOf(cg), ind + 1, new HGHandle[] { CellUtils
-                        .makeCopy(child) }, new HGHandle[0]));
+                        .handleOf(cg), ind + 1, new HGHandle[] {copy}, new HGHandle[0]));
         }
         return true;
     }
@@ -1126,7 +1131,8 @@ public class NotebookDocument extends DefaultStyledDocument
             gr_el = getContainerEl(gr_el, false);
         }
         CellGroup gr = (CellGroup) getNBElement(gr_el);
-        if (backup) fireCellGroupChanged(new CellGroupChangeEvent(
+        if (backup)
+            fireCellGroupChanged(new CellGroupChangeEvent(
                 getNBElementH(gr_el), gr.indexOf(nb), new HGHandle[0],
                 new HGHandle[] { nb }));
         else
@@ -1136,6 +1142,7 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public String getTitle()
     {
+        if(getBook() == null) return "<NULL>?";
         String text = CellUtils.getName(getBook());
         if (text == null) text = "";
         return text;

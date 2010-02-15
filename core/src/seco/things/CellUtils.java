@@ -704,9 +704,20 @@ public class CellUtils
     {
         CellGroupMember in = (CellGroupMember) ThisNiche.graph.get(in_h);
         if (in instanceof CellGroup) return cellGroupCopy(in_h);
-        else if (isInputCell(in)) return inputCellCopy(in_h);
+        else if (isInputCell(in))
+        {
+            HGHandle resH = inputCellCopy(in_h);
+           for(HGHandle outH : getOutCellHandles(in_h))
+                   addEventPubSub(EvalCellEvent.HANDLE, resH, outH, outH);     
+            return resH;
+        }
         else
-            return outputCellCopy(in_h);
+        {
+            HGHandle resH = outputCellCopy(in_h);
+            HGHandle par = getOutCellInput(in_h);
+            addEventPubSub(EvalCellEvent.HANDLE, par, resH, resH);
+            return resH;
+        }
     }
 
     // full copy
@@ -936,17 +947,20 @@ public class CellUtils
             ThisNiche.graph.remove(s, true);
     }
 
-    public static void backupCell(HGHandle cell)
+    public static void backupCell(HGHandle cellH)
     {
-        CellGroupMember cgm = ThisNiche.graph.get(cell);
+        CellGroupMember cgm = ThisNiche.graph.get(cellH);
         if (cgm == null) return;
-        if (cgm instanceof CellGroup) for (int i = 0; i < ((CellGroup) cgm)
+        if (cgm instanceof CellGroup)
+        {
+           ThisNiche.graph.add(createBackupLink(cellH));
+           for (int i = 0; i < ((CellGroup) cgm)
                 .getArity(); i++)
-            ThisNiche.graph.add(createBackupLink(((CellGroup) cgm)
-                    .getTargetAt(i)));
+               backupCell(((CellGroup) cgm).getTargetAt(i));
+        }
         else
-            ThisNiche.graph.add(createBackupLink(cell));
-        CellUtils.removeHandlers(cell);
+            ThisNiche.graph.add(createBackupLink(cellH));
+        CellUtils.removeHandlers(cellH);
     }
 
     public static boolean isBackuped(HGHandle cell)
@@ -961,28 +975,55 @@ public class CellUtils
                 .type(BackupLink.class), hg.incident(cell)));
         return h != null ? (BackupLink) ThisNiche.graph.get(h) : null;
     }
-
-    public static void restoreCell(HGHandle cell)
+    
+    public static void restoreCell(HGHandle cellH)
     {
-        BackupLink link = getBackupLink(cell);
-        if (link == null) return;
+        restoreCell(cellH, true);
+    }
 
+    public static void restoreCell(HGHandle cellH, boolean fully)
+    {
+        BackupLink link = getBackupLink(cellH);
+        if (link == null) return;
+        
         CellGroupMember cgm = ThisNiche.graph.get(link.getCell());
-        if (cgm instanceof CellGroup) for (int i = 0; i < ((CellGroup) cgm)
-                .getArity(); i++)
+        if (cgm instanceof CellGroup)
+        {
+           restoreFromLink(link, fully); 
+           for (int i = 0; i < ((CellGroup) cgm).getArity(); i++)
             restoreCell(((CellGroup) cgm).getTargetAt(i));
+        }
         else
         {
-            List<EventPubSubInfo> pubs = ThisNiche.graph.get(link.getPubs());
-            for (EventPubSubInfo inf : pubs)
-                ThisNiche.graph.add(new EventPubSub(inf.getEventType(), link
-                        .getCell(), inf.getPubOrSub(), inf.getEventHandler()));
-            List<EventPubSubInfo> subs = ThisNiche.graph.get(link.getSubs());
-            for (EventPubSubInfo inf : subs)
-                ThisNiche.graph.add(new EventPubSub(inf.getEventType(), inf
-                        .getPubOrSub(), link.getCell(), inf.getEventHandler()));
+            restoreFromLink(link, fully);
         }
         removeBackupLink(link, false);
+    }
+    
+    private static void restoreFromLink(BackupLink link, boolean fully)
+    {
+        List<EventPubSubInfo> pubs = ThisNiche.graph.get(link.getPubs());
+        for (EventPubSubInfo inf : pubs)
+        {
+            if(!fully && filter_all_but_eval_eps(inf))  continue;
+            ThisNiche.graph.add(new EventPubSub(inf.getEventType(), link
+                    .getCell(), inf.getPubOrSub(), inf.getEventHandler()));
+        }
+        List<EventPubSubInfo> subs = ThisNiche.graph.get(link.getSubs());
+        for (EventPubSubInfo inf : subs)
+        {
+            if(!fully && filter_all_but_eval_eps(inf))  continue;
+            ThisNiche.graph.add(new EventPubSub(inf.getEventType(), inf
+                    .getPubOrSub(), link.getCell(), inf.getEventHandler()));
+        }
+    }
+    
+    private static boolean filter_all_but_eval_eps(EventPubSubInfo inf)
+    {
+        if(!EvalCellEvent.HANDLE.equals(inf.getEventType())) return true;
+        if (!(ThisNiche.graph.get(inf.getPubOrSub()) instanceof CellGroupMember)) return true;
+        if (!(ThisNiche.graph.get(inf.getEventHandler()) instanceof CellGroupMember)) return true;
+        return false;
     }
 
     public static void removeBackupedCells()
@@ -991,6 +1032,12 @@ public class CellUtils
                 .type(BackupLink.class));
         for (BackupLink link : res)
             removeBackupLink(link, true);
+       List<NotebookDocument> docs = hg.getAll(ThisNiche.graph, hg.type(NotebookDocument.class));
+       for(NotebookDocument doc: docs)
+       {
+           if(doc.getBook() == null)
+               ThisNiche.graph.remove(doc.getBookHandle()); 
+       }
     }
 
     private static void removeBackupLink(BackupLink link, boolean cell_too)

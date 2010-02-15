@@ -133,7 +133,7 @@ public class NotebookTransferHandler extends TransferHandler
         }
         exportComp = null;
     }
-
+    
     public boolean importData(TransferSupport support)
     {
         Transferable t = support.getTransferable();
@@ -369,9 +369,7 @@ public class NotebookTransferHandler extends TransferHandler
             {
                 try
                 {
-                    //HGHandle nbH = NotebookDocument.getNBElementH(e);
-                    doc.removeCellBoxElement(e, false);
-                    //CellUtils.removeHandlers(nbH, c.getDoc().getHandle());
+                    doc.removeCellBoxElement(e, true);
                 }
                 catch (BadLocationException ex)
                 {

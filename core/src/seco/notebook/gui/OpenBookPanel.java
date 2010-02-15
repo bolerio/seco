@@ -133,6 +133,8 @@ public class OpenBookPanel extends JPanel
         {
             NotebookDocument gr = (NotebookDocument) removed[i];
             GUIHelper.openNotebook(gr.getBookHandle());
+            docs.remove(removed[i]);
         }
+        list.setListData(docs.toArray());
     }
 }
