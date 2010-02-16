@@ -56,16 +56,15 @@
 				<include name="**/*.properties" />
 				<include name="**/*.xml" />
 				<include name="**/*.dtd" />
-				<include name="**/.txt" />
+				<include name="**/*.txt" />
                 <include name="**/*.scm"/>
                 <include name="**/*.json"/>
 			</fileset>
 	    </copy>
-		<available property="manifest_generated" file="${build}/seco.manifest" />
 	</target>
 
-	<target name="jars" depends="compile, jars-prepare, generate_manifest" description="Build Seco Jar file.">
-		<jar basedir="${build}/compile" jarfile="${build}/seco/${jar-name}" manifest="${build}/seco.manifest">
+	<target name="jars" depends="compile, jars-prepare" description="Build Seco Jar file.">
+		<jar basedir="${build}/compile" jarfile="${build}/seco/${jar-name}">
 			<exclude name="**/*.jar" />
 			<exclude name="**/*.bak" />
 		</jar>
@@ -104,6 +103,7 @@
 				<include name="seco/**" />
 				<exclude name="seco/run.cmd" />
 				<exclude name="seco/lib/native/windows/**" />
+                <exclude name="seco/lib/native/macos/**" />
 			</tarfileset>
          </tar>
          <gzip src="${dist}/seco-dist-lin-${version}.tar"
@@ -115,28 +115,5 @@
 		<!-- Delete the ${build} and ${dist} directory trees -->
 		<delete dir="${build}" />
 		<delete dir="${dist}" />
-	</target>
-
-	<!-- ======================================================= -->
-	<!-- Manfiest Target                                         -->
-	<!-- Automatically creates Seco Manifest File, based on -->
-	<!-- JAR Files located in lib                      -->
-	<!-- ======================================================= -->
-	<target name="generate_manifest" depends="init" unless="manifest_generated">
-		<echo>
-           Creating Seco Manifest File
-        </echo>
-		<mkdir dir="${build}" />
-
-		<javac destdir="${build}" srcdir="${src}" includeAntRuntime="false" nowarn="off" debug="true" source="1.5" optimize="on">
-			<classpath refid="classpath" />
-			<include name="seco/ManifestCreator.java" />
-		</javac>
-
-		<delete file="${build}/seco.manifest" />
-		<java fork="true" classname="seco.ManifestCreator" output="${build}/seco.manifest">
-			<classpath path="${build}" />
-			<arg value="${lib}" />
-		</java>
 	</target>
 </project>
