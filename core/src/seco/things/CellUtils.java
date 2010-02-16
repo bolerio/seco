@@ -1026,18 +1026,27 @@ public class CellUtils
         return false;
     }
 
-    public static void removeBackupedCells()
+    //remove notebook docs and cells scheduled for deletion during the session
+    public static void removeBackupedStuff()
     {
-        List<BackupLink> res = hg.getAll(ThisNiche.graph, hg
-                .type(BackupLink.class));
-        for (BackupLink link : res)
-            removeBackupLink(link, true);
        List<NotebookDocument> docs = hg.getAll(ThisNiche.graph, hg.type(NotebookDocument.class));
        for(NotebookDocument doc: docs)
        {
            if(doc.getBook() == null)
-               ThisNiche.graph.remove(doc.getBookHandle()); 
+           {
+              ThisNiche.graph.remove(doc.getBookHandle()); 
+              ThisNiche.graph.remove(doc.getHandle());
+           }else if (isBackuped(doc.getBookHandle()))
+           {
+               removeBackupLink(getBackupLink(doc.getBookHandle()), true);
+               ThisNiche.graph.remove(doc.getHandle());
+           }
        }
+       
+       List<BackupLink> res = hg.getAll(ThisNiche.graph, hg
+               .type(BackupLink.class));
+       for (BackupLink link : res)
+           removeBackupLink(link, true);
     }
 
     private static void removeBackupLink(BackupLink link, boolean cell_too)

@@ -170,7 +170,7 @@ public abstract class TopFrame extends JFrame
         Log.end();
         if (AUTO_BACKUP) CommonActions.backup();
         ConnectionManager.stopConnections(false);
-        CellUtils.removeBackupedCells();
+        CellUtils.removeBackupedStuff();
         System.exit(0);
     }
 

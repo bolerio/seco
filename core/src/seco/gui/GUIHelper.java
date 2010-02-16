@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -255,7 +256,7 @@ public class GUIHelper
         {
             Point pt = super.getPopupMenuOrigin();
             if (getParent() != null && getParent() instanceof JComponent)
-                return GUIHelper.computePoint((JComponent) getParent(), pt);
+                return computePoint((JComponent) getParent(), pt);
             return pt;
         }
     }
@@ -740,13 +741,19 @@ public class GUIHelper
     {
         PSwingNode ps = getPSwingNode(c);
         if (ps == null) return pt;
-        PBounds r = ps.getFullBounds();
+//        PBounds r = ps.getFullBounds();
         PiccoloCanvas canvas = ps.getCanvas();
-        PSwingNode par = GUIHelper.getPSwingNode(canvas);
-        if (par == null)
-            return new Point((int) (pt.x + r.x), (int) (pt.y + r.y));
-        PBounds r1 = par.getFullBounds();
-        return new Point((int) (r.x + r1.x + pt.x), (int) (r.y + r1.y + pt.y));
+//        PSwingNode par = GUIHelper.getPSwingNode(canvas);
+//        if (par == null)
+//            return new Point((int) (pt.x + r.x), (int) (pt.y + r.y));
+//        PBounds r1 = par.getFullBounds();
+//        return new Point((int) (r.x + r1.x + pt.x), (int) (r.y + r1.y + pt.y));
+        
+        PBounds r1c = ps.getBounds();
+        ps.localToGlobal(r1c);
+        canvas.getCamera().globalToLocal(r1c);
+        Rectangle2D r = canvas.getCamera().getViewTransform().createTransformedShape(r1c).getBounds2D();
+        return new Point((int) (r.getX() + pt.x), (int) (r.getY() + pt.y));
     }
 
     public static void openNotebook(HGHandle bookH)

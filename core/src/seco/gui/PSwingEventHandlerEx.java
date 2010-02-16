@@ -114,17 +114,8 @@ public class PSwingEventHandlerEx implements PInputEventListener {
             int ncomponents = contain.getComponentCount();
             Component component[] = contain.getComponents();
             //MINE: otherwise some buttons from inactive tabs receive events
-            //which leads to lot of unexpected bugs and strange behavior
-//            if(contain instanceof JTabbedPane)
-//            {
-//                ncomponents = 1;
-//                component = new Component[]{
-//                        ((JTabbedPane) contain).getSelectedComponent()
-//                };
-//                //System.out.println("PSwingEventHandlerEx: " + component[0]);
-//            }
-            //but the addition of comp.isVisible() will have the same effect
-            //isEnabled() chek probably will speed up things too 
+            //the addition of comp.isVisible() prevent this
+            //isEnabled() check probably will speed up things too 
             for (int i = 0; i < ncomponents; i++) {
                 Component comp = component[i];
                 if (comp != null && comp.isVisible() && comp.isEnabled()) {
@@ -184,9 +175,6 @@ public class PSwingEventHandlerEx implements PInputEventListener {
 
             if (true)//grabNode.isDescendentOf(canvas.getRoot()))
             {
-                //pt = new Point2D.Double(mEvent.getX(), mEvent.getY());
-                //cameraToLocal(pSwingMouseEvent.getPath().getTopCamera(), pt,
-                //        grabNode);
                 boolean inner = ! grabNode.isDescendentOf(canvas.getRoot());
                 pt = new Point2D.Double(mEvent.getX(), mEvent.getY());
                 cameraToLocal(pSwingMouseEvent.getPath().getTopCamera(), pt, grabNode);  

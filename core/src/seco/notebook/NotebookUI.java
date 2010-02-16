@@ -618,13 +618,13 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                     if (!dont_change_pos && ui.getCaretPosition() <0)
                     {
                         int off = ui.viewToModel(e.getPoint());
-                        if (off != -1) // && ui.getCaretPosition() != off)
+                        if (off != -1) 
                             ui.setCaretPosition(off);
                     }
                     popupMenu.update();
                     Frame f = GUIUtilities.getFrame(e.getComponent());
                     Point pt = getPoint(e, f);
-                    popupMenu.show(f, pt.x, pt.y);
+                    popupMenu.show(ui, pt.x, pt.y);
                 }
             }
         }
