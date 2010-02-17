@@ -64,6 +64,8 @@ public class PCTransferHandler extends TransferHandler
             for (Element e : els)
             {
                 HGHandle nbH = NotebookDocument.getNBElementH(e);
+                if(CellUtils.isBackuped(nbH))
+                    CellUtils.restoreCell(nbH, false);
                 boolean outputC = NotebookDocument.isOutputCell(e);
                 HGHandle vis = (outputC) ? JComponentVisual.getHandle()
                         : NBUIVisual.getHandle();

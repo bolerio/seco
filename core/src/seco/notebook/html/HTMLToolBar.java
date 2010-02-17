@@ -549,7 +549,7 @@ public class HTMLToolBar extends JToolBar
            //System.out.println("PBasicComboPopup: " + comboBox.getParent());
            if (comboBox.getParent() != null && comboBox.getParent() instanceof JComponent)
            {
-               return GUIHelper.computePoint(
+               return GUIHelper.adjustPointInPicollo(
                        (JComponent) comboBox.getParent(), new Point(0,0));
            }
            return pt;

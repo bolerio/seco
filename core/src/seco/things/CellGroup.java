@@ -135,7 +135,7 @@ public class CellGroup extends BaseCellGroupMember implements HGLink
         if (grH  == null)
             throw new NullPointerException("Group with NULL handle: " + this);
         if(CellUtils.isBackuped(h))
-            CellUtils.restoreCell(h);
+            CellUtils.restoreCell(h, false);
         outgoingSet.add(ind, h);
         ThisNiche.graph.update(this);
         fireCellGroupChanged(new CellGroupChangeEvent(grH, ind,

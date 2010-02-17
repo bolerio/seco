@@ -217,7 +217,7 @@ public class TabbedPaneU
         {
             Point pt =  new Point(e.getX(), e.getY());
             if (e.getComponent() instanceof JComponent)
-                return GUIHelper.computePoint((JComponent) e.getComponent(), pt);
+                return GUIHelper.adjustPointInPicollo((JComponent) e.getComponent(), pt);
             return pt;
         }
     }

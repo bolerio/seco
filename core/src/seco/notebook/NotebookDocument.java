@@ -492,13 +492,11 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         int offset = findElementOffset(cellH);
         if (offset < 0) return false;
-        boolean create_new_output_cell = true;
         // TODO: should decide the problem with output cell
         // residing in deeper levels,
         // or floating around in HG if we adopt the other approach with:
         List<HGHandle> list = CellUtils.getOutCellHandles(cellH);
-        create_new_output_cell = (list.isEmpty());
-        if (!create_new_output_cell) return false;
+        if (!list.isEmpty()) return false;
         // insert empty output cell, which will populate itself later
         HGHandle outH = CellUtils.createOutputCellH(cellH, text, null, false);
         Element el = getUpperElement(offset, inputCellBox);

@@ -16,6 +16,8 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
@@ -35,7 +37,9 @@ import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.NotebookDocument.UpdateAction;
 import seco.notebook.gui.GUIUtilities;
+import seco.notebook.gui.UpdatablePopupMenu;
 import seco.notebook.html.HTMLEditor;
+import seco.notebook.html.MyHTMLEditorKit;
 import seco.things.Cell;
 import seco.things.CellUtils;
 
@@ -74,9 +78,8 @@ public class HtmlView extends HidableComponentView
         if (view == null)
         {
             final NotebookUI ui = (NotebookUI) getContainer();
-            String fn = ui.getDoc().getTitle();
-            view = new InnerHTMLEditor(fn); 
             Cell cell = (Cell) NotebookDocument.getNBElement(getElement());
+            view = new InnerHTMLEditor();
             view.setContent(CellUtils.getText(cell));
             view.setEditable(!ui.getDoc().isReadOnlyEl(getElement()));
 
@@ -102,9 +105,9 @@ public class HtmlView extends HidableComponentView
 
     public class InnerHTMLEditor extends HTMLEditor
     {
-        public InnerHTMLEditor(String filename)
+        public InnerHTMLEditor()
         {
-            super(filename);
+            super();
             addFocusListener(new FocusListener() {
                 public void focusGained(FocusEvent e)
                 {
@@ -151,6 +154,19 @@ public class HtmlView extends HidableComponentView
             if (popupListener == null) popupListener = new MyPopupListener();
             return popupListener;
         }
+        
+        protected UpdatablePopupMenu createPopup()
+        {
+            UpdatablePopupMenu popupMenu = super.createPopup();
+            MyHTMLEditorKit htmlKit = new MyHTMLEditorKit();
+          
+            popupMenu.add(new JMenuItem(htmlKit
+                    .getActionByName(MyHTMLEditorKit.sourceAction)), 0);
+            popupMenu.addSeparator();
+           
+            return popupMenu;
+        }
+
 
         public Element getElement()
         {
@@ -196,7 +212,7 @@ public class HtmlView extends HidableComponentView
                         e.getY(), f);
                 if (e.getComponent() instanceof JComponent)
                     return GUIHelper
-                            .computePoint(getNotebookUI(), pt);
+                            .adjustPointInPicollo(getNotebookUI(), pt);
                 return pt;
             }
         }

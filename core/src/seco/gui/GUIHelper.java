@@ -256,7 +256,7 @@ public class GUIHelper
         {
             Point pt = super.getPopupMenuOrigin();
             if (getParent() != null && getParent() instanceof JComponent)
-                return computePoint((JComponent) getParent(), pt);
+                return adjustPointInPicollo((JComponent) getParent(), pt);
             return pt;
         }
     }
@@ -737,18 +737,11 @@ public class GUIHelper
         return null;
     }
 
-    public static Point computePoint(JComponent c, Point pt)
+    public static Point adjustPointInPicollo(JComponent c, Point pt)
     {
         PSwingNode ps = getPSwingNode(c);
         if (ps == null) return pt;
-//        PBounds r = ps.getFullBounds();
         PiccoloCanvas canvas = ps.getCanvas();
-//        PSwingNode par = GUIHelper.getPSwingNode(canvas);
-//        if (par == null)
-//            return new Point((int) (pt.x + r.x), (int) (pt.y + r.y));
-//        PBounds r1 = par.getFullBounds();
-//        return new Point((int) (r.x + r1.x + pt.x), (int) (r.y + r1.y + pt.y));
-        
         PBounds r1c = ps.getBounds();
         ps.localToGlobal(r1c);
         canvas.getCamera().globalToLocal(r1c);

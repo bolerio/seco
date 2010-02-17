@@ -234,7 +234,7 @@ abstract class CompletionLayoutPopup {
     protected void correctBounds(Rectangle r, boolean aboveOccupiedBounds)
     {
         if(TopFrame.getInstance().getCanvas() == null) return;
-        Point corr = GUIHelper.computePoint(getEditorComponent(), new Point(r.x, r.y));
+        Point corr = GUIHelper.adjustPointInPicollo(getEditorComponent(), new Point(r.x, r.y));
         //System.out.println("correctBounds: " + corr + ":" + r + ":" + aboveOccupiedBounds + ":" + this);
         r.x = corr.x; r.y = corr.y;
     }

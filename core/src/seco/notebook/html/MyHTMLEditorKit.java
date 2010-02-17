@@ -844,21 +844,18 @@ public class MyHTMLEditorKit extends HTMLEditorKit
             if (editor instanceof HtmlView.InnerHTMLEditor)
             {
                 Element el = ((HtmlView.InnerHTMLEditor) editor).getElement();
-                // ((NotebookDocument) el.getDocument()).toggleHTMLCell(el
-                // .getStartOffset());
                 CellUtils.toggleAttribute(NotebookDocument.getNBElement(el),
                         XMLConstants.ATTR_HTML);
-            } else
-            {
-                // ((NotebookDocument)
-                // editor.getDocument()).toggleHTMLCell(editor
-                // .getCaretPosition());
-                Element el = ((NotebookDocument) editor.getDocument())
-                        .getEnclosingCellElement(editor.getCaretPosition());
-                if(el != null)
-                   CellUtils.toggleAttribute(NotebookDocument.getNBElement(el),
-                        XMLConstants.ATTR_HTML);
             }
+//            else 
+//            {
+//                
+//                Element el = ((NotebookDocument) editor.getDocument())
+//                        .getEnclosingCellElement(editor.getCaretPosition());
+//                if(el != null)
+//                   CellUtils.toggleAttribute(NotebookDocument.getNBElement(el),
+//                        XMLConstants.ATTR_HTML);
+//            }
         }
 
         public void setEnabled(boolean enabled)

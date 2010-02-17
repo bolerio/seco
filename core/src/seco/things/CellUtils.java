@@ -991,7 +991,7 @@ public class CellUtils
         {
            restoreFromLink(link, fully); 
            for (int i = 0; i < ((CellGroup) cgm).getArity(); i++)
-            restoreCell(((CellGroup) cgm).getTargetAt(i));
+            restoreCell(((CellGroup) cgm).getTargetAt(i), fully);
         }
         else
         {

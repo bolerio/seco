@@ -86,7 +86,7 @@ public class PeerList extends JPanel
                 Point pt = SwingUtilities.convertPoint(e.getComponent(), e
                         .getX(), e.getY(), f);
                 if (e.getComponent() instanceof JComponent)
-                    return GUIHelper.computePoint(
+                    return GUIHelper.adjustPointInPicollo(
                             (JComponent) e.getComponent(), pt);
                 return pt;
             }

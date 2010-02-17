@@ -18,9 +18,12 @@ import java.awt.event.InputEvent;
 import java.awt.im.InputContext;
 import java.io.IOException;
 import java.util.Vector;
+
+import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.TransferHandler;
+import javax.swing.UIManager;
 import javax.swing.TransferHandler.TransferSupport;
 import javax.swing.plaf.UIResource;
 import javax.swing.text.BadLocationException;
@@ -36,6 +39,7 @@ import seco.ThisNiche;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import sun.swing.SwingUtilities2;
 
 public class NotebookTransferHandler extends TransferHandler
 {
@@ -121,19 +125,24 @@ public class NotebookTransferHandler extends TransferHandler
 
     protected void exportDone(JComponent source, Transferable data, int action)
     {
-        // only remove the text if shouldRemove has not been set to
+        exportDone0(source, data, action, false);
+    }
+    
+    protected void  exportDone0(JComponent source, Transferable data, int action, boolean calledFromClipboard)
+    {
+         // only remove the text if shouldRemove has not been set to
         // false by importData and only if the action is a move
         if (shouldRemove && action == MOVE)
         {
             if (data instanceof TextTransferable)
                 ((TextTransferable) data).removeText();
-            //done during the import
+            // done during the import
             if (data instanceof ElementTransferable)
-                ((ElementTransferable) data).removeElements();
+                ((ElementTransferable) data).removeElements(calledFromClipboard);
         }
         exportComp = null;
     }
-    
+
     public boolean importData(TransferSupport support)
     {
         Transferable t = support.getTransferable();
@@ -174,7 +183,8 @@ public class NotebookTransferHandler extends TransferHandler
         return imported;
     }
 
-    public boolean importJavaStringData(JComponent comp, Transferable t, boolean keep_newlines)
+    public boolean importJavaStringData(JComponent comp, Transferable t,
+            boolean keep_newlines)
     {
         NotebookUI c = (NotebookUI) comp;
         // Don't drop on myself.
@@ -200,7 +210,8 @@ public class NotebookTransferHandler extends TransferHandler
                 shouldRemove = false;
                 return true;
             }
-            handleJavaStringImport((String) t.getTransferData(importFlavor), c, keep_newlines);
+            handleJavaStringImport((String) t.getTransferData(importFlavor), c,
+                    keep_newlines);
             imported = true;
         }
         catch (UnsupportedFlavorException ufe)
@@ -218,8 +229,8 @@ public class NotebookTransferHandler extends TransferHandler
         return imported;
     }
 
-    protected void handleJavaStringImport(String s, JTextComponent c, boolean keep_newlines)
-            throws BadLocationException
+    protected void handleJavaStringImport(String s, JTextComponent c,
+            boolean keep_newlines) throws BadLocationException
     {
         String tab = Utilities.getTabSubstitute();
         StringBuffer sbuff = new StringBuffer(s);
@@ -232,14 +243,16 @@ public class NotebookTransferHandler extends TransferHandler
             {
                 if (i != sbuff.length() - 1)
                 {
-                    
-                    if(keep_newlines)
+
+                    if (keep_newlines)
                     {
                         out.append("\\n");
                         out.append("\"+ \"");
-                    }else // not very clear if the \n should be considered as
+                    }
+                    else
+                        // not very clear if the \n should be considered as
                         // a whitespace, but...
-                       out.append(' ');
+                        out.append(' ');
                 }
             }
             else if (ch == '"') // || ch == '\'')
@@ -267,6 +280,33 @@ public class NotebookTransferHandler extends TransferHandler
         JTextComponent c = (JTextComponent) comp;
         if (!(c.isEditable() && c.isEnabled())) return false;
         return (getImportFlavor(flavors, c) != null);
+    }
+
+    public void exportToClipboard(JComponent comp, Clipboard clip, int action)
+            throws IllegalStateException
+    {
+
+        if ((action == COPY || action == MOVE)
+                && (getSourceActions(comp) & action) != 0)
+        {
+
+            Transferable t = createTransferable(comp);
+            if (t != null)
+            {
+                try
+                {
+                    clip.setContents(t, null);
+                    exportDone0(comp, t, action, true);
+                    return;
+                }
+                catch (IllegalStateException ise)
+                {
+                    exportDone(comp, t, NONE);
+                    throw ise;
+                }
+            }
+        }
+        exportDone(comp, null, NONE);
     }
 
     /**
@@ -362,14 +402,15 @@ public class NotebookTransferHandler extends TransferHandler
             return FLAVOR.equals(flavor);
         }
 
-        void removeElements()
+        void removeElements(boolean calledFromClipboard)
         {
             NotebookDocument doc = c.getDoc();
             for (Element e : elements)
             {
                 try
                 {
-                    doc.removeCellBoxElement(e, true);
+                    //when called from clipboard, backup the cell
+                    doc.removeCellBoxElement(e, calledFromClipboard);
                 }
                 catch (BadLocationException ex)
                 {

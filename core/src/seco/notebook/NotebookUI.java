@@ -573,7 +573,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     @Override
     public Point getToolTipLocation(MouseEvent e)
     {
-        return (TopFrame.PICCOLO) ? GUIHelper.computePoint(this, e.getPoint())
+        return (TopFrame.PICCOLO) ? GUIHelper.adjustPointInPicollo(this, e.getPoint())
                 : super.getToolTipLocation(e);
     }
 
@@ -635,7 +635,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                     e.getY(), f);
             if (e.getComponent() instanceof JComponent)
                 return GUIHelper
-                        .computePoint((JComponent) e.getComponent(), pt);
+                        .adjustPointInPicollo((JComponent) e.getComponent(), pt);
             return pt;
         }
     }
@@ -1105,7 +1105,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         if (type == outputCellBox) return el;
         return NotebookDocument.getUpperElement(el, type);
     }
-
+    
+   
     public static final Object FOCUSED_COMPONENT = new StringBuilder(
             "JTextComponent_FocusedComponent");
 

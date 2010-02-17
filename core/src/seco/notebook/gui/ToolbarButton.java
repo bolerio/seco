@@ -110,7 +110,7 @@ public class ToolbarButton extends JButton implements MouseListener
     @Override
     public Point getToolTipLocation(MouseEvent e)
     {
-        return (TopFrame.PICCOLO) ? GUIHelper.computePoint(this, e.getPoint())
+        return (TopFrame.PICCOLO) ? GUIHelper.adjustPointInPicollo(this, e.getPoint())
                 : super.getToolTipLocation(e);
     }
 
