@@ -121,7 +121,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     protected int lastCaretEnd = -1;
 
     protected static NBFocusListener nbFocusListener = new NBFocusListener();
-    protected static HTMLEditor html_editor;
+    
 
     // TODO: pending deadlock -
     // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6195631 looks very
@@ -595,16 +595,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         getPopupListener().dont_change_pos = false;
     }
 
-    public static void setFocusedHTMLEditor(HTMLEditor e)
-    {
-        html_editor = e;
-    }
-
-    public static HTMLEditor getFocusedHTMLEditor()
-    {
-        return html_editor;
-    }
-    
     public HtmlView getHtmlView(int dot, Position.Bias bias)
     {
         NotebookDocument doc = getDoc();
@@ -704,39 +694,32 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 {
                     n = (up) ? n - 1 : n + 1;
                 }
-                while (doc.isCellHandle(n));
-                // System.out.println("CustomNavigationFilter - CellHandle: " +
-                // n + ":" + realBias + ":" + ":" + doc.getParagraphElement(n));
+                while (doc.isCellHandle(n));               
                 fb.setDot(n, realBias);
                 return;
             }
-            if (doc.isInputCell(dot))
-            {
-                Element el = doc.getUpperElement(dot, inputCellBox);
-                Cell cell = (Cell) NotebookDocument.getNBElement(el);
-                if (CellUtils.isHTML(cell))
-                {
-                    HtmlView inner = getHtmlView(dot, bias);
-                    if (inner != null)
-                    {
-                        HTMLEditor c = (HTMLEditor) inner.getComponent();
-                        int p = dot - inner.getStartOffset();
-                        if (p < 0 || p >= c.getDocument().getLength()) 
-                            p = up ? c.getDocument().getLength() - 1 : 1;
-                        c.setCaretPosition(p);
-                        c.requestFocus();
-                       // return;
-                        
-                    }
-                    fb.setDot(dot, realBias);
-                }
-                else
-                    fb.setDot(dot, bias);
-            }
-            else
-            {
+//            if (doc.isInputCell(dot))
+ //           {
+//                Element el = doc.getUpperElement(dot, inputCellBox);
+//                Cell cell = (Cell) NotebookDocument.getNBElement(el);
+//                if (CellUtils.isHTML(cell))
+//                {
+//                    HtmlView inner = getHtmlView(dot, bias);
+//                    if (inner != null)
+//                    {
+//                        HTMLEditor c = (HTMLEditor) inner.getComponent();
+//                        fb.setDot(dot, realBias);
+//                        c.requestFocus();
+//                    }
+//                    fb.setDot(dot, realBias);
+//                }
+//                else
+//                    fb.setDot(dot, bias);
+//            }
+//            else
+//            {
                 fb.setDot(dot, bias);
-            }
+//            }
         }
 
         public void moveDot(NavigationFilter.FilterBypass fb, int dot,
@@ -747,22 +730,22 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             Element el = getDoc().getUpperElement(dot, commonCell);
             if (el == null) 
             {
-                HtmlView inner = getHtmlView(dot, bias);
-                if (inner != null)
-                {
-                    HTMLEditor c = (HTMLEditor) inner.getComponent();
-                    int mark0 = c.getCaret().getMark();
-                    if(mark0 > inner.getEndOffset())
-                        c.setCaretPosition(c.getDoc().getLength() -1);
-                    if(mark0 < inner.getStartOffset())
-                        c.setCaretPosition(0);
-                    int new_dot = dot - inner.getStartOffset();
-                    if(new_dot > inner.getEndOffset())
-                        c.moveCaretPosition(c.getDoc().getLength() -1);
-                    if(new_dot < inner.getStartOffset())
-                        c.moveCaretPosition(0);
-                    c.requestFocus();
-                }
+//                HtmlView inner = getHtmlView(dot, bias);
+//                if (inner != null)
+//                {
+//                    HTMLEditor c = (HTMLEditor) inner.getComponent();
+//                    int mark0 = c.getCaret().getMark();
+//                    if(mark0 > inner.getEndOffset())
+//                        c.setCaretPosition(c.getDoc().getLength() -1);
+//                    if(mark0 < inner.getStartOffset())
+//                        c.setCaretPosition(0);
+//                    int new_dot = dot - inner.getStartOffset();
+//                    if(new_dot > inner.getEndOffset())
+//                        c.moveCaretPosition(c.getDoc().getLength() -1);
+//                    if(new_dot < inner.getStartOffset())
+//                        c.moveCaretPosition(0);
+//                    c.requestFocus();
+//                }
                 return;
             }
             if (mark >= el.getStartOffset() && mark <= el.getEndOffset()) fb
@@ -784,9 +767,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     }
 
   
-   // private static Vector<Mode> modes = null;
-
-    
     // the vertical scrolls don't work as expected, so we need to force them...
     // by the next 2 methods
     @Override
@@ -1004,13 +984,17 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         if (doc != null)
         {
             if (position > doc.getLength() || position < 0) return;
-            // throw new IllegalArgumentException("bad position: " + position);
             getCaret().setDot(position);
         }
-        // super.setCaretPosition(position);
+        
         lastCaretStart = getCaretPosition();
     }
-
+    
+    public void setCaretPositionEx(int position) 
+    {
+        ((FixedCaret)getCaret()).setDotEx(position);
+    }
+    
     public Element getSelectedGroupElement()
     {
         return getSelectedNBElement(cellGroupBox);
@@ -1077,6 +1061,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 
     public static class FixedCaret extends DefaultCaret
     {
+        private boolean dont_fire;
         // preventing IllegalArgumentException which randomly occurs
         // in unclear situations(pending SUN bug issue)
         public void setDot(int dot, Position.Bias dotBias)
@@ -1091,6 +1076,25 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             // setVisible(false);
             // setSelectionVisible(ownsSelection || e.isTemporary());
         }
+        
+        public void setDotEx(int dot)
+        {
+            dont_fire = true;
+            super.setDot(dot);
+        }
+
+        @Override
+        protected void fireStateChanged()
+        {
+            if(dont_fire)
+            {
+                dont_fire = false;
+                return;
+            }
+            super.fireStateChanged();
+        }
+        
+        
     }
 
 }

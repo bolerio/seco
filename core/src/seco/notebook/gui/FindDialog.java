@@ -225,6 +225,7 @@ public class FindDialog extends JDialog
             public void windowActivated(WindowEvent e)
             {
                 searchIndex = -1;
+                txtFind1.requestFocus();
             }
 
             public void windowDeactivated(WindowEvent e)
@@ -272,7 +273,7 @@ public class FindDialog extends JDialog
               
         if (doReplace)  replacement = txtReplace.getText();
             
-        JEditorPane monitor = owner;
+        JEditorPane monitor = owner.isVisible() ? owner : NotebookUI.getFocusedNotebookUI();
         int pos = monitor.getCaretPosition();
         HtmlView view = getHtmlView(monitor, pos);
         if(view != null)
@@ -283,7 +284,7 @@ public class FindDialog extends JDialog
         return findNext0(monitor, monitor.getCaretPosition(), doReplace, showWarnings);
     }
 
-    public int findNext0(JEditorPane monitor, int pos, boolean doReplace, boolean showWarnings)
+    int findNext0(JEditorPane monitor, int pos, boolean doReplace, boolean showWarnings)
     {
         if (modelUp.isSelected() != searchUp)
         {
@@ -389,7 +390,7 @@ public class FindDialog extends JDialog
         {
            monitor = (HTMLEditor) html.getComponent();
            searchIndex = -1;
-           int new_pos = (searchUp) ? monitor.getDocument().getLength()/* - 1*/: 0; 
+           int new_pos = (searchUp) ? monitor.getDocument().getLength() /*- 1*/: 0; 
            return findNext0(monitor, new_pos, doReplace, showWarnings);
         }
         
@@ -409,10 +410,13 @@ public class FindDialog extends JDialog
     {
         if(pane.getCaret().getDot() != pane.getCaret().getMark())
         {
+            int dot = pane.getCaret().getDot();
+            int mark = pane.getCaret().getMark();
             int pos = (modelUp.isSelected())?
-               pane.getCaret().getDot() : pane.getCaret().getMark();
+               Math.min(dot, mark) : Math.max(dot, mark);
             pane.select(pos, pos);
          }
+        //TODO: last HTML selection remains visible - drawing problem
     }
 
     @Override

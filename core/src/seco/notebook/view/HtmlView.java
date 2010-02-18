@@ -114,11 +114,9 @@ public class HtmlView extends HidableComponentView
                     NotebookUI ui = getNotebookUI();
                     if (ui == null) return;
                     ui.getSelectionManager().clearSelections();
-                    NotebookUI.setFocusedHTMLEditor(editor);
-                    editor = InnerHTMLEditor.this;
-                    boolean readonly =
-                      ui.getDoc().isReadOnlyEl(getElement());
-                    editor .setEditable(!readonly);
+                    HTMLEditor.setFocusedEditor(InnerHTMLEditor.this);
+                    boolean readonly = ui.getDoc().isReadOnlyEl(getElement());
+                    InnerHTMLEditor.this.setEditable(!readonly);
                     if(readonly)  return;
                     TopFrame.getInstance().showHTMLToolBar(true);
                 }
@@ -129,8 +127,8 @@ public class HtmlView extends HidableComponentView
                     try{
                       doc.updateCell(getElement(), UpdateAction.syncronize, null);
                       //clear selection if any
-                     // int pos = InnerHTMLEditor.this.getCaretPosition();
-                    //InnerHTMLEditor.this.select(pos, pos);
+                      //int pos = InnerHTMLEditor.this.getCaretPosition();
+                      //InnerHTMLEditor.this.select(pos, pos);
                     }catch(Exception ex)
                     {
                         ex.printStackTrace();
@@ -143,15 +141,16 @@ public class HtmlView extends HidableComponentView
                 public void caretUpdate(CaretEvent e)
                 {
                     if(getNotebookUI().getDoc().isReadOnlyEl(getElement())) return;
-                    GUIHelper.getHTMLToolBar().showAttributes(editor, e.getDot());
                     NotebookUI ui = getNotebookUI();
                     if (ui == null) return;
-                    ui.getCaret().setDot(getElement().getStartOffset() + e.getDot());
+                    ui.setCaretPositionEx(getElement().getStartOffset() + e.getDot());
+                    GUIHelper.getHTMLToolBar().showAttributes(InnerHTMLEditor.this, e.getDot());
                 }
                 
             });
 
            setNavigationFilter(new CustomNavigationFilter());
+           this.setDoubleBuffered(!TopFrame.PICCOLO);
         }
 
         

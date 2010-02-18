@@ -337,7 +337,7 @@ public class HTMLToolBar extends JToolBar
             Object o = e.getSource();
             if (o instanceof HTMLEditor) { return (HTMLEditor) o; }
         }
-        return HTMLEditor.editor;
+        return HTMLEditor.getFocusedEditor();
     }
 
 

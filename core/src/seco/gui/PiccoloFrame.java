@@ -79,8 +79,7 @@ public class PiccoloFrame extends TopFrame
     {
         public void caretUpdate(CaretEvent e)
         {
-            NotebookUI.setFocusedHTMLEditor(null);
-            TopFrame.getInstance().showHTMLToolBar(false);
+           TopFrame.getInstance().showHTMLToolBar(false);
         }
     }
  

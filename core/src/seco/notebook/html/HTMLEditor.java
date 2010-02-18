@@ -55,23 +55,24 @@ import javax.swing.text.html.StyleSheet;
 import javax.swing.undo.UndoManager;
 
 import seco.gui.GUIHelper;
+import seco.notebook.NotebookUI;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.UpdatablePopupMenu;
+import sun.awt.AppContext;
 
 public class HTMLEditor extends JTextPane
 {
     public static final String TOOLBAR_NAME = "htmlEditorToolBar";
     public static final String PROP_ELEM = "prop_elem";
-    protected static HTMLEditor editor;
+    //protected static HTMLEditor editor;
     protected UndoManager undo = new UndoManager();
     private UpdatablePopupMenu popupMenu;
     protected static HyperlinkListener hyperlinkListener = new MyHyperlinkListener();
     protected PopupListener popupListener;
 
-   
     public HTMLEditor()
     {
-       this(null);
+        this(null);
     }
 
     public HTMLEditor(String text)
@@ -90,8 +91,7 @@ public class HTMLEditor extends JTextPane
                 MyHTMLEditorKit.redo.updateRedoState(undo);
             }
         });
-        if (text != null)
-          setContent(text);
+        if (text != null) setContent(text);
 
         addHyperlinkListener(hyperlinkListener);
         addMouseListener(getPopupListener());
@@ -278,7 +278,7 @@ public class HTMLEditor extends JTextPane
     {
         Element par = el.getParentElement();
         int offset = par.getEndOffset();
-        Element td = HTMLUtils.getTag(editor, HTML.Tag.TD, offset);
+        Element td = HTMLUtils.getTag(this, HTML.Tag.TD, offset);
         // System.out.println("removeListElement: " + par + ":" + el + ":" + td
         // + ":" + offset);
         HTMLUtils.listOff(this, HTMLUtils.getName(par));
@@ -290,17 +290,17 @@ public class HTMLEditor extends JTextPane
     {
         // System.out.println("insertListItem: " + element + ":" + s);
         if (s == null) s = "&nbsp;";
-        int caretPos = editor.getCaretPosition();
+        int caretPos = this.getCaretPosition();
         HTML.Tag tag = HTMLUtils.getName(element.getParentElement());
         insertListItem(tag, s);
-        editor.setCaretPosition(caretPos + 2);
+        this.setCaretPosition(caretPos + 2);
     }
 
     void insertListItem(HTML.Tag baseTag, String text)
             throws BadLocationException, IOException
     {
-        Element el = HTMLUtils.getTag(editor, HTML.Tag.LI, editor
-                .getCaretPosition() - 1);
+        Element el = HTMLUtils
+                .getTag(this, HTML.Tag.LI, getCaretPosition() - 1);
         getDoc().insertAfterEnd(el, "<li>" + text + "</li>");
     }
 
@@ -848,7 +848,7 @@ public class HTMLEditor extends JTextPane
         if (popupMenu != null) return popupMenu;
         popupMenu = new UpdatablePopupMenu();
         MyHTMLEditorKit htmlKit = new MyHTMLEditorKit();
-      
+
         JMenu menu = new JMenu("Table");
         menu.add(new JMenuItem(htmlKit
                 .getActionByName(MyHTMLEditorKit.formatTableAction)));
@@ -947,6 +947,19 @@ public class HTMLEditor extends JTextPane
                 .getMappedAttributes(AttributeMapper.toJava);
     }
 
+    public static final Object FOCUSED_COMPONENT = new StringBuilder(
+            "HTMLEditor_FocusedComponent");
+
+    public static final HTMLEditor getFocusedEditor()
+    {
+        return (HTMLEditor) AppContext.getAppContext().get(FOCUSED_COMPONENT);
+    }
+
+    public static final void setFocusedEditor(HTMLEditor ui)
+    {
+        AppContext.getAppContext().put(FOCUSED_COMPONENT, (HTMLEditor) ui);
+    }
+
     static class MyHyperlinkListener implements HyperlinkListener
     {
 
@@ -984,7 +997,7 @@ public class HTMLEditor extends JTextPane
         {
             if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e))
             {
-                if(!(e.getComponent() instanceof HTMLEditor)) return;
+                if (!(e.getComponent() instanceof HTMLEditor)) return;
                 HTMLEditor ed = (HTMLEditor) e.getComponent();
                 if (ed.getPopup().isVisible())
                 {
