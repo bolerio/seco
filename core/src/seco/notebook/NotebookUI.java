@@ -101,7 +101,6 @@ import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import sun.awt.AppContext;
 
-
 public class NotebookUI extends JTextPane implements DocumentListener,
         AdjustmentListener, NotebookDocument.CaretMoveListener
 {
@@ -252,32 +251,37 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     public Rectangle getVisibleRect()
     {
         Rectangle visibleRect = new Rectangle();
-        //getBounds(visibleRect);
-        //if (!TopFrame.PICCOLO) 
+        // getBounds(visibleRect);
+        // if (!TopFrame.PICCOLO)
         computeVisibleRect(visibleRect);
         return visibleRect;
     }
-    
-    public void computeVisibleRect(Rectangle visibleRect) {
+
+    public void computeVisibleRect(Rectangle visibleRect)
+    {
         computeVisibleRect(this, visibleRect);
     }
-    
-    static final void computeVisibleRect(Component c, Rectangle visibleRect) {
+
+    static final void computeVisibleRect(Component c, Rectangle visibleRect)
+    {
         Container p = c.getParent();
         Rectangle bounds = c.getBounds();
 
-        if (p == null || p instanceof Window || p instanceof Applet) 
+        if (p == null || p instanceof Window || p instanceof Applet)
         {
             visibleRect.setBounds(0, 0, bounds.width, bounds.height);
-        }else if(TopFrame.PICCOLO)// && p instanceof PiccoloCanvas)
+        }
+        else if (TopFrame.PICCOLO)// && p instanceof PiccoloCanvas)
         {
             visibleRect.setBounds(0, 0, bounds.width, bounds.height);
-        } 
-        else {
+        }
+        else
+        {
             computeVisibleRect(p, visibleRect);
             visibleRect.x -= bounds.x;
             visibleRect.y -= bounds.y;
-            SwingUtilities.computeIntersection(0,0,bounds.width,bounds.height,visibleRect);
+            SwingUtilities.computeIntersection(0, 0, bounds.width,
+                    bounds.height, visibleRect);
         }
     }
 
@@ -294,9 +298,9 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     protected void initKeyBindings()
     {
         InputMap inputMap = getInputMap();
-        for (Action a: ActionManager.getInstance().getActions())
-            if(a.getValue(Action.ACCELERATOR_KEY) != null)
-                inputMap.put((KeyStroke)a.getValue(Action.ACCELERATOR_KEY), a);
+        for (Action a : ActionManager.getInstance().getActions())
+            if (a.getValue(Action.ACCELERATOR_KEY) != null)
+                inputMap.put((KeyStroke) a.getValue(Action.ACCELERATOR_KEY), a);
     }
 
     void restoreCaret()
@@ -409,7 +413,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         CellGroupMember nb = NotebookDocument.getNBElement(el);
         if (!(nb instanceof Cell)) return;
         nb.setAttribute(XMLConstants.ATTR_ENGINE, engine);
-        if("html".equals(engine))
+        if ("html".equals(engine))
             nb.setAttribute(XMLConstants.ATTR_HTML, true);
         SwingUtilities.invokeLater(new Runnable() {
             public void run()
@@ -452,23 +456,24 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         if (offset > 0) setCaretPosition(offset - 1);
         requestFocus();
     }
-    
+
     public void evalSelectedElements()
     {
-        if (getDoc() instanceof OutputCellDocument || 
-                getDoc() instanceof ScriptletDocument) return;
-        
+        if (getDoc() instanceof OutputCellDocument
+                || getDoc() instanceof ScriptletDocument) return;
+
         for (Element el : new Vector<Element>(getSelectionManager()
                 .getSelection()))
         {
             try
             {
-                if(NotebookDocument.isOutputCell(el)) continue;
+                if (NotebookDocument.isOutputCell(el)) continue;
                 CellGroupMember cgm = NotebookDocument.getNBElement(el);
-                if(cgm instanceof CellGroup)
-                    getDoc().evalGroup((CellGroup) cgm);
-                 else // inputCell
-                   getDoc().evalCellInAuxThread(el);
+                if (cgm instanceof CellGroup) getDoc().evalGroup(
+                        (CellGroup) cgm);
+                else
+                    // inputCell
+                    getDoc().evalCellInAuxThread(el);
             }
             catch (BadLocationException e)
             {
@@ -573,8 +578,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     @Override
     public Point getToolTipLocation(MouseEvent e)
     {
-        return (TopFrame.PICCOLO) ? GUIHelper.adjustPointInPicollo(this, e.getPoint())
-                : super.getToolTipLocation(e);
+        return (TopFrame.PICCOLO) ? GUIHelper.adjustPointInPicollo(this, e
+                .getPoint()) : super.getToolTipLocation(e);
     }
 
     public static UpdatablePopupMenu getPopupMenu()
@@ -599,6 +604,29 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     {
         return html_editor;
     }
+    
+    public HtmlView getHtmlView(int dot, Position.Bias bias)
+    {
+        NotebookDocument doc = getDoc();
+        if (!doc.isInputCell(dot)) return null;
+
+        Element el = doc.getUpperElement(dot, inputCellBox);
+        Cell cell = (Cell) NotebookDocument.getNBElement(el);
+        if (CellUtils.isHTML(cell))
+        {
+            View v = getUI().getRootView(NotebookUI.this);
+            int ind = v.getViewIndex(dot, bias);
+            View inner = v;
+            while (ind != -1)
+            {
+                inner = inner.getView(ind);
+                ind = (inner != null) ? inner.getViewIndex(dot, bias) : -1;
+            }
+            if (inner != null && inner instanceof HtmlView)
+                return ((HtmlView) inner);
+        }
+        return null;
+    }
 
     static class PopupListener extends MouseInputAdapter
     {
@@ -615,11 +643,10 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 }
                 else
                 {
-                    if (!dont_change_pos && ui.getCaretPosition() <0)
+                    if (!dont_change_pos && ui.getCaretPosition() < 0)
                     {
                         int off = ui.viewToModel(e.getPoint());
-                        if (off != -1) 
-                            ui.setCaretPosition(off);
+                        if (off != -1) ui.setCaretPosition(off);
                     }
                     popupMenu.update();
                     Frame f = GUIUtilities.getFrame(e.getComponent());
@@ -634,8 +661,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getX(),
                     e.getY(), f);
             if (e.getComponent() instanceof JComponent)
-                return GUIHelper
-                        .adjustPointInPicollo((JComponent) e.getComponent(), pt);
+                return GUIHelper.adjustPointInPicollo((JComponent) e
+                        .getComponent(), pt);
             return pt;
         }
     }
@@ -689,27 +716,17 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 Cell cell = (Cell) NotebookDocument.getNBElement(el);
                 if (CellUtils.isHTML(cell))
                 {
-                    View v = getUI().getRootView(NotebookUI.this);
-                    int ind = v.getViewIndex(dot, bias);
-                    View inner = v;
-                    while (ind != -1)
+                    HtmlView inner = getHtmlView(dot, bias);
+                    if (inner != null)
                     {
-                        inner = inner.getView(ind);
-                        ind = (inner != null) ? inner.getViewIndex(dot, bias)
-                                : -1;
-                    }
-                    if (inner != null && inner instanceof HtmlView)
-                    {
-                        lastCaretStart = -1;
-                        Component c = ((HtmlView) inner).getComponent();
-                        int p = up ? ((HTMLEditor) c).getDocument().getLength() - 1
-                                : 1;
-                        if (p < 0
-                                || p >= ((HTMLEditor) c).getDocument()
-                                        .getLength()) p = 0;
-                        ((HTMLEditor) c).setCaretPosition(p);
+                        HTMLEditor c = (HTMLEditor) inner.getComponent();
+                        int p = dot - inner.getStartOffset();
+                        if (p < 0 || p >= c.getDocument().getLength()) 
+                            p = up ? c.getDocument().getLength() - 1 : 1;
+                        c.setCaretPosition(p);
                         c.requestFocus();
-                        return;
+                       // return;
+                        
                     }
                     fb.setDot(dot, realBias);
                 }
@@ -728,7 +745,26 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             // allow selection in a single cell only
             int mark = getCaret().getMark();
             Element el = getDoc().getUpperElement(dot, commonCell);
-            if (el == null) return;
+            if (el == null) 
+            {
+                HtmlView inner = getHtmlView(dot, bias);
+                if (inner != null)
+                {
+                    HTMLEditor c = (HTMLEditor) inner.getComponent();
+                    int mark0 = c.getCaret().getMark();
+                    if(mark0 > inner.getEndOffset())
+                        c.setCaretPosition(c.getDoc().getLength() -1);
+                    if(mark0 < inner.getStartOffset())
+                        c.setCaretPosition(0);
+                    int new_dot = dot - inner.getStartOffset();
+                    if(new_dot > inner.getEndOffset())
+                        c.moveCaretPosition(c.getDoc().getLength() -1);
+                    if(new_dot < inner.getStartOffset())
+                        c.moveCaretPosition(0);
+                    c.requestFocus();
+                }
+                return;
+            }
             if (mark >= el.getStartOffset() && mark <= el.getEndOffset()) fb
                     .moveDot(dot, bias);
             else if (getDoc().isCellHandle(dot))
@@ -747,111 +783,10 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         }
     }
 
+  
+   // private static Vector<Mode> modes = null;
 
-    /**
-     * Returns the edit mode with the specified name.
-     * 
-     * @param name
-     *            The edit mode
-     */
-//    public static Mode getMode(String name)
-//    {
-////        getScriptSupportClassesMap();
-//        for (int i = 0; i < modes.size(); i++)
-//        {
-//            Mode mode = (Mode) modes.elementAt(i);
-//            if (mode.getName().equals(name)) return mode;
-//        }
-//        return null;
-//    }
-
-//    private static void addMode(Mode mode)
-//    {
-//        modes.addElement(mode);
-//    }
-
-    /**
-     * Returns an array of installed edit modes.
-     */
-//    public static Mode[] getModes()
-//    {
-//        Mode[] array = new Mode[modes.size()];
-//        modes.copyInto(array);
-//        return array;
-//    }
-
-//    public static void registerScriptSupport(ScriptSupportFactory sup,
-//            boolean permanently)
-//    {
-//        if (sup == null)
-//            throw new NullPointerException(
-//                    "Attempt to register null ScriptSupport");
-//        if (getScriptSupportClassesMap().containsKey(sup.getEngineName()))
-//            return;
-//        for (Mode m : sup.getModes())
-//            if (getMode(m.getName()) == null) addMode(m);
-//        getScriptSupportClassesMap().put(sup.getEngineName(),
-//                sup.getClass());
-//        if (permanently) ThisNiche.graph.update(getScriptSupportClassesMap());
-//    }
-
-//    private static Map<String, Class<?>> supports = null;
     
-    private static Vector<Mode> modes = null;
-
-//    static Map<String, Class<?>> getScriptSupportClassesMap()
-//    {
-//        if (supports == null)
-//        {
-//            supports = (Map<String, Class<?>>) ThisNiche.graph.get(SCRIPT_SUPPORTS_HANDLE);
-//            if (supports != null)
-//            {
-//                //legacy niche opened 
-//                if(!supports.get("beanshell").isAssignableFrom(ScriptSupportFactory.class))
-//                {
-//                   ThisNiche.graph.remove(NotebookUI.SCRIPT_SUPPORTS_HANDLE);
-//                   supports = null;
-//                }else
-//                {
-//                   if (modes == null) init_modes();
-//                     return supports;
-//                 }
-//            }
-//            supports = new HashMap<String, Class<?>>();
-//            modes = new Vector<Mode>();
-//            registerScriptSupport(new BshScriptSupportFactory(), false);
-//            registerScriptSupport(new JSchemeScriptSupportFactory(), false);
-//            registerScriptSupport(new RubyScriptSupportFactory(), false);
-//            registerScriptSupport(new HTMLScriptSupportFactory(), false);
-//            registerScriptSupport(new PrologScriptSupportFactory(), false);
-//            registerScriptSupport(new JSScriptSupportFactory(), false);
-//            registerScriptSupport(new GroovyScriptSupportFactory(), false);
-//            registerScriptSupport(new JavaFxScriptSupportFactory(), false);
-//            ThisNiche.graph.define(SCRIPT_SUPPORTS_HANDLE, supports);
-//        }
-//        return supports;
-//    }
-
-//    static void init_modes()
-//    {
-//        modes = new Vector<Mode>();
-//        for (Class<?> c : getScriptSupportClassesMap().values())
-//        {
-//            ScriptSupportFactory sup = null;
-//            try
-//            {
-//                sup = (ScriptSupportFactory) c.newInstance();
-//            }
-//            catch (Exception ex)
-//            {
-//                System.err.println("Unable to create ScriptSupport for: "
-//                        + c.getName());
-//            }
-//            if (sup != null) for (Mode m : sup.getModes())
-//                if (getMode(m.getName()) == null) addMode(m);
-//        }
-//    }
-
     // the vertical scrolls don't work as expected, so we need to force them...
     // by the next 2 methods
     @Override
@@ -884,9 +819,12 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         }
         return false;
     }
-    
-    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-        switch(orientation) {
+
+    public int getScrollableBlockIncrement(Rectangle visibleRect,
+            int orientation, int direction)
+    {
+        switch (orientation)
+        {
         case SwingConstants.VERTICAL:
         {
             if (getParent() instanceof JViewport)
@@ -899,10 +837,11 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         case SwingConstants.HORIZONTAL:
             return visibleRect.width;
         default:
-            throw new IllegalArgumentException("Invalid orientation: " + orientation);
+            throw new IllegalArgumentException("Invalid orientation: "
+                    + orientation);
         }
-        
-    }  
+
+    }
 
     private static final Dimension dim = new Dimension(300, 200);
 
@@ -1105,8 +1044,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         if (type == outputCellBox) return el;
         return NotebookDocument.getUpperElement(el, type);
     }
-    
-   
+
     public static final Object FOCUSED_COMPONENT = new StringBuilder(
             "JTextComponent_FocusedComponent");
 
@@ -1146,11 +1084,12 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             if (dotBias == null) dotBias = Position.Bias.Forward;
             super.setDot(dot, dotBias);
         }
-        
-        //this is fired to often and erases the selection
-        public void focusLost(FocusEvent e) {
-           // setVisible(false);
-           //     setSelectionVisible(ownsSelection || e.isTemporary());
+
+        // this is fired to often and erases the selection
+        public void focusLost(FocusEvent e)
+        {
+            // setVisible(false);
+            // setSelectionVisible(ownsSelection || e.isTemporary());
         }
     }
 

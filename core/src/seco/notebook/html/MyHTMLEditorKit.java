@@ -1235,9 +1235,16 @@ public class MyHTMLEditorKit extends HTMLEditorKit
         protected void action(HTMLEditor ui) throws Exception
         {
             int index = findOrReplace ? 0 : 1;
-            if (findDialog == null) findDialog = new FindDialog(ui, index);
+            JEditorPane editor =
+             (ui instanceof HtmlView.InnerHTMLEditor) ?
+                ((HtmlView.InnerHTMLEditor) ui).getNotebookUI() : ui;
+            if (findDialog == null) 
+                findDialog = new FindDialog(editor, index);
             else
+            {
+                findDialog.setEditorPane(editor);
                 findDialog.setSelectedIndex(index);
+            }
             findDialog.setVisible(true);
             GUIUtilities.centerOnScreen(findDialog);
         }

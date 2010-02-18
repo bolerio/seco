@@ -199,12 +199,6 @@ public class HTMLEditor extends JTextPane
 
     protected EditorKit createDefaultEditorKit()
     {
-        // if (htmlKit == null)
-        // {
-        // htmlKit = new MyHTMLEditorKit();
-        // setEditorKit(htmlKit);
-        // }
-        // return htmlKit;
         return new MyHTMLEditorKit();
     }
 
@@ -212,12 +206,6 @@ public class HTMLEditor extends JTextPane
     {
         return (MyHTMLEditorKit) getEditorKit();
     }
-
-    // static MyHTMLEditorKit getKit()
-    // {
-    // if (htmlKit == null) htmlKit = new MyHTMLEditorKit();
-    // return htmlKit;
-    // }
 
     protected void setAttributeSet(AttributeSet attr)
     {

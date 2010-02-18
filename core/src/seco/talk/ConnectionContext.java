@@ -45,8 +45,6 @@ public class ConnectionContext
     //TODO: shouldn't be hardcoded
     private String networkName = "Seco Network";
     
-   
-
     static final String OPENFIRE_HOST = "kobrix.syspark.net";
 
     private ConnectionConfig config;

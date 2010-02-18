@@ -71,7 +71,7 @@ public class ConnectionManager
                 hg.eq("config", config)));
     }
 
-    //called from Network menu JScheme script
+    //called from Network menu with JScheme script
     public static ConnectionPanel openConnectionPanel(ConnectionConfig config)
     {
         ConnectionContext ctx = getConnectionContext(config);

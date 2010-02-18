@@ -127,7 +127,10 @@ public class HtmlView extends HidableComponentView
                 {
                     NotebookDocument doc = (NotebookDocument) getElement().getDocument();
                     try{
-                     doc.updateCell(getElement(), UpdateAction.syncronize, null);
+                      doc.updateCell(getElement(), UpdateAction.syncronize, null);
+                      //clear selection if any
+                     // int pos = InnerHTMLEditor.this.getCaretPosition();
+                    //InnerHTMLEditor.this.select(pos, pos);
                     }catch(Exception ex)
                     {
                         ex.printStackTrace();
@@ -141,6 +144,9 @@ public class HtmlView extends HidableComponentView
                 {
                     if(getNotebookUI().getDoc().isReadOnlyEl(getElement())) return;
                     GUIHelper.getHTMLToolBar().showAttributes(editor, e.getDot());
+                    NotebookUI ui = getNotebookUI();
+                    if (ui == null) return;
+                    ui.getCaret().setDot(getElement().getStartOffset() + e.getDot());
                 }
                 
             });

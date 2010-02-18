@@ -246,7 +246,11 @@
                   (if (.hasNext rs) (.getConfig (.get ThisNiche.graph$ (.next rs))) 
                       (seco.talk.ConnectionConfig.)))))
         (if (eq? #null (.getHandle ThisNiche.graph$ config))
-            (.add ThisNiche.graph$ config))
+            (.add ThisNiche.graph$ config)
+            ; force the creation of ConnectionContext if one doesn't exist 
+            ;temp solution until the netdialog won't be redesign to work with
+            ;multiple ConnectionContext-s
+            (seco.talk.ConnectionManager.getConnectionContext config))
         (open-network-connection config)
 ))
       
