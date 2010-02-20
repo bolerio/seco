@@ -284,7 +284,11 @@ public class NotebookDocument extends DefaultStyledDocument
                 {
                     HTMLEditor ed = (HTMLEditor) html.getAttributes()
                             .getAttribute(ATTR_HTML_EDITOR);
-                    CellUtils.setCellText(cell, ed.getContent());
+                    if(ed.isModified())
+                    {
+                       CellUtils.setCellText(cell, ed.getContent());
+                       ed.setModified(false);
+                    }
                 }
             }
         }
@@ -294,25 +298,27 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         Element root = getDefaultRootElement();// getRootElements()[0];
         for (int i = 0; i < root.getElementCount(); i++)
+            update(root.getElement(i), action);
+        setModified(true);
+    }
+    
+    void update(Element el, UpdateAction action)
+    {
+        try
         {
-            Element el = root.getElement(i);
-            try
+            Object param = CellUtils.isInitCell(getBook());
+            if (cellGroupBox == getElementType(el)) updateGroup(
+                    getLowerElement(el, cellGroup), action, param);
+            else if (inputCellBox == getElementType(el)
+                    || outputCellBox == getElementType(el))
             {
-                Object param = CellUtils.isInitCell(getBook());
-                if (cellGroupBox == getElementType(el)) updateGroup(
-                        getLowerElement(el, cellGroup), action, param);
-                else if (inputCellBox == getElementType(el)
-                        || outputCellBox == getElementType(el))
-                {
-                    updateCell(el, action, param);
-                }
-            }
-            catch (Exception ex)
-            {
-                ex.printStackTrace();
+                updateCell(el, action, param);
             }
         }
-        setModified(true);
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     public void updateStyles()
@@ -1048,6 +1054,8 @@ public class NotebookDocument extends DefaultStyledDocument
 
     void group(Collection<Element> elems) throws BadLocationException
     {
+        for(Element el: elems)
+            update(el, UpdateAction.syncronize);
         HGHandle gr_h = CellUtils.createGroupHandle();
         CellGroup gr = (CellGroup) ThisNiche.graph.get(gr_h);
         for (Element el : elems)
@@ -1063,9 +1071,7 @@ public class NotebookDocument extends DefaultStyledDocument
             removed[i] = getNBElementH(el);
             i++;
         }
-        // fireCellGroupChanged(new
-        // CellGroupChangeEvent(ThisNiche.handleOf(par),
-        // index, new HGHandle[] { gr_h }, removed));
+        
         par.batchProcess(new CellGroupChangeEvent(ThisNiche.handleOf(par),
                 index, new HGHandle[] { gr_h }, removed), false);
     }
@@ -1074,6 +1080,7 @@ public class NotebookDocument extends DefaultStyledDocument
     {
         ElementType type = getElementType(el);
         if (cellGroupBox != type) return;
+        update(el, UpdateAction.syncronize);
         // beginCompoundEdit("Cell Ungroup");
         CellGroup group = (CellGroup) getNBElement(el);
         CellGroup parent = (CellGroup) getContainer(el);

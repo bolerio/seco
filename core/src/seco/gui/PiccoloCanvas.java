@@ -23,6 +23,7 @@ import seco.things.CellUtils;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.event.PZoomEventHandler;
@@ -104,6 +105,7 @@ public class PiccoloCanvas extends PSwingCanvas
         setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
         setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
         setDefaultRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
+               
         selectionHandler = new PCSelectionHandler();
         selectionHandler.setEventFilter(new PInputEventFilter(
                 InputEvent.BUTTON1_MASK));
@@ -111,18 +113,17 @@ public class PiccoloCanvas extends PSwingCanvas
         getRoot().getDefaultInputManager().setKeyboardFocus(selectionHandler);
 
         setPanEventHandler(null);
-        PZoomEventHandler zoomer = getZoomEventHandler();
-        if (zoomer != null)
-        {
-            zoomer.setMinScale(.25);
-            zoomer.setMaxScale(3);
-        }
-        setZoomEventHandler(zoomer);
+       
 
         ctxMenuHandler = new ContextMenuHandler();
         ctxMenuHandler.setEventFilter(new PInputEventFilter(
                 InputEvent.BUTTON3_MASK));
         addInputEventListener(ctxMenuHandler);
+        
+        PZoomEventHandler zoomer = new MyZoomEventHandler(this);
+        zoomer.setMinScale(.25);
+        zoomer.setMaxScale(3);
+        setZoomEventHandler(zoomer);
         
         getCamera().addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM, 
                 new PropertyChangeListener()
@@ -293,7 +294,7 @@ public class PiccoloCanvas extends PSwingCanvas
         n.moveToFront();
         n.setBounds(0, 0, getWidth() - 60, getHeight() - 60);
         PBounds b = n.getFullBounds();
-        n.translate(-b.x + 20, -b.y + 20);
+        n.translate(-b.x + 30, -b.y + 30);
         n.getComponent().revalidate();
     }
     
@@ -480,5 +481,37 @@ public class PiccoloCanvas extends PSwingCanvas
     public PCSelectionHandler getSelectionHandler()
     {
         return selectionHandler;
+    }
+    
+    public static class MyZoomEventHandler extends PZoomEventHandler
+    {
+        PiccoloCanvas canvas;
+        
+        public MyZoomEventHandler(PiccoloCanvas canvas)
+        {
+            this.canvas = canvas;
+        }
+
+        @Override
+        protected void stopDragActivity(PInputEvent event)
+        {
+            // TODO Auto-generated method stub
+            super.stopDragActivity(event);
+        }
+
+        @Override
+        protected void dragActivityFirstStep(PInputEvent event)
+        {
+            //System.out.println("dragActivityFirstStep" + canvas.getSelectedPSwingNode());
+            super.dragActivityFirstStep(event);
+        }
+
+        @Override
+        protected void dragActivityStep(PInputEvent event)
+        {
+            //System.out.println("dragActivityStep" + canvas.getSelectedPSwingNode());
+            super.dragActivityStep(event);
+        }
+        
     }
 }

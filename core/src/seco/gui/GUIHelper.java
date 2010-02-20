@@ -101,12 +101,12 @@ public class GUIHelper
     public static final HGPersistentHandle HTML_TOOLBAR_HANDLE = HGHandleFactory
             .makeHandle("56371f73-025d-11dd-b650-ef87b987c94a");
     public static final HGPersistentHandle WIN_ACTIONS_HANDLE = HGHandleFactory
-    .makeHandle("8724b420-963b-11de-8a39-0800200c9a66");
-    
+            .makeHandle("8724b420-963b-11de-8a39-0800200c9a66");
+
     public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
-    //default rectangle used for adding containers 
+    // default rectangle used for adding containers
     public static Rectangle CONTAINER_RECT = new Rectangle(20, 70, 300, 300);
-    
+
     static
     {
         PlasticLookAndFeel.setPlasticTheme(new DesertBluer());
@@ -118,32 +118,34 @@ public class GUIHelper
         {
         }
     }
-    
-   // public static final String ANOTHER_ICON = "ANOTHER_ICON";
+
+    // public static final String ANOTHER_ICON = "ANOTHER_ICON";
     public static List<Action> getWinTitleActions()
     {
-        List<Action> actions = (List<Action>)ThisNiche.graph.get(WIN_ACTIONS_HANDLE);
-        if(actions != null) return actions;
+        List<Action> actions = (List<Action>) ThisNiche.graph
+                .get(WIN_ACTIONS_HANDLE);
+        if (actions != null) return actions;
         actions = new ArrayList<Action>();
-        //maximize
+        // maximize
         Action a = new ScriptletAction(
-                "node = desktop.canvas.getSelectedPSwingNode();"+
-                "cgm = niche.get(node.getHandle());" +
-                "if(seco.things.CellUtils.isMinimized(cgm))" +
-                "seco.things.CellUtils.toggleMinimized(cgm);" +
-                "seco.things.CellUtils.toggleMaximized(cgm);");
+                "node = desktop.canvas.getSelectedPSwingNode();"
+                        + "cgm = niche.get(node.getHandle());"
+                        + "if(seco.things.CellUtils.isMinimized(cgm))"
+                        + "seco.things.CellUtils.toggleMinimized(cgm);"
+                        + "seco.things.CellUtils.toggleMaximized(cgm);");
         a.putValue(Action.SMALL_ICON, IconManager.resolveIcon("Maximize.gif"));
-        //a.putValue(ANOTHER_ICON, IconManager.resolveIcon("Restore.png"));
+        // a.putValue(ANOTHER_ICON, IconManager.resolveIcon("Restore.png"));
         a.putValue(Action.SHORT_DESCRIPTION, "Maximize/Restore");
         actions.add(a);
-       //minimize
-        a = new ScriptletAction("node = desktop.canvas.getSelectedPSwingNode();"+
-        "seco.things.CellUtils.toggleMinimized(niche.get(node.getHandle()))");
+        // minimize
+        a = new ScriptletAction(
+                "node = desktop.canvas.getSelectedPSwingNode();"
+                        + "seco.things.CellUtils.toggleMinimized(niche.get(node.getHandle()))");
         a.putValue(Action.SMALL_ICON, IconManager.resolveIcon("Minimize.gif"));
-       // a.putValue(ANOTHER_ICON, IconManager.resolveIcon("Restore.png"));
+        // a.putValue(ANOTHER_ICON, IconManager.resolveIcon("Restore.png"));
         a.putValue(Action.SHORT_DESCRIPTION, "Minimize/Restore");
         actions.add(a);
-        
+
         ThisNiche.graph.define(WIN_ACTIONS_HANDLE, actions);
         return actions;
     }
@@ -292,7 +294,7 @@ public class GUIHelper
 
     public static class NewAction extends AbstractAction
     {
-         public NewAction()
+        public NewAction()
         {
             putValue(Action.NAME, NEW);
             putValue(Action.SMALL_ICON, IconManager.resolveIcon("New16.gif"));
@@ -611,38 +613,41 @@ public class GUIHelper
     }
 
     public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
-            HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell,
-            Map<Object, Object> addit_attribs, int index)
+            HGHandle visualH, LayoutHandler lh, Rectangle r,
+            boolean create_cell, Map<Object, Object> addit_attribs, int index)
     {
-        HGHandle cellH = (create_cell) ? CellUtils.getOrCreateCellHForRefH(h) : h;
+        HGHandle cellH = (create_cell) ? CellUtils.getOrCreateCellHForRefH(h)
+                : h;
         CellGroupMember out = ThisNiche.graph.get(cellH);
         if (r != null) out.setAttribute(VisualAttribs.rect, r);
         if (visualH != null) out.setVisual(visualH);
         if (lh != null) out.setAttribute(VisualAttribs.layoutHandler, lh);
-        if(addit_attribs != null)
-            for(Object key: addit_attribs.keySet())
-                out.setAttribute(key, addit_attribs.get(key));
-        int i = (index >= 0 && index <= group.getArity()) ? index : group.getArity();
+        if (addit_attribs != null) for (Object key : addit_attribs.keySet())
+            out.setAttribute(key, addit_attribs.get(key));
+        int i = (index >= 0 && index <= group.getArity()) ? index : group
+                .getArity();
         group.insert(i, out);
         return cellH;
     }
-    
+
     public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
             HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell)
     {
         return addToCellGroup(h, group, visualH, lh, r, create_cell, null, -1);
     }
-    
+
     public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
-            HGHandle visualH, LayoutHandler lh, Rectangle r, boolean create_cell, int index)
+            HGHandle visualH, LayoutHandler lh, Rectangle r,
+            boolean create_cell, int index)
     {
-        return addToCellGroup(h, group, visualH, lh, r, create_cell, null, index);
+        return addToCellGroup(h, group, visualH, lh, r, create_cell, null,
+                index);
     }
 
     public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
             HGHandle visualH, LayoutHandler lh, Rectangle r, int index)
     {
-        return addToCellGroup(h, group, visualH, lh, r, true, index); 
+        return addToCellGroup(h, group, visualH, lh, r, true, index);
     }
 
     public static HGHandle addToTopCellGroup(HGHandle h, HGHandle visualH,
@@ -680,47 +685,50 @@ public class GUIHelper
             HGHandle objectHandle, HGHandle visualHandle, LayoutHandler lh,
             Rectangle r)
     {
-        return addIfNotThere(groupHandle,
-                objectHandle, visualHandle, lh, r, null);
+        return addIfNotThere(groupHandle, objectHandle, visualHandle, lh, r,
+                null);
     }
-    
+
     public static HGHandle addIfNotThere(HGHandle groupHandle,
             HGHandle objectHandle, HGHandle visualHandle, LayoutHandler lh,
             Rectangle r, Map<Object, Object> addit_attribs)
     {
-        HGHandle existingH = 
-            getCellHandleByValueHandle(groupHandle, objectHandle);
-        if(existingH != null) return existingH;
-        
+        HGHandle existingH = getCellHandleByValueHandle(groupHandle,
+                objectHandle);
+        if (existingH != null) return existingH;
+
         CellGroup group = ThisNiche.graph.get(groupHandle);
         Object x = ThisNiche.graph.get(objectHandle);
         return GUIHelper.addToCellGroup(objectHandle, group, null, null, r,
                 !(x instanceof CellGroupMember), addit_attribs, -1);
     }
-    
-    public static HGHandle getCellHandleByValueHandle(HGHandle groupHandle, HGHandle objectHandle)
+
+    public static HGHandle getCellHandleByValueHandle(HGHandle groupHandle,
+            HGHandle objectHandle)
     {
         CellGroup group = ThisNiche.graph.get(groupHandle);
         for (int i = 0; i < group.getArity(); i++)
         {
             Object x = ThisNiche.graph.get(group.getTargetAt(i));
             if (x instanceof Cell
-                    && ((Cell) x).getAtomHandle().equals(objectHandle))
-                return group.getTargetAt(i);
-            else if(x instanceof CellGroup)
+                    && ((Cell) x).getAtomHandle().equals(objectHandle)) return group
+                    .getTargetAt(i);
+            else if (x instanceof CellGroup)
             {
                 CellGroup inner = (CellGroup) x;
-                if(inner.getVisualInstance() instanceof GroupVisual)
+                if (inner.getVisualInstance() instanceof GroupVisual)
                 {
-                    HGHandle inH = getCellHandleByValueHandle(ThisNiche.handleOf(inner), objectHandle);
-                    if(inH != null) return inH;
+                    HGHandle inH = getCellHandleByValueHandle(ThisNiche
+                            .handleOf(inner), objectHandle);
+                    if (inH != null) return inH;
                 }
             }
         }
         return null;
     }
 
-    public static void removeFromCellGroup(HGHandle groupH, HGHandle h, boolean backup)
+    public static void removeFromCellGroup(HGHandle groupH, HGHandle h,
+            boolean backup)
     {
         CellGroup top = ThisNiche.graph.get(groupH);
         top.remove((CellGroupMember) ThisNiche.graph.get(h), backup);
@@ -745,7 +753,8 @@ public class GUIHelper
         PBounds r1c = ps.getBounds();
         ps.localToGlobal(r1c);
         canvas.getCamera().globalToLocal(r1c);
-        Rectangle2D r = canvas.getCamera().getViewTransform().createTransformedShape(r1c).getBounds2D();
+        Rectangle2D r = canvas.getCamera().getViewTransform()
+                .createTransformedShape(r1c).getBounds2D();
         return new Point((int) (r.getX() + pt.x), (int) (r.getY() + pt.y));
     }
 
@@ -759,13 +768,12 @@ public class GUIHelper
     {
         CellGroup group = ThisNiche.graph.get(TopFrame.getInstance()
                 .getFocusedContainerHandle());
-        if(CellUtils.isBackuped(h))
-            CellUtils.restoreCell(h);
+        if (CellUtils.isBackuped(h)) CellUtils.restoreCell(h);
         CellGroupMember child = ThisNiche.graph.get(h);
         child.setVisual(NBUIVisual.getHandle());
-        child.setAttribute(VisualAttribs.rect, new Rectangle(100, 100, 500, 400));
-        if(!CellUtils.isShowTitle(child))
-           CellUtils.toggleShowTitle(child);
+        child.setAttribute(VisualAttribs.rect,
+                new Rectangle(100, 100, 500, 400));
+        if (!CellUtils.isShowTitle(child)) CellUtils.toggleShowTitle(child);
         group.insert(group.getArity(), h);
     }
 
@@ -811,10 +819,11 @@ public class GUIHelper
         CellGroupMember book = ThisNiche.graph.get(h);
         String name = CellUtils.getName(book);
         if (name == null) name = "";
-       // RuntimeContext rcInstance = (RuntimeContext) ThisNiche.graph.get(TopFrame
-       //         .getInstance().getCurrentRuntimeContext());
+        // RuntimeContext rcInstance = (RuntimeContext)
+        // ThisNiche.graph.get(TopFrame
+        // .getInstance().getCurrentRuntimeContext());
         String title = "[" + ThisNiche.graph.getLocation() + "] "
-                /*+ rcInstance.getName() + " "*/ + name;
+        /* + rcInstance.getName() + " " */+ name;
         TopFrame.getInstance().setTitle(title);
         TopFrame.getInstance().showHTMLToolBar(false);
     }
@@ -822,19 +831,21 @@ public class GUIHelper
     // Create the edit menu.
     private static JMenu createEditMenu()
     {
-       ActionManager man = ActionManager.getInstance();
+        ActionManager man = ActionManager.getInstance();
         JMenu menu = new NBMenu("Edit");
         menu.setMnemonic('e');
         menu.add(new JMenuItem(man.getAction(NotebookEditorKit.undoAction)));
         menu.add(new JMenuItem(man.getAction(NotebookEditorKit.redoAction)));
         menu.addSeparator();
         menu.addMenuListener(new EditMenuListener());
-        
+
         menu.add(new JMenuItem(man.getAction(Actions.CUT)));
         menu.add(new JMenuItem(man.getAction(Actions.COPY)));
         menu.add(new JMenuItem(man.getAction(Actions.PASTE)));
-      
-        menu.add(new JMenuItem(man.getAction(DefaultEditorKit.selectAllAction)));
+
+        menu
+                .add(new JMenuItem(man
+                        .getAction(DefaultEditorKit.selectAllAction)));
         menu.addSeparator();
         menu.add(new JMenuItem(man.getAction(NotebookEditorKit.findAction)));
         menu.add(new JMenuItem(man.getAction(NotebookEditorKit.replaceAction)));
@@ -864,13 +875,17 @@ public class GUIHelper
         menu.setMnemonic('o');
         ActionManager man = ActionManager.getInstance();
         menu.add(new EnhancedMenu("Visual Properties", new VisPropsProvider()));
-        menu.add(new GlobMenuItem(man.getAction(NotebookEditorKit.shortcutInspectorAction)));
+        menu.add(new GlobMenuItem(man
+                .getAction(NotebookEditorKit.shortcutInspectorAction)));
         Action act = kit.getActionByName(NotebookEditorKit.formatAction);
-        act.putValue(Action.NAME, "Format");
-        JMenuItem mi = new JMenuItem(act);
-        mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
-                ActionEvent.SHIFT_MASK | ActionEvent.CTRL_MASK));
-        menu.add(mi);
+        if (act != null)
+        {
+            act.putValue(Action.NAME, "Format");
+            JMenuItem mi = new JMenuItem(act);
+            mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
+                    ActionEvent.SHIFT_MASK | ActionEvent.CTRL_MASK));
+            menu.add(mi);
+        }
         return menu;
     }
 
@@ -880,15 +895,22 @@ public class GUIHelper
         menu.setMnemonic('t');
         ActionManager man = ActionManager.getInstance();
         menu.add(new JMenuItem(man.getAction(NotebookEditorKit.evalAction)));
-        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.evalCellGroupAction)));
-        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.reEvalOutputCellsAction)));
-        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.removeOutputCellsAction)));
+        menu.add(new JMenuItem(man
+                .getAction(NotebookEditorKit.evalCellGroupAction)));
+        menu.add(new JMenuItem(man
+                .getAction(NotebookEditorKit.reEvalOutputCellsAction)));
+        menu.add(new JMenuItem(man
+                .getAction(NotebookEditorKit.removeOutputCellsAction)));
 
-        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.mergeCellsAction)));
-        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.clearEngineContextAction)));
-       
-        menu.add(new GlobMenuItem(man.getAction(NotebookEditorKit.javaDocManagerAction)));
-        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.ctxInspectorAction)));
+        menu.add(new JMenuItem(man
+                .getAction(NotebookEditorKit.mergeCellsAction)));
+        menu.add(new JMenuItem(man
+                .getAction(NotebookEditorKit.clearEngineContextAction)));
+
+        menu.add(new GlobMenuItem(man
+                .getAction(NotebookEditorKit.javaDocManagerAction)));
+        menu.add(new JMenuItem(man
+                .getAction(NotebookEditorKit.ctxInspectorAction)));
         menu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
         menu.add(new EnhancedMenu("CellGroup", new CellGroupPropsProvider()));
         menu.add(new EnhancedMenu("Notebook", new NotebookPropsProvider()));
@@ -913,7 +935,7 @@ public class GUIHelper
         for (int i = 0; i < top.getArity(); i++)
         {
             CellGroupMember cgm = top.getElement(i);
-            if(cgm == null) continue;
+            if (cgm == null) continue;
             if (NBUIVisual.getHandle().equals(cgm.getVisual()))
             {
                 res.add(top.getTargetAt(i));
@@ -929,7 +951,8 @@ public class GUIHelper
     public static void handleTitle(PSwingNode node)
     {
         CellGroupMember cgm = ThisNiche.graph.get(node.getHandle());
-        if(CellUtils.isMinimized(cgm)){
+        if (CellUtils.isMinimized(cgm))
+        {
             update_minimized_UI(node, cgm);
             return;
         }
@@ -937,7 +960,7 @@ public class GUIHelper
         if (CellUtils.isShowTitle(cgm) && title != null)
         {
             PCSelectionHandler.decorateSelectedNode(node, false);
-            //move down the node with the height of the added title pane
+            // move down the node with the height of the added title pane
             node.translate(0, TitlePaneNode.HEIGHT);
         }
         else if (!CellUtils.isShowTitle(cgm))
@@ -945,25 +968,25 @@ public class GUIHelper
             PCSelectionHandler.undecorateSelectedNode(node, true);
         }
     }
-    
-    //size of the minimized components 
+
+    // size of the minimized components
     static Dimension MINIMIZED_COMPONENT_SIZE = new Dimension(64, 64);
 
     static JComponent getMinimizedUI(final CellGroupMember cgm)
     {
-        return new MinimizedUI(cgm); 
+        return new MinimizedUI(cgm);
     }
-    
+
     static Dimension getMinimizedUISize()
     {
         return MINIMIZED_COMPONENT_SIZE;
     }
-    
+
     private static void update_minimized_UI(PSwingNode node, CellGroupMember cgm)
     {
         String text = CellUtils.getName(cgm);
         if (text == null) text = "Untitled";
         MinimizedUI ui = (MinimizedUI) node.getComponent();
         ui.setTitle(text);
-    } 
+    }
 }

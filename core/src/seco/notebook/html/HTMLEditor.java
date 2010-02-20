@@ -69,7 +69,8 @@ public class HTMLEditor extends JTextPane
     private UpdatablePopupMenu popupMenu;
     protected static HyperlinkListener hyperlinkListener = new MyHyperlinkListener();
     protected PopupListener popupListener;
-
+    protected boolean modified = false;
+    
     public HTMLEditor()
     {
         this(null);
@@ -89,6 +90,7 @@ public class HTMLEditor extends JTextPane
                 undo.addEdit(e.getEdit());
                 MyHTMLEditorKit.undo.updateUndoState(undo);
                 MyHTMLEditorKit.redo.updateRedoState(undo);
+                setModified(true);
             }
         });
         if (text != null) setContent(text);
@@ -137,6 +139,16 @@ public class HTMLEditor extends JTextPane
         inputMap.put(key, MyHTMLEditorKit.showInputTypePopup);
         key = KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK);
         inputMap.put(key, MyHTMLEditorKit.findAction);
+    }
+    
+    public boolean isModified()
+    {
+        return modified;
+    }
+
+    public void setModified(boolean modified)
+    {
+        this.modified = modified;
     }
 
     UndoManager getUndoManager()
@@ -278,7 +290,7 @@ public class HTMLEditor extends JTextPane
     {
         Element par = el.getParentElement();
         int offset = par.getEndOffset();
-        Element td = HTMLUtils.getTag(this, HTML.Tag.TD, offset);
+        //Element td = HTMLUtils.getTag(this, HTML.Tag.TD, offset);
         // System.out.println("removeListElement: " + par + ":" + el + ":" + td
         // + ":" + offset);
         HTMLUtils.listOff(this, HTMLUtils.getName(par));
@@ -901,7 +913,7 @@ public class HTMLEditor extends JTextPane
         SimpleAttributeSet a = new SimpleAttributeSet();
         Element cElem = e;
         AttributeSet attrs;
-        Vector elements = new Vector();
+        Vector<Element> elements = new Vector<Element>();
         Object classAttr;
         String styleName;
         String elemName;

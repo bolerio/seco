@@ -370,8 +370,23 @@ public class CellUtils
     {
         boolean b = isMinimized(cgm);
         // first render in normal state the maximized cell, then minimize
-        if (!b && isMaximized(cgm)) toggleMaximized(cgm);
+        boolean max = false;
+        if (!b && isMaximized(cgm)) 
+        {
+            toggleMaximized(cgm);
+            max = true;
+        }
         cgm.setAttribute(VisualAttribs.minimized, !b);
+        //restore the max attrib without firing event
+        if(max)
+            cgm.getAttributes().put(VisualAttribs.maximized, true);
+        //when restoring from minimized state, maximize if needed
+        if(b && isMaximized(cgm))
+        {
+            //need to clear the attrib without firing 
+            cgm.getAttributes().put(VisualAttribs.maximized, false);
+            cgm.setAttribute(VisualAttribs.maximized, true);
+        }
     }
 
     public static boolean isMaximized(CellGroupMember cgm)

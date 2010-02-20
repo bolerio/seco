@@ -41,8 +41,10 @@ import seco.notebook.NotebookUI;
 import seco.notebook.html.HTMLEditor;
 import seco.notebook.view.HtmlView;
 
-public class FindDialog extends JDialog
+public class FindDialog extends JDialog 
 {
+    private static final long serialVersionUID = 2059260096201174285L;
+
     public static final char[] WORD_SEPARATORS = { ' ', '\t', '\n', '\r', '\f',
             '.', ',', ':', '-', '(', ')', '[', ']', '{', '}', '<', '>', '/',
             '|', '\\', '\'', '\"' };

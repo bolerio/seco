@@ -23,7 +23,6 @@ public class MinimizeHandle extends CommandHandle
     {
         super(new OffsetPBoundsLocator(node, side, offsetP));
         setPaint(Color.orange);
-        //this.setShape(PNodeEx.ELLIPSE);
         setToolTip("Minimize");
         
         //http://www.kansas.gov/index.php
@@ -37,18 +36,16 @@ public class MinimizeHandle extends CommandHandle
         CellUtils.toggleMinimized(cgm);
     }
   
-    public static class Action extends ScriptletAction
-    {
-
-        public Action()
-        {
-            super("node = desktop.canvas.getSelectedPSwingNode();"+
-            "CellUtils.toggleMinimized(niche.get(node.getHandle()))");
-            putValue(Action.SMALL_ICON, IconManager.resolveIcon("Minimize.gif"));
-            putValue(Action.SHORT_DESCRIPTION, "Minimize/Restore");
-            // TODO Auto-generated constructor stub
-        }
-        
-        
-    }
+//    public static class Action extends ScriptletAction
+//    {
+//
+//        public Action()
+//        {
+//            super("node = desktop.canvas.getSelectedPSwingNode();"+
+//            "CellUtils.toggleMinimized(niche.get(node.getHandle()))");
+//            putValue(Action.SMALL_ICON, IconManager.resolveIcon("Minimize.gif"));
+//            putValue(Action.SHORT_DESCRIPTION, "Minimize/Restore");
+//            // TODO Auto-generated constructor stub
+//        }
+//   }
 }

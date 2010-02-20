@@ -219,7 +219,8 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     protected void drag(PInputEvent e)
     {
         super.drag(e);
-        dragStandardSelection(e);
+        if(!maximized())
+           dragStandardSelection(e);
     }
 
     protected void endDrag(PInputEvent e)
@@ -295,6 +296,13 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         CellUtils.isMinimized( (CellGroupMember)
                 ThisNiche.graph.get(((PSwingNode)pressNode).getHandle()));
     }
+    
+    private boolean maximized()
+    {
+        return pressNode instanceof PSwingNode &&
+        CellUtils.isMaximized( (CellGroupMember)
+                ThisNiche.graph.get(((PSwingNode)pressNode).getHandle()));
+    }
 
     protected void startStandardSelection(PInputEvent pie)
     {
@@ -309,7 +317,8 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
     protected void startStandardOptionSelection(PInputEvent pie)
     {
         // Option indicator is down, toggle selection
-        if (isSelected(pressNode)) unselect(pressNode);
+        if (isSelected(pressNode)) 
+            unselect(pressNode);
         else
             select(pressNode);
     }
@@ -320,6 +329,8 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         PDimension d = e.getCanvasDelta();
         e.getTopCamera().localToView(d);
         PDimension gDist = new PDimension();
+        if(selection.size() == 1)
+            
         for (PNode node : selection.keySet())
         {
             gDist.setSize(d);

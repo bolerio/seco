@@ -140,9 +140,9 @@ public class HtmlView extends HidableComponentView
 
                 public void caretUpdate(CaretEvent e)
                 {
-                    if(getNotebookUI().getDoc().isReadOnlyEl(getElement())) return;
                     NotebookUI ui = getNotebookUI();
                     if (ui == null) return;
+                    if(ui.getDoc().isReadOnlyEl(getElement())) return;
                     ui.setCaretPositionEx(getElement().getStartOffset() + e.getDot());
                     GUIHelper.getHTMLToolBar().showAttributes(InnerHTMLEditor.this, e.getDot());
                 }
