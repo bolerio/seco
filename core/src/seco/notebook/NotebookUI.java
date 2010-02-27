@@ -633,14 +633,24 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 }
                 else
                 {
+                    int off = ui.viewToModel(e.getPoint());
                     if (!dont_change_pos && ui.getCaretPosition() < 0)
                     {
-                        int off = ui.viewToModel(e.getPoint());
-                        if (off != -1) ui.setCaretPosition(off);
+                       if (off != -1) ui.setCaretPosition(off);
                     }
                     popupMenu.update();
                     Frame f = GUIUtilities.getFrame(e.getComponent());
-                    Point pt = getPoint(e, f);
+                    Point pt = null;
+                    try
+                    {
+                      Rectangle rect = ui.modelToView(off);
+                      pt = new Point(rect.x, rect.y);
+                      pt = SwingUtilities.convertPoint(ui, rect.x, rect.y, f);
+                      pt = GUIHelper.adjustPointInPicollo(ui, pt);
+                    }catch(Exception ex)
+                    {
+                        pt = getPoint(e, f);
+                    }
                     popupMenu.show(ui, pt.x, pt.y);
                 }
             }
@@ -651,8 +661,10 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getX(),
                     e.getY(), f);
             if (e.getComponent() instanceof JComponent)
-                return GUIHelper.adjustPointInPicollo((JComponent) e
+            {
+                GUIHelper.adjustPointInPicollo((JComponent) e
                         .getComponent(), pt);
+            }
             return pt;
         }
     }
