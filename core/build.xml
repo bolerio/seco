@@ -92,6 +92,7 @@
 				<include name="seco/**" />
 				<exclude name="seco/run.sh" />
 				<exclude name="seco/lib/native/linux/**" />
+                <exclude name="seco/lib/native/macos/**" />
 			</fileset>
 		</zip>
 	</target>
@@ -110,6 +111,19 @@
                destfile="${dist}/seco-dist-lin-${version}.tgz"/>
 	</target>
 
+	<target name="dist-macos" depends="dist-prepare" description="Build MacOS distribution">
+		<tar destfile="${dist}/seco-dist-macos-${version}.tar"
+		     basedir="dist">
+			<tarfileset dir="${build}">
+				<include name="seco/**" />
+				<exclude name="seco/run.cmd" />
+				<exclude name="seco/lib/native/windows/**" />
+                <exclude name="seco/lib/native/linux/**" />
+			</tarfileset>
+         </tar>
+         <gzip src="${dist}/seco-dist-macos-${version}.tar"
+               destfile="${dist}/seco-dist-macos-${version}.tgz"/>
+	</target>    
 
 	<target description="clean up" name="clean">
 		<!-- Delete the ${build} and ${dist} directory trees -->
