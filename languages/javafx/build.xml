@@ -23,9 +23,10 @@
 		<fileset dir="jars">
 			<include name="**/*.jar" />
 		</fileset>
-		   <fileset dir="..">
-		      <include name="seco.jar"/>
-		   </fileset>
+		<!--seco jar is there-->
+		<fileset dir="../../core/build/seco">
+		   <include name="**/*.jar"/>
+		</fileset>
 		<pathelement path="${java.class.path}" />
 	</path>
 

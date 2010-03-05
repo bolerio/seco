@@ -24,9 +24,10 @@
 		<fileset dir="jars">
 			<include name="**/*.jar" />
 		</fileset>
-		   <fileset dir="..">
-		      <include name="seco.jar"/>
-		   </fileset>
+		<!--seco jar is there-->
+		<fileset dir="../../core/build/seco">
+		   <include name="**/*.jar"/>
+		</fileset>
 		<pathelement path="${java.class.path}" />
 	</path>
 
@@ -43,7 +44,7 @@
 	</target>
 
 	<target name="compile" depends="init" description="compile the Seco source">
-		<javac source="1.5" classpathref="classpath" debug="on" destdir="${build}/compile" srcdir="${src}">
+		<javac source="1.6" classpathref="classpath" debug="on" destdir="${build}/compile" srcdir="${src}">
 		</javac>
 	</target>
 
@@ -60,7 +61,7 @@
 	</target>
 
 	<target name="jars" depends="compile, jars-prepare" description="Build Jar file.">
-		<jar basedir="${build}/compile" jarfile="${dist_jars}/${jar-name}">
+		<jar basedir="${build}/compile" jarfile="${dist}/${jar-name}">
 			<exclude name="**/*.jar" />
 			<exclude name="**/*.bak" />
 		</jar>
