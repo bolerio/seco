@@ -13,6 +13,7 @@ import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
 import seco.notebook.util.Log;
+import seco.rtenv.RuntimeContext;
 import seco.talk.ConnectionManager;
 import seco.things.CellUtils;
 
@@ -133,6 +134,12 @@ public abstract class TopFrame extends JFrame
             }
         });
        flashThread.start();
+    }
+    
+    // TODO: legacy - called in .scm scripts
+    public HGHandle getCurrentRuntimeContext()
+    {
+        return ThisNiche.TOP_CONTEXT_HANDLE;
     }
 
     @Override
