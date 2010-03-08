@@ -221,9 +221,58 @@ public class NicheManager
         		"jscheme",
                 "jscheme.scriptingapi.JSchemeScriptEngineFactory",
                 new String[] { "jsint", "jscheme", "jscheme.scriptingapi" },
-                "seco.langs.jscheme.JSchemeScriptSupportFactory"));
-        
-        graph.add(new SEDescriptor("html", null, new String[0], "seco.notebook.HTMLScriptSupportFactory"));       
+                "seco.langs.jscheme.JSchemeScriptSupportFactory"));        
+        graph.add(new SEDescriptor(
+                "html", 
+                null, 
+                new String[0], 
+                "seco.notebook.HTMLScriptSupportFactory"));
+        // Try other know languages:
+        try
+        {
+            Class.forName("seco.langs.groovy.jsr.GroovyScriptEngineFactory");
+            graph.add(new SEDescriptor("groovy",  
+                                       "seco.langs.groovy.jsr.GroovyScriptEngineFactory",
+                                        new String[] {},  
+                                        "seco.langs.groovy.GroovyScriptSupportFactory"));            
+        }
+        catch (ClassNotFoundException t) { }
+        try
+        {
+            Class.forName("seco.langs.ruby.JRubyScriptEngineFactory");
+            graph.add(new SEDescriptor("jruby",  
+                                       "seco.langs.ruby.JRubyScriptEngineFactory",
+                                        new String[] {},   
+                                        "seco.langs.ruby.RubyScriptSupportFactory"));
+        }
+        catch (ClassNotFoundException t) { }
+        try
+        {
+            Class.forName("seco.langs.javafx.jsr.JavaFXScriptEngineFactory");
+            graph.add(new SEDescriptor("javafx",   
+                                       "seco.langs.javafx.jsr.JavaFXScriptEngineFactory",   
+                                        new String[] {},      
+                                        "seco.langs.javafx.JavaFxScriptSupportFactory"));            
+        }
+        catch (ClassNotFoundException t) { }        
+        try
+        {
+            Class.forName("alice.tuprologx.TuScriptEngineFactory");
+            graph.add(new SEDescriptor("prolog",   
+                                       "alice.tuprologx.TuScriptEngineFactory",   
+                                        new String[] {},      
+                                        "seco.langs.prolog.PrologScriptSupportFactory"));            
+        }
+        catch (ClassNotFoundException t) { }       
+        try
+        {
+            Class.forName("seco.langs.javascript.jsr.RhinoScriptEngineFactory");
+            graph.add(new SEDescriptor("javascript",   
+                                       "seco.langs.javascript.jsr.RhinoScriptEngineFactory",   
+                                        new String[] {},      
+                                        "seco.langs.javascript.JSScriptSupportFactory"));            
+        }
+        catch (ClassNotFoundException t) { }          
     }
     
     static void populateDefaultVisuals(HyperGraph graph)
