@@ -476,8 +476,13 @@ public class ClassRepository
                 String classDes = entryName.substring(0, entryName.length() - 6);
                 // loading of each class leads to OutOfMemoryExc in some JVM
                 // versions, so take the name from file
-                String simple = classDes
-                        .substring(classDes.lastIndexOf('.') + 1);
+                int idx = classDes.lastIndexOf('/');
+                if(idx == -1)
+                    idx = classDes.lastIndexOf('\\');
+                if(idx == -1)
+                    idx = classDes.lastIndexOf('.');
+                String simple = classDes.substring(idx + 1);
+                //System.out.println("classDes: " + classDes + " simple: " + simple);
                 HGHandle clsH = getClsHandle(simple, true);
                 graph.add(new JarLink(new HGHandle[] { jarHandle, clsH }));
                 if (lastP != null)
