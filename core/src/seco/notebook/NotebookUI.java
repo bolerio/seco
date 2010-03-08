@@ -651,7 +651,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                     {
                         pt = getPoint(e, f);
                     }
-                    popupMenu.show(ui, pt.x, pt.y);
+                    popupMenu.show(f, pt.x, pt.y);
                 }
             }
         }

@@ -21,6 +21,7 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -665,7 +666,11 @@ public class GUIHelper
             name = "CanvasCellGroup";
         CellGroup c = new CellGroup(name);
         HGHandle h = ThisNiche.graph.add(c);
-        return addToTopCellGroup(h, visualH, null, CONTAINER_RECT);
+       // return addToTopCellGroup(h, visualH, null, CONTAINER_RECT);
+        Map<Object, Object> attribs = new HashMap<Object, Object>();
+        attribs.put(VisualAttribs.showTitle, true);
+       return addToCellGroup(h, (CellGroup) ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE),
+                visualH, null, CONTAINER_RECT, false, attribs, -1);
     }
 
     public static HGHandle addToTopCellGroup(final Object x, final Rectangle r)

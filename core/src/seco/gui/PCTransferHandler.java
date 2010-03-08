@@ -6,6 +6,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -70,12 +72,14 @@ public class PCTransferHandler extends TransferHandler
                 HGHandle vis = (outputC) ? JComponentVisual.getHandle()
                         : NBUIVisual.getHandle();
                 CellGroup group = ThisNiche.graph.get(canvas.getGroupH());
+                Map<Object, Object> attribs = new HashMap<Object, Object>();
+                attribs.put(VisualAttribs.showTitle, true);
                 if (move) GUIHelper.addToCellGroup(nbH, group, vis, null,
-                        new Rectangle(pt.x, pt.y, 200, 200), false);
+                        new Rectangle(pt.x, pt.y, 200, 200), false, attribs, -1);
                 else
                     GUIHelper.addToCellGroup(CellUtils.makeCopy(nbH), group,
                             vis, null, new Rectangle(pt.x, pt.y, 200, 200),
-                            false);
+                            false, attribs, -1);
             }
             return true;
         }
@@ -198,6 +202,7 @@ public class PCTransferHandler extends TransferHandler
             }
         }
         CellUtils.setAppropriateBounds(cgm, r, true);
+        cgm.getAttributes().put(VisualAttribs.showTitle, true);
         top.insert(top.getArity(), h);
     }
 
