@@ -10,7 +10,7 @@ public class RubyScriptSupportFactory extends ScriptSupportFactory
 {
     public RubyScriptSupportFactory()
     {
-        addMode("ruby", new Mode("ruby", "/modes/ruby.xml",this));
+        addMode("jruby", new Mode("jruby", "/modes/ruby.xml",this));
     }
 
     public String getEngineName()

@@ -26,17 +26,19 @@ package seco.langs.ruby;
  * JRubyScriptEngineFactory.java
  * @author A. Sundararajan
  */
-import javax.script.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import javax.script.*;
-import java.util.*;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 
 public class JRubyScriptEngineFactory implements ScriptEngineFactory
 {
-	public String getEngineName()
+    
+    public String getEngineName()
 	{
-		return "JRuby Engine";
+		return "jruby";
 	}
 
 	public String getEngineVersion()
@@ -51,7 +53,7 @@ public class JRubyScriptEngineFactory implements ScriptEngineFactory
 
 	public String getLanguageName()
 	{
-		return "ruby";
+		return "jruby";
 	}
 
 	public String getLanguageVersion()
@@ -160,13 +162,20 @@ public class JRubyScriptEngineFactory implements ScriptEngineFactory
 		return buf.toString();
 	}
 
-	public ScriptEngine getScriptEngine()
+	public ScriptEngine createScriptEngine()
 	{
 		JRubyScriptEngine engine = new JRubyScriptEngine();
 		engine.setFactory(this);
 		return engine;
 	}
+	
+	 @Override
+    public ScriptEngine getScriptEngine()
+    {
+       return createScriptEngine();
+    }
 
+  
 	private static List<String> names;
 	private static List<String> extensions;
 	private static List<String> mimeTypes;
