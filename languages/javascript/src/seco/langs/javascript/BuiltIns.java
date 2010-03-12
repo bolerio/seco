@@ -22,10 +22,10 @@ public class BuiltIns
     public static final String NUM = "Number";
     public static final String STRING = "String";
     public static final String MATH = "Math";
+    public static final String FUNCTION = "Function";
 
     private static final String VOID = "void";
-    // private static final String FUNCTION = "Function";
-
+    
     private static final String[] ARR_NUM = new String[] { NUM };
     private static final String[] ARR_STR = new String[] { STRING };
     static Map<String, List<JavaResultItem>> objectsMap;
@@ -63,6 +63,7 @@ public class BuiltIns
             objectsMap.put(NUM, number());
             objectsMap.put(REG_EXP, regexp());
             objectsMap.put(OBJECT, object());
+            objectsMap.put(FUNCTION, function_());
         }
         return objectsMap;
     }
@@ -313,6 +314,16 @@ public class BuiltIns
         params.add(PROP_TO_STRING);
         params.add(PROP_VALUE_OF);
 
+        return params;
+    }
+    
+    private static List<JavaResultItem> function_()
+    {
+        List<JavaResultItem> params = new ArrayList<JavaResultItem>(object());
+        params.add(new JSVarArgMethod("call", OBJECT,
+                new String[] { OBJECT }, new String[] { "object" }, Modifier.PUBLIC));
+        params.add(new JavaResultItem.MethodItem("apply", OBJECT,
+                new String[] { OBJECT, ARRAY }, new String[] { "object", "array" }));
         return params;
     }
 
