@@ -1,9 +1,17 @@
 package seco.gui;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
@@ -21,6 +29,7 @@ import seco.notebook.NotebookUI;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
@@ -48,7 +57,7 @@ public class PiccoloCanvas extends PSwingCanvas
     ContextMenuHandler ctxMenuHandler;
     boolean nested;
     PSwingNode maximizedNode;
-    
+
     public PiccoloCanvas()
     {
         this(false);
@@ -105,7 +114,7 @@ public class PiccoloCanvas extends PSwingCanvas
         setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
         setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
         setDefaultRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
-               
+
         selectionHandler = new PCSelectionHandler();
         selectionHandler.setEventFilter(new PInputEventFilter(
                 InputEvent.BUTTON1_MASK));
@@ -113,33 +122,31 @@ public class PiccoloCanvas extends PSwingCanvas
         getRoot().getDefaultInputManager().setKeyboardFocus(selectionHandler);
 
         setPanEventHandler(null);
-       
 
         ctxMenuHandler = new ContextMenuHandler();
         ctxMenuHandler.setEventFilter(new PInputEventFilter(
                 InputEvent.BUTTON3_MASK));
         addInputEventListener(ctxMenuHandler);
-        
+
         PZoomEventHandler zoomer = new MyZoomEventHandler(this);
         zoomer.setMinScale(.25);
         zoomer.setMaxScale(3);
         setZoomEventHandler(zoomer);
-        
-        getCamera().addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM, 
-                new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent evt)
-            {
-                PAffineTransform tr = getCamera().getViewTransform();
-                HGHandle h = PiccoloCanvas.this.getGroupH();
-                if(h != null)
-                {
-                    AffineTransformEx old = CellUtils.getZoom(h);
-                    if(tr != null && tr.equals(old)) return;
-                    CellUtils.setZoom(h, tr);
-                }
-            }
-        });
+
+        getCamera().addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM,
+                new PropertyChangeListener() {
+                    public void propertyChange(PropertyChangeEvent evt)
+                    {
+                        PAffineTransform tr = getCamera().getViewTransform();
+                        HGHandle h = PiccoloCanvas.this.getGroupH();
+                        if (h != null)
+                        {
+                            AffineTransformEx old = CellUtils.getZoom(h);
+                            if (tr != null && tr.equals(old)) return;
+                            CellUtils.setZoom(h, tr);
+                        }
+                    }
+                });
     }
 
     void removePSwingEventHandler()
@@ -160,7 +167,7 @@ public class PiccoloCanvas extends PSwingCanvas
         // System.out.println("PicCanvas - relayout(): " +
         // getCamera().getChildrenCount() +
         // ":" + this);
-        if(maximizedNode != null) return;
+        if (maximizedNode != null) return;
         for (int i = 0; i < getCamera().getChildrenCount(); i++)
         {
             PNode o = getCamera().getChild(i);
@@ -180,9 +187,8 @@ public class PiccoloCanvas extends PSwingCanvas
 
     public void deleteSelection()
     {
-        if(selectionHandler.getSelection().isEmpty()) return;
-        if(maximizedNode != null)
-           unmaximizeNode(maximizedNode);
+        if (selectionHandler.getSelection().isEmpty()) return;
+        if (maximizedNode != null) unmaximizeNode(maximizedNode);
         for (PNode node : selectionHandler.getSelection())
         {
             if (!(node instanceof PSwingNode)) continue;
@@ -231,7 +237,8 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         if (!(o instanceof PSwingNode)) return;
         PSwingNode p = (PSwingNode) o;
-        CellGroupMember cm = (CellGroupMember) ThisNiche.graph.get(p.getHandle());
+        CellGroupMember cm = (CellGroupMember) ThisNiche.graph.get(p
+                .getHandle());
         if (cm != null)
         {
             if (CellUtils.isMinimized(cm)) return;
@@ -271,21 +278,21 @@ public class PiccoloCanvas extends PSwingCanvas
     public void maximizeNode(PSwingNode n)
     {
         if (n == null) return;
-        if(n.getCanvas() != this)
+        if (n.getCanvas() != this)
         {
-            n.getCanvas().maximizeNode(n); return;
+            n.getCanvas().maximizeNode(n);
+            return;
         }
-        if(maximizedNode != null) return;
+        if (maximizedNode != null) return;
         maximizedNode = n;
         for (int i = 0; i < getNodes().size(); i++)
         {
             PNode o = getNode(i);
             if (!o.equals(n)) o.setVisible(false);
         }
-        //System.out.println("maximize: " + nested + ":" +
-        //        (n.getCanvas() == TopFrame.getInstance().getCanvas()));
-        if (!nested)
-            for (int i = 0; i < getFixedNodes().size(); i++)
+        // System.out.println("maximize: " + nested + ":" +
+        // (n.getCanvas() == TopFrame.getInstance().getCanvas()));
+        if (!nested) for (int i = 0; i < getFixedNodes().size(); i++)
         {
             PNode o = getFixedNode(i);
             if (!o.equals(n)) o.setVisible(false);
@@ -297,14 +304,15 @@ public class PiccoloCanvas extends PSwingCanvas
         n.translate(-b.x + 30, -b.y + 30);
         n.getComponent().revalidate();
     }
-    
+
     public void unmaximizeNode(PSwingNode n)
     {
-        if(n.getCanvas() != this)
+        if (n.getCanvas() != this)
         {
-            n.getCanvas().unmaximizeNode(n); return;
+            n.getCanvas().unmaximizeNode(n);
+            return;
         }
-        if(maximizedNode == null) return;
+        if (maximizedNode == null) return;
         maximizedNode = null;
         showAllNodes();
         placeNode(n);
@@ -383,10 +391,9 @@ public class PiccoloCanvas extends PSwingCanvas
             if (dim.height < 100 || dim.height > 800) dim.height = 100;
 
             p.setBounds(0, 0, dim.width, dim.height);
-            if(nested)
-              p.translate(20, 20);
+            if (nested) p.translate(20, 20);
             else
-               p.translate(100, 100);
+                p.translate(100, 100);
         }
     }
 
@@ -416,32 +423,32 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         getNodeLayer().addChild(node);
     }
-    
+
     public void removeNode(PNode node)
     {
         getNodeLayer().removeChild(node);
     }
-    
+
     public PNode getNode(int i)
     {
-       return getNodeLayer().getChild(i);
+        return getNodeLayer().getChild(i);
     }
-    
+
     public void addFixedNode(PNode node)
     {
         getCamera().addChild(node);
     }
-    
+
     public void removeFixedNode(PNode node)
     {
         getCamera().removeChild(node);
     }
-    
+
     public PNode getFixedNode(int i)
     {
-       return getCamera().getChild(i);
+        return getCamera().getChild(i);
     }
-    
+
     public Collection<PSwingNode> getNodes()
     {
         return (Collection<PSwingNode>) nodeLayer.getAllNodes(ps_filter, null);
@@ -452,7 +459,7 @@ public class PiccoloCanvas extends PSwingCanvas
         return (Collection<PSwingNode>) getCamera()
                 .getAllNodes(ps_filter, null);
     }
-    
+
     void removeAllNodes()
     {
         getCamera().removeAllChildren();
@@ -482,36 +489,67 @@ public class PiccoloCanvas extends PSwingCanvas
     {
         return selectionHandler;
     }
-    
-    public static class MyZoomEventHandler extends PZoomEventHandler
+
+    static class MyZoomEventHandler extends PZoomEventHandler
     {
+        PInputEvent original = null;
         PiccoloCanvas canvas;
-        
-        public MyZoomEventHandler(PiccoloCanvas canvas)
+
+        public MyZoomEventHandler( PiccoloCanvas canvas)
         {
             this.canvas = canvas;
         }
 
         @Override
-        protected void stopDragActivity(PInputEvent event)
+        public void mousePressed(PInputEvent e)
         {
-            // TODO Auto-generated method stub
-            super.stopDragActivity(event);
+            if (accept((MouseEvent) e.getSourceSwingEvent()))
+                original = e;
         }
 
         @Override
-        protected void dragActivityFirstStep(PInputEvent event)
+        public void mouseReleased(PInputEvent e)
         {
-            //System.out.println("dragActivityFirstStep" + canvas.getSelectedPSwingNode());
-            super.dragActivityFirstStep(event);
-        }
-
-        @Override
-        protected void dragActivityStep(PInputEvent event)
-        {
-            //System.out.println("dragActivityStep" + canvas.getSelectedPSwingNode());
-            super.dragActivityStep(event);
+            e.getComponent().setInteracting(false);
+             original = null;
         }
         
+        private boolean accept(MouseEvent e)
+        {
+            return e.getButton() == MouseEvent.BUTTON3 
+                    && !e.isControlDown() &&
+                    !e.isShiftDown() && !e.isAltDown();
+        }
+        
+        @Override
+        public void mouseDragged(PInputEvent e)
+        {
+            if(original == null || //some node is under the mouse 
+                    !(e.getPath().getPickedNode() instanceof PCamera)) return;
+            PCamera camera = (PCamera) e.getPath().getPickedNode();
+            e.getComponent().setInteracting(true);
+            super.mouseDragged(e);
+            doZoom(camera, original, e);
+        }
+        
+        protected void doZoom(PCamera camera, PInputEvent ref, PInputEvent now)
+        {
+            Point2D zoomPt = ref.getCanvasPosition();
+            
+            double dx = ((MouseEvent)ref.getSourceSwingEvent()).getX() -
+               ((MouseEvent)now.getSourceSwingEvent()).getX(); 
+            double scaleDelta = (1.0 + (0.001 * dx));
+            double currentScale = camera.getViewScale();
+            double newScale = currentScale * scaleDelta;
+
+            if (newScale < getMinScale())
+                scaleDelta = getMinScale() / currentScale;
+            
+            if ((getMaxScale() > 0) && (newScale > getMaxScale()))
+                scaleDelta = getMaxScale() / currentScale;
+    
+            camera.scaleViewAboutPoint(scaleDelta, zoomPt.getX(), zoomPt.getY());
+            original = now;   
+        }
     }
 }
