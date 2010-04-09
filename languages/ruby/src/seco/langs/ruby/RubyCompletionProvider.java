@@ -87,16 +87,14 @@ public class RubyCompletionProvider implements CompletionProvider
 				// System.out.println("RubyCompProv - query: " + s + ":" +
 				// offset);
 				Object obj = p.resolveVar(s, offset);
-				// if (obj != null)
+				 if (obj != null)
 				//System.out.println("RubyCompProv - query - obj: " + obj);
-				// " cls:" + ((obj != null) ? obj.getClass(): "null") + ":" +
-				// p.evaled_or_guessed);
+				
 				if (obj == null)
 				{
 					resultSet.finish();
 					return;
 				}
-				Class<?> cls = obj.getClass();
 				if (obj instanceof RubyClass)
 				{
 					populateRubyClass(resultSet, (RubyClass) obj);
@@ -106,8 +104,10 @@ public class RubyCompletionProvider implements CompletionProvider
 					populateRubyModule(resultSet, (RubyModule) obj);
 					return;
 				}
+				Class<?> cls = obj.getClass();
 				int mod = Modifier.PUBLIC;
-				if (!p.evaled_or_guessed) cls = (Class<?>) obj;
+				if (!p.evaled_or_guessed) 
+				    cls = (Class<?>) obj;
 				populateComplPopup(resultSet, cls, mod);
 			}
 			catch (Exception ex)
@@ -123,9 +123,10 @@ public class RubyCompletionProvider implements CompletionProvider
 				RubyClass t)
 		{
 			// System.out.println("populateRubyClass: " + t);
+		    resultSet.setTitle(t.toString());
 			while (t != null)
 			{
-				for (Object key : t.getMethods().keySet())
+			    for (Object key : t.getMethods().keySet())
 				{
 					DynamicMethod m = (DynamicMethod) t.getMethods().get(key);
 					if (m.getVisibility().isPrivate() || 

@@ -586,7 +586,7 @@ public class JRubyScriptEngine extends AbstractScriptEngine implements
 		return JavaEmbedUtils.rubyToJava(runtime, result, Object.class);
 	}
 
-	synchronized Object evalNode(Node node, ScriptContext ctx)
+    synchronized Object evalNode(Node node, ScriptContext ctx)
 			throws ScriptException
 	{
 		GlobalVariables oldGlobals = runtime.getGlobalVariables();
