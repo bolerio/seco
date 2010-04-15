@@ -1,18 +1,18 @@
 <notebook title="F:\kosta\ticl\seco\languages\InstallLanguages.nb">
     <cell-group name="CG4" collapsed="true">
-        <cell initialization="true" engine="null">
+        <cell initialization="true">
             <data><![CDATA[import seco.rtenv.*;
 ]]>            </data>
         </cell>
 
     </cell-group>
     <cell-group name="CG0">
-        <cell html-preview="true" engine="html">
+        <cell html-preview="true">
             <data><![CDATA[<h2>JRuby
 </h2>
 ]]>            </data>
         </cell>
-        <cell engine="null">
+        <cell>
             <data><![CDATA[seco.langs.ruby.JRubyScriptEngineFactory.class;
 niche.add(new SEDescriptor( "jruby",  "seco.langs.ruby.JRubyScriptEngineFactory",
                 new String[] {},   "seco.langs.ruby.RubyScriptSupportFactory"));
@@ -21,10 +21,10 @@ niche.add(new SEDescriptor( "jruby",  "seco.langs.ruby.JRubyScriptEngineFactory"
 
     </cell-group>
     <cell-group name="CG1">
-        <cell html-preview="true" engine="html">
+        <cell html-preview="true">
             <data><![CDATA[JavaScript]]>            </data>
         </cell>
-        <cell engine="null">
+        <cell>
             <data><![CDATA[seco.langs.javascript.jsr.RhinoScriptEngineFactory.class;
 niche.add(new SEDescriptor( "javascript",   "seco.langs.javascript.jsr.RhinoScriptEngineFactory",
                 new String[] {},  "seco.langs.javascript.JSScriptSupportFactory"));
@@ -33,12 +33,12 @@ niche.add(new SEDescriptor( "javascript",   "seco.langs.javascript.jsr.RhinoScri
 
     </cell-group>
     <cell-group name="CG2">
-        <cell html-preview="true" engine="html">
+        <cell html-preview="true">
             <data><![CDATA[<h2>Groovy
 </h2>
 ]]>            </data>
         </cell>
-        <cell engine="null">
+        <cell>
             <data><![CDATA[seco.langs.groovy.jsr.GroovyScriptEngineFactory.class;
 niche.add(new SEDescriptor( "groovy",  "seco.langs.groovy.jsr.GroovyScriptEngineFactory",
                 new String[] {},  "seco.langs.groovy.GroovyScriptSupportFactory"));
@@ -47,15 +47,29 @@ niche.add(new SEDescriptor( "groovy",  "seco.langs.groovy.jsr.GroovyScriptEngine
 
     </cell-group>
     <cell-group name="CG3">
-        <cell html-preview="true" engine="html">
-            <data><![CDATA[
-<h2>JavaFX
-</h2>]]>            </data>
+        <cell html-preview="true">
+            <data><![CDATA[<h2>JavaFX
+</h2>
+]]>            </data>
         </cell>
-        <cell engine="null">
+        <cell>
             <data><![CDATA[seco.langs.javafx.jsr.JavaFXScriptEngineFactory.class;
 niche.add(new SEDescriptor( "javafx",   "seco.langs.javafx.jsr.JavaFXScriptEngineFactory",   
        new String[] {},      "seco.langs.javafx.JavaFxScriptSupportFactory"));
+]]>            </data>
+        </cell>
+
+    </cell-group>
+    <cell-group name="CG0">
+        <cell html-preview="true" engine="html">
+            <data><![CDATA[
+<h2>Python
+</h2>]]>            </data>
+        </cell>
+        <cell>
+            <data><![CDATA[seco.langs.python.jsr223.PyScriptEngineFactory.class;
+niche.add(new SEDescriptor( "python",  "seco.langs.python.jsr223.PyScriptEngineFactory",
+                new String[] {},  "seco.langs.python.PythonScriptSupportFactory"));
 ]]>            </data>
         </cell>
 

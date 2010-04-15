@@ -48,7 +48,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import com.sun.tools.javac.code.Type;
+//import com.sun.tools.javac.code.Type;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.ArrayType;
@@ -59,8 +59,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.lang.model.type.WildcardType;
 import javax.lang.model.util.SimpleTypeVisitor6;
-//import org.netbeans.api.java.source.SourceUtils;
-//import org.netbeans.modules.csl.api.Modifier;
+
 
 import seco.notebook.csl.Modifier;
 
@@ -292,13 +291,14 @@ public final class Utilities {
                     if (bound.getKind() == TypeKind.WILDCARD)
                         bound = ((WildcardType)bound).getSuperBound();
                     visit(bound, p);
-                } else if (len == 0) {
-                    bound = getBound(t);
-                    if (bound != null && (bound.getKind() != TypeKind.DECLARED || !((TypeElement)((DeclaredType)bound).asElement()).getQualifiedName().contentEquals("java.lang.Object"))) { //NOI18N
-                        DEFAULT_VALUE.append(" extends "); //NOI18N
-                        visit(bound, p);
-                    }
-                }
+                } 
+//                    else if (len == 0) {
+//                    bound = getBound(t);
+//                    if (bound != null && (bound.getKind() != TypeKind.DECLARED || !((TypeElement)((DeclaredType)bound).asElement()).getQualifiedName().contentEquals("java.lang.Object"))) { //NOI18N
+//                        DEFAULT_VALUE.append(" extends "); //NOI18N
+//                        visit(bound, p);
+//                    }
+//                }
             } else {
                 DEFAULT_VALUE.append(" super "); //NOI18N
                 visit(bound, p);
@@ -318,10 +318,10 @@ public final class Utilities {
     }
     
     
-    public static TypeMirror getBound(WildcardType wildcardType) {
-        Type.TypeVar bound = ((Type.WildcardType)wildcardType).bound;
-        return bound != null ? bound.bound : null;
-    }
+//    public static TypeMirror getBound(WildcardType wildcardType) {
+//        Type.TypeVar bound = ((Type.WildcardType)wildcardType).bound;
+//        return bound != null ? bound.bound : null;
+//    }
 
     private static class ClassNameVisitor extends SimpleTypeVisitor6<StringBuilder,Void> {
 
