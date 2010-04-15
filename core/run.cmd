@@ -1,5 +1,5 @@
 @echo off
-set JAVA_HOME=c:/java6
+set JAVA_HOME=C:\jdk1.6.0_05
 set SCRIBA_HOME=%CD%
 
 set SCRIBA_CLASSPATH="%SCRIBA_HOME%/seco.jar"
