@@ -100,7 +100,7 @@ public class CellUtils
         for (int i = 0; i < group.getArity(); i++)
         {
             CellGroupMember cgm = group.getElement(i);
-            if (cgm instanceof Cell) continue;
+            if (cgm == null || cgm instanceof Cell) continue;
             CellVisual visual = CellUtils.getVisual(cgm);
             if (visual instanceof NBUIVisual) evalInitCells((CellGroup) cgm);
             else if (visual instanceof CellContainerVisual
