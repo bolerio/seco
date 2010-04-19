@@ -1,16 +1,7 @@
 package seco.langs.groovy;
 
-import groovy.lang.GroovyClassLoader;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CancellationException;
-import java.util.logging.Level;
 
-import javax.script.ScriptContext;
 import javax.swing.JTree;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelEvent;
@@ -23,23 +14,20 @@ import javax.swing.tree.TreePath;
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.CompileUnit;
 import org.codehaus.groovy.ast.ModuleNode;
-import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.CompilationUnit;
 import org.codehaus.groovy.control.ErrorCollector;
 import org.codehaus.groovy.control.Phases;
 import org.codehaus.groovy.control.messages.Message;
 import org.codehaus.groovy.control.messages.SyntaxErrorMessage;
 import org.codehaus.groovy.syntax.SyntaxException;
-import org.codehaus.groovy.control.*;
 
 import seco.langs.groovy.jsr.GroovyScriptEngine;
 import seco.notebook.AppConfig;
 import seco.notebook.syntax.Formatter;
-import seco.notebook.syntax.Mode;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.ScriptSupportFactory;
 import seco.notebook.syntax.completion.CompletionProvider;
 import seco.notebook.syntax.completion.NBParser;
-import seco.notebook.syntax.completion.NBParser.ParserRunnable;
 import seco.notebook.syntax.java.JavaFormatter;
 import seco.notebook.syntax.java.JavaFormatterOptions;
 import seco.notebook.util.SegmentCache;

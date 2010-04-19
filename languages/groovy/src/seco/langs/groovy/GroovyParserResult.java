@@ -43,18 +43,11 @@ package seco.langs.groovy;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.codehaus.groovy.ast.ModuleNode;
-//import org.netbeans.modules.csl.api.Error;
-//import org.netbeans.modules.groovy.editor.api.StructureAnalyzer;
-//import org.netbeans.modules.groovy.editor.api.elements.AstRootElement;
 import org.codehaus.groovy.control.ErrorCollector;
-//import org.netbeans.api.annotations.common.NonNull;
-//import org.netbeans.modules.csl.api.OffsetRange;
-//import org.netbeans.modules.csl.spi.ParserResult;
-//import org.netbeans.modules.parsing.api.Snapshot;
 
 import seco.langs.groovy.GroovyScriptSupport.GroovyScriptParser;
-import seco.notebook.csl.OffsetRange;
 
 /**
  *
@@ -93,19 +86,6 @@ public class GroovyParserResult
     public void setErrors(List<? extends Error> errors) {
         this.errors = new ArrayList<Error>(errors);
     }
-    
-   
-//    public void setStructure(@NonNull StructureAnalyzer.AnalysisResult result) {
-//        this.analysisResult = result;
-//    }
-//
-//    @NonNull
-//    public StructureAnalyzer.AnalysisResult getStructure() {
-//        if (analysisResult == null) {
-//            analysisResult = new StructureAnalyzer().analyze(this);
-//        }
-//        return analysisResult;
-//    }
-
+ 
 }
 

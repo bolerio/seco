@@ -59,11 +59,6 @@ import org.codehaus.groovy.ast.expr.ClosureListExpression;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
 import org.codehaus.groovy.ast.stmt.ForStatement;
 import org.codehaus.groovy.control.SourceUnit;
-//import org.netbeans.api.lexer.Token;
-//import org.netbeans.api.lexer.TokenSequence;
-//import org.netbeans.editor.BaseDocument;
-//import org.netbeans.modules.groovy.editor.api.lexer.GroovyTokenId;
-//import org.netbeans.modules.groovy.editor.api.lexer.LexUtilities;
 
 /**
  *
@@ -181,12 +176,6 @@ public class TypeVisitor extends ClassCodeVisitorSupport {
 //        visitBlockStatement(moduleNode.getStatementBlock());
     }
 
-//    /**
-//     * Children can override this if it has special requirement on selected token.
-//     */
-//    protected boolean isValidToken(Token<? extends GroovyTokenId> token) {
-//        return true;
-//    }
 
     /**
      * Children can override this to do extra things with method/constructor parameters.
