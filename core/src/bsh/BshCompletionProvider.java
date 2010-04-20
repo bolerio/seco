@@ -235,17 +235,14 @@ public class BshCompletionProvider implements CompletionProvider
 
 			public DocItem(Object item, JavaDoc javaDoc)
 			{
-				this.javaDoc = javaDoc != null ? javaDoc : new JavaDoc(
-						component);
-				this.javaDoc.docItem = this;
-				this.javaDoc.setItem(item);
+				this.javaDoc = javaDoc != null ? javaDoc : 
+				    new JavaDoc(this, item);
 				this.url = getURL(item);
 			}
 
 			public CompletionDocumentation resolveLink(String link)
 			{
-				// ???Object item = javaDoc.parseLink(link, (Class)null);
-				return null;// item != null ? new DocItem(item, javaDoc) : null;
+				return null;
 			}
 
 			public String getText()
@@ -273,20 +270,15 @@ public class BshCompletionProvider implements CompletionProvider
 				public static final String CONTENT_NOT_FOUND = "JavaDoc Not Found.";
 				private DocItem docItem;
 
-				private JavaDoc(JTextComponent component)
+				private JavaDoc(DocItem docItem, Object item)
 				{
-				}
-
-				private void setItem(Object item)
-				{
-					showJavaDoc(JavaDocManager.getInstance().getHTML(item));
+				    this.docItem = docItem;
+				    showJavaDoc(JavaDocManager.getInstance().getHTML(item));
 				}
 
 				private URL getURL(Object item)
 				{
-					// URL[] urls = getJMISyntaxSupport().getJavaDocURLs(item);
-					return null;// (urls == null || urls.length < 1) ? null :
-								// urls[0];
+					return null;
 				}
 
 				protected void showJavaDoc(String preparedText)
