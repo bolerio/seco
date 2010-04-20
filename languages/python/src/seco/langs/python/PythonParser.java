@@ -1,15 +1,16 @@
 package seco.langs.python;
 
 import java.io.CharArrayReader;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
-import java.io.InputStream;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.JTree;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.text.BadLocationException;
+
 import org.python.antlr.runtime.ANTLRStringStream;
 import org.python.antlr.runtime.BaseRecognizer;
 import org.python.antlr.runtime.BitSet;
@@ -36,6 +37,8 @@ import org.python.antlr.runtime.CharStream;
 
 import javax.swing.text.Element;
 import javax.swing.text.Segment;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 
 import seco.langs.python.jsr223.PyScriptEngine;
 import seco.notebook.csl.GsfUtilities;
@@ -48,7 +51,7 @@ public class PythonParser extends NBParser
 {
     PyScriptEngine engine;
     ParserRunnable parserRunnable;
-    //GroovyParserResult parserResult;
+    PythonTree parseTree;
 
     public PythonParser(final ScriptSupport support)
     {
@@ -71,7 +74,7 @@ public class PythonParser extends NBParser
                     int offset = el.getStartOffset();
                     int length = el.getEndOffset() - el.getStartOffset();
                     support.getDocument().getText(offset, length, seg);
-                    parse(makeReader(seg, offset, length), "NONAME");
+                    parseTree = parse(makeReader(seg, offset, length), "NONAME");
                     return true;
                 }
                 catch (Throwable e)
@@ -621,6 +624,167 @@ public class PythonParser extends NBParser
 
         public int getErrorOffset() {
             return errorOffset;
+        }
+    }
+    
+    public JTree getAstTree()
+    {
+        if (parseTree == null) return null;
+        JTree astTree = new JTree();
+        PyTreeModel treeModel = new PyTreeModel(parseTree);
+        astTree.setModel(treeModel);
+        // astTree.setCellRenderer(new JSNodeRenderer());
+
+        return astTree;
+    }
+
+    class PyTreeModel implements TreeModel
+    {
+        PythonTree root = null;
+        protected EventListenerList listenerList = new EventListenerList();
+
+        public PyTreeModel(PythonTree t)
+        {
+            if (t == null) { throw new IllegalArgumentException("root is null"); }
+            root = t;
+        }
+
+        public Object getChild(Object parent, int index)
+        {
+            if (parent == null) { return null; }
+            PythonTree p = (PythonTree) parent;
+            if (p.getChildCount() == 0) return null;
+            if (p.getChildCount() <= index)
+                throw new ArrayIndexOutOfBoundsException("node " + p
+                        + " has no child with index: " + index);
+            return p.getChild(index);
+        }
+
+        public int getChildCount(Object parent)
+        {
+            if (parent == null) { throw new IllegalArgumentException(
+                    "root is null"); }
+            return ((PythonTree) parent).getChildCount();
+        }
+
+        public int getIndexOfChild(Object parent, Object child)
+        {
+            if (parent == null || child == null) { throw new IllegalArgumentException(
+                    "root or child is null"); }
+            int i = 0;
+            PythonTree p = (PythonTree) parent;
+            int index = p.getChildren().indexOf(child);
+            if(index > -1) return index;
+            throw new java.util.NoSuchElementException("node is not a child");
+        }
+
+        public Object getRoot()
+        {
+            return root;
+        }
+
+        public boolean isLeaf(Object node)
+        {
+            if (node == null) { throw new IllegalArgumentException(
+                    "node is null"); }
+            PythonTree t = (PythonTree) node;
+            return t.getChildCount() == 0;
+        }
+
+        public void addTreeModelListener(TreeModelListener l)
+        {
+            listenerList.add(TreeModelListener.class, l);
+        }
+        
+        public void removeTreeModelListener(TreeModelListener l)
+        {
+            listenerList.remove(TreeModelListener.class, l);
+        }
+
+        public TreeModelListener[] getTreeModelListeners()
+        {
+            return (TreeModelListener[]) listenerList
+                    .getListeners(TreeModelListener.class);
+        }
+
+        public void valueForPathChanged(TreePath path, Object newValue)
+        {
+            fireTreeStructureChanged(path.getLastPathComponent(), path);
+        }
+
+        /*
+         * ==================================================================
+         * 
+         * Borrowed from javax.swing.tree.DefaultTreeModel
+         * 
+         * ==================================================================
+         */
+        /*
+         * Notifies all listeners that have registered interest for notification
+         * on this event type. The event instance is lazily created using the
+         * parameters passed into the fire method.
+         * 
+         * @param source the node where the tree model has changed @param path
+         * the path to the root node
+         * 
+         * @see EventListenerList
+         */
+        private void fireTreeStructureChanged(Object source, TreePath path)
+        {
+            // Guaranteed to return a non-null array
+            Object[] listeners = listenerList.getListenerList();
+            TreeModelEvent e = null;
+            // Process the listeners last to first, notifying
+            // those that are interested in this event
+            for (int i = listeners.length - 2; i >= 0; i -= 2)
+            {
+                if (listeners[i] == TreeModelListener.class)
+                {
+                    // Lazily create the event:
+                    if (e == null) e = new TreeModelEvent(source, path);
+                    ((TreeModelListener) listeners[i + 1])
+                            .treeStructureChanged(e);
+                }
+            }
+        }
+
+        /**
+         * @param nodeBefore
+         * @return
+         */
+        public TreePath getTreePath(PythonTree node)
+        {
+            PythonTree[] nodes = getTreePathNodes((PythonTree) getRoot(), node, 0);
+            if (nodes == null) return null;
+            else
+                return new TreePath(nodes);
+        }
+
+        public PythonTree[] getTreePathNodes(PythonTree root, PythonTree node, int depth)
+        {
+            if (node == null) return null;
+            depth++;
+            PythonTree[] retNodes = null;
+            if (node == root)
+            {
+                retNodes = new PythonTree[depth];
+                retNodes[depth - 1] = root;
+            }
+            else
+            {
+                int n = getChildCount(root); // .getNumberOfChildren();
+                loop: for (int i = 0; i < n; i++)
+                {
+                    retNodes = getTreePathNodes((PythonTree) getChild(root, i), node,
+                            depth);
+                    if (retNodes != null)
+                    {
+                        retNodes[depth - 1] = root;
+                        break loop;
+                    }
+                }
+            }
+            return retNodes;
         }
     }
 }
