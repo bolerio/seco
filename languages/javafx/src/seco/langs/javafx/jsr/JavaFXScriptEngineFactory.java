@@ -36,7 +36,7 @@ public class JavaFXScriptEngineFactory
 
     public String getEngineVersion()
     {
-        return "1.0";
+        return "1.2";
     }
 
     public List<String> getExtensions()
@@ -51,7 +51,7 @@ public class JavaFXScriptEngineFactory
 
     public String getLanguageVersion()
     {
-        return "1.0";
+        return "1.2";
     }
 
     public String getMethodCallSyntax(String obj, String m, String args[])
