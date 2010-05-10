@@ -721,7 +721,8 @@ public class GUIHelper
             else if (x instanceof CellGroup)
             {
                 CellGroup inner = (CellGroup) x;
-                if (inner.getVisualInstance() instanceof GroupVisual)
+                Object visual = ThisNiche.graph.get(inner.getVisual());
+                if (visual instanceof GroupVisual)
                 {
                     HGHandle inH = getCellHandleByValueHandle(ThisNiche
                             .handleOf(inner), objectHandle);

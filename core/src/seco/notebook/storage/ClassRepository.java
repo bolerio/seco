@@ -98,7 +98,7 @@ public class ClassRepository
                     addLibDir(new File(AppConfig.getConfigDirectory(), "lib")
                             .getAbsolutePath(), false);
                     addJar(new File(AppConfig.getConfigDirectory(),
-                            "scriba.jar").getAbsolutePath(), false);
+                            "seco.jar").getAbsolutePath(), false);
                     System.out.println("Repository creation finished.");
                 }
                 finally

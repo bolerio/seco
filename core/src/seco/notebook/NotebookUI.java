@@ -710,28 +710,28 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 fb.setDot(n, realBias);
                 return;
             }
-//            if (doc.isInputCell(dot))
- //           {
-//                Element el = doc.getUpperElement(dot, inputCellBox);
-//                Cell cell = (Cell) NotebookDocument.getNBElement(el);
-//                if (CellUtils.isHTML(cell))
-//                {
-//                    HtmlView inner = getHtmlView(dot, bias);
-//                    if (inner != null)
-//                    {
-//                        HTMLEditor c = (HTMLEditor) inner.getComponent();
-//                        fb.setDot(dot, realBias);
-//                        c.requestFocus();
-//                    }
-//                    fb.setDot(dot, realBias);
-//                }
-//                else
-//                    fb.setDot(dot, bias);
-//            }
-//            else
-//            {
+            if (doc.isInputCell(dot))
+            {
+                Element el = doc.getUpperElement(dot, inputCellBox);
+                Cell cell = (Cell) NotebookDocument.getNBElement(el);
+                if (CellUtils.isHTML(cell))
+                {
+                    HtmlView inner = getHtmlView(dot, bias);
+                    if (inner != null)
+                    {
+                        HTMLEditor c = (HTMLEditor) inner.getComponent();
+                        fb.setDot(dot, realBias);
+                        c.requestFocus();
+                    }
+                    fb.setDot(dot, realBias);
+                }
+                else
+                    fb.setDot(dot, bias);
+            }
+            else
+            {
                 fb.setDot(dot, bias);
-//            }
+            }
         }
 
         public void moveDot(NavigationFilter.FilterBypass fb, int dot,
@@ -742,22 +742,22 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             Element el = getDoc().getUpperElement(dot, commonCell);
             if (el == null) 
             {
-//                HtmlView inner = getHtmlView(dot, bias);
-//                if (inner != null)
-//                {
-//                    HTMLEditor c = (HTMLEditor) inner.getComponent();
-//                    int mark0 = c.getCaret().getMark();
-//                    if(mark0 > inner.getEndOffset())
-//                        c.setCaretPosition(c.getDoc().getLength() -1);
-//                    if(mark0 < inner.getStartOffset())
-//                        c.setCaretPosition(0);
-//                    int new_dot = dot - inner.getStartOffset();
-//                    if(new_dot > inner.getEndOffset())
-//                        c.moveCaretPosition(c.getDoc().getLength() -1);
-//                    if(new_dot < inner.getStartOffset())
-//                        c.moveCaretPosition(0);
-//                    c.requestFocus();
-//                }
+                HtmlView inner = getHtmlView(dot, bias);
+                if (inner != null)
+                {
+                    HTMLEditor c = (HTMLEditor) inner.getComponent();
+                    int mark0 = c.getCaret().getMark();
+                    if(mark0 > inner.getEndOffset())
+                        c.setCaretPosition(c.getDoc().getLength() -1);
+                    if(mark0 < inner.getStartOffset())
+                        c.setCaretPosition(0);
+                    int new_dot = dot - inner.getStartOffset();
+                    if(new_dot > inner.getEndOffset())
+                        c.moveCaretPosition(c.getDoc().getLength() -1);
+                    if(new_dot < inner.getStartOffset())
+                        c.moveCaretPosition(0);
+                    c.requestFocus();
+                }
                 return;
             }
             if (mark >= el.getStartOffset() && mark <= el.getEndOffset()) fb

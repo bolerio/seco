@@ -22,12 +22,10 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URL;
 import java.util.Vector;
 
 import javax.swing.Action;
 import javax.swing.InputMap;
-import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -55,7 +53,6 @@ import javax.swing.text.html.StyleSheet;
 import javax.swing.undo.UndoManager;
 
 import seco.gui.GUIHelper;
-import seco.notebook.NotebookUI;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.UpdatablePopupMenu;
 import sun.awt.AppContext;

@@ -143,7 +143,9 @@ public class HtmlView extends HidableComponentView
                     NotebookUI ui = getNotebookUI();
                     if (ui == null) return;
                     if(ui.getDoc().isReadOnlyEl(getElement())) return;
-                    ui.setCaretPositionEx(getElement().getStartOffset() + e.getDot());
+                    int dot = getElement().getStartOffset() + e.getDot();
+                    if(dot < getElement().getEndOffset())
+                       ui.setCaretPositionEx(dot);
                     GUIHelper.getHTMLToolBar().showAttributes(InnerHTMLEditor.this, e.getDot());
                 }
                 

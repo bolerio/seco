@@ -3,6 +3,7 @@ package seco.gui;
 import java.awt.Component;
 
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
@@ -66,6 +67,8 @@ public class TabbedPaneVisual implements CellVisual, GroupVisual, EventHandler
         CellVisual visual = CellUtils.getVisual(cell);
         JComponent comp = visual.bind(cell);
         if(comp == null) return;
+        if(!(comp instanceof JScrollPane))
+           comp = new JScrollPane(comp);
         comp.putClientProperty(TabbedPaneU.CHILD_HANDLE_KEY, childH);
         String title = (CellUtils.getName(cell) != null) ? 
                 CellUtils.getName(cell): "Untitled";

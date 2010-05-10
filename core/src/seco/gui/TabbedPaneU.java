@@ -38,6 +38,7 @@ import seco.notebook.gui.ScriptEngineProvider;
 import seco.notebook.gui.menu.EnhancedMenu;
 import seco.notebook.gui.menu.RCListProvider;
 import seco.things.CellGroup;
+import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
 public class TabbedPaneU
@@ -147,14 +148,14 @@ public class TabbedPaneU
         act = new AbstractAction("Rename") {
             public void actionPerformed(ActionEvent e)
             {
-                NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-                if (ui == null) return;
-                if(CommonActions.renameCellGroupMember(ui.getDoc().getBookHandle()))
+                HGHandle h = getHandleAt(currentTP,currentTP.getSelectedIndex());
+                if(h == null) return;
+                if(CommonActions.renameCellGroupMember(h))
                 {
                     currentTP.setTitleAt(currentTP.getSelectedIndex(), 
-                            makeTabTitle(CellUtils.getName(ui.getDoc().getBook())));
-                    GUIHelper.updateFrameTitle(
-                            getHandleAt(currentTP,currentTP.getSelectedIndex()));
+                            makeTabTitle(CellUtils.getName(
+                                    (CellGroupMember) ThisNiche.graph.get(h))));
+                    GUIHelper.updateFrameTitle(h);
                 }
             }
         };
@@ -265,7 +266,9 @@ public class TabbedPaneU
         if(c instanceof JScrollPane)
         {
            JScrollPane comp =  (JScrollPane) c; 
-           return (NotebookUI) comp.getViewport().getView();
+           Component inner = comp.getViewport().getView();
+           if (inner instanceof NotebookUI) 
+               return (NotebookUI) inner;
         }else if(c instanceof NotebookUI)
             return (NotebookUI) c;
         return null;

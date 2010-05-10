@@ -35,6 +35,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.SimpleScriptContext;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
@@ -133,6 +134,9 @@ public class NotebookDocument extends DefaultStyledDocument
     @SuppressWarnings("unchecked")
     public void init()
     {
+        DocumentListener[] ls = listenerList.getListeners(DocumentListener.class);
+        for(int i = 0; i < ls.length; i++)
+            removeDocumentListener(ls[i]);
         if (inited) return;
         CellGroup book = ThisNiche.graph.get(bookH);
         Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) book
@@ -234,20 +238,19 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public EvaluationContext getEvaluationContext()
     {
-        if(evalContext == null)
+        if (evalContext == null)
         {
             HGHandle ctxH = CellUtils.getEvalContextH(getBook());
-            if(ctxH == null)
-               ctxH = ThisNiche.TOP_CONTEXT_HANDLE; 
-           evalContext = ThisNiche.getEvaluationContext(ctxH);
+            if (ctxH == null) ctxH = ThisNiche.TOP_CONTEXT_HANDLE;
+            evalContext = ThisNiche.getEvaluationContext(ctxH);
         }
         return evalContext;
     }
 
-//    public void setEvaluationContext(EvaluationContext ctx)
-//    {
-//        evalContext = ctx;
-//    }
+    // public void setEvaluationContext(EvaluationContext ctx)
+    // {
+    // evalContext = ctx;
+    // }
 
     public CellGroupMember getBook()
     {
@@ -284,10 +287,10 @@ public class NotebookDocument extends DefaultStyledDocument
                 {
                     HTMLEditor ed = (HTMLEditor) html.getAttributes()
                             .getAttribute(ATTR_HTML_EDITOR);
-                    if(ed.isModified())
+                    if (ed.isModified())
                     {
-                       CellUtils.setCellText(cell, ed.getContent());
-                       ed.setModified(false);
+                        CellUtils.setCellText(cell, ed.getContent());
+                        ed.setModified(false);
                     }
                 }
             }
@@ -301,7 +304,7 @@ public class NotebookDocument extends DefaultStyledDocument
             update(root.getElement(i), action);
         setModified(true);
     }
-    
+
     void update(Element el, UpdateAction action)
     {
         try
@@ -362,8 +365,8 @@ public class NotebookDocument extends DefaultStyledDocument
         sup = null;
         try
         {
-            ScriptSupportFactory factory = 
-                getEvaluationContext().getLanguageDescriptor(name).getEditSupportFactory();
+            ScriptSupportFactory factory = getEvaluationContext()
+                    .getLanguageDescriptor(name).getEditSupportFactory();
             sup = factory.createScriptSupport(el.getElement(0));
         }
         catch (Exception ex)
@@ -440,9 +443,10 @@ public class NotebookDocument extends DefaultStyledDocument
         syncronize, tokenize, resetTokenMarker, index
     };
 
-    public void evalGroup(CellGroup group) 
+    public void evalGroup(CellGroup group)
     {
-        CellUtils.evalGroup(group, getDefaultEngineName(), getEvaluationContext());
+        CellUtils.evalGroup(group, getDefaultEngineName(),
+                getEvaluationContext());
     }
 
     public void evalCellInAuxThread(Element el) throws BadLocationException
@@ -652,14 +656,14 @@ public class NotebookDocument extends DefaultStyledDocument
             Element el = elements.get(i);
             HGHandle child = getNBElementH(el);
             HGHandle copy = child;
-            if(!CellUtils.isBackuped(child)) 
-                CellUtils.makeCopy(child);
+            if (!CellUtils.isBackuped(child)) CellUtils.makeCopy(child);
             else
                 CellUtils.restoreCell(child, false);
             if (isInsP) insPointInsert(offset, copy);
             else
                 fireCellGroupChanged(new CellGroupChangeEvent(ThisNiche
-                        .handleOf(cg), ind + 1, new HGHandle[] {copy}, new HGHandle[0]));
+                        .handleOf(cg), ind + 1, new HGHandle[] { copy },
+                        new HGHandle[0]));
         }
         return true;
     }
@@ -1054,7 +1058,7 @@ public class NotebookDocument extends DefaultStyledDocument
 
     void group(Collection<Element> elems) throws BadLocationException
     {
-        for(Element el: elems)
+        for (Element el : elems)
             update(el, UpdateAction.syncronize);
         HGHandle gr_h = CellUtils.createGroupHandle();
         CellGroup gr = (CellGroup) ThisNiche.graph.get(gr_h);
@@ -1071,7 +1075,7 @@ public class NotebookDocument extends DefaultStyledDocument
             removed[i] = getNBElementH(el);
             i++;
         }
-        
+
         par.batchProcess(new CellGroupChangeEvent(ThisNiche.handleOf(par),
                 index, new HGHandle[] { gr_h }, removed), false);
     }
@@ -1136,8 +1140,7 @@ public class NotebookDocument extends DefaultStyledDocument
             gr_el = getContainerEl(gr_el, false);
         }
         CellGroup gr = (CellGroup) getNBElement(gr_el);
-        if (backup)
-            fireCellGroupChanged(new CellGroupChangeEvent(
+        if (backup) fireCellGroupChanged(new CellGroupChangeEvent(
                 getNBElementH(gr_el), gr.indexOf(nb), new HGHandle[0],
                 new HGHandle[] { nb }));
         else
@@ -1147,7 +1150,7 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public String getTitle()
     {
-        if(getBook() == null) return "<NULL>?";
+        if (getBook() == null) return "<NULL>?";
         String text = CellUtils.getName(getBook());
         if (text == null) text = "";
         return text;
@@ -1442,8 +1445,8 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public SyntaxStyle[] getSyntaxStyles(ScriptSupport support)
     {
-        SyntaxStyle[] styles = syntaxStyleMap
-                .get(support.getFactory().getEngineName());
+        SyntaxStyle[] styles = syntaxStyleMap.get(support.getFactory()
+                .getEngineName());
         if (styles == null)
         {
             ArrayList<SyntaxStyleBean> main = SyntaxUtilities
@@ -1609,6 +1612,31 @@ public class NotebookDocument extends DefaultStyledDocument
             if (listeners[i] == CaretMoveListener.class)
                 ((CaretMoveListener) listeners[i + 1]).caretMoved(pos);
     }
+
+//    static final String bad = "javax.swing.plaf.basic.BasicTextUI";
+//
+//    @Override
+//    public void addDocumentListener(DocumentListener listener)
+//    {
+//        // check and remove duplicated
+//        // javax.swing.plaf.basic.BasicTextUI$UpdateHandler
+//        if (listener.getClass().getName().startsWith(bad))
+//        {
+//            Object[] listeners = listenerList
+//                    .getListeners(DocumentListener.class);
+//            for (int i = 0; i < listeners.length; i++)
+//                if (listeners[i].getClass().getName().startsWith(bad))
+//                {
+//                    System.out
+//                            .println("Remove Duplicated BasicTextUI$UpdateHandler");
+//                    removeDocumentListener((DocumentListener) listeners[i]);
+//                    Thread.dumpStack();
+//                    break;
+//                }
+//
+//        }
+//        super.addDocumentListener(listener);
+//    }
 
     public static interface ModificationListener extends EventListener
     {

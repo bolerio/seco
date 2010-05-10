@@ -980,7 +980,7 @@ public class MyHTMLEditorKit extends HTMLEditorKit
             if (dot != mark)
             {
                 doc.remove(Math.min(dot, mark), Math.abs(dot - mark));
-                HTMLUtils.setCaretPosInAWT(editor, dot - 1);
+                //HTMLUtils.setCaretPosInAWT(editor, dot - 1);
             } else if (dot > 0)
             {
                 if (special_deal(editor, dot))
@@ -1000,6 +1000,7 @@ public class MyHTMLEditorKit extends HTMLEditorKit
                 doc.remove(dot - delChars, delChars);
                 //setCaretPosInAWT0(editor, dot - 1);
             }
+            HTMLUtils.setCaretPosInAWT(editor, dot - 1);
         }
         
 //        static void setCaretPosInAWT0(final HTMLEditor editor, final int pos){

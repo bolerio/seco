@@ -172,7 +172,7 @@ public class SecoTabbedPane extends JTabbedPane
         {
             JComponent comp = (JComponent) support.getComponent();
             Transferable t = support.getTransferable();
-            System.out.println("TPTransferHandler: " + comp + ":" + tp);
+            //System.out.println("TPTransferHandler: " + comp + ":" + tp);
             // Don't drop on myself.
             if (comp == tp) return false;
             DataFlavor fl = getImportFlavor(t.getTransferDataFlavors(), comp);

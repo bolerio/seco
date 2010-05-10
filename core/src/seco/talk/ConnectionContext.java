@@ -329,7 +329,7 @@ public class ConnectionContext
         {
             PSwingNode n = TopFrame.getInstance().getCanvas()
                     .getPSwingNodeForHandle(existingH);
-            n.blink();
+            if(n != null) n.blink();
             return;
         }
 
