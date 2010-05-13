@@ -591,7 +591,11 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     public void showPopup(MouseEvent e)
     {
         getPopupListener().dont_change_pos = true;
-        getPopupListener().mouseClicked(e);
+        //getPopupListener().mouseClicked(e);
+        Frame f = GUIUtilities.getFrame(e.getComponent());
+        Point pt = SwingUtilities.convertPoint(this, e.getX(), e.getY(), f);
+        pt = GUIHelper.adjustPointInPicollo(this, pt);
+        popupMenu.show(f, pt.x, pt.y);
         getPopupListener().dont_change_pos = false;
     }
 

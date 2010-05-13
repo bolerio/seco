@@ -1,9 +1,6 @@
 package seco.things;
 
-import static seco.notebook.ElementType.inputCellBox;
-
 import java.awt.Color;
-
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.Window;
@@ -18,11 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.script.ScriptEngine;
 import javax.swing.JComponent;
-import javax.swing.JTabbedPane;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.text.Element;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
@@ -63,11 +56,9 @@ import seco.notebook.NotebookUI;
 import seco.notebook.StyleAttribs;
 import seco.notebook.StyleType;
 import seco.notebook.XMLConstants;
-import seco.rtenv.ContextLink;
 import seco.rtenv.EvaluationContext;
 import seco.rtenv.RuntimeContext;
 import edu.umd.cs.piccolo.util.PAffineTransform;
-import edu.umd.cs.piccolox.pswing.PSwing;
 
 public class CellUtils
 {
@@ -277,7 +268,8 @@ public class CellUtils
         HGAtomRef ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         Cell out = new Cell(ref);
         HGHandle outH = ThisNiche.handleOf(out);
-        if (outH == null) outH = ThisNiche.graph.add(out);
+        if (outH == null) 
+            outH = ThisNiche.graph.add(out);
         return outH;
     }
 
@@ -800,15 +792,17 @@ public class CellUtils
     private static HGHandle outputCellCopy(HGHandle in)
     {
         Cell c = (Cell) ThisNiche.graph.get(in);
-        boolean error = isError(c);
         Object value = c.getValue();
         // TODO: not very clear when to clone
-        // if(value instanceof Component)
-        // value = DocUtil.maybe_clone((Component) value);
+        if(value instanceof Component)
+           value = DocUtil.maybe_clone((Component) value);
         HGHandle h = addSerializable(value);
-        HGHandle res = CellUtils.getOrCreateCellHForRefH(h);
-        if (error) setError(h, error);
-        return res;
+       // HGHandle res = getOrCreateCellHForRefH(h);
+       // return res;
+        Cell out = new Cell(new HGAtomRef(h, HGAtomRef.Mode.symbolic));
+        out.attributes = c.getAttributes();
+        HGHandle outH = ThisNiche.graph.add(out);
+        return outH;
     }
 
     public static HGHandle getOutCellInput(HGHandle h)
@@ -1166,7 +1160,7 @@ public class CellUtils
     public static void processCelTextChangeEvent(HGHandle cH,
             CellTextChangeEvent e)
     {
-        Cell c = (Cell) ThisNiche.graph.get(cH);
+        Cell c = ThisNiche.graph.get(cH);
         Scriptlet s = (Scriptlet) c.getValue();
         String code = s.getCode();
         StringBuffer res = new StringBuffer(code.substring(0, e.getOffset()));

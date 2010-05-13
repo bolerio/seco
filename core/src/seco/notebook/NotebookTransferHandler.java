@@ -19,12 +19,9 @@ import java.awt.im.InputContext;
 import java.io.IOException;
 import java.util.Vector;
 
-import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.TransferHandler;
-import javax.swing.UIManager;
-import javax.swing.TransferHandler.TransferSupport;
 import javax.swing.plaf.UIResource;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -32,14 +29,6 @@ import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 import javax.swing.text.TextAction;
-
-import org.hypergraphdb.HGHandle;
-
-import seco.ThisNiche;
-import seco.things.CellGroup;
-import seco.things.CellGroupMember;
-import seco.things.CellUtils;
-import sun.swing.SwingUtilities2;
 
 public class NotebookTransferHandler extends TransferHandler
 {

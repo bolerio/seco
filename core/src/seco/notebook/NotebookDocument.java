@@ -655,10 +655,9 @@ public class NotebookDocument extends DefaultStyledDocument
         {
             Element el = elements.get(i);
             HGHandle child = getNBElementH(el);
-            HGHandle copy = child;
-            if (!CellUtils.isBackuped(child)) CellUtils.makeCopy(child);
-            else
+            if(CellUtils.isBackuped(child)) 
                 CellUtils.restoreCell(child, false);
+            HGHandle copy = CellUtils.makeCopy(child);
             if (isInsP) insPointInsert(offset, copy);
             else
                 fireCellGroupChanged(new CellGroupChangeEvent(ThisNiche
