@@ -109,9 +109,31 @@ public class CellBoxView extends HidableBoxView implements CollapsibleView
 		//System.out.println("CellBoxView - layoutMinorAxis: " +
 		//		targetSpan + ":" + getElement() + ":" + isVisible() +
 		//		":" + getPreferredSpan(axis) + ":"+ collapsed);
+	  // if(collapsed){
 		collapsedWidth = getView(0).getPreferredSpan(axis);
 		spans[0] = (int) collapsedWidth;
 		if(spans.length > 1) spans[1] = spans[0];
+		//}
+//	    else
+//	    {
+//	    //    super.layoutMinorAxis(targetSpan, axis, offsets, spans);
+//	        int n = getViewCount();
+//	        for (int i = 0; i < n; i++) {
+//	            View v = getView(i);
+//	            int max = (int) v.getPreferredSpan(axis);
+//	            if (max < targetSpan) {
+//	            // can't make the child this wide, align it
+//	            float align = v.getAlignment(axis);
+//	            offsets[i] = (int) ((targetSpan - max) * align);
+//	            spans[i] = max;
+//	            } else {
+//	            // make it the target width, or as small as it can get.
+//	                    int min = (int)v.getMinimumSpan(axis);
+//	            offsets[i] = 0;
+//	            spans[i] = Math.max(min, targetSpan);
+//	            }
+//	        }
+//	    }
 	}
 	
 	public int getNextVisualPositionFrom(int pos, Position.Bias b, Shape a,

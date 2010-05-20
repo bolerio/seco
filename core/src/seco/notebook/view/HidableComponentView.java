@@ -8,7 +8,7 @@
 package seco.notebook.view;
 
 import java.awt.Shape;
-import javax.swing.SwingConstants;
+
 import javax.swing.text.BadLocationException;
 import javax.swing.text.ComponentView;
 import javax.swing.text.Element;

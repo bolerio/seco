@@ -24,13 +24,13 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.View;
 import javax.swing.text.Position.Bias;
@@ -79,7 +79,25 @@ public class CellHandleView extends HidableComponentView
 		if (button != null) button.setVisible(visible);
 		super.setVisible(visible);
 	}
-
+	
+	@Override
+	public float getPreferredSpan(int axis)
+    {
+	    //this way we keep the Y size in sync
+        //when an output cell have been removed during DnD 
+	    //and cellHandle's component mistakenly is not updated
+	    //thus leaving big empty space to the next cell  
+	    if (axis == Y_AXIS)
+	    {
+	       float sup = super.getPreferredSpan(axis);
+	       View prev = getParent().getView(getParent().getViewCount()- 2);
+	       return (prev != null) ?
+	           prev.getPreferredSpan(axis) : sup;
+	       
+	    }
+	    return super.getPreferredSpan(axis);
+    }
+	
 	protected Component createComponent()
 	{
 		if (button == null)
@@ -185,7 +203,8 @@ public class CellHandleView extends HidableComponentView
 
 	public static class CustomButton extends JButton implements	SelectionManager.Selection
 	{
-		boolean drawInsertionLine = false;
+	    private static final long serialVersionUID = -537431695320086336L;
+        boolean drawInsertionLine = false;
 		CaretListener caretListener;
 		private CellHandleView view;
 		// keep reference for use in removeNotify() when getContainer() is null

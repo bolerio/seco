@@ -1112,11 +1112,14 @@ public class NotebookDocument extends DefaultStyledDocument
         nb_el = (nb == null || nb instanceof Cell) ? getWholeCellElement(nb_el
                 .getStartOffset()) : getUpperElement(nb_el, cellGroupBox);
         if (nb_el == null) return;
+        //Element par = nb_el.getParentElement();
         // + the insPoint after the cell
         super.remove(nb_el.getStartOffset(), (nb_el.getEndOffset() - nb_el
                 .getStartOffset()) + 1);
         setModified(true);
         fireCaretMoved(nb_el.getStartOffset() - 1);
+        //updateElement(par);
+        
     }
 
     public void removeCellBoxElement(Element el) throws BadLocationException

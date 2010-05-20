@@ -1,5 +1,5 @@
 /*
- * This file is part of the Scriba source distribution. This is free, open-source 
+ * This file is part of the Seco source distribution. This is free, open-source 
  * software. For full licensing information, please see the LicensingInformation file
  * at the root level of the distribution.
  *
@@ -8,12 +8,11 @@
 package seco.notebook.view;
 
 import java.awt.Shape;
+
 import javax.swing.text.BadLocationException;
 import javax.swing.text.BoxView;
 import javax.swing.text.Element;
 import javax.swing.text.Position;
-
-import seco.notebook.NotebookDocument;
 
 
 public class HidableBoxView extends BoxView implements HidableView

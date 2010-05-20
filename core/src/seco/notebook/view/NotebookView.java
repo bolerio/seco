@@ -7,12 +7,13 @@
  */
 package seco.notebook.view;
 
-import java.awt.Container;
 import java.awt.Shape;
 
-import javax.swing.JScrollPane;
-import javax.swing.event.DocumentEvent;
-import javax.swing.text.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.BoxView;
+import javax.swing.text.Element;
+import javax.swing.text.Position;
+import javax.swing.text.View;
 
 /**
  *
@@ -39,16 +40,14 @@ public class NotebookView extends BoxView
     	//super.layoutMajorAxis(targetSpan, axis, offsets, spans);
     	//System.out.println("NotebookView - layoutMajorAxis: " +
 		//		targetSpan + ":" + getElement() + ":" + isVisible());
-        
-    	int n = getViewCount();
-        int currentSpan = 0;
+  	    int currentSpan = 0;
+  	    int n = getViewCount();
         for (int i = 0; i < n; i++)
         {
             View v = getView(i);
             offsets[i] = currentSpan;
             spans[i] = (int)v.getPreferredSpan(axis);
             currentSpan += spans[i];    
-          //System.out.println("inner" + i + ":" + offsets[i] + ":" + spans[i]);
         }
         
     }
