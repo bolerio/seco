@@ -119,8 +119,21 @@ public class MyHTMLDocument extends HTMLDocument
 		return cE;
 	}
 
-	protected void fireUndoableEditUpdate(UndoableEditEvent e)
+	protected boolean modified = false;
+	
+	public boolean isModified()
+    {
+        return modified;
+    }
+
+    public void setModified(boolean modified)
+    {
+        this.modified = modified;
+    }
+
+    protected void fireUndoableEditUpdate(UndoableEditEvent e)
 	{
+	    modified = true;
 		if (!(e.getEdit() instanceof DefaultDocumentEvent))
 		{
 			super.fireUndoableEditUpdate(e);

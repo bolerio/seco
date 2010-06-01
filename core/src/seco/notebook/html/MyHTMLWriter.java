@@ -254,10 +254,10 @@ public class MyHTMLWriter
 		for (int i = 0; i < el.getElementCount(); i++)
 			if(HTMLUtils.getName(el.getElement(i)) != HTML.Tag.CONTENT)
 				return false;
-		startTag("p", el.getAttributes());
+		//startTag("p", el.getAttributes());
 		for (int i = 0; i < el.getElementCount(); i++)
 			write(el.getElement(i)); 
-		endTag("p");
+		//endTag("p");
 		return true;
 	}
 
@@ -396,7 +396,8 @@ public class MyHTMLWriter
 	{
 		if (!name.equalsIgnoreCase(HTML.Tag.A.toString()))
 		{
-			w.write(newline);
+		    if(!firstContent)
+			   w.write(newline);
 			indent();
 		}
 		w.write(htmlTagStart);

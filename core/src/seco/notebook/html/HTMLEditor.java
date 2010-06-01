@@ -66,8 +66,7 @@ public class HTMLEditor extends JTextPane
     private UpdatablePopupMenu popupMenu;
     protected static HyperlinkListener hyperlinkListener = new MyHyperlinkListener();
     protected PopupListener popupListener;
-    protected boolean modified = false;
-    
+       
     public HTMLEditor()
     {
         this(null);
@@ -87,7 +86,7 @@ public class HTMLEditor extends JTextPane
                 undo.addEdit(e.getEdit());
                 MyHTMLEditorKit.undo.updateUndoState(undo);
                 MyHTMLEditorKit.redo.updateRedoState(undo);
-                setModified(true);
+                //setModified(true);
             }
         });
         if (text != null) setContent(text);
@@ -140,12 +139,12 @@ public class HTMLEditor extends JTextPane
     
     public boolean isModified()
     {
-        return modified;
+        return getDoc().isModified();
     }
 
     public void setModified(boolean modified)
     {
-        this.modified = modified;
+        getDoc().setModified(modified);
     }
 
     UndoManager getUndoManager()
@@ -153,6 +152,7 @@ public class HTMLEditor extends JTextPane
         return undo;
     }
 
+    protected String cachedText = null;
     /**
      * Sets the content as HTML
      */
@@ -172,6 +172,8 @@ public class HTMLEditor extends JTextPane
                     scrollRectToVisible(new Rectangle(0, 0, 0, 0));
                     // clear undos
                     undo.discardAllEdits();
+                    cachedText = content;
+                    doc.setModified(false);
                 }
                 catch (IOException ioe)
                 {
@@ -188,7 +190,8 @@ public class HTMLEditor extends JTextPane
     public String getContent()
     {
         Writer w = new StringWriter();
-        Document doc = getDocument();
+        MyHTMLDocument doc = this.getDoc();
+        if(!doc.isModified()) return cachedText;
         try
         {
             getEditorKit().write(w, doc, 0, doc.getLength());
@@ -197,7 +200,9 @@ public class HTMLEditor extends JTextPane
         {
             ex.printStackTrace();
         }
-        return w.toString();
+        cachedText = w.toString();
+        doc.setModified(false);
+        return cachedText;
     }
 
     /** Sets javadoc background color */

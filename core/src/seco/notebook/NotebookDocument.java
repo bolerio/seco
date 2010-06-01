@@ -1409,6 +1409,7 @@ public class NotebookDocument extends DefaultStyledDocument
                 c.getAttributes().put(XMLConstants.ATTR_ENGINE, "html");
 
             insert(cell, parH, ind);
+            this.fireCaretMoved(offset);
         }
         catch (BadLocationException ex)
         {

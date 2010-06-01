@@ -10,13 +10,13 @@ package seco.notebook.view;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JComponent;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -196,18 +196,28 @@ public class HtmlView extends HidableComponentView
             {
                 if (e.isPopupTrigger() || SwingUtilities.isRightMouseButton(e))
                 {
-                    NotebookUI ui = ((InnerHTMLEditor) e.getComponent())
-                            .getNotebookUI();
+                    InnerHTMLEditor html = ((InnerHTMLEditor) e.getComponent());
+                    NotebookUI ui = html.getNotebookUI();
                     if (getPopup().isVisible())
                     {
                         getPopup().setVisible(false);
                     } else
                     {
-                        int off = ui.viewToModel(e.getPoint());
-                        if (off != -1) ui.setCaretPosition(off);
                         getPopup().update();
+                        int off = html.viewToModel(e.getPoint());
                         Frame f = GUIUtilities.getFrame(e.getComponent());
-                        Point pt = getPoint(e, f);
+                        Point pt = null;
+                        try
+                        {
+                          Rectangle rect = ui.modelToView(
+                                  html.getElement().getStartOffset() + off);
+                          pt = new Point(rect.x, rect.y);
+                          pt = SwingUtilities.convertPoint(ui, rect.x, rect.y, f);
+                          pt = GUIHelper.adjustPointInPicollo(ui, pt);
+                        }catch(Exception ex)
+                        {
+                            pt = getPoint(e, f);
+                        }
                         getPopup().show(f, pt.x, pt.y);
                     }
                 }
