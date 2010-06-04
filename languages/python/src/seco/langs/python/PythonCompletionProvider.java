@@ -1,8 +1,10 @@
 package seco.langs.python;
 
 import java.awt.event.ActionEvent;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 
+import javax.script.ScriptContext;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JToolTip;
@@ -12,15 +14,12 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 
 import org.python.antlr.PythonTree;
-import org.python.core.PyDictProxy;
+import org.python.core.PyJavaType;
 import org.python.core.PyList;
 import org.python.core.PyMethodDescr;
 import org.python.core.PyObject;
-import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.core.PyType;
-
-import bsh.BshCompletionProvider;
 
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
@@ -38,7 +37,6 @@ import seco.notebook.syntax.completion.CompletionTask;
 import seco.notebook.syntax.completion.CompletionU;
 import seco.notebook.syntax.completion.JavaDocManager;
 import seco.notebook.syntax.java.JavaResultItem;
-import seco.notebook.syntax.java.JavaResultItem.ParamStr;
 import seco.notebook.util.DocumentUtilities;
 
 public class PythonCompletionProvider implements CompletionProvider
@@ -93,49 +91,39 @@ public class PythonCompletionProvider implements CompletionProvider
             resultSet.finish();
         }
 
-        // private void add_metas(CompletionResultSet resultSet)
-        // {
-        // for(CompletionItem i: BuiltIns.getGroovyMetas())
-        // {
-        // i.setSubstituteOffset(queryCaretOffset);
-        // resultSet.addItem(i);
-        // }
-        // }
-
         private boolean complete(final CompletionResultSet resultSet)
         {
             PythonTree root = p.parseTree;
 
             if (packageCompletion(resultSet)) return true;
             final AstPath path = AstPath.get(root, queryCaretOffset - 1);
+            
             PythonTypeAnalyzer an = new PythonTypeAnalyzer(root,
-                    queryCaretOffset - 1);
-            String type = an.getType(prefix);
+                    queryCaretOffset - 1, p.engine.getContext());
+            PyType type = an.getType(prefix);
             if (type != null)
             {
-                populateType(resultSet, type);
+                if(type instanceof PyJavaType)
+                   CompletionU.populateClass(resultSet, 
+                           ((PyJavaType) type).getProxyType(), Modifier.PUBLIC,
+                            queryCaretOffset);
+                else
+                   populateType(resultSet, type);
+            }else
+            {
+             
+               Object o = p.engine.getContext().getAttribute(prefix, ScriptContext.GLOBAL_SCOPE);
+               if(o != null)
+                 CompletionU.populateClass(resultSet, o.getClass(), Modifier.PUBLIC,
+                    queryCaretOffset);
             }
-            // AstPath realPath = new AstPath(root, queryCaretOffset - 1,
-            // sup.getElement());
-            // ClassNodePair pair = resolve(realPath);
-            // if (pair == null) return false;
-            // //
-            // if(root.getScriptClassDummy().equals(pair.node))
-            // {
-            // populateThis(resultSet, p.engine);
-            // return true;
-            // }
-            // resultSet.setTitle(pair.node.getName());
-            // populateObject(resultSet, pair, prefix);
-
+         
             return true;
         }
 
-        private void populateType(CompletionResultSet resultSet, String type)
+        private void populateType(CompletionResultSet resultSet, PyType o)
         {
-            PyType o = (PyType) PySystemState.getDefaultBuiltins()
-                    .__finditem__(type);
-            resultSet.setTitle(type);
+            resultSet.setTitle(o.getName());
             PyList list = (PyList) o.__dir__();
             for (int i = 0; i < list.size(); i++)
             {
@@ -149,119 +137,11 @@ public class PythonCompletionProvider implements CompletionProvider
                         // System.out.println(""+ i + ":" + desc.getName());
                         resultSet.addItem(new PyMethodItem(desc));
                     }
+                    else
+                        System.out.println(""+ i + ":" + entry);
                 }
             }
         }
-
-        // private void populateObject(CompletionResultSet resultSet,
-        // ClassNodePair pair, String prefix)
-        // {
-        //
-        // Class<?> type = pair.node.isResolved() ? pair.node.getTypeClass() :
-        // null;
-        //            
-        // System.out.println("populateObject: " + pair.node.getName() + ":" +
-        // type);
-        // if (type != null)
-        // {
-        // int mod = (pair.isStatic) ? Modifier.STATIC : Modifier.PRIVATE;
-        // CompletionU.populateClass(resultSet, type, mod, queryCaretOffset);
-        // add_metas(resultSet);
-        // return;
-        // }
-        //
-        // for (ClassNode inter : pair.node.getInterfaces())
-        // {
-        // System.out.println("interface: " + inter.getName());
-        // if(inter.getName().equals("groovy.lang.GroovyObject"))
-        // add_metas(resultSet);
-        // // populateObject(resultSet, source, inter, prefix, anchor);
-        // }
-        //
-        // for (MethodNode m : pair.node.getMethods())
-        // {
-        // if(m.getName().indexOf('$') > -1 ||
-        // m.getName().indexOf('<') > -1)
-        // continue;
-        // ClassNode cn = m.getReturnType();
-        // Parameter[] ps = m.getParameters();
-        // String types[] = new String[ps.length];
-        // String names[] = new String[ps.length];
-        // for (int i = 0; i < ps.length; i++)
-        // {
-        // types[i] = get_cls_name(ps[i].getDeclaringClass());
-        // names[i] = ps[i].getName();
-        // }
-        // JavaResultItem item = new JavaResultItem.MethodItem(
-        // m.getName(), get_cls_name(cn), types, names, m
-        // .getModifiers());
-        // item.setSubstituteOffset(queryCaretOffset);
-        // resultSet.addItem(item);
-        // }
-        //            
-        // for (FieldNode f : pair.node.getFields())
-        // {
-        // if(f.getName().indexOf('$') > -1 ||
-        // f.getName().indexOf('<') > -1) continue;
-        // JavaResultItem item = new JavaResultItem.FieldResultItem(
-        // f.getName(), get_cls_name(f.getType()),
-        // f.getModifiers());
-        // item.setSubstituteOffset(queryCaretOffset);
-        // resultSet.addItem(item);
-        // }
-        // }
-        //         
-        // private void populateThis(CompletionResultSet resultSet,
-        // GroovyScriptEngine engine)
-        // {
-        // resultSet.setTitle("Global Context");
-        // Bindings b = engine.getBindings(ScriptContext.GLOBAL_SCOPE);
-        // for (String key : b.keySet())
-        // {
-        // JavaResultItem item = new JavaResultItem.VarResultItem(key, b.get(
-        // key).getClass(), Modifier.PUBLIC);
-        // item.setSubstituteOffset(queryCaretOffset);
-        // resultSet.addItem(item);
-        // }
-        // for (String s : engine.globalClosures.keySet())
-        // {
-        // Closure c = engine.globalClosures.get(s);
-        // String m = (String) c.getProperty("method");
-        // if (m == null || m.indexOf("$") > -1) continue;
-        //                
-        // JavaResultItem item = new ClosureItem(c);
-        // item.setSubstituteOffset(queryCaretOffset);
-        // resultSet.addItem(item);
-        // }
-        // add_metas(resultSet);
-        // }
-        //         
-        // private ClassNodePair resolve(AstPath realPath)
-        // {
-        // ModuleNode moduleNode = (ModuleNode) realPath.root();
-        // TypeInferenceVisitor typeVisitor = new
-        // TypeInferenceVisitor(moduleNode.getContext(),
-        // realPath, sup.getElement(), queryCaretOffset, p.engine.getContext());
-        // typeVisitor.collect();
-        //           
-        // if(prefix.indexOf(".") < 0) //simple var
-        // {
-        // ClassNode guessedType = typeVisitor.vars.get(prefix);
-        // if (guessedType != null)
-        // return new ClassNodePair(guessedType, typeVisitor.isStatic);
-        // }
-        //            
-        // ASTNode leaf = realPath.leaf();
-        // if (leaf instanceof Expression)
-        // {
-        // //prop invocation ends with ConstantExpression
-        // if(leaf instanceof ConstantExpression)
-        // leaf = realPath.leafParent();
-        // ClassNode n = typeVisitor.resolveExpression((Expression) leaf);
-        // if(n != null) return new ClassNodePair(n, typeVisitor.isStatic);
-        // }
-        // return null;
-        // }
 
         private boolean packageCompletion(CompletionResultSet resultSet)
         {
@@ -284,17 +164,6 @@ public class PythonCompletionProvider implements CompletionProvider
         // }
 
     }
-
-    // private static class ClassNodePair
-    // {
-    // ClassNode node;
-    // boolean isStatic;
-    // public ClassNodePair(ClassNode node, boolean isStatic)
-    // {
-    // this.node = node;
-    // this.isStatic = isStatic;
-    // }
-    // }
 
     public static class DocQuery extends AsyncCompletionQuery
     {

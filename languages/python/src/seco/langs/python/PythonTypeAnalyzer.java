@@ -31,6 +31,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+import javax.script.ScriptContext;
+
+import org.codehaus.groovy.ast.ClassNode;
 import org.python.antlr.PythonTree;
 import org.python.antlr.ast.Assert;
 import org.python.antlr.ast.Assign;
@@ -85,6 +89,9 @@ import org.python.antlr.ast.While;
 import org.python.antlr.ast.With;
 import org.python.antlr.ast.Yield;
 import org.python.antlr.base.expr;
+import org.python.core.Py;
+import org.python.core.PySystemState;
+import org.python.core.PyType;
 
 /**
  * Type Analyzer for Python. This class is responsible for
@@ -99,15 +106,15 @@ public class PythonTypeAnalyzer {
     private final int astOffset;
     private final PythonTree root;
    
-    //private final CompilationInfo info;
-    private long startTime;
+    ScriptContext scriptContext;
 
     /** Creates a new instance of PythonTypeAnalyzer for a given position.
      * The {@link #analyze} method will do the rest. */
-    public PythonTypeAnalyzer(PythonTree root, int astOffset)
+    public PythonTypeAnalyzer(PythonTree root, int astOffset, ScriptContext ctx)
     {
         this.root = root;
         this.astOffset = astOffset;
+        this.scriptContext = ctx;
     }
 
     private final class TypeVisitor extends VisitorBase<String> {
@@ -309,7 +316,9 @@ public class PythonTypeAnalyzer {
                 return null;
             }
             String id = name.getInternalId();
-            if (id != null && id.length() > 0 && Character.isUpperCase(id.charAt(0))) {
+            if (id != null && id.length() > 0 
+                    //&& Character.isUpperCase(id.charAt(0))
+                    ) {
                 return id;
             }
 
@@ -678,7 +687,6 @@ public class PythonTypeAnalyzer {
 
     private void init() {
         if (localVars == null) {
-            startTime = System.currentTimeMillis();
             localVars = new HashMap<String, String>();
 
             LinkedList<Integer> typeAssertionOffsets = null;
@@ -696,33 +704,40 @@ public class PythonTypeAnalyzer {
     }
 
     /** Like getType(), but doesn't strip off array type parameters etc. */
-    private String getTypeInternal(String symbol) {
+    private PyType getTypeInternal(String symbol) {
         String type = null;
 
-        if (localVars != null) {
+        if (localVars != null)
             type = localVars.get(symbol);
-        }
-
+        
+        if(type != null)
+            return  (PyType) PySystemState.getDefaultBuiltins()
+            .__finditem__(type);
         // TODO:
         // Look in the FunctionCache
-
-        return type;
+        return getFromScriptContext(symbol);
+    }
+    
+    PyType getFromScriptContext(String name)
+    {
+       Object o = scriptContext.getAttribute(name, ScriptContext.ENGINE_SCOPE);
+       return o != null ? Py.java2py(o).getType() : null;           
     }
 
     /** Return the type of the given symbol */
-    public String getType(String symbol) {
+    public PyType getType(String symbol) {
         init();
 
-        String type = getTypeInternal(symbol);
+        PyType type = getTypeInternal(symbol);
 
-        // We keep track of the types contained within Arrays
-        // internally (and probably hashes as well, TODO)
-        // such that we can do the right thing when you operate
-        // on an Array. However, clients should only see the "raw" (and real)
-        // type.
-        if (type != null && type.startsWith("Array<")) { // NOI18N
-            return "Array"; // NOI18N
-        }
+//        // We keep track of the types contained within Arrays
+//        // internally (and probably hashes as well, TODO)
+//        // such that we can do the right thing when you operate
+//        // on an Array. However, clients should only see the "raw" (and real)
+//        // type.
+//        if (type != null && type.startsWith("Array<")) { // NOI18N
+//            return "Array"; // NOI18N
+//        }
 
         return type;
     }
