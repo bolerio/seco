@@ -1,15 +1,10 @@
 package seco.langs.groovy;
 
 import groovy.lang.Closure;
-import groovy.lang.GroovyObject;
 
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -18,11 +13,9 @@ import javax.swing.Action;
 import javax.swing.JToolTip;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 
-import org.codehaus.groovy.GroovyBugError;
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.ClassNode;
 import org.codehaus.groovy.ast.FieldNode;
@@ -31,7 +24,6 @@ import org.codehaus.groovy.ast.ModuleNode;
 import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.Expression;
-import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.codehaus.groovy.runtime.MethodClosure;
 
 import seco.langs.groovy.GroovyScriptSupport.GroovyScriptParser;
@@ -39,7 +31,6 @@ import seco.langs.groovy.jsr.GroovyScriptEngine;
 import seco.notebook.NotebookDocument;
 import seco.notebook.storage.ClassRepository;
 import seco.notebook.storage.NamedInfo;
-import seco.notebook.storage.PackageInfo;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.AsyncCompletionQuery;
 import seco.notebook.syntax.completion.AsyncCompletionTask;
@@ -53,8 +44,6 @@ import seco.notebook.syntax.completion.CompletionTask;
 import seco.notebook.syntax.completion.CompletionU;
 import seco.notebook.syntax.completion.JavaDocManager;
 import seco.notebook.syntax.java.JavaResultItem;
-import seco.notebook.syntax.java.JavaResultItem.ParamStr;
-import seco.notebook.syntax.util.JMIUtils;
 import seco.notebook.util.DocumentUtilities;
 
 public class GroovyCompletionProvider implements CompletionProvider
@@ -275,113 +264,6 @@ public class GroovyCompletionProvider implements CompletionProvider
         {
             this.node = node;
             this.isStatic = isStatic;
-        }
-    }
-
-    public static class DocQuery extends AsyncCompletionQuery
-    {
-        private Object item;
-        private JTextComponent component;
-        private static Action goToSource = new AbstractAction() {
-            public void actionPerformed(ActionEvent e)
-            {
-                if (e != null) Completion.get().hideDocumentation();
-            }
-        };
-
-        public DocQuery(Object item)
-        {
-            this.item = item;
-        }
-
-        protected void query(CompletionResultSet resultSet,
-                NotebookDocument doc, int caretOffset)
-        {
-            if (item != null && JavaDocManager.SHOW_DOC)
-                resultSet.setDocumentation(new DocItem(
-                        getAssociatedObject(item), null));
-            resultSet.finish();
-        }
-
-        protected void prepareQuery(JTextComponent component)
-        {
-            this.component = component;
-        }
-
-        private Object getAssociatedObject(Object item)
-        {
-            Object ret = item;
-            if (item instanceof JavaResultItem)
-                ret = ((JavaResultItem) item).getAssociatedObject();
-            return ret;
-        }
-
-        private class DocItem implements CompletionDocumentation
-        {
-            private String text;
-            private JavaDoc javaDoc;
-            private Object item;
-            private URL url;
-
-            public DocItem(Object item, JavaDoc javaDoc)
-            {
-                this.javaDoc = javaDoc != null ? javaDoc : new JavaDoc(
-                        component);
-                this.javaDoc.docItem = this;
-                this.javaDoc.setItem(item);
-                this.url = getURL(item);
-            }
-
-            public CompletionDocumentation resolveLink(String link)
-            {
-                return null;
-            }
-
-            public String getText()
-            {
-                return text;
-            }
-
-            public URL getURL()
-            {
-                return url;
-            }
-
-            private URL getURL(Object item)
-            {
-                return javaDoc.getURL(item);
-            }
-
-            public Action getGotoSourceAction()
-            {
-                return item != null ? goToSource : null;
-            }
-
-            private class JavaDoc
-            {
-                public static final String CONTENT_NOT_FOUND = "JavaDoc Not Found.";
-                private DocItem docItem;
-
-                private JavaDoc(JTextComponent component)
-                {
-                }
-
-                private void setItem(Object item)
-                {
-                    showJavaDoc(JavaDocManager.getInstance().getHTML(item));
-                }
-
-                private URL getURL(Object item)
-                {
-                    return null;
-                }
-
-                protected void showJavaDoc(String preparedText)
-                {
-                    if (preparedText == null) preparedText = CONTENT_NOT_FOUND;
-                    docItem.text = preparedText;
-                }
-            }
         }
     }
 

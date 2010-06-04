@@ -1,6 +1,5 @@
 package seco.langs.groovy;
 
-import groovy.inspect.Inspector;
 import groovy.lang.MetaClass;
 import groovy.lang.MetaMethod;
 
