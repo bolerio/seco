@@ -24,6 +24,7 @@ import org.python.core.PyMethod;
 import org.python.core.PyMethodDescr;
 import org.python.core.PyNone;
 import org.python.core.PyObject;
+import org.python.core.PyObjectDerived;
 import org.python.core.PyType;
 
 import seco.notebook.NotebookDocument;
@@ -108,8 +109,8 @@ public class PythonCompletionProvider implements CompletionProvider
             PyObject type = an.resolve(prefix);
             if (type != null)
             {
-                if (type instanceof PyJavaType) CompletionU.populateClass(
-                        resultSet, ((PyJavaType) type).getProxyType(),
+                if (type instanceof PyObjectDerived) CompletionU.populateClass(
+                        resultSet, ((PyJavaType)type.getType()).getProxyType(),
                         Modifier.PUBLIC, queryCaretOffset);
                 else if (type instanceof PyType) populateType(resultSet,
                         (PyType) type);
@@ -170,8 +171,8 @@ public class PythonCompletionProvider implements CompletionProvider
                 PyObject entry = o.fastGetDict().__finditem__(key);
                 if (entry instanceof PyMethodDescr)
                      resultSet.addItem(new PyMethodDescItem((PyMethodDescr) entry));
-                else
-                    System.out.println("" + i + ":" + entry);
+                //else
+                //    System.out.println("" + i + ":" + entry);
             }
         }
 
