@@ -3,6 +3,7 @@ package seco.langs.python;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.Map;
 
 import javax.script.ScriptContext;
 import javax.swing.AbstractAction;
@@ -14,11 +15,15 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 
 import org.python.antlr.PythonTree;
+import org.python.core.Py;
+import org.python.core.PyClass;
+import org.python.core.PyInstance;
 import org.python.core.PyJavaType;
 import org.python.core.PyList;
+import org.python.core.PyMethod;
 import org.python.core.PyMethodDescr;
+import org.python.core.PyNone;
 import org.python.core.PyObject;
-import org.python.core.PySystemState;
 import org.python.core.PyType;
 
 import seco.notebook.NotebookDocument;
@@ -97,30 +102,64 @@ public class PythonCompletionProvider implements CompletionProvider
 
             if (packageCompletion(resultSet)) return true;
             final AstPath path = AstPath.get(root, queryCaretOffset - 1);
-            
+
             PythonTypeAnalyzer an = new PythonTypeAnalyzer(root,
                     queryCaretOffset - 1, p.engine.getContext());
-            PyType type = an.getType(prefix);
+            PyObject type = an.resolve(prefix);
             if (type != null)
             {
-                if(type instanceof PyJavaType)
-                   CompletionU.populateClass(resultSet, 
-                           ((PyJavaType) type).getProxyType(), Modifier.PUBLIC,
-                            queryCaretOffset);
+                if (type instanceof PyJavaType) CompletionU.populateClass(
+                        resultSet, ((PyJavaType) type).getProxyType(),
+                        Modifier.PUBLIC, queryCaretOffset);
+                else if (type instanceof PyType) populateType(resultSet,
+                        (PyType) type);
+                else if (type instanceof PyInstance) populateInstance(
+                        resultSet, (PyInstance) type);
                 else
-                   populateType(resultSet, type);
-            }else
-            {
-             
-               Object o = p.engine.getContext().getAttribute(prefix, ScriptContext.GLOBAL_SCOPE);
-               if(o != null)
-                 CompletionU.populateClass(resultSet, o.getClass(), Modifier.PUBLIC,
-                    queryCaretOffset);
+                    populateType(resultSet, type.getType());
             }
-         
+            else
+            {
+
+                Object o = p.engine.getContext().getAttribute(prefix,
+                        ScriptContext.GLOBAL_SCOPE);
+                if (o != null)
+                    CompletionU.populateClass(resultSet, o.getClass(),
+                            Modifier.PUBLIC, queryCaretOffset);
+            }
+
             return true;
         }
 
+        private void populateInstance(CompletionResultSet resultSet,
+                PyInstance o)
+        {
+            resultSet.setTitle(o.instclass.__name__);
+            populateClass(resultSet, o);
+        }
+        
+        void populateClass(CompletionResultSet resultSet, PyInstance o)
+        {
+            PyList list = (PyList) o.__dir__();
+            for (int i = 0; i < list.size(); i++)
+            {
+                String key = list.get(i).toString();
+                PyObject entry = o.__findattr_ex__(key);
+                if(entry == null || "__main__".equals(entry)) continue;
+                if (entry instanceof PyMethod)
+                {
+                    PyMethod desc = (PyMethod) entry;
+                    resultSet.addItem(new PyMethodItem(desc));
+                }
+                else if(entry instanceof PyNone)
+                    continue;
+                else
+                   resultSet.addItem(new PyProperty(key, 
+                            entry.getType().getName()));
+            }
+        }
+        
+   
         private void populateType(CompletionResultSet resultSet, PyType o)
         {
             resultSet.setTitle(o.getName());
@@ -128,18 +167,11 @@ public class PythonCompletionProvider implements CompletionProvider
             for (int i = 0; i < list.size(); i++)
             {
                 String key = list.get(i).toString();
-                if (!key.startsWith("__"))
-                {
-                    PyObject entry = o.fastGetDict().__finditem__(key);
-                    if (entry instanceof PyMethodDescr)
-                    {
-                        PyMethodDescr desc = (PyMethodDescr) entry;
-                        // System.out.println(""+ i + ":" + desc.getName());
-                        resultSet.addItem(new PyMethodItem(desc));
-                    }
-                    else
-                        System.out.println(""+ i + ":" + entry);
-                }
+                PyObject entry = o.fastGetDict().__finditem__(key);
+                if (entry instanceof PyMethodDescr)
+                     resultSet.addItem(new PyMethodDescItem((PyMethodDescr) entry));
+                else
+                    System.out.println("" + i + ":" + entry);
             }
         }
 
@@ -158,16 +190,13 @@ public class PythonCompletionProvider implements CompletionProvider
             return false;
         }
 
-        // private static String get_cls_name(ClassNode n)
-        // {
-        // return n != null ? n.getName() : "Object";
-        // }
+      
 
     }
 
     public static class DocQuery extends AsyncCompletionQuery
     {
-        private PyMethodItem item;
+        private String doc;
         private static Action goToSource = new AbstractAction() {
             public void actionPerformed(ActionEvent e)
             {
@@ -175,26 +204,26 @@ public class PythonCompletionProvider implements CompletionProvider
             }
         };
 
-        public DocQuery(PyMethodItem item)
+        public DocQuery(String doc)
         {
-            this.item = item;
+            this.doc = doc;
         }
 
         protected void query(CompletionResultSet resultSet,
-                NotebookDocument doc, int caretOffset)
+                NotebookDocument document, int caretOffset)
         {
-            if (item != null && JavaDocManager.SHOW_DOC)
-                resultSet.setDocumentation(new DocItem(item));
+            if (doc != null && JavaDocManager.SHOW_DOC)
+                resultSet.setDocumentation(new DocItem(doc));
             resultSet.finish();
         }
 
         private class DocItem implements CompletionDocumentation
         {
-            private PyMethodItem item;
+            private String doc;
 
-            public DocItem(PyMethodItem item)
+            public DocItem(String doc)
             {
-                this.item = item;
+                this.doc = doc;
             }
 
             public CompletionDocumentation resolveLink(String link)
@@ -204,18 +233,18 @@ public class PythonCompletionProvider implements CompletionProvider
 
             public String getText()
             {
-                String doc = item.desc.fastGetDoc();
-                if(doc == null) return "<br>Not found</br>";
+                if (doc == null) return "<br>Not found</br>";
                 StringBuilder sb = new StringBuilder();
-                sb.append("<pre style=\"margin: 5px 5px; border-size: 1px; padding: 5px\">"); 
+                sb
+                        .append("<pre style=\"margin: 5px 5px; border-size: 1px; padding: 5px\">");
                 sb.append("\n");
                 String[] lines = doc.split("\n");
                 for (int i = 0; i < lines.length; i++)
                 {
-                    if(i == 0) sb.append("<b>");
+                    if (i == 0) sb.append("<b>");
                     appendEscaped(sb, lines[i]);
-                    if(i == 0) sb.append("</b>");
-                    sb.append("<br>"); 
+                    if (i == 0) sb.append("</b>");
+                    sb.append("<br>");
                 }
                 sb.append("</pre>\n");
                 System.out.println(sb.toString());
@@ -278,11 +307,7 @@ public class PythonCompletionProvider implements CompletionProvider
                 return;
             PythonParser p = (PythonParser) sup.getParser();
             // TODO:
-            // if (p.getRootNode() == null)
-            // {
-            // resultSet.finish();
-            // return;
-            // }
+           
         }
 
         protected void prepareQuery(JTextComponent component)
@@ -354,22 +379,14 @@ public class PythonCompletionProvider implements CompletionProvider
         }
     }
 
-    static class PyMethodItem extends JavaResultItem.MethodItem
+    static class PyMethodDescItem extends JavaResultItem.MethodItem
     {
         PyMethodDescr desc;
 
-        public PyMethodItem(PyMethodDescr desc)
+        public PyMethodDescItem(PyMethodDescr desc)
         {
             super(desc.getName(), "");
             this.desc = desc;
-            // populateParams0(types, names);
-        }
-
-        void populateParams0(String[] prms, String names[])
-        {
-            // for (int i = 0; i < prms.length; i++)
-            // params.add(new ParamStr(prms[i], prms[i], names[i], true,
-            // getTypeColor(prms[i])));
         }
 
         protected boolean isAddParams()
@@ -379,9 +396,53 @@ public class PythonCompletionProvider implements CompletionProvider
 
         public CompletionTask createDocumentationTask()
         {
-            return new AsyncCompletionTask(new DocQuery(this), NotebookUI
-                    .getFocusedNotebookUI());
+            String doc = this.desc.fastGetDoc();
+            return (doc != null) ? new AsyncCompletionTask(new DocQuery(doc),
+                    NotebookUI.getFocusedNotebookUI()) : null;
 
+        }
+    }
+
+    static class PyMethodItem extends JavaResultItem.MethodItem
+    {
+        PyMethod desc;
+
+        public PyMethodItem(PyMethod desc)
+        {
+            super("" + desc.im_func.__findattr__("__name__"), "");
+            this.desc = desc;
+        }
+
+        protected boolean isAddParams()
+        {
+            return true;
+        }
+
+        public CompletionTask createDocumentationTask()
+        {
+            return (desc.getDoc() != Py.None) ? new AsyncCompletionTask(
+                    new DocQuery("" + desc.getDoc()), NotebookUI
+                            .getFocusedNotebookUI()) : null;
+
+        }
+    }
+    
+    static class PyProperty extends JavaResultItem.FieldResultItem
+    {
+
+        public PyProperty(String name, String type)
+        {
+            super(name, type, Modifier.PUBLIC);
+        }
+
+        public PyProperty(String name, String type, int modifiers)
+        {
+            super(name, type, modifiers);
+        }
+        
+        public CompletionTask createDocumentationTask()
+        {
+            return null;
         }
     }
 

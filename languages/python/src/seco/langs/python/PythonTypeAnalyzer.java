@@ -34,7 +34,6 @@ import java.util.Map;
 
 import javax.script.ScriptContext;
 
-import org.codehaus.groovy.ast.ClassNode;
 import org.python.antlr.PythonTree;
 import org.python.antlr.ast.Assert;
 import org.python.antlr.ast.Assign;
@@ -90,6 +89,7 @@ import org.python.antlr.ast.With;
 import org.python.antlr.ast.Yield;
 import org.python.antlr.base.expr;
 import org.python.core.Py;
+import org.python.core.PyObject;
 import org.python.core.PySystemState;
 import org.python.core.PyType;
 
@@ -704,7 +704,7 @@ public class PythonTypeAnalyzer {
     }
 
     /** Like getType(), but doesn't strip off array type parameters etc. */
-    private PyType getTypeInternal(String symbol) {
+    private PyObject getTypeInternal(String symbol) {
         String type = null;
 
         if (localVars != null)
@@ -718,17 +718,16 @@ public class PythonTypeAnalyzer {
         return getFromScriptContext(symbol);
     }
     
-    PyType getFromScriptContext(String name)
+    PyObject getFromScriptContext(String name)
     {
        Object o = scriptContext.getAttribute(name, ScriptContext.ENGINE_SCOPE);
-       return o != null ? Py.java2py(o).getType() : null;           
+       return o != null ? Py.java2py(o) : null;           
     }
 
-    /** Return the type of the given symbol */
-    public PyType getType(String symbol) {
+    public PyObject resolve(String symbol) {
         init();
 
-        PyType type = getTypeInternal(symbol);
+        PyObject type = getTypeInternal(symbol);
 
 //        // We keep track of the types contained within Arrays
 //        // internally (and probably hashes as well, TODO)
