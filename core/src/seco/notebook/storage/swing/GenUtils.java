@@ -238,7 +238,7 @@ public class GenUtils
 		//System.out.println("getCtr: " + type.getJavaClass() + ":"
 		//		+ type.getCtrHandle());
 		
-		if(type.getCtrHandle() == HGHandleFactory.nullHandle())return null;
+		if(type.getCtrHandle() == hg.getHandleFactory().nullHandle())return null;
 		ConstructorLink link = (ConstructorLink) hg.get(type.getCtrHandle());
 		if (link == null) return null;
 		if (link instanceof FactoryConstructorLink) return getFactoryMethod(hg, type);

@@ -36,6 +36,7 @@ import javax.swing.UIManager;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
@@ -172,8 +173,7 @@ public class NotebookEditorKit extends StyledEditorKit
     public static final String DEFAULT_DOC_NAME = "NotebookEditorKit.DefaultDocumentName";
     public static final CellGroup DEFAULT_TOP_GROUP = new CellGroup(
             DEFAULT_DOC_NAME);
-    static final HGPersistentHandle DOC_HANDLE = HGHandleFactory
-            .makeHandle("50593b0e-d0c2-11dc-99fb-e94ae2f056ca");
+    static final HGPersistentHandle DOC_HANDLE = UUIDHandleFactory.I.makeHandle("50593b0e-d0c2-11dc-99fb-e94ae2f056ca");
 
     public Document createDefaultDocument()
     {

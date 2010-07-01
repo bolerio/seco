@@ -9,6 +9,7 @@ import javax.swing.undo.CannotUndoException;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.things.CellGroup;
@@ -17,7 +18,7 @@ public class CellGroupChangeEvent extends AbstractUndoableEdit
 {
     private static final long serialVersionUID = 3782634173927905183L;
 
-    public static final HGPersistentHandle HANDLE = HGHandleFactory
+    public static final HGPersistentHandle HANDLE = UUIDHandleFactory.I
             .makeHandle("45e6d93f-cddf-11dc-a205-83ce1a342d9c");
 
     private HGHandle groupH;

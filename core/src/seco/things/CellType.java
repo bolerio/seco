@@ -9,13 +9,14 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.IncidenceSetRef;
 import org.hypergraphdb.LazyRef;
 import org.hypergraphdb.atom.HGAtomRef;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 import org.hypergraphdb.type.HGAtomType;
 import org.hypergraphdb.type.HGAtomTypeBase;
 
 public class CellType extends HGAtomTypeBase 
 {
     public static final HGPersistentHandle HGHANDLE = 
-        HGHandleFactory.makeHandle("45eccdb7-9f4c-11dc-9199-0db27d8f317c");
+        UUIDHandleFactory.I.makeHandle("45eccdb7-9f4c-11dc-9199-0db27d8f317c");
     
 	@SuppressWarnings("unchecked")
     public Object make(HGPersistentHandle valueHandle, LazyRef<HGHandle[]> targetSet, IncidenceSetRef incidenceSet) 

@@ -280,7 +280,7 @@ public class CellUtils
                 : VisualsManager.defaultVisualForAtom(ThisNiche.handleOf(c));
         if (visH != null) return (CellVisual) ThisNiche.graph.get(visH);
         CellVisual visual = null;
-        if (visH == null || visH.equals(HGHandleFactory.nullHandle()))
+        if (visH == null || visH.equals(ThisNiche.graph.getHandleFactory().nullHandle()))
         {
             if (c instanceof CellGroup || CellUtils.isInputCell(c)) visual = new NBUIVisual();
             else
@@ -605,8 +605,8 @@ public class CellUtils
                             .incident(EvalCellEvent.HANDLE),
                             hg.incident(cellH), hg.orderedLink(new HGHandle[] {
                                     EvalCellEvent.HANDLE, cellH,
-                                    HGHandleFactory.anyHandle,
-                                    HGHandleFactory.anyHandle })));
+                                    ThisNiche.graph.getHandleFactory().anyHandle(),
+                                    ThisNiche.graph.getHandleFactory().anyHandle() })));
             for (EventPubSub s : subscriptions)
             {
                 Object handler = ThisNiche.graph.get(s.getEventHandler());
@@ -632,8 +632,8 @@ public class CellUtils
         List<EventPubSub> subscriptions = hg.getAll(ThisNiche.graph, hg.and(hg
                 .type(EventPubSub.class), hg.incident(EvalCellEvent.HANDLE), hg
                 .incident(cellH), hg.orderedLink(new HGHandle[] {
-                EvalCellEvent.HANDLE, cellH, HGHandleFactory.anyHandle,
-                HGHandleFactory.anyHandle })));
+                EvalCellEvent.HANDLE, cellH, ThisNiche.graph.getHandleFactory().anyHandle(),
+                ThisNiche.graph.getHandleFactory().anyHandle() })));
         for (EventPubSub s : subscriptions)
         {
             Object handler = ThisNiche.graph.get(s.getEventHandler());
@@ -700,8 +700,8 @@ public class CellUtils
         List<HGHandle> set = hg.findAll(ThisNiche.graph, hg.and(hg
                 .type(EventPubSub.class), hg.incident(EvalCellEvent.HANDLE), hg
                 .incident(cell_handle), hg.orderedLink(new HGHandle[] {
-                EvalCellEvent.HANDLE, HGHandleFactory.anyHandle, cell_handle,
-                HGHandleFactory.anyHandle })));
+                EvalCellEvent.HANDLE, ThisNiche.graph.getHandleFactory().anyHandle(), cell_handle,
+                ThisNiche.graph.getHandleFactory().anyHandle() })));
         for (HGHandle s : set)
             if (s != null) ThisNiche.graph.remove(s, true);
 
@@ -810,7 +810,7 @@ public class CellUtils
         List<EventPubSub> subs = hg.getAll(ThisNiche.graph, hg.and(hg
                 .type(EventPubSub.class), hg.incident(h), hg
                 .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
-                        HGHandleFactory.anyHandle, h, h })));
+                        ThisNiche.graph.getHandleFactory().anyHandle(), h, h })));
         for (EventPubSub eps : subs)
         {
             Object pub = ThisNiche.graph.get(eps.getPublisher());
@@ -946,12 +946,12 @@ public class CellUtils
 
     private static void remove_event_handlers(HGHandle masterH)
     {
-        List<HGHandle> subs = getListForPubOrSub(HGHandleFactory.anyHandle,
-                masterH, HGHandleFactory.anyHandle, HGHandleFactory.anyHandle);
+        List<HGHandle> subs = getListForPubOrSub(ThisNiche.graph.getHandleFactory().anyHandle(),
+                masterH, ThisNiche.graph.getHandleFactory().anyHandle(), ThisNiche.graph.getHandleFactory().anyHandle());
         for (HGHandle s : subs)
             ThisNiche.graph.remove(s, true);
-        subs = getListForPubOrSub(HGHandleFactory.anyHandle,
-                HGHandleFactory.anyHandle, masterH, HGHandleFactory.anyHandle);
+        subs = getListForPubOrSub(ThisNiche.graph.getHandleFactory().anyHandle(),
+                ThisNiche.graph.getHandleFactory().anyHandle(), masterH, ThisNiche.graph.getHandleFactory().anyHandle());
         for (HGHandle s : subs)
             ThisNiche.graph.remove(s, true);
     }
@@ -1075,9 +1075,9 @@ public class CellUtils
         List<EventPubSub> pubs = hg.getAll(ThisNiche.graph, hg
                 .and(hg.type(EventPubSub.class), hg.incident(cell), hg
                         .orderedLink(new HGHandle[] {
-                                HGHandleFactory.anyHandle, cell,
-                                HGHandleFactory.anyHandle,
-                                HGHandleFactory.anyHandle })));
+                                ThisNiche.graph.getHandleFactory().anyHandle(), cell,
+                                ThisNiche.graph.getHandleFactory().anyHandle(),
+                                ThisNiche.graph.getHandleFactory().anyHandle() })));
         List<EventPubSubInfo> pubs_out = new ArrayList<EventPubSubInfo>(pubs
                 .size());
         for (EventPubSub eps : pubs)
@@ -1085,9 +1085,9 @@ public class CellUtils
                     .getSubscriber(), eps.getEventHandler()));
         List<EventPubSub> subs = hg.getAll(ThisNiche.graph, hg.and(hg
                 .type(EventPubSub.class), hg.incident(cell), hg
-                .orderedLink(new HGHandle[] { HGHandleFactory.anyHandle,
-                        HGHandleFactory.anyHandle, cell,
-                        HGHandleFactory.anyHandle })));
+                .orderedLink(new HGHandle[] { ThisNiche.graph.getHandleFactory().anyHandle(),
+                        ThisNiche.graph.getHandleFactory().anyHandle(), cell,
+                        ThisNiche.graph.getHandleFactory().anyHandle() })));
         List<EventPubSubInfo> subs_out = new ArrayList<EventPubSubInfo>(pubs
                 .size());
         for (EventPubSub eps : subs)

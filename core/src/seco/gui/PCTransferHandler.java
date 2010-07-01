@@ -98,7 +98,7 @@ public class PCTransferHandler extends TransferHandler
                     SecoTransferable.FLAVOR);
         }catch(Exception ex)
         {
-            return HGHandleFactory.nullHandle();
+            return ThisNiche.graph.getHandleFactory().nullHandle();
         }
     }
 
@@ -109,7 +109,7 @@ public class PCTransferHandler extends TransferHandler
     {
         Point pt = support.getDropLocation().getDropPoint();
         HGHandle data = getTransferedHandle(support);
-        HGHandle parent_group = (data.equals(HGHandleFactory.nullHandle())) ? null :
+        HGHandle parent_group = (data.equals(ThisNiche.graph.getHandleFactory().nullHandle())) ? null :
             ThisNiche.handleOf(CellUtils.getParentGroup(data));
         for (PSwingNode node : canvas.getNodes())
         {

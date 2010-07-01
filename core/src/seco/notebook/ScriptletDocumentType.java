@@ -5,12 +5,13 @@ import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.IncidenceSetRef;
 import org.hypergraphdb.LazyRef;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 import org.hypergraphdb.type.HGAtomTypeBase;
 
 public class ScriptletDocumentType extends HGAtomTypeBase
 {
     public static final HGPersistentHandle HGHANDLE = 
-        HGHandleFactory.makeHandle("E1B1AA72-E648-11DD-8764-7DD055D89593");
+        UUIDHandleFactory.I.makeHandle("E1B1AA72-E648-11DD-8764-7DD055D89593");
     
     public Object make(HGPersistentHandle valueHandle, LazyRef<HGHandle[]> targetSet, IncidenceSetRef incidenceSet) 
     {

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 
+import org.hypergraphdb.HGEnvironment;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
@@ -16,6 +17,7 @@ import org.hypergraphdb.HGTypeSystem;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.event.HGListenerAtom;
 import org.hypergraphdb.event.HGOpenedEvent;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.type.HGAtomType;
 
@@ -63,7 +65,7 @@ public class NicheManager
     
     public static boolean firstTime = false;
     
-    static Map<String, File> readNiches()
+    public static Map<String, File> readNiches()
     {
         HashMap<String, File> niches = new HashMap<String, File>();
         try
@@ -181,7 +183,7 @@ public class NicheManager
 	
     public static void loadPredefinedTypes(HyperGraph graph)
     {
-        HGPersistentHandle handle = HGHandleFactory
+        HGPersistentHandle handle = graph.getHandleFactory()
                 .makeHandle("0b4503c0-dcd5-11dd-acb1-0002a5d5c51b");
         HGAtomType type = new HGClassType();
         type.setHyperGraph(graph);
@@ -194,7 +196,7 @@ public class NicheManager
         SwingTypeMapper stm = new SwingTypeMapper();
         stm.setHyperGraph(graph);
         graph.getTypeSystem().getJavaTypeFactory().getMappers().add(0, stm);      
-        HGPersistentHandle pHandle = HGHandleFactory.makeHandle("ae9e93e7-07c9-11da-831d-8d375c1471ff");
+        HGPersistentHandle pHandle = graph.getHandleFactory().makeHandle("ae9e93e7-07c9-11da-831d-8d375c1471ff");
         if (graph.get(pHandle) == null)
         {
         	type = new SwingTypeConstructor();
@@ -339,7 +341,7 @@ public class NicheManager
         HyperGraph hg = null;
         try
         {
-            hg = new HyperGraph(path.getAbsolutePath());
+            hg = new HyperGraph(path.getAbsolutePath()); // HGEnvironment.get(path.getAbsolutePath());
             // Scriptlet s = new Scriptlet("jscheme", "(load \"jscheme/scribaui.scm\")(install-runtime-menu)");            
           //  hg.add(new HGValueLink("on-load", new HGHandle[] {ThisNiche.TOP_CONTEXT_HANDLE, hg.add(s)}));
             HyperGraph saveHG = ThisNiche.graph; // likely, this is null, but just in case

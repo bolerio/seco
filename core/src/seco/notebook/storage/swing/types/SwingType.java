@@ -61,10 +61,10 @@ public class SwingType extends RecordType
 	private HGHandle createCtrLink(DefaultConverter cin)
 	{
 		if (!(cin instanceof DefaultConverter))
-			return HGHandleFactory.nullHandle();
+			return graph.getHandleFactory().nullHandle();
 		DefaultConverter c = (DefaultConverter) cin;
 		if (c.getCtr() == null && c.getFactoryCtr() == null)
-			return HGHandleFactory.nullHandle();
+			return graph.getHandleFactory().nullHandle();
 		String[] args = c.getCtrArgs();
 		Class<?>[] types = c.getCtrTypes();
 		if (c.getFactoryCtr() != null)
@@ -152,7 +152,7 @@ public class SwingType extends RecordType
 	protected HGHandle createAddonsLink(DefaultConverter c)
 	{
 		Set<AddOnType> set = c.getAllAddOnFields();
-		if (set == null) return HGHandleFactory.nullHandle();
+		if (set == null) return graph.getHandleFactory().nullHandle();
 		HGHandle[] targets = new HGHandle[set.size()];
 		int i = 0;
 		for (AddOnType a : set)

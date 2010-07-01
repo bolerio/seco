@@ -9,6 +9,7 @@ import javax.swing.JScrollPane;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.notebook.NotebookDocument;
@@ -22,7 +23,7 @@ import seco.things.CellVisual;
 public class NBUIVisual implements CellVisual
 {
     private static final HGPersistentHandle handle = 
-        HGHandleFactory.makeHandle("e870f4b0-13c7-11de-8c30-0800200c9a66");
+        UUIDHandleFactory.I.makeHandle("e870f4b0-13c7-11de-8c30-0800200c9a66");
     
     public static HGPersistentHandle getHandle()
     {

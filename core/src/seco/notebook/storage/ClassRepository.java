@@ -30,6 +30,7 @@ import org.hypergraphdb.HGTypeSystem;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.IncidenceSet;
 import org.hypergraphdb.HGQuery.hg;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.query.AtomTypeCondition;
 import org.hypergraphdb.HGQuery;
@@ -45,10 +46,8 @@ public class ClassRepository
     static String repositoryPath = new File(new File(U.findUserHome()),
             REPOSITORY_NAME).getAbsolutePath();
 
-    private static final HGPersistentHandle JARS_MAP_HANDLE = HGHandleFactory
-            .makeHandle("1d3b7df9-f109-11dc-9512-073dfab2b15a");
-    private static final HGPersistentHandle JAVADOC_HANDLE = HGHandleFactory
-            .makeHandle("b12ecac6-d6d8-4de1-9924-88326993e4e2");
+    private static final HGPersistentHandle JARS_MAP_HANDLE = UUIDHandleFactory.I.makeHandle("1d3b7df9-f109-11dc-9512-073dfab2b15a");
+    private static final HGPersistentHandle JAVADOC_HANDLE = UUIDHandleFactory.I.makeHandle("b12ecac6-d6d8-4de1-9924-88326993e4e2");
 
     private static final String PCK_INDEX = "PackageInfo";
     private static final String PCK_NAME_PROP = "name";

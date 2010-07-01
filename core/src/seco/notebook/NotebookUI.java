@@ -74,6 +74,7 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
@@ -106,11 +107,9 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 {
     private static final long serialVersionUID = 7136295508874367948L;
     public static final String LAST_VISIBLE_OFFSET = "lastVisibleOffset";
-    public static final HGPersistentHandle POPUP_HANDLE = HGHandleFactory
-            .makeHandle("97287a6a-0195-11dd-a1bb-d15dfc7a2992");
+    public static final HGPersistentHandle POPUP_HANDLE = UUIDHandleFactory.I.makeHandle("97287a6a-0195-11dd-a1bb-d15dfc7a2992");
 
-    public static final HGPersistentHandle SCRIPT_SUPPORTS_HANDLE = HGHandleFactory
-            .makeHandle("76b35260-e5ad-11de-8a39-0800200c9a66");
+    public static final HGPersistentHandle SCRIPT_SUPPORTS_HANDLE = UUIDHandleFactory.I.makeHandle("76b35260-e5ad-11de-8a39-0800200c9a66");
 
     private boolean drawCellNums = false;
     protected UndoManager undo = new UndoManager();

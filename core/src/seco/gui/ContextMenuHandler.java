@@ -10,6 +10,7 @@ import javax.swing.JPopupMenu;
 
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.notebook.ScriptletAction;
@@ -22,10 +23,9 @@ import edu.umd.cs.piccolo.event.PInputEvent;
  */
 public class ContextMenuHandler extends PBasicInputEventHandler
 {
-    public static final HGPersistentHandle GLOBAL_ACTION_SET_HANDLE = HGHandleFactory
+    public static final HGPersistentHandle GLOBAL_ACTION_SET_HANDLE = UUIDHandleFactory.I
             .makeHandle("12231b80-7b7e-11de-8a39-0800200c9a66");
-    public static final HGPersistentHandle NODE_ACTION_SET_HANDLE = HGHandleFactory
-            .makeHandle("1cfd4670-7b7e-11de-8a39-0800200c9a66");
+    public static final HGPersistentHandle NODE_ACTION_SET_HANDLE = UUIDHandleFactory.I.makeHandle("1cfd4670-7b7e-11de-8a39-0800200c9a66");
 
     protected JPopupMenu global_menu;
     protected JPopupMenu node_menu;

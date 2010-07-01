@@ -7,6 +7,7 @@ import javax.swing.undo.CannotUndoException;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 
@@ -15,7 +16,7 @@ public class EvalCellEvent extends AbstractUndoableEdit
     private static final long serialVersionUID = 2691447526014196768L;
     
     public static final HGPersistentHandle HANDLE = 
-        HGHandleFactory.makeHandle("22061f39-d011-11dc-b0cc-9759d91d7754");
+        UUIDHandleFactory.I.makeHandle("22061f39-d011-11dc-b0cc-9759d91d7754");
     
     private HGHandle cellH;
     private EvalResult value;

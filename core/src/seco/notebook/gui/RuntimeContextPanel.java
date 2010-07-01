@@ -7,15 +7,34 @@
  */
 package seco.notebook.gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyEditor;
 import java.util.ArrayList;
+
 import javax.script.Bindings;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+
+import org.hypergraphdb.viewer.ObjectInspector;
+import org.hypergraphdb.viewer.dialogs.DialogDescriptor;
+import org.hypergraphdb.viewer.dialogs.DialogDisplayer;
+import org.hypergraphdb.viewer.util.GUIUtilities;
 
 import seco.notebook.NotebookUI;
 
+import com.l2fprod.common.beans.editor.AbstractPropertyEditor;
 import com.l2fprod.common.propertysheet.DefaultProperty;
+import com.l2fprod.common.propertysheet.Property;
+import com.l2fprod.common.propertysheet.PropertyEditorFactory;
 import com.l2fprod.common.propertysheet.PropertySheetPanel;
 import com.l2fprod.common.propertysheet.PropertySheetTable;
 import com.l2fprod.common.propertysheet.PropertySheetTableModel;
+import com.l2fprod.common.swing.ComponentFactory;
+import com.l2fprod.common.swing.LookAndFeelTweaks;
+import com.l2fprod.common.swing.PercentLayout;
 
 public class RuntimeContextPanel extends PropertySheetPanel
 {
@@ -28,6 +47,12 @@ public class RuntimeContextPanel extends PropertySheetPanel
 	
 	private void init(){
 		PropertySheetTable table = new PropertySheetTable();
+		table.setEditorFactory(new PropertyEditorFactory(){
+		    public PropertyEditor createPropertyEditor(Property property)
+		    {
+		        return new ObjectInspectorEditor();
+		    }
+		});
 		ArrayList<DefaultProperty> data = new ArrayList<DefaultProperty>();
 		Bindings binds = editor.getDoc()
 		   .getEvaluationContext().getRuntimeContext().getBindings();
@@ -108,5 +133,69 @@ public class RuntimeContextPanel extends PropertySheetPanel
 			//if(val == null) return;
 			//System.out.println("setValue: " + val);
 		}
+
+//        @Override
+//        public boolean isEditable()
+//        {
+//            return true;
+//        }
 	}
+	
+	public class ObjectInspectorEditor extends AbstractPropertyEditor 
+	{
+
+	    protected JTextField textfield;
+	    private JButton button;
+	    private JButton cancelButton;
+	    private Object value;
+	      
+	    public ObjectInspectorEditor() {
+	      this(true);
+	    }
+	    
+	    public ObjectInspectorEditor(boolean asTableEditor) {
+	      editor = new JPanel(new PercentLayout(PercentLayout.HORIZONTAL, 0)) {
+	        public void setEnabled(boolean enabled) {
+	          super.setEnabled(enabled);
+	          textfield.setEnabled(enabled);
+	          button.setEnabled(enabled);
+	          cancelButton.setEnabled(enabled);
+	        }
+	      };
+	      ((JPanel)editor).add("*", textfield = new JTextField());
+	      ((JPanel)editor).add(button = ComponentFactory.Helper.getFactory()
+	        .createMiniButton());
+	      if (asTableEditor) {
+	        textfield.setBorder(LookAndFeelTweaks.EMPTY_BORDER);
+	      }    
+	      button.addActionListener(new ActionListener() {
+	        public void actionPerformed(ActionEvent e) {
+	          showInspector();
+	        }
+	      });
+	    }
+
+	    public Object getValue() {
+	      return value;
+	    }
+
+	    public void setValue(Object value) 
+	    {
+	       this.value = value;
+	       textfield.setText("" + value);
+	   }
+
+	    protected void showInspector()
+	    {
+	        ObjectInspector propsPanel = new ObjectInspector(value);
+	        DialogDescriptor dd = new DialogDescriptor(
+	                GUIUtilities.getFrame(), 
+	                new JScrollPane(propsPanel),
+	              "Object Inspector: " + ((value == null)? 
+	                      "null" : value.getClass().getName()));
+	        Object o = DialogDisplayer.getDefault().notify(dd);
+	        firePropertyChange(null, value);
+	    }
+    
+	  }
 }

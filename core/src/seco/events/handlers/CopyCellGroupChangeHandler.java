@@ -95,8 +95,9 @@ public class CopyCellGroupChangeHandler implements EventHandler
          List<EventPubSub> subs = hg.getAll(ThisNiche.graph, 
                 hg.and(hg.type(EventPubSub.class), hg
                 .incident(h), hg.orderedLink(new HGHandle[] {
-                AttributeChangeEvent.HANDLE, HGHandleFactory.anyHandle, 
-                HGHandleFactory.anyHandle, HGHandleFactory.anyHandle })));
+                AttributeChangeEvent.HANDLE, ThisNiche.graph.getHandleFactory().anyHandle(), 
+                    ThisNiche.graph.getHandleFactory().anyHandle(), 
+                ThisNiche.graph.getHandleFactory().anyHandle()})));
         for (EventPubSub eps : subs)
         {
             EventHandler eh = (EventHandler) ThisNiche.graph.get(eps.getEventHandler());

@@ -94,7 +94,7 @@ public class RoomPanel extends BaseChatPanel
                 int hostPart = from.lastIndexOf("/");
                 if (hostPart > -1) from = from.substring(hostPart + 1);
                 id.setName(from);
-                id.setId(HGHandleFactory.makeHandle());
+                id.setId(ThisNiche.graph.getHandleFactory().makeHandle());
                 getChatPane().chatFrom(id, msg.getBody());
             }
         });

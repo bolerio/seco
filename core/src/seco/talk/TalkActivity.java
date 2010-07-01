@@ -91,8 +91,8 @@ public class TalkActivity extends FSMActivity
                     .type(EventPubSub.class),
                     hg.incident(EvalCellEvent.HANDLE), hg.incident(atom), hg
                             .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
-                                    atom, HGHandleFactory.anyHandle,
-                                    HGHandleFactory.anyHandle })));
+                                    atom, ThisNiche.graph.getHandleFactory().anyHandle(),
+                                    ThisNiche.graph.getHandleFactory().anyHandle() })));
             for (EventPubSub s : subscriptions)
             {
                 Object handler = ThisNiche.graph.get(s.getEventHandler());

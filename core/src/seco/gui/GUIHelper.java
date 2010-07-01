@@ -51,6 +51,7 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.gui.layout.DRect;
@@ -95,14 +96,10 @@ import edu.umd.cs.piccolox.pswing.PSwing;
 
 public class GUIHelper
 {
-    public static final HGPersistentHandle TOOLBAR_HANDLE = HGHandleFactory
-            .makeHandle("d40c99be-f108-11dc-a860-d9a9d2c59ef1");
-    public static final HGPersistentHandle MENUBAR_HANDLE = HGHandleFactory
-            .makeHandle("1d3b7df9-f109-11dc-9512-073dfab2b15a");
-    public static final HGPersistentHandle HTML_TOOLBAR_HANDLE = HGHandleFactory
-            .makeHandle("56371f73-025d-11dd-b650-ef87b987c94a");
-    public static final HGPersistentHandle WIN_ACTIONS_HANDLE = HGHandleFactory
-            .makeHandle("8724b420-963b-11de-8a39-0800200c9a66");
+    public static final HGPersistentHandle TOOLBAR_HANDLE = UUIDHandleFactory.I.makeHandle("d40c99be-f108-11dc-a860-d9a9d2c59ef1");
+    public static final HGPersistentHandle MENUBAR_HANDLE = UUIDHandleFactory.I.makeHandle("1d3b7df9-f109-11dc-9512-073dfab2b15a");
+    public static final HGPersistentHandle HTML_TOOLBAR_HANDLE = UUIDHandleFactory.I.makeHandle("56371f73-025d-11dd-b650-ef87b987c94a");
+    public static final HGPersistentHandle WIN_ACTIONS_HANDLE = UUIDHandleFactory.I.makeHandle("8724b420-963b-11de-8a39-0800200c9a66");
 
     public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
     // default rectangle used for adding containers

@@ -16,6 +16,7 @@ import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 import org.hypergraphdb.query.And;
 import org.hypergraphdb.query.AtomTypeCondition;
 import org.hypergraphdb.query.LinkCondition;
@@ -35,11 +36,11 @@ public final class ThisNiche
     static EvaluationContext topContext;
     static HashMap<HGHandle, EvaluationContext> allContexts = new HashMap<HGHandle, EvaluationContext>();
 
-    public static final HGPersistentHandle NICHE_NAME_HANDLE = HGHandleFactory
+    public static final HGPersistentHandle NICHE_NAME_HANDLE = UUIDHandleFactory.I
             .makeHandle("86a18ae7-391d-11db-b473-e61fbd5cb97a");
-    public static final HGPersistentHandle TOP_CONTEXT_HANDLE = HGHandleFactory
+    public static final HGPersistentHandle TOP_CONTEXT_HANDLE = UUIDHandleFactory.I
             .makeHandle("8e579278-391d-11db-b473-e61fbd5cb97a");
-    public static final HGPersistentHandle TOP_CELL_GROUP_HANDLE = HGHandleFactory
+    public static final HGPersistentHandle TOP_CELL_GROUP_HANDLE = UUIDHandleFactory.I
             .makeHandle("f00a2f20-e177-11dd-ad8b-0800200c9a66");
    // public static final HGPersistentHandle TABBED_PANE_GROUP_HANDLE = HGHandleFactory
    //         .makeHandle("7b01b680-e186-11dd-ad8b-0800200c9a66");

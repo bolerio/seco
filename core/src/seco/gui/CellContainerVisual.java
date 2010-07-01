@@ -12,6 +12,7 @@ import javax.swing.border.TitledBorder;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.util.PAffineTransform;
@@ -31,8 +32,8 @@ import seco.things.CellVisual;
 
 public class CellContainerVisual implements CellVisual, GroupVisual, EventHandler
 {
-    private static final HGPersistentHandle handle = HGHandleFactory
-            .makeHandle("cc88ae4c-f70b-4536-814c-95a6ac6a7b62");
+    private static final HGPersistentHandle handle =  UUIDHandleFactory.I.makeHandle
+            ("cc88ae4c-f70b-4536-814c-95a6ac6a7b62");
 
     private HGHandle maximized = null;
     

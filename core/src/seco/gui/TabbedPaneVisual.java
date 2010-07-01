@@ -8,6 +8,7 @@ import javax.swing.JTabbedPane;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
@@ -20,8 +21,7 @@ import seco.things.CellVisual;
 
 public class TabbedPaneVisual implements CellVisual, GroupVisual, EventHandler
 {
-    private static final HGPersistentHandle handle = HGHandleFactory
-            .makeHandle("55ddbdf0-149d-11de-8c30-0800200c9a66");
+    private static final HGPersistentHandle handle = UUIDHandleFactory.I.makeHandle("55ddbdf0-149d-11de-8c30-0800200c9a66");
 
     public static HGPersistentHandle getHandle()
     {

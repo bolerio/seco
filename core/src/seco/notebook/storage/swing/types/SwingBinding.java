@@ -77,7 +77,7 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
             //class with special constructor can't contain properties
             //that reference this class's instance  
             boolean no_spec_ctr = hgType.getCtrHandle() == null ||
-                    HGHandleFactory.nullHandle().equals(hgType.getCtrHandle());
+                    graph.getHandleFactory().nullHandle().equals(hgType.getCtrHandle());
             if (no_spec_ctr)
             {
                 bean = instantiate(hgType.getCtrHandle(), null);

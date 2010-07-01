@@ -51,9 +51,9 @@ public class SwingTypeConstructor extends HGAtomTypeBase {
 				.slotCount() + 3];
 		layout[0] = graph.getPersistentHandle(graph.add(recordType.getJavaClass().getName()));
 		layout[1] = recordType.getCtrHandle() == null ?
-				HGHandleFactory.nullHandle() : graph.getPersistentHandle(recordType.getCtrHandle());
+		        graph.getHandleFactory().nullHandle() : graph.getPersistentHandle(recordType.getCtrHandle());
 		layout[2] = recordType.getAddOnsHandle() == null ? 
-				HGHandleFactory.nullHandle() : graph.getPersistentHandle(recordType.getAddOnsHandle());
+		        graph.getHandleFactory().nullHandle() : graph.getPersistentHandle(recordType.getAddOnsHandle());
 		
 		for (int i = 0; i < recordType.slotCount(); i++) {
 			layout[i+3] = graph.getPersistentHandle(recordType.getAt(i));

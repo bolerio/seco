@@ -322,11 +322,12 @@ public class TopCellTreeDlg extends JDialog
 
         public EventPubSubsPanel(HGHandle h, boolean pub_or_sub)
         {
-            docs = (pub_or_sub) ? getEventPubSubList(HGHandleFactory.anyHandle,
-                    h, HGHandleFactory.anyHandle, HGHandleFactory.anyHandle)
-                    : getEventPubSubList(HGHandleFactory.anyHandle,
-                            HGHandleFactory.anyHandle, h,
-                            HGHandleFactory.anyHandle);
+            docs = (pub_or_sub) ? getEventPubSubList(ThisNiche.graph.getHandleFactory().anyHandle(),
+                    h, ThisNiche.graph.getHandleFactory().anyHandle(), 
+                    ThisNiche.graph.getHandleFactory().anyHandle())
+                    : getEventPubSubList(ThisNiche.graph.getHandleFactory().anyHandle(),
+                            ThisNiche.graph.getHandleFactory().anyHandle(), h,
+                            ThisNiche.graph.getHandleFactory().anyHandle());
             initComponents();
             list.setListData(docs.toArray());
         }
@@ -334,7 +335,7 @@ public class TopCellTreeDlg extends JDialog
         List<EventPubSub> getEventPubSubList(HGHandle eventType,
                 HGHandle publisher, HGHandle subscriber, HGHandle listener)
         {
-            HGHandle pub_or_sub = HGHandleFactory.anyHandle.equals(publisher) ? subscriber
+            HGHandle pub_or_sub = ThisNiche.graph.getHandleFactory().anyHandle().equals(publisher) ? subscriber
                     : publisher;
             return hg.getAll(ThisNiche.graph, hg.and(hg.type(EventPubSub.class),
                     hg.incident(pub_or_sub), hg.orderedLink(new HGHandle[] {
