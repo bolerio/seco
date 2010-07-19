@@ -19,7 +19,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGIndex;
 import org.hypergraphdb.HGIndexManager;
 import org.hypergraphdb.HGPersistentHandle;
@@ -33,7 +32,6 @@ import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.query.AtomTypeCondition;
-import org.hypergraphdb.HGQuery;
 
 import seco.U;
 import seco.notebook.AppConfig;

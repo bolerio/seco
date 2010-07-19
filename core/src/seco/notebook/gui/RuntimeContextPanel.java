@@ -18,11 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import org.hypergraphdb.viewer.ObjectInspector;
-import org.hypergraphdb.viewer.dialogs.DialogDescriptor;
-import org.hypergraphdb.viewer.dialogs.DialogDisplayer;
-import org.hypergraphdb.viewer.util.GUIUtilities;
-
+import seco.gui.ObjectInspector;
+import seco.gui.TopFrame;
 import seco.notebook.NotebookUI;
 
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor;
@@ -189,7 +186,7 @@ public class RuntimeContextPanel extends PropertySheetPanel
 	    {
 	        ObjectInspector propsPanel = new ObjectInspector(value);
 	        DialogDescriptor dd = new DialogDescriptor(
-	                GUIUtilities.getFrame(), 
+	                TopFrame.getInstance(), 
 	                new JScrollPane(propsPanel),
 	              "Object Inspector: " + ((value == null)? 
 	                      "null" : value.getClass().getName()));

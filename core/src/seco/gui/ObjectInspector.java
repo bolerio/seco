@@ -210,7 +210,7 @@ public class ObjectInspector extends Outline
                     children = new PropNode[len];
                     for(int i = 0; i < len; i++)
                         children[i] = new PropNode("[" + i + "]", Array.get(value, i));
-                    Arrays.sort(children);
+                   // Arrays.sort(children);
                 }
             };
         }
@@ -438,8 +438,7 @@ public class ObjectInspector extends Outline
     private static final Field[] EMPTY = new Field[0];
     static synchronized Field[] getFieldsForTypeArray(Class<?> type)
     {
-        if(primitiveEquivalentOf(type) != null ||
-                String.class.equals(type))
+        if(primitiveEquivalentOf(type) != null) //|| String.class.equals(type))
             return EMPTY;
         Set<Field> set  = getInspector(type).getSlots();
         return set.toArray(new Field[set.size()]);
