@@ -17,6 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 
 import org.hypergraphdb.HGHandle;
 
@@ -164,10 +165,10 @@ public class PiccoloCanvas extends PSwingCanvas
 
     public void relayout()
     {
-        // System.out.println("PicCanvas - relayout(): " +
-        // getCamera().getChildrenCount() +
-        // ":" + this);
-        if (maximizedNode != null) return;
+        if (maximizedNode != null) {
+            adjust_maximized_node();
+            return;
+        }
         for (int i = 0; i < getCamera().getChildrenCount(); i++)
         {
             PNode o = getCamera().getChild(i);
@@ -298,11 +299,27 @@ public class PiccoloCanvas extends PSwingCanvas
             if (!o.equals(n)) o.setVisible(false);
         }
 
+        adjust_maximized_node();
         n.moveToFront();
-        n.setBounds(0, 0, getWidth() - 60, getHeight() - 60);
-        PBounds b = n.getFullBounds();
-        n.translate(-b.x + 30, -b.y + 30);
-        n.getComponent().revalidate();
+        if(!nested){
+        JScrollPane scroll = (JScrollPane) getParent().getParent();
+         //scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        //scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        }
+    }
+
+    private static int max_offset_y = 30;
+    private static int max_offset_x = 30;
+
+    private void adjust_maximized_node()
+    {
+        int w = TopFrame.getInstance().getContentPane().getWidth();
+        int h = TopFrame.getInstance().getContentPane().getHeight();
+        maximizedNode.setBounds(0, 0, w - max_offset_x, h - max_offset_y);
+        PBounds b = maximizedNode.getFullBounds();
+        System.out.println("bounds:" + b);
+        maximizedNode.translate(-b.x + max_offset_x / 2, -b.y + max_offset_y / 2);
+        //maximizedNode.getComponent().revalidate();
     }
 
     public void unmaximizeNode(PSwingNode n)
@@ -314,17 +331,34 @@ public class PiccoloCanvas extends PSwingCanvas
         }
         if (maximizedNode == null) return;
         maximizedNode = null;
-        showAllNodes();
         placeNode(n);
+        showAllNodes(n);
+        relayout();
+        
+//        if(!nested){
+//        JScrollPane scroll = (JScrollPane) getParent().getParent();
+//        scroll.setHorizontalScrollBarPolicy(
+//                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+//        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+//        }
     }
 
-    void showAllNodes()
+    void showAllNodes(PSwingNode except)
     {
         for (int i = 0; i < getNodeLayer().getChildrenCount(); i++)
-            getNodeLayer().getChild(i).setVisible(true);
+        {
+            PNode n = getNodeLayer().getChild(i);
+            n.setVisible(true); 
+            if(n instanceof PSwingNode)
+             ((PSwingNode) n).getComponent().revalidate();
+        }
         for (int i = 0; i < getCamera().getChildrenCount(); i++)
-            getCamera().getChild(i).setVisible(true);
-        relayout();
+        {
+            PNode n = getCamera().getChild(i);
+            n.setVisible(true); 
+            if(n instanceof PSwingNode)
+                ((PSwingNode) n).getComponent().revalidate();
+        }
     }
 
     PSwingNode addComponent(JComponent comp, CellGroupMember cell)
@@ -495,7 +529,7 @@ public class PiccoloCanvas extends PSwingCanvas
         PInputEvent original = null;
         PiccoloCanvas canvas;
 
-        public MyZoomEventHandler( PiccoloCanvas canvas)
+        public MyZoomEventHandler(PiccoloCanvas canvas)
         {
             this.canvas = canvas;
         }
@@ -503,53 +537,53 @@ public class PiccoloCanvas extends PSwingCanvas
         @Override
         public void mousePressed(PInputEvent e)
         {
-            if (accept((MouseEvent) e.getSourceSwingEvent()))
-                original = e;
+            if (accept((MouseEvent) e.getSourceSwingEvent())) original = e;
         }
 
         @Override
         public void mouseReleased(PInputEvent e)
         {
             e.getComponent().setInteracting(false);
-             original = null;
+            original = null;
         }
-        
+
         private boolean accept(MouseEvent e)
         {
-            return e.getButton() == MouseEvent.BUTTON3 
-                    && !e.isControlDown() &&
-                    !e.isShiftDown() && !e.isAltDown();
+            return e.getButton() == MouseEvent.BUTTON3 && !e.isControlDown()
+                    && !e.isShiftDown() && !e.isAltDown();
         }
-        
+
         @Override
         public void mouseDragged(PInputEvent e)
         {
-            if(original == null || //some node is under the mouse 
+            if (original == null || // some node is under the mouse
                     !(e.getPath().getPickedNode() instanceof PCamera)) return;
             PCamera camera = (PCamera) e.getPath().getPickedNode();
             e.getComponent().setInteracting(true);
             super.mouseDragged(e);
             doZoom(camera, original, e);
         }
-        
+
         protected void doZoom(PCamera camera, PInputEvent ref, PInputEvent now)
         {
             Point2D zoomPt = ref.getCanvasPosition();
-            
-            double dx = ((MouseEvent)ref.getSourceSwingEvent()).getX() -
-               ((MouseEvent)now.getSourceSwingEvent()).getX(); 
+
+            double dx = ((MouseEvent) ref.getSourceSwingEvent()).getX()
+                    - ((MouseEvent) now.getSourceSwingEvent()).getX();
             double scaleDelta = (1.0 + (0.001 * dx));
             double currentScale = camera.getViewScale();
             double newScale = currentScale * scaleDelta;
 
             if (newScale < getMinScale())
                 scaleDelta = getMinScale() / currentScale;
-            
+
             if ((getMaxScale() > 0) && (newScale > getMaxScale()))
                 scaleDelta = getMaxScale() / currentScale;
-    
-            camera.scaleViewAboutPoint(scaleDelta, zoomPt.getX(), zoomPt.getY());
-            original = now;   
+
+            camera
+                    .scaleViewAboutPoint(scaleDelta, zoomPt.getX(), zoomPt
+                            .getY());
+            original = now;
         }
     }
 }
