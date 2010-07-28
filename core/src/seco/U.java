@@ -63,7 +63,7 @@ public class U
     	// windows "user.home"
         String home = System.getenv().get("HOME");
         if(home == null)
-           home = System.getenv().get("USERPROFILE");//System.getProperty("user.home");
+           home = System.getProperty("user.home"); //System.getenv().get("USERPROFILE");
         //on my Windows System.getenv().get("HOME") return a quoted value 
         if(home != null && home.startsWith(QUOTE))
            home = unquote(home);

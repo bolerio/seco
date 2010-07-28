@@ -18,6 +18,8 @@ import java.util.Collection;
 
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
+import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 
 import org.hypergraphdb.HGHandle;
 
@@ -165,7 +167,8 @@ public class PiccoloCanvas extends PSwingCanvas
 
     public void relayout()
     {
-        if (maximizedNode != null) {
+        if (maximizedNode != null)
+        {
             adjust_maximized_node();
             return;
         }
@@ -301,27 +304,10 @@ public class PiccoloCanvas extends PSwingCanvas
 
         adjust_maximized_node();
         n.moveToFront();
-        if(!nested){
-        JScrollPane scroll = (JScrollPane) getParent().getParent();
-         //scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        //scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        }
+        toggle_scroll_bars(false);
     }
 
-    private static int max_offset_y = 30;
-    private static int max_offset_x = 30;
-
-    private void adjust_maximized_node()
-    {
-        int w = TopFrame.getInstance().getContentPane().getWidth();
-        int h = TopFrame.getInstance().getContentPane().getHeight();
-        maximizedNode.setBounds(0, 0, w - max_offset_x, h - max_offset_y);
-        PBounds b = maximizedNode.getFullBounds();
-        System.out.println("bounds:" + b);
-        maximizedNode.translate(-b.x + max_offset_x / 2, -b.y + max_offset_y / 2);
-        //maximizedNode.getComponent().revalidate();
-    }
-
+   
     public void unmaximizeNode(PSwingNode n)
     {
         if (n.getCanvas() != this)
@@ -334,13 +320,8 @@ public class PiccoloCanvas extends PSwingCanvas
         placeNode(n);
         showAllNodes(n);
         relayout();
-        
-//        if(!nested){
-//        JScrollPane scroll = (JScrollPane) getParent().getParent();
-//        scroll.setHorizontalScrollBarPolicy(
-//                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-//        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-//        }
+
+        toggle_scroll_bars(true);
     }
 
     void showAllNodes(PSwingNode except)
@@ -348,16 +329,58 @@ public class PiccoloCanvas extends PSwingCanvas
         for (int i = 0; i < getNodeLayer().getChildrenCount(); i++)
         {
             PNode n = getNodeLayer().getChild(i);
-            n.setVisible(true); 
-            if(n instanceof PSwingNode)
-             ((PSwingNode) n).getComponent().revalidate();
+            n.setVisible(true);
+            if (n instanceof PSwingNode)
+                ((PSwingNode) n).getComponent().revalidate();
         }
         for (int i = 0; i < getCamera().getChildrenCount(); i++)
         {
             PNode n = getCamera().getChild(i);
-            n.setVisible(true); 
-            if(n instanceof PSwingNode)
+            n.setVisible(true);
+            if (n instanceof PSwingNode)
                 ((PSwingNode) n).getComponent().revalidate();
+        }
+    }
+    
+    private static int offset_y = 16;
+    private static int offset_x = 16;
+
+    private void adjust_maximized_node()
+    {
+       // double w = (nested) ? getBounds().getWidth() :TopFrame.getInstance().getContentPane().getWidth();
+      //  double h = (nested) ? getBounds().getHeight() :TopFrame.getInstance().getContentPane().getHeight();
+        double w = getBounds().getWidth(); 
+        double h = getBounds().getHeight();
+        maximizedNode.setBounds(0, 0, w - offset_x, h - 2*offset_y);
+        PBounds b = maximizedNode.getFullBounds();
+        //System.out.println("bounds:" + b);
+        maximizedNode.translate(-b.x + offset_x / 2, -b.y + offset_y/ 2);
+    }
+
+    private void toggle_scroll_bars(boolean on)
+    {
+        JScrollPane scroll = (JScrollPane) getParent().getParent();
+        if (!on)
+        {
+
+            if (scroll.getVerticalScrollBar().isShowing()
+                    || scroll.getHorizontalScrollBar().isShowing())
+            {
+                JViewport vp = scroll.getViewport();
+                if (vp != null && vp.getView() != null)
+                    vp.setViewPosition(new Point(0, 0));
+            }
+            scroll
+                    .setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            scroll
+                    .setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        }
+        else
+        {
+            scroll
+                    .setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            scroll
+                    .setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         }
     }
 

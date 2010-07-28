@@ -41,8 +41,8 @@ import seco.notebook.util.RequestProcessor;
 public class ClassRepository
 {
     public static final String REPOSITORY_NAME = ".secoRepository";
-    static String repositoryPath = new File(new File(U.findUserHome()),
-            REPOSITORY_NAME).getAbsolutePath();
+    //static String repositoryPath = new File(new File(U.findUserHome()),
+    //        REPOSITORY_NAME).getAbsolutePath();
 
     private static final HGPersistentHandle JARS_MAP_HANDLE = UUIDHandleFactory.I.makeHandle("1d3b7df9-f109-11dc-9512-073dfab2b15a");
     private static final HGPersistentHandle JAVADOC_HANDLE = UUIDHandleFactory.I.makeHandle("b12ecac6-d6d8-4de1-9924-88326993e4e2");
@@ -656,6 +656,8 @@ public class ClassRepository
     {
         if (instance == null)
         {
+            String repositoryPath = new File(new File(U.findUserHome()),
+                    REPOSITORY_NAME).getAbsolutePath();
             System.out.println("ClassRepository Path : " + repositoryPath);
             instance = new ClassRepository(new HyperGraph(repositoryPath));
         }
