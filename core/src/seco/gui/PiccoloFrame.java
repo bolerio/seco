@@ -1,25 +1,13 @@
 package seco.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.HeadlessException;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.border.MatteBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
 import seco.ThisNiche;
-import seco.notebook.NotebookUI;
-import seco.things.CellGroup; 
-import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolox.pswing.PSwing;
+import seco.things.CellGroup;
 import edu.umd.cs.piccolox.swing.PScrollPane;
 
 public class PiccoloFrame extends TopFrame
@@ -79,7 +67,7 @@ public class PiccoloFrame extends TopFrame
     {
         public void caretUpdate(CaretEvent e)
         {
-           TopFrame.getInstance().showHTMLToolBar(false);
+           getInstance().showHTMLToolBar(false);
         }
     }
  

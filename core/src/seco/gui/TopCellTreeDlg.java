@@ -1,6 +1,7 @@
 package seco.gui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -255,7 +256,7 @@ public class TopCellTreeDlg extends JDialog
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-                    JDialog dialog = new JDialog(TopFrame.getInstance(),
+                    JDialog dialog = new JDialog(GUIUtilities.getFrame((Component)e.getSource(),
                             "Delete Attributes");
                     dialog.setSize(300, 200);
                     dialog.add(new RemoveAttribsPanel(cgm));

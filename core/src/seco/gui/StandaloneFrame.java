@@ -1,5 +1,5 @@
 /*
- * This file is part of the Scriba source distribution. This is free, open-source 
+ * This file is part of the Seco source distribution. This is free, open-source 
  * software. For full licensing information, please see the LicensingInformation file
  * at the root level of the distribution.
  *
@@ -11,7 +11,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
 
 import javax.swing.JPanel;
 import javax.swing.event.CaretListener;

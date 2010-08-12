@@ -389,9 +389,9 @@ public class GUIHelper
             putValue(Action.SHORT_DESCRIPTION, "Import Notebook");
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent evt)
+        public void actionPerformed(ActionEvent evt)
         {
-            JDialog dialog = new JDialog(TopFrame.getInstance(),
+            JDialog dialog = new JDialog(GUIUtilities.getFrame((Component)evt.getSource()),
                     "Open Or Delete CellGroup");
             dialog.setSize(500, 500);
             dialog.add(new OpenBookPanel());
@@ -769,8 +769,7 @@ public class GUIHelper
 
     private static void addAsBook(HGHandle h)
     {
-        CellGroup group = ThisNiche.graph.get(TopFrame.getInstance()
-                .getFocusedContainerHandle());
+        CellGroup group = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         if (CellUtils.isBackuped(h)) CellUtils.restoreCell(h);
         CellGroupMember child = ThisNiche.graph.get(h);
         child.setVisual(NBUIVisual.getHandle());

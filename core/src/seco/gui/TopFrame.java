@@ -13,7 +13,6 @@ import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
 import seco.notebook.util.Log;
-import seco.rtenv.RuntimeContext;
 import seco.talk.ConnectionManager;
 import seco.things.CellUtils;
 
@@ -71,12 +70,6 @@ public abstract class TopFrame extends JFrame
         set_original_title_and_icon();
     }
     
-    @Override
-    public void setTitle(String title)
-    {
-        super.setTitle(title);
-    }
-
     public void blink(String message)
     {
         if(isFocused()) return;
@@ -181,14 +174,14 @@ public abstract class TopFrame extends JFrame
         System.exit(0);
     }
 
-    public HGHandle getFocusedContainerHandle()
-    {
-        return focusedContainerHandle;
-    }
-
-    public void setFocusedContainerHandle(HGHandle focusedContainerHandle)
-    {
-        this.focusedContainerHandle = focusedContainerHandle;
-    }
+//    public HGHandle getFocusedContainerHandle()
+//    {
+//        return focusedContainerHandle;
+//    }
+//
+//    public void setFocusedContainerHandle(HGHandle focusedContainerHandle)
+//    {
+//        this.focusedContainerHandle = focusedContainerHandle;
+//    }
 
 }

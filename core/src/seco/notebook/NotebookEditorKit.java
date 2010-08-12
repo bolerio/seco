@@ -7,6 +7,7 @@
  */
 package seco.notebook;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Point;
@@ -909,9 +910,9 @@ public class NotebookEditorKit extends StyledEditorKit
             super(javaDocManagerAction);
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent evt)
+        public void actionPerformed(ActionEvent evt)
         {
-            JDialog dialog = new JDialog(TopFrame.getInstance(),
+            JDialog dialog = new JDialog(GUIUtilities.getFrame((Component)evt.getSource()),
                     javaDocManagerAction);
             dialog.setSize(500, 500);
             dialog.add(new JavaDocPanel());
@@ -945,7 +946,7 @@ public class NotebookEditorKit extends StyledEditorKit
 
         public void actionPerformed(ActionEvent e) 
         {
-            JDialog dialog = new JDialog(TopFrame.getInstance(),
+            JDialog dialog = new JDialog(GUIUtilities.getFrame((Component)e.getSource()),
                     shortcutInspectorAction);
             dialog.setSize(500, 500);
             dialog.add(new ShortcutPanel());
