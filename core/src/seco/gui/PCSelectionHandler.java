@@ -350,7 +350,7 @@ public class PCSelectionHandler extends PDragSequenceEventHandler
         switch (e.getKeyCode())
         {
         case KeyEvent.VK_DELETE:
-            TopFrame.getInstance().getCanvas().deleteSelection();
+            ThisNiche.getCanvas().deleteSelection();
         }
     }
 

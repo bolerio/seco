@@ -193,7 +193,7 @@ public class ConnectionContext
                 else
                 {
                     if (t != null) t.printStackTrace(System.err);
-                    JOptionPane.showMessageDialog(TopFrame.getInstance(),
+                    JOptionPane.showMessageDialog(ThisNiche.guiController.getFrame(),
                             HGUtils.getRootCause(t),
                             "Failed to connect to network, see error console.",
                             JOptionPane.ERROR_MESSAGE);
@@ -236,7 +236,7 @@ public class ConnectionContext
                     if (t != null) t.printStackTrace(System.err);
                     JOptionPane
                             .showMessageDialog(
-                                    TopFrame.getInstance(),
+                                    ThisNiche.guiController.getFrame(),
                                     t,
                                     "Failed to disconnected from network, see error console.",
                                     JOptionPane.ERROR_MESSAGE);
@@ -276,13 +276,13 @@ public class ConnectionContext
                 ThisNiche.TOP_CELL_GROUP_HANDLE, panelHandle);
         if (existingH != null)
         {
-            PSwingNode n = TopFrame.getInstance().getCanvas()
+            PSwingNode n = ThisNiche.getCanvas()
                     .getPSwingNodeForHandle(existingH);
             n.blink();
             return panel;
         }
         // Create new panel
-        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
+        PiccoloCanvas canvas = ThisNiche.getCanvas();
         int width = 200;
         int height = 200;
         int x = Math.max(0, canvas.getWidth() - width - width / 5);
@@ -327,13 +327,13 @@ public class ConnectionContext
                 ThisNiche.TOP_CELL_GROUP_HANDLE, panelH);
         if (existingH != null)
         {
-            PSwingNode n = TopFrame.getInstance().getCanvas()
+            PSwingNode n = ThisNiche.getCanvas()
                     .getPSwingNodeForHandle(existingH);
             if(n != null) n.blink();
             return;
         }
 
-        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
+        PiccoloCanvas canvas = ThisNiche.getCanvas();
         int width = 200;
         int height = 100;
         int x = Math.max(0, (canvas.getWidth() - width) / 2);
@@ -390,13 +390,12 @@ public class ConnectionContext
                 ThisNiche.TOP_CELL_GROUP_HANDLE, panelH);
         if (existingH != null)
         {
-            PSwingNode n = TopFrame.getInstance().getCanvas()
-                    .getPSwingNodeForHandle(existingH);
+            PSwingNode n = ThisNiche.getCanvas().getPSwingNodeForHandle(existingH);
             n.blink();
             return;
         }
 
-        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
+        PiccoloCanvas canvas = ThisNiche.getCanvas();
         int width = 400;
         int height = 500;
         int x = Math.max(0, (canvas.getWidth() - width) / 2);
@@ -526,7 +525,7 @@ public class ConnectionContext
     {
         if (isMe(x))
         {
-            JOptionPane.showMessageDialog(TopFrame.getInstance(),
+            JOptionPane.showMessageDialog(ThisNiche.guiController.getFrame(),
                     "Can't talk to yourself");
             return;
         }
@@ -541,7 +540,7 @@ public class ConnectionContext
         String message = "User "
                 + x.getNick()
                 + " is not currently in your friend list, would you like to add them?";
-        int res = JOptionPane.showConfirmDialog(TopFrame.getInstance(),
+        int res = JOptionPane.showConfirmDialog(ThisNiche.guiController.getFrame(),
                 message, "?", JOptionPane.OK_CANCEL_OPTION);
         if (res == JOptionPane.OK_OPTION) addRoster(x);
     }

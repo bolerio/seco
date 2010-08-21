@@ -52,7 +52,7 @@ public class TopCellTreeDlg extends JDialog
 
     public TopCellTreeDlg(CellGroupMember cell)
     {
-        super(TopFrame.getInstance(), false);
+        super(ThisNiche.guiController.getFrame(), false);
         this.top = cell;
         String name = CellUtils.getName(cell);
         if (name == null) name = "";
@@ -256,7 +256,8 @@ public class TopCellTreeDlg extends JDialog
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-                    JDialog dialog = new JDialog(GUIUtilities.getFrame((Component)e.getSource(),
+                    JDialog dialog = new JDialog(GUIUtilities.getFrame(
+                            (Component)e.getSource()),
                             "Delete Attributes");
                     dialog.setSize(300, 200);
                     dialog.add(new RemoveAttribsPanel(cgm));

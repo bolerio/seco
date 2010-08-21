@@ -16,16 +16,16 @@ import seco.notebook.util.Log;
 import seco.talk.ConnectionManager;
 import seco.things.CellUtils;
 
-public abstract class TopFrame extends JFrame
+public abstract class TopFrame extends JFrame implements GUIController 
 {
     private static final long serialVersionUID = -4693003403767961820L; 
     
     public static boolean PICCOLO = true;
     public static boolean AUTO_BACKUP = true;
    
-    private static TopFrame instance;
+   // private static TopFrame instance;
 
-    protected HGHandle focusedContainerHandle = ThisNiche.TOP_CELL_GROUP_HANDLE;
+    //protected HGHandle focusedContainerHandle = ThisNiche.TOP_CELL_GROUP_HANDLE;
 
     protected Image LOGO_IMAGE = Toolkit.getDefaultToolkit().getImage(
             TopFrame.class.getResource(GUIHelper.LOGO_IMAGE_RESOURCE));
@@ -34,12 +34,12 @@ public abstract class TopFrame extends JFrame
 
     private String original_title;
     
-    public static TopFrame getInstance()
-    {
-        if (instance == null)
-            instance = (PICCOLO) ? new PiccoloFrame() : new StandaloneFrame();
-        return instance;
-    }
+//    /*public*/private static TopFrame getInstance()
+//    {
+//        if (instance == null)
+//            instance = (PICCOLO) ? new PiccoloFrame() : new StandaloneFrame();
+//        return instance;
+//    }
 
     public TopFrame() throws HeadlessException
     {
@@ -70,6 +70,7 @@ public abstract class TopFrame extends JFrame
         set_original_title_and_icon();
     }
     
+  
     public void blink(String message)
     {
         if(isFocused()) return;
@@ -146,21 +147,21 @@ public abstract class TopFrame extends JFrame
         }
     }
 
-    public void showHTMLToolBar(boolean show_or_hide)
-    {
-    }
+//    public void showHTMLToolBar(boolean show_or_hide)
+//    {
+//    }
 
     public PiccoloCanvas getCanvas()
     {
         return null;
     }
 
-    public void setStatusBarMessage(String message)
+    public  JFrame getFrame()
     {
-
+        return this;
     }
 
-    public CaretListener getCaretListener()
+     public CaretListener getNotebookUICaretListener()
     {
         return null;
     }

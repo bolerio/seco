@@ -16,10 +16,11 @@ public class PiccoloFrame extends TopFrame
 	private PiccoloCanvas canvas;
     private CaretListener caretL; 
     
-    PiccoloFrame() throws HeadlessException
+    public PiccoloFrame() throws HeadlessException
     {
         super();
-        caretL = new CListener();
+        caretL = new NotebookUICaretListener();
+        PICCOLO = true;
     }
 
     protected void initFrame()
@@ -36,11 +37,11 @@ public class PiccoloFrame extends TopFrame
         validate(); 
     }
  
-    public void showHTMLToolBar(boolean show_or_hide)
-    {
-       GUIHelper.getHTMLToolBar().setEnabled(show_or_hide);
-    }
-    
+//    public void showHTMLToolBar(boolean show_or_hide)
+//    {
+//       GUIHelper.getHTMLToolBar().setEnabled(show_or_hide);
+//    }
+//    
     
     public void exit()
     {
@@ -58,16 +59,16 @@ public class PiccoloFrame extends TopFrame
     }
     
     
-    public CaretListener getCaretListener()
+    public CaretListener getNotebookUICaretListener()
     {
         return caretL;
     }
     
-    private static class CListener implements CaretListener
+    public static class NotebookUICaretListener implements CaretListener
     {
         public void caretUpdate(CaretEvent e)
         {
-           getInstance().showHTMLToolBar(false);
+            GUIHelper.getHTMLToolBar().setEnabled(false);
         }
     }
  

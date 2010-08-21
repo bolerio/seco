@@ -47,8 +47,8 @@ public class NBUIVisual implements CellVisual
            h = ThisNiche.handleOf(element); 
         final NotebookUI ui = new NotebookUI(h);
         final NotebookDocument doc = ui.getDoc();
-        if (TopFrame.getInstance().getCaretListener() != null)
-            ui.addCaretListener(TopFrame.getInstance().getCaretListener());
+        if (ThisNiche.guiController.getNotebookUICaretListener() != null)
+            ui.addCaretListener(ThisNiche.guiController.getNotebookUICaretListener());
         
         final JScrollPane scrollPane = new JScrollPane(ui);
         scrollPane.setDoubleBuffered(!TopFrame.PICCOLO);

@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import seco.ThisNiche;
 import seco.gui.ObjectInspector;
 import seco.gui.TopFrame;
 import seco.notebook.NotebookUI;
@@ -186,7 +187,7 @@ public class RuntimeContextPanel extends PropertySheetPanel
 	    {
 	        ObjectInspector propsPanel = new ObjectInspector(value);
 	        DialogDescriptor dd = new DialogDescriptor(
-	                TopFrame.getInstance(), 
+	                ThisNiche.guiController.getFrame(), 
 	                new JScrollPane(propsPanel),
 	              "Object Inspector: " + ((value == null)? 
 	                      "null" : value.getClass().getName()));

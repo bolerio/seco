@@ -44,7 +44,7 @@
           (.show (edit-context-dialog #null (RuntimeContext.)))
       )))
       ;(menuitem "Configure Current" (action (lambda (e) 
-      ;    (let ((h (.getCurrentRuntimeContext desktop)))
+      ;    (let ((h (.TOP_CONTEXT_HANDLE ThisNiche)))
       ;        (.show (edit-context-dialog h (.get niche h))))
       ; )))
       (menuitem "Manage Contexts" (action (lambda (e) 

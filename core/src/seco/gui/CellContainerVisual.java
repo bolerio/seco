@@ -51,10 +51,12 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
         if (isTopContainer(element))
         {
             maximized = null;
-            canvas = TopFrame.getInstance().getCanvas();
+            if(ThisNiche.guiController == null)
+               ThisNiche.initGUIController();
+            canvas = ThisNiche.getCanvas();
             Rectangle r = (Rectangle) element.getAttribute(VisualAttribs.rect);
-            if (r != null) 
-                TopFrame.getInstance().setBounds(r);
+            if (r != null && ThisNiche.guiController.getFrame() != null) 
+                ThisNiche.guiController.getFrame().setBounds(r);
         }
         else
         {
@@ -142,7 +144,7 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
                 scroll.getViewport().setView(canvas);
                 scroll.setTransferHandler(canvas.getTransferHandler());
             }
-            else
+            else if(top_canvas != null)
             {
                 PSwingNode ps = top_canvas.getPSwingNodeForHandle(childH);
                 if (ps != null)
@@ -171,11 +173,11 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
     {
         JComponent c = (JComponent) cm.getVisualInstance();
         if(c == null || GUIHelper.getPSwingNode(c) == null) 
-            return TopFrame.getInstance().getCanvas();        
+            return ThisNiche.getCanvas();        
         if(c instanceof PiccoloCanvas) 
             return (PiccoloCanvas) c;
         if(c == null || GUIHelper.getPSwingNode(c) == null) 
-            return TopFrame.getInstance().getCanvas();
+            return ThisNiche.getCanvas();
         return GUIHelper.getPSwingNode(c).getCanvas();
     }
 

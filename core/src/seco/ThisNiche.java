@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.swing.JFrame;
+
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
@@ -22,6 +25,11 @@ import org.hypergraphdb.query.AtomTypeCondition;
 import org.hypergraphdb.query.LinkCondition;
 import static org.hypergraphdb.HGQuery.hg;
 import seco.boot.NicheManager;
+import seco.classloader.AdaptiveClassLoader;
+import seco.gui.GUIController;
+import seco.gui.PiccoloCanvas;
+import seco.gui.PiccoloFrame;
+import seco.gui.StandaloneFrame;
 import seco.rtenv.ContextLink;
 import seco.rtenv.EvaluationContext;
 import seco.rtenv.SEDescriptor;
@@ -36,6 +44,9 @@ public final class ThisNiche
     static EvaluationContext topContext;
     static HashMap<HGHandle, EvaluationContext> allContexts = new HashMap<HGHandle, EvaluationContext>();
 
+    public static String guiControllerClassName = PiccoloFrame.class.getName();;
+    public static GUIController guiController;
+    
     public static final HGPersistentHandle NICHE_NAME_HANDLE = UUIDHandleFactory.I
             .makeHandle("86a18ae7-391d-11db-b473-e61fbd5cb97a");
     public static final HGPersistentHandle TOP_CONTEXT_HANDLE = UUIDHandleFactory.I
@@ -62,6 +73,27 @@ public final class ThisNiche
         {
             U.closeNoException(rs);
         }
+    }
+    
+    public static void initGUIController()
+    {
+        if(guiController != null) return;
+        AdaptiveClassLoader cl = new AdaptiveClassLoader(new java.util.Vector<Object>(), true);
+        try
+        {
+            Class<?> c = cl.loadClass(guiControllerClassName);
+            guiController = (GUIController) c.newInstance();
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace(System.err);
+            System.exit(-1);
+        }
+    }
+    
+    public static PiccoloCanvas getCanvas()
+    {
+        return ThisNiche.guiController.getCanvas();
     }
 
     public static void bindNiche(HyperGraph graph)

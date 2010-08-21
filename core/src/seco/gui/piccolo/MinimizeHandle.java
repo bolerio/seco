@@ -41,7 +41,7 @@ public class MinimizeHandle extends CommandHandle
 //
 //        public Action()
 //        {
-//            super("node = desktop.canvas.getSelectedPSwingNode();"+
+//            super("node = canvas.getSelectedPSwingNode();"+
 //            "CellUtils.toggleMinimized(niche.get(node.getHandle()))");
 //            putValue(Action.SMALL_ICON, IconManager.resolveIcon("Minimize.gif"));
 //            putValue(Action.SHORT_DESCRIPTION, "Minimize/Restore");

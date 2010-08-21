@@ -80,8 +80,8 @@ public class TabbedPaneU
         CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, h, visH, visH);
         CellUtils.removeEventPubSub(AttributeChangeEvent.HANDLE, h, visH, visH);
        
-        if (tp.getTabCount() == 0) 
-            TopFrame.getInstance().setTitle("Seco");
+        if (tp.getTabCount() == 0 && ThisNiche.guiController.getFrame() != null) 
+            ThisNiche.guiController.getFrame().setTitle("Seco");
         else
             GUIHelper.updateFrameTitle(
                     getHandleAt(tp, tp.getSelectedIndex()));
@@ -210,7 +210,8 @@ public class TabbedPaneU
                     break;
                 }
             }
-            TopFrame.getInstance().repaint();
+            if(ThisNiche.guiController.getFrame() != null)
+               ThisNiche.guiController.getFrame().repaint();
             e.consume();
         }
         

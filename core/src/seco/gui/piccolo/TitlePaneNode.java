@@ -75,7 +75,7 @@ public class TitlePaneNode extends CommandHandle
     {
         relocateHandle();
         PCSelectionHandler handler = 
-            TopFrame.getInstance().getCanvas().getSelectionHandler();
+            ThisNiche.getCanvas().getSelectionHandler();
         if(!handler.isSelected(node))
             handler.select(node, true);
         else
@@ -86,7 +86,7 @@ public class TitlePaneNode extends CommandHandle
     @Override
     public void rightClick(PInputEvent e)
     {
-        TopFrame.getInstance().getCanvas().getSelectionHandler().select(node, false);
-        TopFrame.getInstance().getCanvas().getContextMenuHandler().showNodeMenu(e);
+        ThisNiche.getCanvas().getSelectionHandler().select(node, false);
+        ThisNiche.getCanvas().getContextMenuHandler().showNodeMenu(e);
     }
 }

@@ -15,6 +15,8 @@ import java.awt.GridLayout;
 import javax.swing.JPanel;
 import javax.swing.event.CaretListener;
 
+import org.hypergraphdb.HGHandle;
+
 import seco.ThisNiche;
 import seco.notebook.StatusBar;
 import seco.notebook.gui.AKDockLayout;
@@ -29,10 +31,11 @@ public class StandaloneFrame extends TopFrame
 {
     private StatusBar status;
     private JPanel statusPane;
+    public HGHandle tabbedPaneGroupHandle;
 
-    StandaloneFrame()
+    public StandaloneFrame()
     {
-       
+        PICCOLO = false;
     }
 
     protected void initFrame()
@@ -46,6 +49,7 @@ public class StandaloneFrame extends TopFrame
         setJMenuBar(GUIHelper.getMenuBar());
         getContentPane().setLayout(new AKDockLayout());
         getContentPane().add(GUIHelper.getMainToolBar(), AKDockLayout.NORTH);
+        getContentPane().add(GUIHelper.getHTMLToolBar(), AKDockLayout.NORTH);
         getContentPane().add(getJTabbedPane(), BorderLayout.CENTER);
         getContentPane().add(statusPane, BorderLayout.SOUTH);
         setPreferredSize(new Dimension(1000, 700));
@@ -62,21 +66,21 @@ public class StandaloneFrame extends TopFrame
             if(cgm instanceof CellGroup && 
                     TabbedPaneVisual.getHandle().equals(cgm.getVisual()))
             {
-                focusedContainerHandle = top.getTargetAt(i);
+                tabbedPaneGroupHandle = top.getTargetAt(i);
                 TabbedPaneVisual v = ThisNiche.graph.get(TabbedPaneVisual.getHandle());
                 return v.bind(cgm);
             }
         }
         //no tabbedPane, add one
         CellGroup group = new CellGroup("TabbedPaneCellGroup");
-        focusedContainerHandle = ThisNiche.graph.add(group);
+        tabbedPaneGroupHandle = ThisNiche.graph.add(group);
         group.setVisual(TabbedPaneVisual.getHandle());
         ThisNiche.graph.update(group);
         top.insert(top.getArity(), group);
         return TabbedPaneU.createTabbedPane(group);
     } 
 
-    public CaretListener getCaretListener()
+    public CaretListener getNotebookUICaretListener()
     {
         return status;
     }
@@ -87,19 +91,19 @@ public class StandaloneFrame extends TopFrame
             status.setMessage(message);
     }
 
-    private boolean html_toolbar_added;
-
-    public void showHTMLToolBar(boolean show_or_hide)
-    {
-        if (!html_toolbar_added)
-        {
-            getContentPane()
-                    .add(GUIHelper.getHTMLToolBar(), AKDockLayout.NORTH);
-            getContentPane().invalidate();
-            getContentPane().repaint();
-            html_toolbar_added = true;
-        }
-        GUIHelper.getHTMLToolBar().setEnabled(show_or_hide);
-    }
+//    private boolean html_toolbar_added;
+//
+//    public void showHTMLToolBar(boolean show_or_hide)
+//    {
+//        if (!html_toolbar_added)
+//        {
+//            getContentPane()
+//                    .add(GUIHelper.getHTMLToolBar(), AKDockLayout.NORTH);
+//            getContentPane().invalidate();
+//            getContentPane().repaint();
+//            html_toolbar_added = true;
+//        }
+//        GUIHelper.getHTMLToolBar().setEnabled(show_or_hide);
+//    }
 
 }

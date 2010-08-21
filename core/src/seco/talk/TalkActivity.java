@@ -317,7 +317,7 @@ public class TalkActivity extends FSMActivity
             // friend.getId(),
             // new ChatEvent(friend, text));
             getPanel().getChatPane().chatFrom(friend, text);
-            TopFrame.getInstance().blink("New message received");
+            ThisNiche.guiController.blink("New message received");
         }
         return null;
     }

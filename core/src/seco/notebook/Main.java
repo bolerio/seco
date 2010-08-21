@@ -7,6 +7,9 @@
  */
 package seco.notebook;
 
+import seco.ThisNiche;
+import seco.boot.StartMeUp;
+import seco.gui.StandaloneFrame;
 import seco.gui.TopFrame;
 
 /**
@@ -25,7 +28,9 @@ public class Main
      */
     public static void main(String[] args) 
     {
-        TopFrame.getInstance().setVisible(true);
+        ThisNiche.guiControllerClassName = StandaloneFrame.class.getName();
+        StartMeUp.main(null);
+        //ThisNiche.guiController.getFrame().setVisible(true);
     }
     
 }

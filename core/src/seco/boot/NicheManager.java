@@ -100,7 +100,7 @@ public class NicheManager
         }
     }
 
-    static void saveNiches(Map<String, File> niches)
+    public static void saveNiches(Map<String, File> niches)
     {
         try
         {
@@ -125,7 +125,7 @@ public class NicheManager
      * <p>Recursively delete a directory with all its contents.</p>
      * @param dir
      */
-    static void deleteDirectory(File dir)
+    public static void deleteDirectory(File dir)
     {
         try
         {
@@ -141,7 +141,8 @@ public class NicheManager
             t.printStackTrace(System.err);            
         }
     }
-    static boolean isLocationOk(File location)
+    
+    public static boolean isLocationOk(File location)
     {
         if (!location.exists())
             return true;
@@ -156,7 +157,7 @@ public class NicheManager
     /**
      * <p>Test whether a given location on the file system is a "niche" HyperGraphDB.</p>
      */
-    static boolean isNicheLocation(File location)
+    public static boolean isNicheLocation(File location)
     {
         if (!new File(location, "hgstore_idx_HGATOMTYPE").exists())
         	return false;
@@ -333,7 +334,7 @@ public class NicheManager
     	populateDefaultSecoUI(ThisNiche.graph);        
     }
     
-    static void createNiche(String name, File path)
+    public static void createNiche(String name, File path)
     {
         int levelsToDeleteOnFail = 0;
         for (File existing = path; !existing.exists(); existing = existing.getParentFile())

@@ -31,6 +31,7 @@ import javax.swing.text.NavigationFilter;
 import javax.swing.text.Position;
 import javax.swing.text.Position.Bias;
 
+import seco.ThisNiche;
 import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
 import seco.notebook.NotebookDocument;
@@ -118,7 +119,8 @@ public class HtmlView extends HidableComponentView
                     boolean readonly = ui.getDoc().isReadOnlyEl(getElement());
                     InnerHTMLEditor.this.setEditable(!readonly);
                     if(readonly)  return;
-                    TopFrame.getInstance().showHTMLToolBar(true);
+                    //ThisNiche.guiController.showHTMLToolBar(true);
+                    GUIHelper.getHTMLToolBar().setEnabled(true);
                 }
 
                 public void focusLost(FocusEvent e)

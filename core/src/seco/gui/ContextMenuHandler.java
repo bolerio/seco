@@ -61,8 +61,7 @@ public class ContextMenuHandler extends PBasicInputEventHandler
        // System.out.println("ContextMenuHandler - showMenu: " +
         //         event.getPickedNode() + ":" + event.getComponent());
         if (event == null) return;
-        if ((event.getPickedNode().equals(TopFrame.getInstance()
-                        .getCanvas().getCamera())))
+        if ((event.getPickedNode().equals(ThisNiche.getCanvas().getCamera())))
         {
             int m = InputEvent.CTRL_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
             if ((event.getModifiersEx() & m) == m) showGlobMenu(event);
@@ -159,17 +158,17 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         node_actions
                 .add(makeScriptletAction(
                         "Rename",
-                        "seco.gui.CommonActions.renameCellGroupMember(desktop.canvas.getSelectedPSwingNode().getHandle())"));
+                        "seco.gui.CommonActions.renameCellGroupMember(canvas.getSelectedPSwingNode().getHandle())"));
         node_actions
                 .add(makeScriptletAction(
                         "Title On/Off",
-                        "seco.things.CellUtils.toggleShowTitle(desktop.canvas.getSelectedPSwingNode().getHandle())"));
+                        "seco.things.CellUtils.toggleShowTitle(canvas.getSelectedPSwingNode().getHandle())"));
 
         node_actions
                 .add(makeScriptletAction(
                         "Pin/Unpin",
                         "seco.gui.CommonActions.showLayoutSettingsDlg("
-                                + "desktop.canvas.getSelectedPSwingNode());"));
+                                + "canvas.getSelectedPSwingNode());"));
         node_actions
                 .add(makeScriptletAction("Store Changes",
                         "seco.gui.CommonActions.updateSelectedPSwingCellComponentValue();"));

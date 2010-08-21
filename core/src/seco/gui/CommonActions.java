@@ -38,7 +38,7 @@ public class CommonActions
     public static void showLayoutSettingsDlg(PSwingNode node)
     {
         LayoutSettingsPanel panel = new LayoutSettingsPanel(node);
-        JDialog dialog = new JDialog(TopFrame.getInstance(), "Layout Settings");
+        JDialog dialog = new JDialog(ThisNiche.guiController.getFrame(), "Layout Settings");
         dialog.add(panel);
         dialog.setSize(new Dimension(270, 170));
         dialog.setVisible(true);
@@ -46,14 +46,14 @@ public class CommonActions
 
     public static void birdsEyeView()
     {
-        PCanvas canvas = TopFrame.getInstance().getCanvas();
+        PCanvas canvas = ThisNiche.getCanvas();
         BirdsEyeView bev = new BirdsEyeView();
         bev.connect(canvas, new PLayer[] { canvas.getLayer() });
 
         bev.setMinimumSize(new Dimension(180, 180));
         bev.setSize(new Dimension(180, 180));
         bev.updateFromViewed();
-        JDialog dialog = new JDialog(TopFrame.getInstance(), "BirdsEyeView");
+        JDialog dialog = new JDialog(ThisNiche.guiController.getFrame(), "BirdsEyeView");
         dialog.add(bev);
         dialog.setSize(new Dimension(220, 220));
         dialog.setVisible(true);
@@ -97,7 +97,7 @@ public class CommonActions
     
     public static void restoreDefaultGUI()
     {
-        TopFrame.getInstance().getCanvas().removeAllNodes();
+        ThisNiche.getCanvas().removeAllNodes();
         CellGroup group = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         CellVisual v = ThisNiche.graph.get(group.getVisual());
         ThisNiche.graph.remove(GUIHelper.MENUBAR_HANDLE, true);
@@ -117,7 +117,7 @@ public class CommonActions
     {
         CellGroup group = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         group.getAttributes().remove(VisualAttribs.zoom);
-        PiccoloCanvas canvas = TopFrame.getInstance().getCanvas();
+        PiccoloCanvas canvas = ThisNiche.getCanvas();
         canvas.getCamera().setViewScale(1.0);
         canvas.getCamera().setViewOffset(0, 0);
     }
@@ -138,7 +138,7 @@ public class CommonActions
         CellGroupMember cgm = ThisNiche.graph.get(h);
         String name = CellUtils.getName(cgm);
         NotifyDescriptor.InputLine nd = new NotifyDescriptor.InputLine(
-                TopFrame.getInstance(), "Name: ", "Rename");
+                ThisNiche.guiController.getFrame(), "Name: ", "Rename");
         nd.setInputText(name);
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION)
         {
@@ -151,8 +151,7 @@ public class CommonActions
     
     public static void updateSelectedPSwingCellComponentValue()
     {
-        PSwingNode ps = TopFrame.getInstance().getCanvas()
-                .getSelectedPSwingNode();
+        PSwingNode ps = ThisNiche.getCanvas().getSelectedPSwingNode();
         CellGroupMember cell = ThisNiche.graph.get(ps.getHandle());
         if (cell instanceof Cell
                 && ((Cell) cell).getValue() instanceof JComponent)

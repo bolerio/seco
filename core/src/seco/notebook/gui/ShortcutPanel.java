@@ -29,6 +29,7 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import seco.ThisNiche;
 import seco.gui.TopFrame;
 import seco.notebook.ActionManager;
 import seco.notebook.NotebookUI;
@@ -264,7 +265,7 @@ public class ShortcutPanel extends PropertySheetPanel
         protected void openEditor()
         {
             CustomEditor ed = new CustomEditor();
-            DialogDescriptor dd = new DialogDescriptor(TopFrame.getInstance(), ed, "KeyStroke Editor");
+            DialogDescriptor dd = new DialogDescriptor(ThisNiche.guiController.getFrame(), ed, "KeyStroke Editor");
             if(DialogDisplayer.getDefault().notify(dd) == NotifyDescriptor.OK_OPTION)
             {
                 Object old = getValue(); 

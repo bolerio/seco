@@ -28,7 +28,11 @@ public class ClassPathEntry
 	
 	public ClassPathEntry(String url)
 	{
-		this.url = url;		
+		this.url = url;	
+		//if not a jar, assure the ending slash is present
+		//otherwise the URLClassloader will ignore this entry
+		if(!url.endsWith(".jar") && !url.endsWith("/"))
+		    url += "/";
 	}
 
     public ClassPathEntry(URL url)

@@ -225,7 +225,7 @@ public class PiccoloCanvas extends PSwingCanvas
     public PSwingNode getSelectedPSwingNode()
     {
         if (nested)
-            return TopFrame.getInstance().getCanvas().getSelectedPSwingNode();
+            return ThisNiche.getCanvas().getSelectedPSwingNode();
         return selectionHandler.getSelectedPSwingNode();
     }
 

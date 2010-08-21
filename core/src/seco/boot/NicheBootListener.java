@@ -7,6 +7,7 @@
  */
 package seco.boot;
 
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -29,10 +30,11 @@ public class NicheBootListener implements HGListener
     public Result handle(HyperGraph hg, HGEvent event)
     {
     	ThisNiche.bindNiche(hg);
-    	final TopFrame s = TopFrame.getInstance();
+    	ThisNiche.initGUIController();
+    	final JFrame s = ThisNiche.guiController.getFrame();
         RuntimeContext topRuntime = ThisNiche.getTopContext().getRuntimeContext(); 
-        topRuntime.getBindings().put("desktop", TopFrame.getInstance());
-        topRuntime.getBindings().put("canvas", TopFrame.getInstance().getCanvas());
+        topRuntime.getBindings().put("desktop", s);
+        topRuntime.getBindings().put("canvas", ThisNiche.getCanvas());
         ThisNiche.graph.update(topRuntime);
         
         // We need to make sure that we have a TOP_CELL_GROUP, no matter what, even if
@@ -59,7 +61,8 @@ public class NicheBootListener implements HGListener
                 }else{
                    CellUtils.evaluateVisibleInitCells();
                    v.bind(group);
-                   s.setVisible(true);
+                   if(s != null)
+                      s.setVisible(true);
                    ConnectionManager.startConnections();
                 }
             	Thread.currentThread().setUncaughtExceptionHandler(new SecoUncaughtExceptionHandler());                

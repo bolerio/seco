@@ -8,6 +8,7 @@ import java.awt.geom.Point2D;
 import javax.swing.ImageIcon;
 import javax.swing.TransferHandler;
 
+import seco.ThisNiche;
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
 import seco.gui.TopFrame;
@@ -34,7 +35,7 @@ public class CopyHandle extends CommandHandle
         dragStarted = true;
         setPaint(sel_bg);
         PiccoloCanvas canvas = node.getCanvas();
-        TopFrame.getInstance().getCanvas().getSelectionHandler().select(node, false);
+        ThisNiche.getCanvas().getSelectionHandler().select(node, false);
         canvas.getTransferHandler().exportAsDrag(
            canvas, e.getSourceSwingEvent(), TransferHandler.MOVE);
     }

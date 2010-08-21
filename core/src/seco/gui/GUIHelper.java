@@ -126,7 +126,7 @@ public class GUIHelper
         actions = new ArrayList<Action>();
         // maximize
         Action a = new ScriptletAction(
-                "node = desktop.canvas.getSelectedPSwingNode();"
+                "node = canvas.getSelectedPSwingNode();"
                         + "cgm = niche.get(node.getHandle());"
                         + "if(seco.things.CellUtils.isMinimized(cgm))"
                         + "seco.things.CellUtils.toggleMinimized(cgm);"
@@ -137,7 +137,7 @@ public class GUIHelper
         actions.add(a);
         // minimize
         a = new ScriptletAction(
-                "node = desktop.canvas.getSelectedPSwingNode();"
+                "node = canvas.getSelectedPSwingNode();"
                         + "seco.things.CellUtils.toggleMinimized(niche.get(node.getHandle()))");
         a.putValue(Action.SMALL_ICON, IconManager.resolveIcon("Minimize.gif"));
         // a.putValue(ANOTHER_ICON, IconManager.resolveIcon("Restore.png"));
@@ -355,7 +355,7 @@ public class GUIHelper
 
         public void actionPerformed(java.awt.event.ActionEvent evt)
         {
-            TopFrame.getInstance().exit();
+            ThisNiche.guiController.exit();
         }
     }
 
@@ -769,7 +769,11 @@ public class GUIHelper
 
     private static void addAsBook(HGHandle h)
     {
-        CellGroup group = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        CellGroup group =
+        ThisNiche.graph.get(//(TopFrame.PICCOLO) ? 
+                ThisNiche.TOP_CELL_GROUP_HANDLE);// :
+                    //(StandaloneFrame).tabbedPaneGroupHandle); 
+        
         if (CellUtils.isBackuped(h)) CellUtils.restoreCell(h);
         CellGroupMember child = ThisNiche.graph.get(h);
         child.setVisual(NBUIVisual.getHandle());
@@ -788,7 +792,7 @@ public class GUIHelper
 
     public static void openNotebook()
     {
-        File file = FileUtil.getFile(TopFrame.getInstance(), "Load Notebook",
+        File file = FileUtil.getFile(ThisNiche.guiController.getFrame(), "Load Notebook",
                 FileUtil.LOAD, null);
         if (file == null) return;
         importGroup(file);
@@ -808,7 +812,7 @@ public class GUIHelper
         {
             t.printStackTrace();
             NotifyDescriptor.Exception ex = new NotifyDescriptor.Exception(
-                    TopFrame.getInstance(), t, "Could not open: "
+                    ThisNiche.guiController.getFrame(), t, "Could not open: "
                             + file.getAbsolutePath());
             DialogDisplayer.getDefault().notify(ex);
             // strange requirement to open new Notebook, if file doesn't exist
@@ -826,8 +830,10 @@ public class GUIHelper
         // .getInstance().getCurrentRuntimeContext());
         String title = "[" + ThisNiche.graph.getLocation() + "] "
         /* + rcInstance.getName() + " " */+ name;
-        TopFrame.getInstance().setTitle(title);
-        TopFrame.getInstance().showHTMLToolBar(false);
+        if(ThisNiche.guiController.getFrame() != null)
+            ThisNiche.guiController.getFrame().setTitle(title);
+        //ThisNiche.guiController.showHTMLToolBar(false);
+        GUIHelper.getHTMLToolBar().setEnabled(false);
     }
 
     // Create the edit menu.

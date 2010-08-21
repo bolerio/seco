@@ -7,6 +7,7 @@ import java.awt.geom.Point2D;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
+import seco.ThisNiche;
 import seco.gui.PSwingNode;
 import seco.gui.TopFrame;
 import seco.notebook.util.IconManager;
@@ -58,7 +59,7 @@ public class CommandHandle extends PSmallBoundsHandle
     public void endHandleDrag(Point2D aLocalPoint, PInputEvent aEvent)
     {
         relocateHandle();
-        TopFrame.getInstance().getCanvas().getSelectionHandler().select(node, false);
+        ThisNiche.getCanvas().getSelectionHandler().select(node, false);
         performAction(aLocalPoint, aEvent);
     }
     

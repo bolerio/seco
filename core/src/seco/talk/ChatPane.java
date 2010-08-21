@@ -27,6 +27,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.hypergraphdb.annotation.HGIgnore;
 import org.hypergraphdb.peer.HGPeerIdentity;
 
+import seco.ThisNiche;
 import seco.gui.TopFrame;
 
 public class ChatPane extends JTextPane
@@ -94,7 +95,7 @@ public class ChatPane extends JTextPane
                 if (!from.equals(me)) 
                 {
                     Toolkit.getDefaultToolkit().beep();
-                    TopFrame.getInstance().blink("New message received");
+                    ThisNiche.guiController.blink("New message received");
                 }
             }
         });

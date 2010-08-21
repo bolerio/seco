@@ -36,11 +36,11 @@ public class RecentFilesProvider implements DynamicMenuProvider, Serializable
 {
 	private static final long serialVersionUID = 8629428510393152418L;
 	
-    transient MouseListener mouseListener;
+    //transient MouseListener mouseListener;
 	
 	public RecentFilesProvider()
 	{
-		mouseListener = new RFMouseListener();
+		//mouseListener = new RFMouseListener();
 	}
 	
 	public boolean updateEveryTime()
@@ -74,33 +74,33 @@ public class RecentFilesProvider implements DynamicMenuProvider, Serializable
 		{
 			JMenuItem menuItem = new JMenuItem(path);
 			menuItem.setActionCommand(path);
-			menuItem.removeMouseListener(mouseListener);
+			//menuItem.removeMouseListener(mouseListener);
 			menuItem.addActionListener(new ActionListener()
 			        {
 		        public void actionPerformed(ActionEvent evt)
 		        {
 		            int i = recentVector.indexOf(evt.getActionCommand());
 		            GUIHelper.openNotebook(recentH.get(i));
-		            TopFrame.getInstance().setStatusBarMessage(null);
+		            //TopFrame.getInstance().setStatusBarMessage(null);
 		        }
 		    } );
-			menuItem.addMouseListener(mouseListener);
+			//menuItem.addMouseListener(mouseListener);
 			menu.add(menuItem);
 		}
     }
 	
-	public static class RFMouseListener extends MouseAdapter
-	{
-		public void mouseEntered(MouseEvent evt)
-		{
-		    TopFrame.getInstance().setStatusBarMessage(
-				((JMenuItem)evt.getSource())
-				.getActionCommand());
-		}
-
-		public void mouseExited(MouseEvent evt)
-		{
-		    TopFrame.getInstance().setStatusBarMessage(null);
-		}
-	} 
+//	public static class RFMouseListener extends MouseAdapter
+//	{
+//		public void mouseEntered(MouseEvent evt)
+//		{
+//		    TopFrame.getInstance().setStatusBarMessage(
+//				((JMenuItem)evt.getSource())
+//				.getActionCommand());
+//		}
+//
+//		public void mouseExited(MouseEvent evt)
+//		{
+//		    TopFrame.getInstance().setStatusBarMessage(null);
+//		}
+//	} 
 }
