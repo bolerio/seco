@@ -58,7 +58,7 @@ public class ClassGenerator
     {
         if (WRITE_TO_DISK)
         {
-            File dir = new File(AppConfig.getConfigDirectory(), "seco_gen");
+            File dir = new File(AppConfig.getJarDirectory(), "seco_gen");
             if (!dir.exists()) dir.mkdir();
             GENERATED_CLASSES_OUTPUT_DIR = dir.getAbsolutePath() + File.separator;
             dir = new File(dir, "temp");

@@ -830,8 +830,8 @@ public class GUIHelper
         // .getInstance().getCurrentRuntimeContext());
         String title = "[" + ThisNiche.graph.getLocation() + "] "
         /* + rcInstance.getName() + " " */+ name;
-        if(ThisNiche.guiController.getFrame() != null)
-            ThisNiche.guiController.getFrame().setTitle(title);
+        if(ThisNiche.guiController != null)
+            ThisNiche.guiController.setTitle(title);
         //ThisNiche.guiController.showHTMLToolBar(false);
         GUIHelper.getHTMLToolBar().setEnabled(false);
     }

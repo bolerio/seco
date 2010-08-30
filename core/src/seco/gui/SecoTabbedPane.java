@@ -161,8 +161,8 @@ public class SecoTabbedPane extends JTabbedPane
             CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, h, visH, visH);
             CellUtils.removeEventPubSub(AttributeChangeEvent.HANDLE, h, visH, visH);
            
-            if (tp.getTabCount() == 0 && ThisNiche.guiController.getFrame() != null) 
-                ThisNiche.guiController.getFrame().setTitle("Seco");
+            if (tp.getTabCount() == 0 && ThisNiche.guiController != null) 
+                ThisNiche.guiController.setTitle("Seco");
             else
                 GUIHelper.updateFrameTitle(
                         TabbedPaneU.getHandleAt(tp, tp.getSelectedIndex()));

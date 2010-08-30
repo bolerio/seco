@@ -93,9 +93,9 @@ public class ClassRepository
                     addLibDir(
                             new File(new File(path), "lib").getAbsolutePath(),
                             true);
-                    addLibDir(new File(AppConfig.getConfigDirectory(), "lib")
+                    addLibDir(new File(AppConfig.getJarDirectory(), "lib")
                             .getAbsolutePath(), false);
-                    addJar(new File(AppConfig.getConfigDirectory(),
+                    addJar(new File(AppConfig.getJarDirectory(),
                             "seco.jar").getAbsolutePath(), false);
                     System.out.println("Repository creation finished.");
                 }

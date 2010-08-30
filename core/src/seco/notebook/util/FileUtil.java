@@ -79,7 +79,7 @@ public abstract class FileUtil
 		{
 			String dir = AppConfig.getInstance().getMRUD();
 			if(dir == null)
-			   start = AppConfig.getConfigDirectory(); //System.getProperty("java.home");
+			   start = AppConfig.getJarDirectory(); //System.getProperty("java.home");
 			else    
 			   start = new File(dir);
 		} else

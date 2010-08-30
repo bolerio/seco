@@ -24,11 +24,11 @@ public class EvalCellHandler implements EventHandler
 
     public static HGHandle getInstance()
     {
-        if(instance == null){instance = hg.findOne(
+        if(instance == null)instance = hg.findOne(
                 ThisNiche.graph, hg.and(hg.type(EvalCellHandler.class)));
-        if(instance == null)
+        if(instance == null || ThisNiche.handleOf(instance) == null)
             instance = ThisNiche.graph.add(new EvalCellHandler());
-        }
+        
         return instance;
     }
 

@@ -611,7 +611,9 @@ public class CellUtils
             {
                 Object handler = ThisNiche.graph.get(s.getEventHandler());
                 if (s.getEventHandler().equals(s.getSubscriber())
-                        && handler instanceof Cell)
+                        && handler instanceof Cell
+                        //&& !CellUtils.isBackuped(s.getEventHandler())
+                        )
                     list.add(s.getEventHandler());
             }
 
@@ -638,7 +640,10 @@ public class CellUtils
         {
             Object handler = ThisNiche.graph.get(s.getEventHandler());
             if (s.getEventHandler().equals(s.getSubscriber())
-                    && handler instanceof Cell) list.add((Cell) handler);
+                    && handler instanceof Cell
+                    //&& !CellUtils.isBackuped(s.getEventHandler())
+                    )
+                 list.add((Cell) handler);
         }
         return list;
     }
@@ -946,12 +951,17 @@ public class CellUtils
 
     private static void remove_event_handlers(HGHandle masterH)
     {
-        List<HGHandle> subs = getListForPubOrSub(ThisNiche.graph.getHandleFactory().anyHandle(),
-                masterH, ThisNiche.graph.getHandleFactory().anyHandle(), ThisNiche.graph.getHandleFactory().anyHandle());
+        HGHandle any = ThisNiche.graph.getHandleFactory().anyHandle();
+        List<HGHandle> subs =
+            hg.findAll(ThisNiche.graph, hg.and(hg.type(EventPubSub.class),
+                    hg.incident(masterH), hg.orderedLink(new HGHandle[] {
+                            any, masterH, any, any })));
         for (HGHandle s : subs)
             ThisNiche.graph.remove(s, true);
-        subs = getListForPubOrSub(ThisNiche.graph.getHandleFactory().anyHandle(),
-                ThisNiche.graph.getHandleFactory().anyHandle(), masterH, ThisNiche.graph.getHandleFactory().anyHandle());
+        subs = 
+            hg.findAll(ThisNiche.graph, hg.and(hg.type(EventPubSub.class),
+                    hg.incident(masterH), hg.orderedLink(new HGHandle[] {
+                            any, any, masterH, any })));
         for (HGHandle s : subs)
             ThisNiche.graph.remove(s, true);
     }
@@ -1072,12 +1082,11 @@ public class CellUtils
 
     private static BackupLink createBackupLink(HGHandle cell)
     {
+        HGHandle any = ThisNiche.graph.getHandleFactory().anyHandle();
         List<EventPubSub> pubs = hg.getAll(ThisNiche.graph, hg
                 .and(hg.type(EventPubSub.class), hg.incident(cell), hg
                         .orderedLink(new HGHandle[] {
-                                ThisNiche.graph.getHandleFactory().anyHandle(), cell,
-                                ThisNiche.graph.getHandleFactory().anyHandle(),
-                                ThisNiche.graph.getHandleFactory().anyHandle() })));
+                                any, cell, any, any})));
         List<EventPubSubInfo> pubs_out = new ArrayList<EventPubSubInfo>(pubs
                 .size());
         for (EventPubSub eps : pubs)
@@ -1085,9 +1094,7 @@ public class CellUtils
                     .getSubscriber(), eps.getEventHandler()));
         List<EventPubSub> subs = hg.getAll(ThisNiche.graph, hg.and(hg
                 .type(EventPubSub.class), hg.incident(cell), hg
-                .orderedLink(new HGHandle[] { ThisNiche.graph.getHandleFactory().anyHandle(),
-                        ThisNiche.graph.getHandleFactory().anyHandle(), cell,
-                        ThisNiche.graph.getHandleFactory().anyHandle() })));
+                .orderedLink(new HGHandle[] { any, any, cell, any })));
         List<EventPubSubInfo> subs_out = new ArrayList<EventPubSubInfo>(pubs
                 .size());
         for (EventPubSub eps : subs)
@@ -1096,15 +1103,16 @@ public class CellUtils
         return new BackupLink(cell, pubs_out, subs_out);
     }
 
-    static List<HGHandle> getListForPubOrSub(HGHandle eventType,
-            HGHandle publisher, HGHandle subscriber, HGHandle listener)
-    {
-        HGHandle pub_or_sub = hg.anyHandle().equals(publisher) ? subscriber
-                : publisher;
-        return hg.findAll(ThisNiche.graph, hg.and(hg.type(EventPubSub.class),
-                hg.incident(pub_or_sub), hg.orderedLink(new HGHandle[] {
-                        eventType, publisher, subscriber, listener })));
-    }
+//    static List<HGHandle> getListForPubOrSub(HGHandle eventType,
+//            HGHandle publisher, HGHandle subscriber, HGHandle listener)
+//    {
+//        HGHandle pub_or_sub = //hg.anyHandle().equals(publisher) ||
+//        ThisNiche.graph.getHandleFactory().equals(publisher)
+//              ? subscriber : publisher;
+//        return hg.findAll(ThisNiche.graph, hg.and(hg.type(EventPubSub.class),
+//                hg.incident(pub_or_sub), hg.orderedLink(new HGHandle[] {
+//                        eventType, publisher, subscriber, listener })));
+//    }
 
     public static HGHandle addSerializable(Object o)
     {

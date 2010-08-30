@@ -23,6 +23,10 @@ public class CellGroupChangeHandler implements EventHandler
             if(instance == null)
                 instance = ThisNiche.graph.add(new CellGroupChangeHandler());
          }
+         else if(ThisNiche.handleOf(instance) == null)
+         {
+             instance = ThisNiche.graph.add(new CellGroupChangeHandler());
+         }
         return instance;
     }
     

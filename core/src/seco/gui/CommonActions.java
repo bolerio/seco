@@ -63,7 +63,7 @@ public class CommonActions
     private static String bck_dir = "seco_bck";
     public static void backup()
     {
-        File dir = new File(AppConfig.getConfigDirectory(), 
+        File dir = new File(AppConfig.getJarDirectory(), 
                 bck_dir + File.separator + NicheManager.getNicheName(ThisNiche.graph));
         if (!dir.exists()) dir.mkdir();
         System.out.println("Backup in: " + dir.getAbsolutePath());

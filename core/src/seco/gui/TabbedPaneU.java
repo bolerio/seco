@@ -81,7 +81,7 @@ public class TabbedPaneU
         CellUtils.removeEventPubSub(AttributeChangeEvent.HANDLE, h, visH, visH);
        
         if (tp.getTabCount() == 0 && ThisNiche.guiController.getFrame() != null) 
-            ThisNiche.guiController.getFrame().setTitle("Seco");
+            ThisNiche.guiController.setTitle("Seco");
         else
             GUIHelper.updateFrameTitle(
                     getHandleAt(tp, tp.getSelectedIndex()));

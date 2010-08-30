@@ -22,11 +22,7 @@ public abstract class TopFrame extends JFrame implements GUIController
     
     public static boolean PICCOLO = true;
     public static boolean AUTO_BACKUP = true;
-   
-   // private static TopFrame instance;
-
-    //protected HGHandle focusedContainerHandle = ThisNiche.TOP_CELL_GROUP_HANDLE;
-
+ 
     protected Image LOGO_IMAGE = Toolkit.getDefaultToolkit().getImage(
             TopFrame.class.getResource(GUIHelper.LOGO_IMAGE_RESOURCE));
     private static Image NO_LOGO =  Toolkit.getDefaultToolkit().getImage(
@@ -34,13 +30,6 @@ public abstract class TopFrame extends JFrame implements GUIController
 
     private String original_title;
     
-//    /*public*/private static TopFrame getInstance()
-//    {
-//        if (instance == null)
-//            instance = (PICCOLO) ? new PiccoloFrame() : new StandaloneFrame();
-//        return instance;
-//    }
-
     public TopFrame() throws HeadlessException
     {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -102,6 +91,11 @@ public abstract class TopFrame extends JFrame implements GUIController
         setIconImage(LOGO_IMAGE);
         setTitle(original_title);
     } 
+    
+    public void setTitle(String title)
+    {
+        super.setTitle(title);
+    }
 
     private void flash(final String message, final int intratime, final int intertime, final int count)
     {

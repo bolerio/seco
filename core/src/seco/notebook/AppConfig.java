@@ -117,12 +117,19 @@ public class AppConfig
 		this.properties = properties;
 	}
 
-    public static File getConfigDirectory()
+	public static File getJarDirectory()
+	{
+	    return getJarDirectory(AppConfig.class);
+	}
+	
+	//if cls is null, AppConfig is used 
+    public static File getJarDirectory(Class<?> class_from_the_jar)
     {
-        // if (true) return new File(HARDCODED);
+        if(class_from_the_jar == null)
+            class_from_the_jar = AppConfig.class;
         try
         {
-            CodeSource cs = StandaloneFrame.class.getProtectionDomain().getCodeSource();
+            CodeSource cs = class_from_the_jar.getProtectionDomain().getCodeSource();
             URL url = null;
             if (cs != null)
             {
@@ -132,9 +139,8 @@ public class AppConfig
                     // Try to find 'cls' definition as a resource; this is not
                     // documented to be legal, but Sun's implementations seem to
                     // allow this:
-                    final ClassLoader clsLoader = StandaloneFrame.class
-                            .getClassLoader();
-                    final String clsAsResource = StandaloneFrame.class.getName()
+                    final ClassLoader clsLoader = class_from_the_jar.getClassLoader();
+                    final String clsAsResource = class_from_the_jar.getName()
                             .replace('.', '/').concat(".class");
                     url = clsLoader != null ? clsLoader
                             .getResource(clsAsResource) : ClassLoader
@@ -162,7 +168,7 @@ public class AppConfig
         {
             // plugins
             Set<URL> pluginURLs = new HashSet<URL>();
-            File[] files = (new File(AppConfig.getConfigDirectory(), AppConfig.EXT_DIR))
+            File[] files = (new File(AppConfig.getJarDirectory(AppConfig.class), AppConfig.EXT_DIR))
                     .listFiles();
             if (files != null) for (int i = 0; i < files.length; i++)
             {

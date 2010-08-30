@@ -26,12 +26,10 @@ public class CopyCellGroupChangeHandler implements EventHandler
     public static HGHandle getInstance()
     {
         if (instance == null)
-        {
-            instance = hg.findOne(ThisNiche.graph, hg.and(hg
+             instance = hg.findOne(ThisNiche.graph, hg.and(hg
                     .type(CopyCellGroupChangeHandler.class)));
-            if (instance == null)
+        if(instance == null || ThisNiche.handleOf(instance) == null)
                 instance = ThisNiche.graph.add(new CopyCellGroupChangeHandler());
-        }
         return instance;
     }
 

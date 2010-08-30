@@ -24,11 +24,11 @@ public class CopyEvalCellHandler implements EventHandler
 
     public static HGHandle getInstance()
     {
-        if(instance == null){instance = hg.findOne(
-                ThisNiche.graph, hg.and(hg.type(CopyEvalCellHandler.class)));
         if(instance == null)
+            instance = hg.findOne(
+                ThisNiche.graph, hg.and(hg.type(CopyEvalCellHandler.class)));
+        if(instance == null || ThisNiche.handleOf(instance) == null)
             instance = ThisNiche.graph.add(new CopyEvalCellHandler());
-        }
         return instance;
     }
 

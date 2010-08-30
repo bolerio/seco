@@ -10,6 +10,7 @@ public interface GUIController
     
     public void blink(String message);
 
+    public void setTitle(String message);
     // TODO: legacy - called in .scm scripts
     //public abstract HGHandle getCurrentRuntimeContext();
 

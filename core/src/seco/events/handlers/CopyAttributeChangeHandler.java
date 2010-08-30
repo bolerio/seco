@@ -21,12 +21,11 @@ public class CopyAttributeChangeHandler implements EventHandler
     public static HGHandle getInstance()
     {
         if (instance == null)
-        {
-            instance = hg.findOne(
+           instance = hg.findOne(
                     ThisNiche.graph, hg.and(hg.type(CopyAttributeChangeHandler.class)));
-            if(instance == null)
+        if(instance == null || ThisNiche.handleOf(instance) == null)
                 instance = ThisNiche.graph.add(new CopyAttributeChangeHandler());
-        }
+       
         return instance;
     }
 
