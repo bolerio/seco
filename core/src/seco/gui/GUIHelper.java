@@ -481,7 +481,7 @@ public class GUIHelper
         mi.setText("New Context");
         menu.add(mi);
 
-        code = "(load \"jscheme/scribaui.scm\")\n (let ((h (.getCurrentRuntimeContext desktop)))"
+        code = "(load \"jscheme/scribaui.scm\")\n (let ((h (ThisNiche.TOP_CONTEXT_HANDLE)))"
                 + " (.show (edit-context-dialog h (.get niche h))))";
         a = new ScriptletAction(lang, code);
         mi = new JMenuItem(a);

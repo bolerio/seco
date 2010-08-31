@@ -10,7 +10,7 @@
 (use-module "jscheme/hglib.scm")
 
 (define (find-menu text)
- (let loop ((i 0) (bar (.getBar  desktop))) 
+ (let loop ((i 0) (bar (.getBar  frame))) 
     (if (= i  (.getMenuCount bar)) 
         -1
         (if (.equals (.getText (.getMenu bar i)) text)
@@ -28,7 +28,7 @@
   (SwingUtilities.invokeLater (lambda ()
    (let ((rMenu (the-menu)) 
    		 (idx (find-menu title))
-   		 (bar (.getBar desktop))
+   		 (bar (.getBar frame))
    	    )
        (.setMnemonic rMenu mnemonic)
        (if (> idx -1) 
@@ -73,7 +73,7 @@
      (model (let ((m (DefaultListModel.))) (map (lambda (h) (.addElement m (.getName (.get niche h)))) 
                                    (hg:with-rs rs (type RuntimeContext.class) (hg:rs->list rs))) m)) 
      (listBox (scrollpane (JList. model)))
-    (D (dialog desktop #t "Edit Runtime Context" 
+    (D (dialog #null #t "Edit Runtime Context" 
     (row 'north 'both listBox
         'north 'horizontal (col
            (button "Edit" (action (lambda (e) 
@@ -119,7 +119,7 @@
     (the-list (JList. items))
     (listBox (scrollpane the-list))
     (nameField (textfield (.getName runtimeContext)))
-    (D (dialog desktop #t "Edit Runtime Context" 
+    (D (dialog #null #t "Edit Runtime Context" 
      (border 
          (north (col (border (west (flow (label "Context Name") nameField)))   (label "Class Path") ))
          (center            
@@ -127,7 +127,7 @@
   	(border (north (col
   		  (button "Add ClassPath Entry"
 	           (action (lambda (e) 
-	              (if (= (.showDialog chooser desktop "Select JAR or Directory") JFileChooser.APPROVE_OPTION$)
+	              (if (= (.showDialog chooser frame "Select JAR or Directory") JFileChooser.APPROVE_OPTION$)
                       (iterate (.getSelectedFiles chooser) (lambda (f) (.addEntry items (ClassPathEntry. f))))
                                    ))))
 	        (button "Remove Selected"
@@ -214,7 +214,7 @@
     (define close-button (button "Close" (action (lambda (e)
       (.setVisible networkDialog #f)
     ))))
-    (define networkDialog (dialog desktop #f "Network Connection"
+    (define networkDialog (dialog frame #f "Network Connection"
       (border (north
         (col 'horizontal 
               (border (west (flow (label "Host") host)))

@@ -83,7 +83,8 @@ public class NicheEditDialog extends javax.swing.JDialog {
         fileChooser.setControlButtonsAreShown(false);
         fileChooser.setDialogType(javax.swing.JFileChooser.CUSTOM_DIALOG);
         fileChooser.setFileSelectionMode(javax.swing.JFileChooser.DIRECTORIES_ONLY);
-        fileChooser.getComponents()[3].setVisible(false);
+        if(fileChooser.getComponentCount() > 3)
+           fileChooser.getComponents()[3].setVisible(false);
         fileChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 directorySelected(evt);
