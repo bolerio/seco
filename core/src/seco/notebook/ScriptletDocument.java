@@ -50,10 +50,10 @@ public class ScriptletDocument extends NotebookDocument
         setModified(false);
         if(NotebookDocument.DIRECT_EVENTING)
            CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, bookH,
-                    getHandle(), AttributeChangeHandler.getInstance());
+                    getHandle(), AttributeChangeHandler.getHandle());
         else
            CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, bookH,
-                getHandle(), AttributeChangeHandler.getInstance());
+                getHandle(), AttributeChangeHandler.getHandle());
     }
     
     static void createCell(NotebookDocument doc, HGHandle cellH, 
@@ -72,13 +72,13 @@ public class ScriptletDocument extends NotebookDocument
         DocUtil.endTag(vec);
         DocUtil.endTag(vec);
         CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cellH,
-                doc.getHandle(), AttributeChangeHandler.getInstance());
+                doc.getHandle(), AttributeChangeHandler.getHandle());
         if(NotebookDocument.DIRECT_EVENTING)
            CellUtils.addEventPubSub(CellTextChangeEvent.HANDLE, cellH,
-                    doc.getHandle(), CellTextChangeHandler.getInstance());
+                    doc.getHandle(), CellTextChangeHandler.getHandle());
         else
            CellUtils.addMutualEventPubSub(CellTextChangeEvent.HANDLE, cellH,
-                doc.getHandle(), CellTextChangeHandler.getInstance());
+                doc.getHandle(), CellTextChangeHandler.getHandle());
     }
     
     public boolean evalCell(Element el) throws BadLocationException

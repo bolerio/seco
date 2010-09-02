@@ -1,38 +1,35 @@
 package seco.events.handlers;
 
 import java.util.List;
-import java.util.Set;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
+import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
-import seco.events.EvalCellEvent;
 import seco.events.EventHandler;
 import seco.events.EventPubSub;
-import seco.notebook.NotebookDocument;
-import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 
 public class CopyCellGroupChangeHandler implements EventHandler
 {
-    private static HGHandle instance = null;
-
-    public static HGHandle getInstance()
+    private static final HGPersistentHandle HANDLE = 
+        UUIDHandleFactory.I.makeHandle(
+                "d9f8bbf0-b675-11df-8d81-0800200c9a66");
+   
+    public static HGHandle getHandle()
     {
-        if (instance == null)
-             instance = hg.findOne(ThisNiche.graph, hg.and(hg
-                    .type(CopyCellGroupChangeHandler.class)));
-        if(instance == null || ThisNiche.handleOf(instance) == null)
-                instance = ThisNiche.graph.add(new CopyCellGroupChangeHandler());
-        return instance;
+        if (ThisNiche.graph.get(HANDLE) == null)
+           ThisNiche.graph.define(HANDLE, new CopyCellGroupChangeHandler());
+        return HANDLE;
     }
 
+   
     public void handle(HGHandle eventType, Object event, HGHandle publisher,
             HGHandle subscriber)
     {
@@ -47,7 +44,7 @@ public class CopyCellGroupChangeHandler implements EventHandler
                 CellGroup main = (CellGroup) pub;
                 CellGroup copy = (CellGroup) ThisNiche.graph.get(subscriber);
                 CellUtils.removeEventPubSub(CellGroupChangeEvent.HANDLE,
-                        subscriber, publisher, getInstance());
+                        subscriber, publisher, getHandle());
 
                 HGHandle[] added = e.getChildrenAdded();
                 HGHandle[] removed = e.getChildrenRemoved();
@@ -81,7 +78,7 @@ public class CopyCellGroupChangeHandler implements EventHandler
                         subscriber, index, added_copy, removed_copy);
                 copy.batchProcess(new_e);
                 CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE,
-                        subscriber, publisher, getInstance());
+                        subscriber, publisher, getHandle());
             }
         }
     }

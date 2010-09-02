@@ -157,16 +157,16 @@ public class NotebookDocument extends DefaultStyledDocument
         if (NotebookDocument.DIRECT_EVENTING)
         {
             CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, bookH,
-                    getHandle(), AttributeChangeHandler.getInstance());
+                    getHandle(), AttributeChangeHandler.getHandle());
             CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE, bookH,
-                    getHandle(), CellGroupChangeHandler.getInstance());
+                    getHandle(), CellGroupChangeHandler.getHandle());
         }
         else
         {
             CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, bookH,
-                    getHandle(), AttributeChangeHandler.getInstance());
+                    getHandle(), AttributeChangeHandler.getHandle());
             CellUtils.addMutualEventPubSub(CellGroupChangeEvent.HANDLE, bookH,
-                    getHandle(), CellGroupChangeHandler.getInstance());
+                    getHandle(), CellGroupChangeHandler.getHandle());
         }
         update(UpdateAction.tokenize);
         // update(UpdateAction.evalInitCells);

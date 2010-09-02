@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
+import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
@@ -16,18 +18,17 @@ import seco.things.CellUtils;
 
 public class CopyAttributeChangeHandler implements EventHandler
 {
-    private static HGHandle instance = null;
-
-    public static HGHandle getInstance()
+    private static final HGPersistentHandle HANDLE = 
+        UUIDHandleFactory.I.makeHandle(
+                "bea1a390-b674-11df-8d81-0800200c9a66");
+   
+    public static HGHandle getHandle()
     {
-        if (instance == null)
-           instance = hg.findOne(
-                    ThisNiche.graph, hg.and(hg.type(CopyAttributeChangeHandler.class)));
-        if(instance == null || ThisNiche.handleOf(instance) == null)
-                instance = ThisNiche.graph.add(new CopyAttributeChangeHandler());
-       
-        return instance;
+        if (ThisNiche.graph.get(HANDLE) == null)
+           ThisNiche.graph.define(HANDLE, new CopyAttributeChangeHandler());
+        return HANDLE;
     }
+   
 
     public void handle(HGHandle eventType, Object event, HGHandle publisher,
             HGHandle subscriber)
@@ -40,10 +41,10 @@ public class CopyAttributeChangeHandler implements EventHandler
             if (sub instanceof CellGroupMember)
             {
                 CellGroupMember c = (CellGroupMember) sub;
-                CellUtils.removeEventPubSub(AttributeChangeEvent.HANDLE, publisher, subscriber, getInstance());
+                CellUtils.removeEventPubSub(AttributeChangeEvent.HANDLE, publisher, subscriber, getHandle());
                 c.setAttribute(e.getName(), e.getValue());
                 CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE,
-                         publisher, subscriber, getInstance());
+                         publisher, subscriber, getHandle());
             }
         }
     }

@@ -13,13 +13,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import seco.notebook.storage.ClassRepository;
 import seco.notebook.storage.DocInfo;
 import seco.notebook.storage.PackageInfo;
 
-public class JavaDocManager
+public class JavaDocManager  
 {
 	public static final boolean SHOW_DOC = true;
 	//private static final String JAVADOC =
@@ -27,7 +29,8 @@ public class JavaDocManager
 	
 	private static JavaDocManager instance;
 	private static Map<Object, String> doc_cache = new HashMap<Object, String>();
-     
+    private Set<JavaDocProvider> providers = new HashSet<JavaDocProvider>();
+	
 	public static JavaDocManager getInstance()
 	{
 		if(instance == null)
@@ -35,19 +38,36 @@ public class JavaDocManager
 		return instance;
 	}
 	
-	public String getHTML(Object content)
+	public void addJavaDocProvider(JavaDocProvider p)
 	{
-		boolean pkg = (content instanceof PackageInfo);
-		String c = doc_cache.get(content);
+	    providers.add(p);
+	}
+	
+	public void removeJavaDocProvider(JavaDocProvider p)
+	{
+	    providers.remove(p);
+	}
+	
+	public String getHTML(Object element)
+	{
+		boolean pkg = (element instanceof PackageInfo);
+		String c = doc_cache.get(element);
 		if(c == null)
     	{
-    		URL url = constructURL(content);
+    		URL url = constructURL(element);
     	    if(url != null)
     	    {
     	    	c = HTMLJavadocParser.getJavadocText(url, pkg);
-    	        doc_cache.put(content, c);
+    	        doc_cache.put(element, c);
     	    }
     	}
+		if(c == null)
+		    for(JavaDocProvider p: providers)
+		    {
+		        c = p.getHTML(element);
+		        if(c != null)
+		            return c;
+		    }
 		return c;
 	}
 	
@@ -131,4 +151,9 @@ public class JavaDocManager
      
      private JavaDocManager()
  	 {}
+     
+     public interface JavaDocProvider
+     {
+         String getHTML(Object content);
+     }
 }

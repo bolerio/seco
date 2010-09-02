@@ -60,10 +60,10 @@ public class OutputCellDocument extends NotebookDocument
         create(parseBuffer.toArray(new ElementSpec[parseBuffer.size()]));
         if(NotebookDocument.DIRECT_EVENTING)
            CellUtils.addEventPubSub(EvalCellEvent.HANDLE, bookH, getHandle(),
-                    EvalCellHandler.getInstance()); 
+                    EvalCellHandler.getHandle()); 
         else
            CellUtils.addMutualEventPubSub(EvalCellEvent.HANDLE, bookH, getHandle(),
-                EvalCellHandler.getInstance());
+                EvalCellHandler.getHandle());
     }
 
     public void removeCellBoxElement(Element el) throws BadLocationException

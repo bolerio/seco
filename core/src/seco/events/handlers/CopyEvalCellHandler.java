@@ -1,35 +1,29 @@
 package seco.events.handlers;
 
-import java.awt.Component;
-
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGQuery.hg;
+import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
-import seco.events.CellGroupChangeEvent;
 import seco.events.EvalCellEvent;
-import seco.events.EvalResult;
 import seco.events.EventDispatcher;
 import seco.events.EventHandler;
-import seco.notebook.NotebookDocument;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
-import seco.things.IOUtils;
 
 
 
 public class CopyEvalCellHandler implements EventHandler
 {
-    private static HGHandle instance = null;
-
-    public static HGHandle getInstance()
+    private static final HGPersistentHandle HANDLE = 
+        UUIDHandleFactory.I.makeHandle(
+                "4fee29a0-b688-11df-8d81-0800200c9a66");
+   
+    public static HGHandle getHandle()
     {
-        if(instance == null)
-            instance = hg.findOne(
-                ThisNiche.graph, hg.and(hg.type(CopyEvalCellHandler.class)));
-        if(instance == null || ThisNiche.handleOf(instance) == null)
-            instance = ThisNiche.graph.add(new CopyEvalCellHandler());
-        return instance;
+        if (ThisNiche.graph.get(HANDLE) == null)
+           ThisNiche.graph.define(HANDLE, new CopyEvalCellHandler());
+        return HANDLE;
     }
 
     public void handle(HGHandle eventType, Object event, HGHandle publisher,
@@ -43,13 +37,13 @@ public class CopyEvalCellHandler implements EventHandler
             if (pub instanceof CellGroupMember && sub instanceof CellGroupMember)
             {
                 CellUtils.removeEventPubSub(EvalCellEvent.HANDLE,
-                        subscriber, publisher, getInstance());
+                        subscriber, publisher, getHandle());
                 //CellUtils.removeEventPubSub(EvalCellEvent.HANDLE,
                 //        publisher, subscriber, getInstance());
                 EvalCellEvent n = new EvalCellEvent(subscriber, e.getValue(), e.getOldValue());
                 EventDispatcher.dispatch(EvalCellEvent.HANDLE, e.getCellHandle(), n);
                 CellUtils.addEventPubSub(EvalCellEvent.HANDLE,
-                        subscriber, publisher, getInstance());
+                        subscriber, publisher, getHandle());
                 //CellUtils.addEventPubSub(EvalCellEvent.HANDLE,
                 //        publisher, subscriber, getInstance());
             } 

@@ -1,7 +1,8 @@
 package seco.events.handlers;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGQuery.hg;
+import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.events.EvalCellEvent;
@@ -15,21 +16,20 @@ import seco.things.CellGroupMember;
  * Handle scriptlet cell evaluation events.
  * </p>
  * 
- * @author Borislav Iordanov
+ * @author Konstantin Vandev
  *
  */
 public class EvalCellHandler implements EventHandler
 {
-    private static HGHandle instance = null;
-
-    public static HGHandle getInstance()
+    private static final HGPersistentHandle HANDLE = 
+        UUIDHandleFactory.I.makeHandle(
+                "ee5bf630-b674-11df-8d81-0800200c9a66");
+   
+    public static HGHandle getHandle()
     {
-        if(instance == null)instance = hg.findOne(
-                ThisNiche.graph, hg.and(hg.type(EvalCellHandler.class)));
-        if(instance == null || ThisNiche.handleOf(instance) == null)
-            instance = ThisNiche.graph.add(new EvalCellHandler());
-        
-        return instance;
+        if (ThisNiche.graph.get(HANDLE) == null)
+           ThisNiche.graph.define(HANDLE, new EvalCellHandler());
+        return HANDLE;
     }
 
     public void handle(HGHandle eventType, Object event, HGHandle publisher,

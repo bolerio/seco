@@ -1,28 +1,26 @@
 package seco.events.handlers;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGQuery.hg;
+import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EventHandler;
 import seco.notebook.NotebookDocument;
 import seco.things.CellGroup;
-import seco.things.CellGroupMember;
 
 public class CellGroupChangeHandler implements EventHandler
 {
-    private static HGHandle instance = null;
-
-    public static HGHandle getInstance()
+    private static final HGPersistentHandle HANDLE = 
+        UUIDHandleFactory.I.makeHandle(
+                "f633ac00-b673-11df-8d81-0800200c9a66");
+   
+    public static HGHandle getHandle()
     {
-        if (instance == null)
-            instance = hg.findOne(ThisNiche.graph, hg.and(hg
-                    .type(CellGroupChangeHandler.class)));
-        if (instance == null || ThisNiche.handleOf(instance) == null)
-            instance = ThisNiche.graph.add(new CellGroupChangeHandler());
-
-        return instance;
+        if (ThisNiche.graph.get(HANDLE) == null)
+           ThisNiche.graph.define(HANDLE, new CellGroupChangeHandler());
+        return HANDLE;
     }
 
     public void handle(HGHandle eventType, Object event, HGHandle publisher,

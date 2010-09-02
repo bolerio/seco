@@ -904,9 +904,9 @@ public class CellUtils
         CellGroup master = (CellGroup) ThisNiche.graph.get(masterH);
         CellGroup copy = (CellGroup) ThisNiche.graph.get(copyH);
         addMutualEventPubSub(AttributeChangeEvent.HANDLE, masterH, copyH,
-                CopyAttributeChangeHandler.getInstance());
+                CopyAttributeChangeHandler.getHandle());
         addMutualEventPubSub(CellGroupChangeEvent.HANDLE, masterH, copyH,
-                CopyCellGroupChangeHandler.getInstance());
+                CopyCellGroupChangeHandler.getHandle());
 
         for (int i = 0; i < master.getArity(); i++)
             if (master.getElement(i) instanceof CellGroup) addCellGroupCopyListeners(
@@ -920,12 +920,12 @@ public class CellUtils
         if (isInputCell((CellGroupMember) ThisNiche.graph.get(masterH)))
         {
             addMutualEventPubSub(CellTextChangeEvent.HANDLE, masterH, copyH,
-                    CopyCellTextChangeHandler.getInstance());
+                    CopyCellTextChangeHandler.getHandle());
             addMutualEventPubSub(EvalCellEvent.HANDLE, masterH, copyH,
-                    CopyEvalCellHandler.getInstance());
+                    CopyEvalCellHandler.getHandle());
         }
         addMutualEventPubSub(AttributeChangeEvent.HANDLE, masterH, copyH,
-                CopyAttributeChangeHandler.getInstance());
+                CopyAttributeChangeHandler.getHandle());
     }
 
     public static void removeHandlers(HGHandle masterH)
@@ -1025,15 +1025,15 @@ public class CellUtils
         for (EventPubSubInfo inf : pubs)
         {
             if(!fully && filter_all_but_eval_eps(inf))  continue;
-            ThisNiche.graph.add(new EventPubSub(inf.getEventType(), link
-                    .getCell(), inf.getPubOrSub(), inf.getEventHandler()));
+            addEventPubSub(inf.getEventType(), link
+                    .getCell(), inf.getPubOrSub(), inf.getEventHandler());
         }
         List<EventPubSubInfo> subs = ThisNiche.graph.get(link.getSubs());
         for (EventPubSubInfo inf : subs)
         {
             if(!fully && filter_all_but_eval_eps(inf))  continue;
-            ThisNiche.graph.add(new EventPubSub(inf.getEventType(), inf
-                    .getPubOrSub(), link.getCell(), inf.getEventHandler()));
+               addEventPubSub(inf.getEventType(), inf
+                    .getPubOrSub(), link.getCell(), inf.getEventHandler());
         }
     }
     

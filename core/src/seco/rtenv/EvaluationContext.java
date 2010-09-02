@@ -223,6 +223,7 @@ public class EvaluationContext
         Object nb = this.runtimeContext.getBindings().get("notebook");
         Object desktop = this.runtimeContext.getBindings().get("desktop");
         Object canvas = this.runtimeContext.getBindings().get("canvas");
+        Object frame = this.runtimeContext.getBindings().get("frame");
         
         this.runtimeContext.getBindings().clear();
         this.initReflectiveBindings();
@@ -232,6 +233,7 @@ public class EvaluationContext
         this.runtimeContext.getBindings().put("notebook", nb);
         this.runtimeContext.getBindings().put("desktop", desktop);
         this.runtimeContext.getBindings().put("canvas", canvas);
+        this.runtimeContext.getBindings().put("frame", frame);
         
         // If the reboot is triggered through scripting, then we need to make sure
         // not to use the current classloader as the parent of the newly created one.

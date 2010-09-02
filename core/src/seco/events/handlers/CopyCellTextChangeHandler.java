@@ -1,33 +1,28 @@
 package seco.events.handlers;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGQuery.hg;
+import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
-import seco.events.CellGroupChangeEvent;
 import seco.events.CellTextChangeEvent;
 import seco.events.EventHandler;
-import seco.notebook.NotebookDocument;
-import seco.things.Cell;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
-import seco.things.Scriptlet;
 
 
 
 public class CopyCellTextChangeHandler implements EventHandler
 {
-    private static HGHandle instance = null;
-
-    public static HGHandle getInstance()
+    private static final HGPersistentHandle HANDLE = 
+        UUIDHandleFactory.I.makeHandle(
+                "24f46c50-b688-11df-8d81-0800200c9a66");
+   
+    public static HGHandle getHandle()
     {
-        if(instance == null)
-            instance = hg.findOne(
-                ThisNiche.graph, hg.and(hg.type(CopyCellTextChangeHandler.class)));
-        if(instance == null || ThisNiche.handleOf(instance) == null)
-            instance = ThisNiche.graph.add(new CopyCellTextChangeHandler());
-        
-        return instance;
+        if (ThisNiche.graph.get(HANDLE) == null)
+           ThisNiche.graph.define(HANDLE, new CopyCellTextChangeHandler());
+        return HANDLE;
     }
 
     public void handle(HGHandle eventType, Object event, HGHandle publisher,
@@ -54,12 +49,12 @@ public class CopyCellTextChangeHandler implements EventHandler
     protected void processEvent(HGHandle publisher, HGHandle subscriber, CellTextChangeEvent e)
     {
         CellUtils.removeEventPubSub(CellTextChangeEvent.HANDLE,
-                subscriber, publisher, getInstance());
+                subscriber, publisher, getHandle());
         CellTextChangeEvent n = new CellTextChangeEvent(subscriber, e.getType(),
                 e.getText(), e.getOffset(), e.getLength());
         CellUtils.processCelTextChangeEvent(subscriber, n);
         CellUtils.addEventPubSub(CellTextChangeEvent.HANDLE,
-                subscriber, publisher, getInstance());
+                subscriber, publisher, getHandle());
     }
     
     

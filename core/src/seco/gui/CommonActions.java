@@ -14,6 +14,7 @@ import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 
 import seco.ThisNiche;
+import seco.U;
 import seco.boot.NicheManager;
 import seco.gui.layout.LayoutSettingsPanel;
 import seco.notebook.ActionManager;
@@ -60,10 +61,10 @@ public class CommonActions
         bev.revalidate();
     }
 
-    private static String bck_dir = "seco_bck";
+    private static String bck_dir = ".seco_bck";
     public static void backup()
     {
-        File dir = new File(AppConfig.getJarDirectory(), 
+        File dir = new File(new File(U.findUserHome()),//AppConfig.getJarDirectory(), 
                 bck_dir + File.separator + NicheManager.getNicheName(ThisNiche.graph));
         if (!dir.exists()) dir.mkdir();
         System.out.println("Backup in: " + dir.getAbsolutePath());

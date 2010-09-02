@@ -168,21 +168,21 @@ abstract public class DocUtil
         endTag(vec);
         createInsertionPoint(attr, vec);
         CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cellH, doc
-                .getHandle(), AttributeChangeHandler.getInstance());
+                .getHandle(), AttributeChangeHandler.getHandle());
         if (NotebookDocument.DIRECT_EVENTING)
         {
             CellUtils.addEventPubSub(CellTextChangeEvent.HANDLE, cellH, doc
-                    .getHandle(), CellTextChangeHandler.getInstance());
+                    .getHandle(), CellTextChangeHandler.getHandle());
             CellUtils.addEventPubSub(EvalCellEvent.HANDLE, cellH, doc
-                    .getHandle(), EvalCellHandler.getInstance());
+                    .getHandle(), EvalCellHandler.getHandle());
 
         }
         else
         {
             CellUtils.addMutualEventPubSub(CellTextChangeEvent.HANDLE, cellH,
-                    doc.getHandle(), CellTextChangeHandler.getInstance());
+                    doc.getHandle(), CellTextChangeHandler.getHandle());
             CellUtils.addMutualEventPubSub(EvalCellEvent.HANDLE, cellH, doc
-                    .getHandle(), EvalCellHandler.getInstance());
+                    .getHandle(), EvalCellHandler.getHandle());
         }
     }
 
@@ -211,10 +211,10 @@ abstract public class DocUtil
         if (genInsP) createInsertionPoint(attr, vec);
         if (NotebookDocument.DIRECT_EVENTING) CellUtils.addEventPubSub(
                 AttributeChangeEvent.HANDLE, cellH, doc.getHandle(),
-                AttributeChangeHandler.getInstance());
+                AttributeChangeHandler.getHandle());
         else
             CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, cellH,
-                    doc.getHandle(), AttributeChangeHandler.getInstance());
+                    doc.getHandle(), AttributeChangeHandler.getHandle());
     }
 
     static void createOutputCell(NotebookDocument doc, HGHandle cellH,
@@ -329,18 +329,18 @@ abstract public class DocUtil
         if (NotebookDocument.DIRECT_EVENTING)
         {
             CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cell_groupH,
-                    doc.getHandle(), AttributeChangeHandler.getInstance());
+                    doc.getHandle(), AttributeChangeHandler.getHandle());
             CellUtils.addEventPubSub(CellGroupChangeEvent.HANDLE, cell_groupH,
-                    doc.getHandle(), CellGroupChangeHandler.getInstance());
+                    doc.getHandle(), CellGroupChangeHandler.getHandle());
         }
         else
         {
             CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE,
                     cell_groupH, doc.getHandle(), AttributeChangeHandler
-                            .getInstance());
+                            .getHandle());
             CellUtils.addMutualEventPubSub(CellGroupChangeEvent.HANDLE,
                     cell_groupH, doc.getHandle(), CellGroupChangeHandler
-                            .getInstance());
+                            .getHandle());
         }
     }
 }

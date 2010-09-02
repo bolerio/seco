@@ -31,10 +31,11 @@ public class NicheBootListener implements HGListener
     {
     	ThisNiche.bindNiche(hg);
     	ThisNiche.initGUIController();
-    	final JFrame s = ThisNiche.guiController.getFrame();
+    	final JFrame f = ThisNiche.guiController.getFrame();
         RuntimeContext topRuntime = ThisNiche.getTopContext().getRuntimeContext(); 
-        topRuntime.getBindings().put("desktop", s);
+        topRuntime.getBindings().put("desktop", ThisNiche.guiController);
         topRuntime.getBindings().put("canvas", ThisNiche.getCanvas());
+        topRuntime.getBindings().put("frame", f);
         ThisNiche.graph.update(topRuntime);
         
         // We need to make sure that we have a TOP_CELL_GROUP, no matter what, even if
@@ -61,8 +62,8 @@ public class NicheBootListener implements HGListener
                 }else{
                    CellUtils.evaluateVisibleInitCells();
                    v.bind(group);
-                   if(s != null)
-                      s.setVisible(true);
+                   if(f != null)
+                      f.setVisible(true);
                    ConnectionManager.startConnections();
                 }
             	Thread.currentThread().setUncaughtExceptionHandler(new SecoUncaughtExceptionHandler());                
