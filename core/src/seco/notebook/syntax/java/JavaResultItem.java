@@ -70,6 +70,8 @@ public abstract class JavaResultItem implements CompletionItem
      */
     public abstract String getItemText();
 
+    public abstract Object getAssociatedObject();
+
     protected static Color getTypeColor(Object typ)
     {
         return JavaPaintComponent.TYPE_COLOR;

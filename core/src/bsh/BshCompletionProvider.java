@@ -182,11 +182,17 @@ public class BshCompletionProvider implements CompletionProvider
 	public static class DocQuery extends AsyncCompletionQuery
 	{
 		private Object item;
+		private JTextComponent component;
 		private static Action goToSource = new AbstractAction() {
 			public void actionPerformed(ActionEvent e)
 			{
-				Completion.get().hideDocumentation();
-		    }
+				// DocItem doc = (DocItem)e.getSource();
+				// ???JMIUtils.openElement((Element)doc.item);
+				if (e != null)
+				{
+					Completion.get().hideDocumentation();
+				}
+			}
 		};
 
 		public DocQuery(Object item)
@@ -199,9 +205,25 @@ public class BshCompletionProvider implements CompletionProvider
 		{
 			if (item != null && JavaDocManager.SHOW_DOC)
 			{
-				resultSet.setDocumentation(new DocItem(item, null));
+				resultSet.setDocumentation(new DocItem(
+						getAssociatedObject(item), null));
 			}
 			resultSet.finish();
+		}
+
+		protected void prepareQuery(JTextComponent component)
+		{
+			this.component = component;
+		}
+
+		private Object getAssociatedObject(Object item)
+		{
+			Object ret = item;
+			if (item instanceof JavaResultItem)
+			{
+				ret = ((JavaResultItem) item).getAssociatedObject();
+			}
+			return ret;
 		}
 
 		private class DocItem implements CompletionDocumentation
