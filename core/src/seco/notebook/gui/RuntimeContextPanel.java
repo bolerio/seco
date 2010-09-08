@@ -8,19 +8,17 @@
 package seco.notebook.gui;
 
 import java.awt.event.ActionEvent;
+
 import java.awt.event.ActionListener;
 import java.beans.PropertyEditor;
 import java.util.ArrayList;
-
 import javax.script.Bindings;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-
 import seco.ThisNiche;
 import seco.gui.ObjectInspector;
-import seco.gui.TopFrame;
 import seco.notebook.NotebookUI;
 
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor;

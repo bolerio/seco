@@ -1,6 +1,7 @@
 package seco.notebook.storage.swing;
 
 import java.beans.BeanInfo;
+
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -13,8 +14,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
-import javax.swing.JList;
-
 import org.hypergraphdb.HGException;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGIndex;
@@ -168,7 +167,6 @@ public class SwingTypeMapper extends JavaObjectMapper
     static RecordType makeGUIBeanType(HyperGraph graph, Class<?> javaClass, Class<?> parent)
     {
         HGTypeSystem typeSystem = graph.getTypeSystem();
-        JavaTypeFactory javaTypes = typeSystem.getJavaTypeFactory();
         BeanInfo bi = null;
         try{
           bi = Introspector.getBeanInfo(javaClass, parent);
@@ -196,8 +194,9 @@ public class SwingTypeMapper extends JavaObjectMapper
             if (valueTypeHandle == null)
                 throw new HGException("Unable to get HyperGraph type for Java class " + 
                                       propType.getName() + ": make sure it's default or 'link' constructible.");
-            HGHandle slotHandle = javaTypes.getSlotHandle(desc.getName(), 
-                                                          valueTypeHandle);
+            HGHandle slotHandle = JavaTypeFactory.getSlotHandle(graph, 
+                                                                desc.getName(), 
+                                                                valueTypeHandle);
             //Slot slot = graph.get(slotHandle);
             recordType.addSlot(slotHandle);
             // HGAtomRef.Mode refMode = getReferenceMode(javaClass, desc);                     

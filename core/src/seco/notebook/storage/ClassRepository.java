@@ -8,6 +8,7 @@
 package seco.notebook.storage;
 
 import java.io.File;
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.hypergraphdb.HGEnvironment;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGIndex;
 import org.hypergraphdb.HGIndexManager;
@@ -32,7 +34,6 @@ import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.query.AtomTypeCondition;
-
 import seco.U;
 import seco.notebook.AppConfig;
 import seco.notebook.util.RequestProcessor;
@@ -662,7 +663,7 @@ public class ClassRepository
                 repositoryPath = new File(new File(U.findUserHome()),
                     REPOSITORY_NAME).getAbsolutePath();
             System.out.println("ClassRepository Path : " + repositoryPath);
-            instance = new ClassRepository(new HyperGraph(repositoryPath));
+            instance = new ClassRepository(HGEnvironment.get(repositoryPath));
         }
         return instance;
     }

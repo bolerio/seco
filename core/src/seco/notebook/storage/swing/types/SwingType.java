@@ -1,13 +1,13 @@
 package seco.notebook.storage.swing.types;
 
 import java.lang.reflect.Field;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.hypergraphdb.HGException;
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGLink;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGPlainLink;
@@ -18,6 +18,7 @@ import org.hypergraphdb.atom.AtomProjection;
 import org.hypergraphdb.atom.HGAtomRef;
 import org.hypergraphdb.atom.HGRelType;
 import org.hypergraphdb.type.BonesOfBeans;
+import org.hypergraphdb.type.JavaTypeFactory;
 import org.hypergraphdb.type.RecordType;
 import org.hypergraphdb.type.Slot;
 
@@ -116,7 +117,7 @@ public class SwingType extends RecordType
 				propType = BonesOfBeans.wrapperEquivalentOf(propType);
 			HGHandle valueTypeHandle = typeSystem.getTypeHandle(propType);
 			HGHandle slotHandle = 
-			    typeSystem.getJavaTypeFactory().getSlotHandle(s, valueTypeHandle);
+			    JavaTypeFactory.getSlotHandle(graph, s, valueTypeHandle);
 			addSlot(slotHandle);
 			HGAtomRef.Mode refMode = getReferenceMode(javaClass, s);
 			if (refMode != null)
