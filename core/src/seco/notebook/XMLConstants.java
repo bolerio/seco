@@ -28,6 +28,7 @@ public class XMLConstants
 	public static final String ATTR_HTML = "html-preview";
 	public static final String ATTR_READONLY = "readonly";
 	public static final String ATTR_COLLAPSED = "collapsed";
+	public static final String ATTR_DESCRIPTION = "description";
 	
 	public static final String GLOBAL_STYLE = "global-style";
 	public static final String CELL_STYLE = "cell-style";

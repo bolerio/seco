@@ -17,6 +17,8 @@ import javax.swing.JMenuItem;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 
+import seco.ThisNiche;
+import seco.gui.CommonActions;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.XMLConstants;
@@ -66,10 +68,10 @@ public class CellGroupPropsProvider extends CellPropsProvider
             });
         }
         menu.add(readonlyCellCheck);
-
+       
         if (enabled)
         {
-            final JMenuItem m = new JMenuItem("Eval");
+            JMenuItem m = new JMenuItem("Eval");
             m.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
@@ -81,6 +83,15 @@ public class CellGroupPropsProvider extends CellPropsProvider
             
             menu.add(new EnhancedMenu("Set Runtime Context",
                     new RCListProvider(nb)));
+            
+            m = new JMenuItem("Add/Edit Description");
+            m.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e)
+                {
+                    CommonActions.editCGMDescription(ThisNiche.handleOf(nb));
+                }
+            });
+            menu.add(m);
         }
     }
 }

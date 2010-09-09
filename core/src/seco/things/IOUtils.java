@@ -166,8 +166,7 @@ public class IOUtils
         boolean collapsed = false;
         String engine = null;
         String text = null;
-        //Element outputCellEl = null;
-        String str_ind = el.getAttribute(XMLConstants.ATTR_INIT_CELL);
+         String str_ind = el.getAttribute(XMLConstants.ATTR_INIT_CELL);
         if (str_ind != null && str_ind.length() > 0)
             initCell = Boolean.parseBoolean(str_ind);
         str_ind = el.getAttribute(XMLConstants.ATTR_HTML);
@@ -182,19 +181,14 @@ public class IOUtils
         str_ind = el.getAttribute(XMLConstants.ATTR_ENGINE);
         if (str_ind != null && str_ind.length() > 0)
             engine = str_ind;
-        // System.out.println("Notebook.Cell: " + index +
-        // ":" + initCell + ":" +
-        // el.getAttribute(XMLConstants.ATTR_INIT_CELL));
+       
+    
         for (int i = 0; i < children.getLength(); i++)
         {
             Node n = children.item(i);
             if (!(n instanceof Element))
                 continue;
             Element inner = (Element) n;
-//            if (inner.getTagName().equals(XMLConstants.OUTPUT_CELL))
-//            {
-//                outputCellEl = inner;
-//            } else 
             if (inner.getTagName().equals(XMLConstants.CELL_DATA))
             {
                 text = normalizeText(XMLConstants.concatContents(inner));
@@ -216,6 +210,13 @@ public class IOUtils
             CellUtils.setCollapsed(cell, collapsed);
         //if (outputCellEl != null)
         //    loadOutputCell(outputCellEl, cellH);
+       
+        str_ind = el.getAttribute(XMLConstants.ATTR_DESCRIPTION);
+        if (str_ind != null && str_ind.length() > 0)
+            CellUtils.setDescription(cellH, str_ind); 
+        str_ind = el.getAttribute(XMLConstants.ATTR_NAME);
+        if (str_ind != null && str_ind.length() > 0)
+            CellUtils.setName(cell, str_ind); 
         return cellH;
     }
 
@@ -441,7 +442,14 @@ public class IOUtils
             s += " " + XMLConstants.ATTR_COLLAPSED + "=\"true\"";
         if (CellUtils.getEngine(gr) != null)
             s += " " + XMLConstants.ATTR_ENGINE + "=\"" + CellUtils.getEngine(gr) + "\"";
+        String descr = CellUtils.getDescription(ThisNiche.handleOf(gr));
+        if(descr != null) 
+            s += " " + XMLConstants.ATTR_DESCRIPTION + "=\"" + normalizeText(descr) + "\"";
+        String name = CellUtils.getName(gr);
+        if(name != null) 
+            s += " " + XMLConstants.ATTR_NAME + "=\"" + normalizeText(name) + "\"";
         s += ">\n";
+      
         String ind = XMLConstants.makeIndent(depth + 1);
         s += ind + "<" + XMLConstants.CELL_DATA + ">";
         s += XMLConstants.makeCDATA(CellUtils.getText(gr));

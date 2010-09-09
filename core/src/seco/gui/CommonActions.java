@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JTextArea;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
@@ -20,7 +21,9 @@ import seco.gui.layout.LayoutSettingsPanel;
 import seco.notebook.ActionManager;
 import seco.notebook.AppConfig;
 import seco.notebook.NotebookUI;
+import seco.notebook.gui.DialogDescriptor;
 import seco.notebook.gui.DialogDisplayer;
+import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.NotifyDescriptor;
 import seco.things.Cell;
 import seco.things.CellGroup;
@@ -145,6 +148,23 @@ public class CommonActions
         {
             String t = nd.getInputText();
             CellUtils.setName(cgm, t);
+            return true;
+        }
+        return false;
+    } 
+    
+    public static boolean editCGMDescription(HGHandle h)
+    {
+       // CellGroupMember cgm = ThisNiche.graph.get(h);
+        String desc = CellUtils.getDescription(h);
+        JTextArea area = new JTextArea();
+        area.setPreferredSize(new Dimension(300, 200));
+        DialogDescriptor dd = new DialogDescriptor(ThisNiche.guiController.getFrame(),
+                area, "Cell/Group Description");
+        area.setText(desc);
+        if (DialogDisplayer.getDefault().notify(dd) == NotifyDescriptor.OK_OPTION)
+        {
+            CellUtils.setDescription(h, area.getText());
             return true;
         }
         return false;

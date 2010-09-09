@@ -22,6 +22,7 @@ import javax.swing.text.Element;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
+import seco.gui.CommonActions;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.XMLConstants;
@@ -106,10 +107,10 @@ public class CellPropsProvider implements DynamicMenuProvider
             });
             menu.add(outputCellCheck);
         }
-
+        
         if (enabled && (nb != null))
         {
-            final JMenuItem m = new JMenuItem("Eval");
+            JMenuItem m = new JMenuItem("Eval");
             m.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
@@ -137,6 +138,15 @@ public class CellPropsProvider implements DynamicMenuProvider
             menu.add(mi);
             menu.add(new EnhancedMenu("Set Runtime Context",
                     new RCListProvider(nb)));
+            
+            m = new JMenuItem("Add/Edit Description");
+            m.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e)
+                {
+                    CommonActions.editCGMDescription(ThisNiche.handleOf(nb));
+                }
+            });
+            menu.add(m);
         }
     }
     

@@ -437,6 +437,28 @@ public class CellUtils
         CellGroupMember c = (CellGroupMember) ThisNiche.graph.get(h);
         c.setAttribute(XMLConstants.ATTR_ERROR, b);
     }
+    
+    public static void setDescription(HGHandle h, String d)
+    {
+       // CellGroupMember c = (CellGroupMember) ThisNiche.graph.get(h);
+        HGHandle link = getDescriptionLinkH(h);
+        if(link != null)
+            ThisNiche.graph.remove(link);
+        ThisNiche.graph.add(new DescriptionLink(h,  ThisNiche.graph.add(d)));
+    }
+    
+    public static String getDescription(HGHandle h)
+    {
+        HGHandle linkH = getDescriptionLinkH(h);
+        if(linkH == null) return null;
+        DescriptionLink link = ThisNiche.graph.get(linkH);
+        return ThisNiche.graph.get(link.getDescriptionHandle());
+    }
+    
+    private static HGHandle getDescriptionLinkH(HGHandle h)
+    {
+        return hg.findOne(ThisNiche.graph, hg.and(hg.incident(h), hg.type(DescriptionLink.class)));
+    }
 
     public static boolean isInitCell(CellGroupMember c)
     {
