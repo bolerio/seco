@@ -33,6 +33,10 @@ public class ScriptletDocument extends NotebookDocument
     
     public void init()
     {
+//        DocumentListener[] ls = listenerList.getListeners(DocumentListener.class);
+//        for(int i = 0; i < ls.length; i++)
+//            removeDocumentListener(ls[i]);
+        if (inited) return;
         Cell book = (Cell) ThisNiche.graph.get(bookH);
         Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) book
                 .getAttribute(XMLConstants.CELL_STYLE);
@@ -54,6 +58,7 @@ public class ScriptletDocument extends NotebookDocument
         else
            CellUtils.addMutualEventPubSub(AttributeChangeEvent.HANDLE, bookH,
                 getHandle(), AttributeChangeHandler.getHandle());
+        inited = true;
     }
     
     static void createCell(NotebookDocument doc, HGHandle cellH, 

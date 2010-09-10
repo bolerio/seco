@@ -129,7 +129,7 @@ public class NotebookDocument extends DefaultStyledDocument
         this.evalContext = evalContext;
     }
 
-    private boolean inited;
+    protected boolean inited;
 
     @SuppressWarnings("unchecked")
     public void init()

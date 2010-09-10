@@ -38,6 +38,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
@@ -66,6 +67,7 @@ import seco.notebook.AppConfig;
 import seco.notebook.NotebookEditorKit;
 import seco.notebook.NotebookUI;
 import seco.notebook.ScriptletAction;
+import seco.notebook.gui.DialogDescriptor;
 import seco.notebook.gui.DialogDisplayer;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.NotifyDescriptor;
@@ -379,6 +381,19 @@ public class GUIHelper
             openCellTree(book);
         }
     }
+    
+    public static class DescriptionManagerAction implements ActionListener
+    {
+        public void actionPerformed(ActionEvent evt)
+        {
+            SearchDescriptionPanel p = new SearchDescriptionPanel();
+            JDialog dialog = new JDialog(ThisNiche.guiController.getFrame(), 
+                    "Manage Descriptions");
+            dialog.add(p);
+            dialog.setSize(new Dimension(700, 500));
+            dialog.setVisible(true);
+        }
+     }
 
     public static class OpenAction extends AbstractAction
     {
@@ -919,11 +934,14 @@ public class GUIHelper
                 .getAction(NotebookEditorKit.javaDocManagerAction)));
         menu.add(new JMenuItem(man
                 .getAction(NotebookEditorKit.ctxInspectorAction)));
+        GlobMenuItem mi = new GlobMenuItem("Manage Cell Descriptions");
+        mi.addActionListener(new DescriptionManagerAction());
+        menu.add(mi);
         menu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
         menu.add(new EnhancedMenu("CellGroup", new CellGroupPropsProvider()));
         menu.add(new EnhancedMenu("Notebook", new NotebookPropsProvider()));
         menu.add(new JSeparator());
-        JMenuItem mi = new GlobMenuItem("Top CellGroup Tree");
+        mi = new GlobMenuItem("Top CellGroup Tree");
         mi.addActionListener(new TopCellTreeAction());
         menu.add(mi);
         return menu;

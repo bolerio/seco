@@ -12,12 +12,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.nio.CharBuffer;
-import java.util.Iterator;
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -27,19 +24,16 @@ import javax.swing.border.TitledBorder;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
-import seco.notebook.AppConfig;
-import seco.notebook.NBStyle;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
-import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellUtils;
 
 
-
 public class SettingsPreviewPane extends JSplitPane
 {
-	private final static String TEMPLATE = "seco/notebook/gui/JavaTemplate.txt";
+	private static final long serialVersionUID = -5690086043456987656L;
+    private static final String TEMPLATE = "seco/notebook/gui/JavaTemplate.txt";
 	protected NotebookDocument doc;
 	protected NotebookUI previewPane = null;
 	protected CellGroup book;
@@ -48,7 +42,6 @@ public class SettingsPreviewPane extends JSplitPane
 	public SettingsPreviewPane(NotebookDocument doc, final OptionPane optionPane,
 			NotebookUI _previewPane)
 	{
-		// this.previewPane = previewPane;
 		this.optionPane = optionPane;
 		this.doc = doc;
 		if (_previewPane == null)

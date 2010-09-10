@@ -5,6 +5,7 @@ import static seco.notebook.ElementType.notebook;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
@@ -45,6 +46,10 @@ public class OutputCellDocument extends NotebookDocument
 
     public void init()
     {
+        DocumentListener[] ls = listenerList.getListeners(DocumentListener.class);
+        for(int i = 0; i < ls.length; i++)
+            removeDocumentListener(ls[i]);
+        if (inited) return;
         Cell book = (Cell) ThisNiche.graph.get(bookH);
         Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) book
                 .getAttribute(XMLConstants.CELL_STYLE);
@@ -64,6 +69,7 @@ public class OutputCellDocument extends NotebookDocument
         else
            CellUtils.addMutualEventPubSub(EvalCellEvent.HANDLE, bookH, getHandle(),
                 EvalCellHandler.getHandle());
+        inited = true;
     }
 
     public void removeCellBoxElement(Element el) throws BadLocationException

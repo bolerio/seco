@@ -153,7 +153,13 @@ public class CellParagraphView extends javax.swing.text.ParagraphView implements
 		// special handling
 		if (firstLineIndent <= 0)
 		{
-			Shape sh = getChildAllocation(0, a);
+			Shape sh = null;
+			try{
+			 sh = getChildAllocation(0, a);
+			}catch(ArrayIndexOutOfBoundsException ex)
+			{
+			    //this happens in some occasions... 
+			}
 				
 			if ((sh != null) && sh.intersects(alloc))
 			{
