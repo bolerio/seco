@@ -268,8 +268,7 @@ public class RubyCompletionProvider implements CompletionProvider
 				NotebookDocument doc, int caretOffset)
 		{
 			if (item != null && JavaDocManager.SHOW_DOC)
-				resultSet.setDocumentation(new DocItem(
-						getAssociatedObject(item), null));
+				resultSet.setDocumentation(new DocItem(item, null));
 			resultSet.finish();
 		}
 
@@ -278,14 +277,7 @@ public class RubyCompletionProvider implements CompletionProvider
 			this.component = component;
 		}
 
-		private Object getAssociatedObject(Object item)
-		{
-			Object ret = item;
-			if (item instanceof JavaResultItem)
-				ret = ((JavaResultItem) item).getAssociatedObject();
-			return ret;
-		}
-
+	
 		private class DocItem implements CompletionDocumentation
 		{
 			private String text;
