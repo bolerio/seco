@@ -571,7 +571,6 @@ public class HTMLToolBar extends JToolBar
             if (editor != null) editor.setAttributeSet(attr, true);
             // editor.grabFocus();
         }
-
     }
 
 }

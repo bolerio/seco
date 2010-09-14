@@ -6,18 +6,31 @@ package seco.gui;
  */
 
 import java.awt.Dimension;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.AbstractListModel;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -33,10 +46,10 @@ import seco.things.DescriptionLink;
 
 public class SearchDescriptionPanel extends javax.swing.JPanel
 {
-    // Variables declaration - do not modify
+    private static final long serialVersionUID = 6681375510410865074L;
+    private static int MAX_CHARS_IN_LIST = 30;
     private JButton buttSearch;
     private JList descrList;
-    private JLabel jLabel1;
     private JComponent previewUI;
     private JScrollPane scrollPane;
     private JSplitPane splitPane;
@@ -44,7 +57,6 @@ public class SearchDescriptionPanel extends javax.swing.JPanel
     private DescrModel list_model;
     private JPopupMenu popupMenu = new JPopupMenu();;
 
-    // End of variables declaration
 
     /** Creates new form SearchDescriptionPanel */
     public SearchDescriptionPanel()
@@ -55,7 +67,7 @@ public class SearchDescriptionPanel extends javax.swing.JPanel
     private void initComponents()
     {
 
-        jLabel1 = new JLabel("Search for:");
+        JLabel jLabel1 = new JLabel("Search for:");
         textSearch = new JTextField();
         textSearch.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e)
@@ -261,7 +273,7 @@ public class SearchDescriptionPanel extends javax.swing.JPanel
         {
             String res = ThisNiche.graph.get(links.get(i)
                     .getDescriptionHandle());
-            return res.length() > 50 ? res.substring(0, 50) + "..." : res;
+            return res.length() > MAX_CHARS_IN_LIST ? res.substring(0, MAX_CHARS_IN_LIST) + "..." : res;
         }
     }
 }

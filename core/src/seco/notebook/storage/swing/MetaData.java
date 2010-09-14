@@ -134,6 +134,8 @@ public class MetaData
         removeProperty("javax.swing.JSeparator", "UI");
         removeProperty("javax.swing.JPopupMenu", "layout");
         removeProperty("javax.swing.JButton", "UI");
+        removeProperty("javax.swing.AbstractButton", "UI");
+        removeProperty("javax.swing.JToggleButton", "UI");
         removeProperty("javax.swing.JToolBar", "UI");
         removeProperty("javax.swing.JComboBox", "UI");
         removeProperty("javax.swing.JToolBar", "layout");
