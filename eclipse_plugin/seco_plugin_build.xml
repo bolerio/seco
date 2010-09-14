@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="plugin_export" name="build">
+<property name="jar-name" value="seco.jar"/>
+	
+	<!-- The directory containing seco lib files -->
+	<property name="seco_top_dir" value="../core" />
+	
+	<!-- The directory containing seco lib files -->
+	<property name="lib" value="${seco_top_dir}/lib" />
+
+	<!-- The path to seco.jar -->
+	<property name="seco_jar" value="${seco_top_dir}/build/seco/seco.jar" />
+
+	<!-- The directory containing distribution jar -->
+	<property name="dist" value="${basedir}/dist"/>
+	
+	<target name="prepare" description="Copy Seco lib files to build directory.">
+		<!-- Copy seco lib files to build tree -->
+		<copy todir="${basedir}/lib">
+			<fileset dir="${lib}">
+				 <include name="**/*.jar"/>
+			</fileset>
+	    </copy>
+		<copy file="${seco_jar}" tofile="${basedir}/lib/seco.jar" />
+	</target>
+	
+	<target name="plugin_export">
+		<pde.exportPlugins destination="${dist}" exportSource="false" exportType="directory" plugins="seco.eclipse.plugin" useJARFormat="true"/>
+	</target>
+</project>

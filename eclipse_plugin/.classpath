@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="lib" path="lib/asm-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/asm-all-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/asm-commons-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/backport-util-concurrent.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/beanshell.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/db.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/grouplayout.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/hgdbfull.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jscheme-jsr.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jscheme.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jstyle.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jxta.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/l2fprod-common-sheet.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/looks-2.0.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org-netbeans-swing-outline.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/packer.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/piccolo.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/piccolox.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/seco.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/smack.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/smackx.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swing-layout-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swingutil1.5.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

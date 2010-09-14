@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Scripting"
+            id="seco.plugin">
+      </category>
+      <view
+            name="Seco"
+            icon="icons/logoicon.gif"
+            category="seco.plugin"
+            class="seco.eclipse.SecoView"
+            id="seco.eclipse.SecoView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               ratio="0.5"
+               relationship="right"
+               id="seco.eclipse.SecoView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="seco.plugin.actionSet"
+            label="Seco"
+            visible="true">
+          <action
+               class="seco.eclipse.SecoAction"
+               icon="icons/logoicon.gif"
+               id="seco.eclipse.SecoAction"
+               label="&amp;Open Niche"
+               toolbarPath="sampleGroup"
+               tooltip="Seco project">
+         </action>
+      </actionSet>
+   </extension>
+
+</plugin>
