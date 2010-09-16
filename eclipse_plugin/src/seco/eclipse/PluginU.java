@@ -1,6 +1,7 @@
 package seco.eclipse;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 import org.eclipse.albireo.core.AwtEnvironment;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.WorkingCopyOwner;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
@@ -139,10 +141,10 @@ public class PluginU
         };
         SearchEngine engine = new SearchEngine((WorkingCopyOwner) null);
         int flags = SearchPattern.R_EXACT_MATCH;
-//                | SearchPattern.R_PREFIX_MATCH
-//                | SearchPattern.R_PATTERN_MATCH
-//                | SearchPattern.R_CAMELCASE_MATCH
-//                | SearchPattern.R_CAMELCASE_SAME_PART_COUNT_MATCH;
+        // | SearchPattern.R_PREFIX_MATCH
+        // | SearchPattern.R_PATTERN_MATCH
+        // | SearchPattern.R_CAMELCASE_MATCH
+        // | SearchPattern.R_CAMELCASE_SAME_PART_COUNT_MATCH;
         String pck = name.indexOf(".") > 0 ? name.substring(0, name
                 .lastIndexOf('.')) : null;
         if (pck != null) name = name.substring(name.lastIndexOf('.') + 1);
@@ -227,9 +229,22 @@ public class PluginU
         if (list.isEmpty()) return null;
         // trying to find .java file to open
         for (TypeNameMatch m : list)
-            if (m.getType().getClass().getName().indexOf("SourceType") > 0) { 
-                return m
+            if (m.getType().getClass().getName().indexOf("SourceType") > 0) { return m
                     .getType(); }
         return list.get(0).getType();
+    }
+
+    public static IMethod getIMethod(Method m)
+    {
+        IType cl = getClassIType(m.getDeclaringClass());
+        if(cl == null) return null; 
+        String[] params = new String[m.getParameterTypes().length];
+        for (int i = 0; i < params.length; i++)
+        {
+            params[i] = PluginU.getClassIType(m.getParameterTypes()[i])
+                    .getElementName();
+        }
+
+        return cl.getMethod(m.getName(), params);
     }
 }

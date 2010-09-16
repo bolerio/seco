@@ -22,16 +22,9 @@ public class EclipseJavaDocProvider implements JavaDocProvider
     private String resolveMethod(Method m)
     {
         IType cl = PluginU.getClassIType(m.getDeclaringClass());
-        System.out.println("EclipseJavaDocProvider: " + cl);
-        if(cl == null) return null;
-        String[] params = new String[m.getParameterTypes().length];
-        for(int i = 0; i < params.length; i++)
-        {
-            params[i] = PluginU.getClassIType(m.getParameterTypes()[i]).getElementName();
-        }
-        
-        IMethod im = cl.getMethod(m.getName(), params);
-        System.out.println("EclipseJavaDocProvider1: " + im);
+       // System.out.println("EclipseJavaDocProvider: " + cl);
+        IMethod im = PluginU.getIMethod(m);
+      //  System.out.println("EclipseJavaDocProvider1: " + im);
         try{
         return org.eclipse.jdt.internal.ui.text.javadoc.JavadocContentAccess2.getHTMLContent(im, true, true);
         }catch(Exception ex)
