@@ -38,14 +38,6 @@ import seco.notebook.util.SegmentCache;
  * guarantee the full thread safety of the execution. It's the user's task to
  * lock the document appropriately before using methods described here.
  * 
- * Most of the methods require org.netbeans.editor.BaseDocument instance not
- * just the javax.swing.text.Document. The reason for that is to mark that the
- * methods work on BaseDocument instances only, not on generic documents. To
- * convert the Document to BaseDocument the simple conversion
- * (BaseDocument)target.getDocument() can be done or the method
- * getDocument(target) can be called. There are also other conversion methods
- * like getEditorUI(), getKit() or getKitClass().
- * 
  * @author Miloslav Metelka
  * @version 0.10
  */

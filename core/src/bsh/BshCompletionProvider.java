@@ -40,430 +40,435 @@ import seco.notebook.util.DocumentUtilities;
 
 public class BshCompletionProvider implements CompletionProvider
 {
-	public int getAutoQueryTypes(JTextComponent component, String typedText)
-	{
-		if (".".equals(typedText)) // &&
-									// !sup.isCompletionDisabled(component.getCaret().getDot()))
-			return COMPLETION_QUERY_TYPE;
-		if (" ".equals(typedText)) return TOOLTIP_QUERY_TYPE;
-		return 0;
-	}
+    public int getAutoQueryTypes(JTextComponent component, String typedText)
+    {
+        if (".".equals(typedText)) // &&
+            // !sup.isCompletionDisabled(component.getCaret().getDot()))
+            return COMPLETION_QUERY_TYPE;
+        if (" ".equals(typedText)) return TOOLTIP_QUERY_TYPE;
+        return 0;
+    }
 
-	public CompletionTask createTask(int queryType, JTextComponent component)
-	{
-		int offset = component.getCaret().getDot();
-		ScriptSupport sup =
-		 ((NotebookDocument) component.getDocument()).getScriptSupport(offset);
-		if (sup.isCommentOrLiteral(offset -1)) return null;
-		if (queryType == COMPLETION_QUERY_TYPE)
-			return new AsyncCompletionTask(new Query(component.getCaret()
-					.getDot()), component);
-		else if (queryType == DOCUMENTATION_QUERY_TYPE)
-			return new AsyncCompletionTask(new DocQuery(null), component);
-		else if (queryType == TOOLTIP_QUERY_TYPE)
-			return new AsyncCompletionTask(new ToolTipQuery(), component);
-		return null;
-	}
+    public CompletionTask createTask(int queryType, JTextComponent component)
+    {
+        int offset = component.getCaret().getDot();
+        ScriptSupport sup = ((NotebookDocument) component.getDocument())
+                .getScriptSupport(offset);
+        if (sup.isCommentOrLiteral(offset - 1)) return null;
+        if (queryType == COMPLETION_QUERY_TYPE) return new AsyncCompletionTask(
+                new Query(component.getCaret().getDot()), component);
+        else if (queryType == DOCUMENTATION_QUERY_TYPE) return new AsyncCompletionTask(
+                new DocQuery(null), component);
+        else if (queryType == TOOLTIP_QUERY_TYPE)
+            return new AsyncCompletionTask(new ToolTipQuery(), component);
+        return null;
+    }
 
+    static final class Query extends BaseAsyncCompletionQuery
+    {
+        public Query(int caretOffset)
+        {
+            super(caretOffset);
+        }
 
-	static final class Query extends BaseAsyncCompletionQuery
-	{
-		public Query(int caretOffset)
-		{
-			super(caretOffset);
-		}
+        protected void query(CompletionResultSet resultSet,
+                NotebookDocument doc, int offset)
+        {
+            ScriptSupport sup = doc.getScriptSupport(offset);
+            queryCaretOffset = offset;
+            queryAnchorOffset = offset;
+            BshAst p = (BshAst) sup.getParser();
+            try
+            {
+                String s = sup.getCommandBeforePt(offset);
+                // System.out.println("BshCompProv - query: " + s + ":" +
+                // offset);
+                Object obj = p.resolveVar(s, offset);
+                // System.out.println("BshCompProv - query - obj: " + obj +
+                // " cls:" + ((obj != null) ? obj.getClass(): "null") + ":" +
+                // p.evaled_or_guessed);
+                if (obj == null)
+                {
+                    resultSet.finish();
+                    return;
+                }
+                Class<?> cls = obj.getClass();
+                if (cls.getName().indexOf("bsh.XThis") >= 0)
+                {
+                    populateXThisRef(resultSet, obj);
+                }
+                if (obj instanceof CompletionU.DBPackageInfo)
+                {
+                    CompletionU.populatePackage(resultSet,
+                            (CompletionU.DBPackageInfo) obj, queryCaretOffset);
+                    queryResult = resultSet;
+                    resultSet.finish();
+                    return;
+                }
+                int mod = Modifier.PUBLIC;
+                if (cls.getName().equals(ClassIdentifier.class.getName()))
+                {
+                    cls = BshAst.getClsFromClassIdentifier(obj);
+                    mod = Modifier.STATIC;
+                }
+                if (p.isPrivateAccessAllowed()) mod |= Modifier.PRIVATE;
+                if (!p.evaled_or_guessed) cls = (Class<?>) obj;
+                CompletionU
+                        .populateClass(resultSet, cls, mod, queryCaretOffset);
+                queryResult = resultSet;
+            }
+            catch (Exception ex)
+            {
+                // stay silent on eval error
+                // if (!(ex instanceof UtilEvalError || ex instanceof EvalError)
+                // || ex instanceof ScriptException) ex.printStackTrace();
+            }
+            resultSet.finish();
+        }
 
-		protected void query(CompletionResultSet resultSet,
-				NotebookDocument doc, int offset)
-		{
-			ScriptSupport sup = doc.getScriptSupport(offset);
-			queryCaretOffset = offset;
-			queryAnchorOffset = offset;
-			BshAst p = (BshAst) sup.getParser();
-			try
-			{
-				String s = sup.getCommandBeforePt(offset);
-				// System.out.println("BshCompProv - query: " + s + ":" +
-				// offset);
-				Object obj = p.resolveVar(s, offset);
-				//System.out.println("BshCompProv - query - obj: " + obj +
-				// " cls:" + ((obj != null) ? obj.getClass(): "null") + ":" + p.evaled_or_guessed);
-				if (obj == null) {resultSet.finish(); return;}
-				Class<?> cls = obj.getClass();
-				if (cls.getName().indexOf("bsh.XThis") >= 0)
-				{
-					populateXThisRef(resultSet, obj);
-				}
-				if (obj instanceof CompletionU.DBPackageInfo)
-				{
-					CompletionU.populatePackage(resultSet, (CompletionU.DBPackageInfo) obj, queryCaretOffset);
-					queryResult = resultSet;
-					resultSet.finish();
-					return;
-				}
-				int mod = Modifier.PUBLIC;
-				if (cls.getName().equals(ClassIdentifier.class.getName()))
-				{
-					cls = BshAst.getClsFromClassIdentifier(obj);
-					mod = Modifier.STATIC;
-				}
-				if (p.isPrivateAccessAllowed()) mod |= Modifier.PRIVATE;
-				if(!p.evaled_or_guessed)
-					cls = (Class<?>) obj;
-				CompletionU.populateClass(resultSet, cls, mod, queryCaretOffset);
-				queryResult = resultSet;
-			}
-			catch (Exception ex)
-			{
-				// stay silent on eval error
-				//if (!(ex instanceof UtilEvalError || ex instanceof EvalError)
-				//		|| ex instanceof ScriptException) ex.printStackTrace();
-			}
-			resultSet.finish();
-		}
+        private static final Object[] empty = new Object[0];
+        private static final String REGEX = "[a-zA-Z_]+[a-zA-Z0-9_]*";
 
-		private static final Object[] empty = new Object[0];
-		private static final String REGEX = "[a-zA-Z_]+[a-zA-Z0-9_]*";
-
-		private void populateXThisRef(CompletionResultSet resultSet, Object t)
-				throws UtilEvalError
-		{
-			try
-			{
-				Object ns = t.getClass().getMethod("getNameSpace").invoke(t,
-						empty);
-				String[] var_names = (String[]) ns.getClass().getMethod(
-						"getVariableNames").invoke(ns, empty);
-				Method method = ns.getClass().getMethod("getVariable",
+        private void populateXThisRef(CompletionResultSet resultSet, Object t)
+                throws UtilEvalError
+        {
+            try
+            {
+                Object ns = t.getClass().getMethod("getNameSpace").invoke(t,
+                        empty);
+                String[] var_names = (String[]) ns.getClass().getMethod(
+                        "getVariableNames").invoke(ns, empty);
+                Method method = ns.getClass().getMethod("getVariable",
                         new Class[] { String.class });
-				for (int i = 0; i < var_names.length; i++)
-				{
-					if (!var_names[i].matches(REGEX)) continue;
-					Object obj = method.invoke(ns,
-							new Object[] { var_names[i] });
-					Class<?> cls = (obj instanceof Primitive) ? ((Primitive) obj)
-							.getType() : obj.getClass();
-					if (cls.getName().startsWith("jsint.")) continue;
-					// System.out.println("XThis - vars: " + var_names[i] + ":"
-					// + cls.getName());
-					JavaResultItem item = new JavaResultItem.VarResultItem(
-							var_names[i], cls, Modifier.PUBLIC);
-					item.setSubstituteOffset(queryCaretOffset);
-					resultSet.addItem(item);
-				}
-				Object[] ms = (Object[]) ns.getClass().getMethod("getMethods")
-						.invoke(ns, empty);
-				
-				for (int i = 0; i < ms.length; i++)
-				{
-					String name = (String) ms[i].getClass()
-							.getMethod("getName").invoke(ms[i], empty);
-					if (!name.matches(REGEX)) continue;
-					Class<?> retType = (Class<?>) ms[i].getClass().getMethod(
-							"getReturnType").invoke(ms[i], empty);
-					Class<?>[] params = (Class[]) ms[i].getClass().getMethod(
-							"getParameterTypes").invoke(ms[i], empty);
-					// System.out.println("XThis - methods: " + name + ":" +
-					// ((retType != null) ? retType.getName(): "null"));
-					JavaResultItem item = new JavaResultItem.MethodItem(
-							name, retType, params, null);
-					item.setSubstituteOffset(queryCaretOffset);
-					resultSet.addItem(item);
-				}
-				queryResult = resultSet;
-			}
-			catch (Exception ex)
-			{
-				ex.printStackTrace();
-			}
-		}
-	}
+                for (int i = 0; i < var_names.length; i++)
+                {
+                    if (!var_names[i].matches(REGEX)) continue;
+                    Object obj = method.invoke(ns,
+                            new Object[] { var_names[i] });
+                    Class<?> cls = (obj instanceof Primitive) ? ((Primitive) obj)
+                            .getType()
+                            : obj.getClass();
+                    if (cls.getName().startsWith("jsint.")) continue;
+                    // System.out.println("XThis - vars: " + var_names[i] + ":"
+                    // + cls.getName());
+                    JavaResultItem item = new JavaResultItem.VarResultItem(
+                            var_names[i], cls, Modifier.PUBLIC);
+                    item.setSubstituteOffset(queryCaretOffset);
+                    resultSet.addItem(item);
+                }
+                Object[] ms = (Object[]) ns.getClass().getMethod("getMethods")
+                        .invoke(ns, empty);
 
-	public static class DocQuery extends AsyncCompletionQuery
-	{
-		private Object item;
-		private JTextComponent component;
-		private static Action goToSource = new AbstractAction() {
-			public void actionPerformed(ActionEvent e)
-			{
-				// DocItem doc = (DocItem)e.getSource();
-				// ???JMIUtils.openElement((Element)doc.item);
-				if (e != null)
-				{
-					Completion.get().hideDocumentation();
-				}
-			}
-		};
+                for (int i = 0; i < ms.length; i++)
+                {
+                    String name = (String) ms[i].getClass()
+                            .getMethod("getName").invoke(ms[i], empty);
+                    if (!name.matches(REGEX)) continue;
+                    Class<?> retType = (Class<?>) ms[i].getClass().getMethod(
+                            "getReturnType").invoke(ms[i], empty);
+                    Class<?>[] params = (Class[]) ms[i].getClass().getMethod(
+                            "getParameterTypes").invoke(ms[i], empty);
+                    // System.out.println("XThis - methods: " + name + ":" +
+                    // ((retType != null) ? retType.getName(): "null"));
+                    JavaResultItem item = new JavaResultItem.MethodItem(name,
+                            retType, params, null);
+                    item.setSubstituteOffset(queryCaretOffset);
+                    resultSet.addItem(item);
+                }
+                queryResult = resultSet;
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+        }
+    }
 
-		public DocQuery(Object item)
-		{
-			this.item = item;
-		}
+    public static class DocQuery extends AsyncCompletionQuery
+    {
+        private Object item;
+        private JTextComponent component;
+        private static Action goToSource = new AbstractAction() {
+            public void actionPerformed(ActionEvent e)
+            {
+                // DocItem doc = (DocItem)e.getSource();
+                // ???JMIUtils.openElement((Element)doc.item);
+                if (e != null)
+                {
+                    Completion.get().hideDocumentation();
+                }
+            }
+        };
 
-		protected void query(CompletionResultSet resultSet,
-				NotebookDocument doc, int caretOffset)
-		{
-			if (item != null && JavaDocManager.SHOW_DOC)
-			{
-				resultSet.setDocumentation(new DocItem(
-						getAssociatedObject(item), null));
-			}
-			resultSet.finish();
-		}
+        public DocQuery(Object item)
+        {
+            this.item = item;
+        }
 
-		protected void prepareQuery(JTextComponent component)
-		{
-			this.component = component;
-		}
+        protected void query(CompletionResultSet resultSet,
+                NotebookDocument doc, int caretOffset)
+        {
+            if (item != null && JavaDocManager.SHOW_DOC)
+            {
+                resultSet.setDocumentation(new DocItem(
+                        getAssociatedObject(item), null));
+            }
+            resultSet.finish();
+        }
 
-		private Object getAssociatedObject(Object item)
-		{
-			Object ret = item;
-			if (item instanceof JavaResultItem)
-			{
-				ret = ((JavaResultItem) item).getAssociatedObject();
-			}
-			return ret;
-		}
+        protected void prepareQuery(JTextComponent component)
+        {
+            this.component = component;
+        }
 
-		private class DocItem implements CompletionDocumentation
-		{
-			private String text;
-			private JavaDoc javaDoc;
-			private Object item;
-			private URL url;
+        private Object getAssociatedObject(Object item)
+        {
+            Object ret = item;
+            if (item instanceof JavaResultItem)
+            {
+                ret = ((JavaResultItem) item).getAssociatedObject();
+            }
+            return ret;
+        }
 
-			public DocItem(Object item, JavaDoc javaDoc)
-			{
-				this.javaDoc = javaDoc != null ? javaDoc : 
-				    new JavaDoc(this, item);
-				this.url = getURL(item);
-			}
+        private class DocItem implements CompletionDocumentation
+        {
+            private String text;
+            private JavaDoc javaDoc;
+            private Object item;
+            private URL url;
 
-			public CompletionDocumentation resolveLink(String link)
-			{
-				return null;
-			}
+            public DocItem(Object item, JavaDoc javaDoc)
+            {
+                this.javaDoc = javaDoc != null ? javaDoc : new JavaDoc(this,
+                        item);
+                this.url = getURL(item);
+            }
 
-			public String getText()
-			{
-				return text;
-			}
+            public CompletionDocumentation resolveLink(String link)
+            {
+                return null;
+            }
 
-			public URL getURL()
-			{
-				return url;
-			}
+            public String getText()
+            {
+                return text;
+            }
 
-			private URL getURL(Object item)
-			{
-				return javaDoc.getURL(item);
-			}
+            public URL getURL()
+            {
+                return url;
+            }
 
-			public Action getGotoSourceAction()
-			{
-				return item != null ? goToSource : null;
-			}
+            private URL getURL(Object item)
+            {
+                return javaDoc.getURL(item);
+            }
 
-			private class JavaDoc 
-			{
-				public static final String CONTENT_NOT_FOUND = "JavaDoc Not Found.";
-				private DocItem docItem;
+            public Action getGotoSourceAction()
+            {
+                return item != null ? goToSource : null;
+            }
 
-				private JavaDoc(DocItem docItem, Object item)
-				{
-				    this.docItem = docItem;
-				    showJavaDoc(JavaDocManager.getInstance().getHTML(item));
-				}
+            private class JavaDoc
+            {
+                public static final String CONTENT_NOT_FOUND = "JavaDoc Not Found.";
+                private DocItem docItem;
 
-				private URL getURL(Object item)
-				{
-					return null;
-				}
+                private JavaDoc(DocItem docItem, Object item)
+                {
+                    this.docItem = docItem;
+                    showJavaDoc(JavaDocManager.getInstance().getHTML(item));
+                }
 
-				protected void showJavaDoc(String preparedText)
-				{
-					if (preparedText == null) preparedText = CONTENT_NOT_FOUND;
-					docItem.text = preparedText;
-				}
-			}
-		}
-	}
+                private URL getURL(Object item)
+                {
+                    return null;
+                }
 
-	static class ToolTipQuery extends AsyncCompletionQuery
-	{
-		private JTextComponent component;
-		private int queryCaretOffset;
-		private int queryAnchorOffset;
-		private JToolTip queryToolTip;
-		/**
-		 * Method/constructor '(' position for tracking whether the method is
-		 * still being completed.
-		 */
-		private Position queryMethodParamsStartPos = null;
-		private boolean otherMethodContext;
+                protected void showJavaDoc(String preparedText)
+                {
+                    if (preparedText == null) preparedText = CONTENT_NOT_FOUND;
+                    docItem.text = preparedText;
+                }
+            }
+        }
+    }
 
-		protected void query(CompletionResultSet resultSet,
-				NotebookDocument doc, int caretOffset)
-		{
-			// Position oldPos = queryMethodParamsStartPos;
-			queryMethodParamsStartPos = null;
-			ScriptSupport sup = doc.getScriptSupport(caretOffset);
-			if (sup == null || !(sup.getParser() instanceof BshAst)) return;
-			BshAst p = (BshAst) sup.getParser();
-			if (p.getRootNode() == null)
-			{
-				resultSet.finish();
-				return;
-			}
-			SimpleNode n = ParserUtils.getASTNodeAtOffset(sup.getElement(), p
-					.getRootNode(), caretOffset - 1);
-			SimpleNode outer = n;
-			if (outer != null)
-				outer = ParserUtils.getParentOfType(n,
-						BSHMethodInvocation.class);
-			// System.out.println("BshCompletion - tooltipQuery - outer: " +
-			// outer);
-			String methodName = "";
-			int offset = 0;
-			if (outer == null)
-			{
-				outer = ParserUtils.getParentOfType(n, BSHPrimarySuffix.class);
-				if (outer != null
-						&& ((BSHPrimarySuffix) outer).operation == BSHPrimarySuffix.NAME)
-				{
-					methodName = ((BSHPrimarySuffix) outer).field;
-					offset = sup.lineToOffset(outer.firstToken.beginLine - 1,
-							outer.firstToken.beginColumn);
-				}
-			} else
-			{
-				methodName = ((SimpleNode) outer.children[0]).getText();
-			}
-			// System.out.println("BshCompletion - tooltipQuery - node: " + n +
-			// ":" + methodName);
-			if (n == null)
-			{
-				resultSet.finish();
-				return;
-			}
-			int idx = methodName.lastIndexOf(".");
-			List<List<String>> list = new ArrayList<List<String>>();
-			try
-			{
-				if (idx > 0)
-				{
-					Object obj = p.resolveVar(methodName.substring(0, idx)
-							.trim(), caretOffset);
-					if (obj != null)
-						populateResult(list, obj.getClass(), methodName
-								.substring(idx + 1).trim(), Modifier.PUBLIC);
-				} else
-				{
-					if (offset == 0)
-						offset = caretOffset - methodName.length();
-					Object obj = p.resolveVar(sup.getCommandBeforePt(offset)
-							,sup.offsetToLineCol(offset)[1]);
-					if (obj != null)
-						populateResult(list, obj.getClass(), methodName,
-								Modifier.PUBLIC);
-				}
-			}
-			catch (Exception ex)
-			{
-				// stay silent on eval error
-				if (!(ex instanceof UtilEvalError || ex instanceof EvalError))
-					ex.printStackTrace();
-			}
-			resultSet
-					.setToolTip(queryToolTip = new MethodParamsTipPaintComponent(
-							list, -1));
-			resultSet.finish();
-		}
+    static class ToolTipQuery extends AsyncCompletionQuery
+    {
+        private JTextComponent component;
+        private int queryCaretOffset;
+        private int queryAnchorOffset;
+        private JToolTip queryToolTip;
+        /**
+         * Method/constructor '(' position for tracking whether the method is
+         * still being completed.
+         */
+        private Position queryMethodParamsStartPos = null;
+        private boolean otherMethodContext;
 
-		private void populateResult(List<List<String>> list, Class<?> cls, String name,
-				int modifiers)
-		{
-			Method[] ms = cls.getMethods();
-			for (int i = 0; i < ms.length; i++)
-			{
-				if (ms[i].getModifiers() != modifiers) continue;
-				if (!ms[i].getName().equals(name)) continue;
-				JavaResultItem item = new JavaResultItem.MethodItem(ms[i]);
-				List<String> parms = new ArrayList<String>();
-				parms.add(item.toString());
-				list.add(parms);
-			}
-		}
+        protected void query(CompletionResultSet resultSet,
+                NotebookDocument doc, int caretOffset)
+        {
+            // Position oldPos = queryMethodParamsStartPos;
+            queryMethodParamsStartPos = null;
+            ScriptSupport sup = doc.getScriptSupport(caretOffset);
+            if (sup == null || !(sup.getParser() instanceof BshAst)) return;
+            BshAst p = (BshAst) sup.getParser();
+            if (p.getRootNode() == null)
+            {
+                resultSet.finish();
+                return;
+            }
+            SimpleNode n = ParserUtils.getASTNodeAtOffset(sup.getElement(), p
+                    .getRootNode(), caretOffset - 1);
+            SimpleNode outer = n;
+            if (outer != null)
+                outer = ParserUtils.getParentOfType(n,
+                        BSHMethodInvocation.class);
+            // System.out.println("BshCompletion - tooltipQuery - outer: " +
+            // outer);
+            String methodName = "";
+            int offset = 0;
+            if (outer == null)
+            {
+                outer = ParserUtils.getParentOfType(n, BSHPrimarySuffix.class);
+                if (outer != null
+                        && ((BSHPrimarySuffix) outer).operation == BSHPrimarySuffix.NAME)
+                {
+                    methodName = ((BSHPrimarySuffix) outer).field;
+                    offset = sup.lineToOffset(outer.firstToken.beginLine - 1,
+                            outer.firstToken.beginColumn);
+                }
+            }
+            else
+            {
+                methodName = ((SimpleNode) outer.children[0]).getText();
+            }
+            // System.out.println("BshCompletion - tooltipQuery - node: " + n +
+            // ":" + methodName);
+            if (n == null)
+            {
+                resultSet.finish();
+                return;
+            }
+            int idx = methodName.lastIndexOf(".");
+            List<List<String>> list = new ArrayList<List<String>>();
+            try
+            {
+                if (idx > 0)
+                {
+                    Object obj = p.resolveVar(methodName.substring(0, idx)
+                            .trim(), caretOffset);
+                    if (obj != null)
+                        populateResult(list, obj.getClass(), methodName
+                                .substring(idx + 1).trim(), Modifier.PUBLIC);
+                }
+                else
+                {
+                    if (offset == 0)
+                        offset = caretOffset - methodName.length();
+                    Object obj = p.resolveVar(sup.getCommandBeforePt(offset),
+                            sup.offsetToLineCol(offset)[1]);
+                    if (obj != null)
+                        populateResult(list, obj.getClass(), methodName,
+                                Modifier.PUBLIC);
+                }
+            }
+            catch (Exception ex)
+            {
+                // stay silent on eval error
+                if (!(ex instanceof UtilEvalError || ex instanceof EvalError))
+                    ex.printStackTrace();
+            }
+            resultSet
+                    .setToolTip(queryToolTip = new MethodParamsTipPaintComponent(
+                            list, -1));
+            resultSet.finish();
+        }
 
-		protected void prepareQuery(JTextComponent component)
-		{
-			this.component = component;
-		}
+        private void populateResult(List<List<String>> list, Class<?> cls,
+                String name, int modifiers)
+        {
+            Method[] ms = cls.getMethods();
+            for (int i = 0; i < ms.length; i++)
+            {
+                if (ms[i].getModifiers() != modifiers) continue;
+                if (!ms[i].getName().equals(name)) continue;
+                JavaResultItem item = new JavaResultItem.MethodItem(ms[i]);
+                List<String> parms = new ArrayList<String>();
+                parms.add(item.toString());
+                list.add(parms);
+            }
+        }
 
-		protected boolean canFilter(JTextComponent component)
-		{
-			CharSequence text = null;
-			int textLength = -1;
-			int caretOffset = component.getCaretPosition();
-			Document doc = component.getDocument();
-			try
-			{
-				if (caretOffset - queryCaretOffset > 0)
-					text = DocumentUtilities.getText(doc, queryCaretOffset,
-							caretOffset - queryCaretOffset);
-				else if (caretOffset - queryCaretOffset < 0)
-					text = DocumentUtilities.getText(doc, caretOffset,
-							queryCaretOffset - caretOffset);
-				else
-					textLength = 0;
-			}
-			catch (BadLocationException e)
-			{
-			}
-			if (text != null)
-			{
-				textLength = text.length();
-			} else if (textLength < 0)
-			{
-				return false;
-			}
-			boolean filter = true;
-			int balance = 0;
-			for (int i = 0; i < textLength; i++)
-			{
-				char ch = text.charAt(i);
-				switch (ch)
-				{
-				case ',':
-					filter = false;
-					break;
-				case '(':
-					balance++;
-					filter = false;
-					break;
-				case ')':
-					balance--;
-					filter = false;
-					break;
-				}
-				if (balance < 0) otherMethodContext = true;
-			}
-			if (otherMethodContext && balance < 0) otherMethodContext = false;
-			if (queryMethodParamsStartPos == null
-					|| caretOffset <= queryMethodParamsStartPos.getOffset())
-				filter = false;
-			return otherMethodContext || filter;
-		}
+        protected void prepareQuery(JTextComponent component)
+        {
+            this.component = component;
+        }
 
-		protected void filter(CompletionResultSet resultSet)
-		{
-			if (!otherMethodContext)
-			{
-				resultSet.setAnchorOffset(queryAnchorOffset);
-				resultSet.setToolTip(queryToolTip);
-			}
-			resultSet.finish();
-		}
-	}
+        protected boolean canFilter(JTextComponent component)
+        {
+            CharSequence text = null;
+            int textLength = -1;
+            int caretOffset = component.getCaretPosition();
+            Document doc = component.getDocument();
+            try
+            {
+                if (caretOffset - queryCaretOffset > 0) text = DocumentUtilities
+                        .getText(doc, queryCaretOffset, caretOffset
+                                - queryCaretOffset);
+                else if (caretOffset - queryCaretOffset < 0) text = DocumentUtilities
+                        .getText(doc, caretOffset, queryCaretOffset
+                                - caretOffset);
+                else
+                    textLength = 0;
+            }
+            catch (BadLocationException e)
+            {
+            }
+            if (text != null)
+            {
+                textLength = text.length();
+            }
+            else if (textLength < 0) { return false; }
+            boolean filter = true;
+            int balance = 0;
+            for (int i = 0; i < textLength; i++)
+            {
+                char ch = text.charAt(i);
+                switch (ch)
+                {
+                case ',':
+                    filter = false;
+                    break;
+                case '(':
+                    balance++;
+                    filter = false;
+                    break;
+                case ')':
+                    balance--;
+                    filter = false;
+                    break;
+                }
+                if (balance < 0) otherMethodContext = true;
+            }
+            if (otherMethodContext && balance < 0) otherMethodContext = false;
+            if (queryMethodParamsStartPos == null
+                    || caretOffset <= queryMethodParamsStartPos.getOffset())
+                filter = false;
+            return otherMethodContext || filter;
+        }
+
+        protected void filter(CompletionResultSet resultSet)
+        {
+            if (!otherMethodContext)
+            {
+                resultSet.setAnchorOffset(queryAnchorOffset);
+                resultSet.setToolTip(queryToolTip);
+            }
+            resultSet.finish();
+        }
+    }
 }

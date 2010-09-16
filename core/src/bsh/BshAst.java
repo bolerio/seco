@@ -91,7 +91,7 @@ public class BshAst extends NBParser
         }
     }
 
-    public Object resolveMethod(String s, int offset)
+    public Method resolveMethod(String s, int offset)
     {
         SimpleNode root = getRootNode();
         int[] lineCol = support.offsetToLineCol(offset);
@@ -134,26 +134,21 @@ public class BshAst extends NBParser
                 false); // isPrivateAccessAllowed());
         if (meth == null) return null;
         if (lineCol[1] - 1 == m.getArgsNode().lastToken.endColumn)
-            return meth.getReturnType();
+            return meth;
         if (root.children.length > 1)
         {
-            Class<?> c = meth.getReturnType();
+            Method c = meth;
             for (int j = 1; j < root.children.length; j++)
             {
                 BSHPrimarySuffix suff = (BSHPrimarySuffix) root.getChild(j);
                 c = resolveSuffix(c, suff, offset);
-                // System.out.println("resolveMethod - suff: " + suff.getText()
-                // +
-                // suff.operation + ":" + suff.field + ":" + meth + ":" + c +
-                // ":"
-                // + lineCol[1] + ":" + suff.lastToken.endColumn);
                 // evaluate only to the specified offset
                 if (lineCol[1] - 1 == suff.lastToken.endColumn) return c;
                 if (c == null) return null;
             }
             return c;
         }
-        return meth.getReturnType();
+        return meth;
     }
   
     static Class<?> getClsFromClassIdentifier(Object obj)
@@ -168,15 +163,15 @@ public class BshAst extends NBParser
         }
     }
 
-    private Class<?> resolveSuffix(Class<?> type, BSHPrimarySuffix suff,
+    private Method resolveSuffix(Method type, BSHPrimarySuffix suff,
             int offset)
     {
         if (suff.operation == BSHPrimarySuffix.NAME)
         {
             Class<?>[] types = resolveArgs(((BSHArguments) suff.getChild(0)),
                     offset);
-            Method meth = findMethod(type, suff.field, types, false); // isPrivateAccessAllowed());
-            return (meth != null) ? meth.getReturnType() : null;
+            Method meth = findMethod(type.getReturnType(), suff.field, types, false); // isPrivateAccessAllowed());
+            return (meth != null) ? meth : null;
 
         }
         return null;
