@@ -20,6 +20,7 @@ import org.hypergraphdb.event.HGOpenedEvent;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.type.HGAtomType;
+import org.hypergraphdb.type.JavaTypeFactory;
 
 import seco.ThisNiche;
 import seco.U;
@@ -196,7 +197,9 @@ public class NicheManager
         //
         SwingTypeMapper stm = new SwingTypeMapper();
         stm.setHyperGraph(graph);
-        graph.getTypeSystem().getJavaTypeFactory().getMappers().add(0, stm);      
+        JavaTypeFactory f =
+            (JavaTypeFactory) graph.getTypeSystem().getJavaTypeFactory();
+        f.getMappers().add(0, stm);      
         HGPersistentHandle pHandle = graph.getHandleFactory().makeHandle("ae9e93e7-07c9-11da-831d-8d375c1471ff");
         if (graph.get(pHandle) == null)
         {

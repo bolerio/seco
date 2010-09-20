@@ -121,6 +121,7 @@ public class HtmlView extends HidableComponentView
                     if(readonly)  return;
                     //ThisNiche.guiController.showHTMLToolBar(true);
                     GUIHelper.getHTMLToolBar().setEnabled(true);
+                    ThisNiche.guiController.setStatusBarMessage(null);
                 }
 
                 public void focusLost(FocusEvent e)

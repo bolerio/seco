@@ -96,6 +96,8 @@ public abstract class TopFrame extends JFrame implements GUIController
     {
         super.setTitle(title);
     }
+    
+    public void setStatusBarMessage(String message){}
 
     private void flash(final String message, final int intratime, final int intertime, final int count)
     {
