@@ -2,23 +2,17 @@ package seco.eclipse;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.lang.reflect.Method;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.JTextComponent;
 
 import org.eclipse.albireo.core.SwingControl;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -29,6 +23,7 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
@@ -36,62 +31,40 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-import org.hypergraphdb.HGEnvironment;
 
 import seco.ThisNiche;
 import seco.gui.PiccoloCanvas;
 import seco.notebook.Acceptor;
-import seco.notebook.ActionManager;
-import seco.notebook.AppConfig;
 import seco.notebook.FinderFactory;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.Utilities;
 import seco.notebook.syntax.ScriptSupport;
-import seco.rtenv.ClassPathEntry;
 import bsh.BshAst;
-import edu.emory.mathcs.backport.java.util.Arrays;
 import edu.umd.cs.piccolox.swing.PScrollPane;
 
 /**
- * This sample class demonstrates how to plug-in a new workbench view. The view
- * shows data obtained from the model. The sample creates a dummy model on the
- * fly, but a real implementation would connect to the model available either in
- * this or another plug-in (e.g. the workspace). The view is connected to the
- * model using a content provider.
- * <p>
- * The view uses a label provider to define how model objects should be
- * presented in the view. Each view can present the same model objects using
- * different labels and icons, if needed. Alternatively, a single label provider
- * can be shared between views in order to ensure that objects of the same type
- * are presented in the same way everywhere.
+ *  Main Seco view.
  * <p>
  */
 
 public class SecoView extends ViewPart
 {
     public static final String ID = "seco.eclipse.SecoView";
+    private SwingControl swingControl;
     private IMemento memento;
     private NoNicheGUI noNicheGUI;
 
     Composite parent;
-
-    /**
-     * The constructor.
-     */
-    public SecoView()
-    {
-    }
 
     @Override
     public void init(IViewSite site, IMemento memento) throws PartInitException
     {
         super.init(site, memento);
         this.memento = memento;
+        //PluginU.view = this;
         makeActions();
     }
-
-    private SwingControl swingControl;
 
     public void createPartControl(final Composite par)
     {
@@ -115,21 +88,20 @@ public class SecoView extends ViewPart
 
     void update()
     {
-        SecoPlugin plugin = PluginU.getSecoPlugin();
+        SecoPlugin plugin = SecoPlugin.getDefault();
         if (plugin.getNicheLocation() == null)
             plugin.setNicheLocation(restoreState());
         clean();
         if (plugin.getNicheLocation() == null)
         {
-
             noNicheGUI = new NoNicheGUI(parent, SWT.None);
         }
         else
         {
-            boolean success = setupNiche();
+            boolean success = plugin.setupNiche();
             if (!success)
             {
-                PluginU.getSecoPlugin().closeNiche();
+                plugin.closeNiche();
                 noNicheGUI = new NoNicheGUI(parent, SWT.None);
             }
             else
@@ -149,59 +121,13 @@ public class SecoView extends ViewPart
                     }
                 };
         }
-        // parent.setLayout(new FillLayout());
+        
         parent.layout();
     }
 
-    static GoToDeclarationAction goToDeclarationAction = new GoToDeclarationAction();
+    
 
-    boolean setupNiche()
-    {
-        SecoPlugin plugin = PluginU.getSecoPlugin();
-        ThisNiche.guiController = new SecoEclipseGUIController();
-        try
-        {
-            HGEnvironment.get(plugin.getNicheLocation());
-        }
-        catch (Throwable t)
-        {
-            return false;
-        }
-        // something went wrong
-        if (ThisNiche.getTopContext() == null) return false;
-        File f = AppConfig.getJarDirectory(Platform.class);
-        ThisNiche.getTopContext().getRuntimeContext().getClassPath().add(
-                new ClassPathEntry(f));
-        ThisNiche.getTopContext().getRuntimeContext().getBindings().put(
-                "plugin", plugin);
-        ThisNiche.getTopContext().getRuntimeContext().getBindings().put(
-                "workspace", ResourcesPlugin.getWorkspace());
-        ThisNiche.getTopContext().getRuntimeContext().getBindings().put(
-                "frame", null);
-        // try
-        // {
-        // BshScriptEngineEx eng = (BshScriptEngineEx) ThisNiche
-        // .getEvaluationContext(ThisNiche.TOP_CONTEXT_HANDLE)
-        // .getEngine("beanshell");
-        // eng.importPackage("seco.eclipse");
-        // }
-        // catch (Exception ex)
-        // {
-        // ex.printStackTrace();
-        // }
-
-        if (!Arrays.asList(NotebookUI.getPopupMenu().getComponents()).contains(
-                goToDeclarationAction))
-        {
-            NotebookUI.getPopupMenu().add(goToDeclarationAction);
-            ActionManager.getInstance().putAction(goToDeclarationAction, false);
-        }
-        // JavaDocManager.getInstance().addJavaDocProvider(new
-        // EclipseJavaDocProvider());
-
-        return true;
-    }
-
+   
     @Override
     public void saveState(IMemento memento)
     {
@@ -227,104 +153,21 @@ public class SecoView extends ViewPart
         if (swingControl != null) swingControl.setFocus();
     }
 
-    void setTitle0(String title)
+    void setWinTitle(String title)
     {
-        // setTitle(title);
-        // this.setPartName(title);
-        // this.setContentDescription(title);
+        final Shell window = getSite().getShell();
+        window.setText(title);
     }
 
     private void makeActions()
     {
-        Action nicheAction = new Action() {
-            public void run()
-            {
-                PluginU.openNichesDlg(PlatformUI.getWorkbench()
-                        .getActiveWorkbenchWindow());
-            }
-        };
-        nicheAction.setText("Open Niche");
-        nicheAction.setToolTipText("Open Another Niche");
-        Action closeNicheAction = new Action() {
-            public void run()
-            {
-                SecoPlugin plugin = PluginU.getSecoPlugin();
-                plugin.setNicheLocation(null);
-            }
-        };
-        closeNicheAction.setText("Close Niche");
-        closeNicheAction.setToolTipText("Close Current Niche");
-
-        Action aboutAction = new Action() {
-            public void run()
-            {
-                showMessage("Seco Plugin 1.0");
-            }
-        };
-        aboutAction.setText("About");
-        aboutAction.setToolTipText("About");
-
         IActionBars bars = getViewSite().getActionBars();
         IMenuManager manager = bars.getMenuManager();
-        manager.add(nicheAction);
-        manager.add(closeNicheAction);
+        manager.add(EclipseActions.getAction(EclipseActions.OPEN_NICHE_ACTION));
+        manager.add(EclipseActions.getAction(EclipseActions.CLOSE_NICHE_ACTION));
         manager.add(new Separator());
-        manager.add(aboutAction);
+        manager.add(EclipseActions.getAction(EclipseActions.ABOUT_ACTION));
     }
-
-    private void showMessage(String message)
-    {
-        MessageDialog.openInformation(getSite().getShell(), "Seco", message);
-    }
-
-    // private void hookDoubleClickAction()
-    // {
-    // // viewer.addDoubleClickListener(new IDoubleClickListener() {
-    // // public void doubleClick(DoubleClickEvent event)
-    // // {
-    // // doubleClickAction.run();
-    // // }
-    // // });
-    // }
-
-    // private void hookContextMenu()
-    // {
-    // MenuManager menuMgr = new MenuManager("#PopupMenu");
-    // menuMgr.setRemoveAllWhenShown(true);
-    // menuMgr.addMenuListener(new IMenuListener() {
-    // public void menuAboutToShow(IMenuManager manager)
-    // {
-    // SecoView.this.fillContextMenu(manager);
-    // }
-    // });
-    // // Menu menu = menuMgr.createContextMenu(viewer.getControl());
-    // // viewer.getControl().setMenu(menu);
-    // // getSite().registerContextMenu(menuMgr, viewer);
-    // }
-    //
-    // private void fillLocalPullDown(IMenuManager manager)
-    // {
-    // manager.add(nicheAction);
-    // manager.add(closeNicheAction);
-    // manager.add(new Separator());
-    // manager.add(aboutAction);
-    // }
-    //
-    // private void fillContextMenu(IMenuManager manager)
-    // {
-    // manager.add(nicheAction);
-    // manager.add(closeNicheAction);
-    // manager.add(aboutAction);
-    // // Other plug-ins can contribute there actions here
-    // manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-    // }
-    //
-    // private void fillLocalToolBar(IToolBarManager manager)
-    // {
-    // manager.add(nicheAction);
-    // manager.add(closeNicheAction);
-    // manager.add(aboutAction);
-    // }
 
     private class NoNicheGUI extends Composite
     {
@@ -358,12 +201,8 @@ public class SecoView extends ViewPart
             SelectionAdapter adapter = new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent event)
                 {
-                    // SecoAction a = new SecoAction();
                     IWorkbench win = PlatformUI.getWorkbench();
-                    // a.init(win.getActiveWorkbenchWindow());
-                    // a.run(null);
                     PluginU.openNichesDlg(win.getActiveWorkbenchWindow());
-                    // createPartControl(parent);
                 }
             };
             noNicheButton.addSelectionListener(adapter);
@@ -448,7 +287,7 @@ public class SecoView extends ViewPart
             throws BadLocationException
     {
         int ret = Utilities.find(doc,
-                new FinderFactory.AcceptorFwdFinder(new FwdAcceptor()), offset,
+                new SmartFwdFinder(), offset,
                 -1);
         return (ret > 0) ? ret : doc.getLength();
     }
@@ -464,13 +303,27 @@ public class SecoView extends ViewPart
         
     }
     
-    public static class FwdAcceptor implements Acceptor
+    static class SmartFwdFinder extends FinderFactory.AcceptorFwdFinder
     {
-
+        public SmartFwdFinder()
+        {
+            super(new FwdAcceptor());
+        }
+    }
+    
+    static class FwdAcceptor implements Acceptor
+    {
+        boolean inParanthes = false;
         @Override
         public boolean accept(char ch)
         {
-            return ch != ';' && ch != '\n' && ch != '=' && ch != '.';
+            if(ch == '(')
+                inParanthes = true;
+            if(ch == ')')
+                inParanthes = false;
+            if(!inParanthes && ch == '.')
+                return true;
+            return ch != ';' && ch != '\n' && ch != '=';
         }
         
     }

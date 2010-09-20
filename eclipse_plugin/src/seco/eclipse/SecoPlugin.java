@@ -1,103 +1,178 @@
 package seco.eclipse;
 
-import java.util.ResourceBundle;
+import java.io.File;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.hypergraphdb.HGEnvironment;
 import org.osgi.framework.BundleContext;
 
 import seco.ThisNiche;
+import seco.eclipse.SecoView.GoToDeclarationAction;
+import seco.notebook.ActionManager;
+import seco.notebook.AppConfig;
+import seco.notebook.NotebookUI;
+import seco.rtenv.ClassPathEntry;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * The activator class controls the plug-in life cycle
  */
-public class SecoPlugin extends AbstractUIPlugin {
+public class SecoPlugin extends AbstractUIPlugin
+{
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "seco.eclipse.plugin";
+    // The plug-in ID
+    public static final String PLUGIN_ID = "seco.eclipse.plugin";
+    // The shared instance
+    private static SecoPlugin plugin;
+    private String nicheLocation;
 
-	// The shared instance
-	private static SecoPlugin plugin;
-	
-	private String nicheLocation;
-	
-	public String getNicheLocation()
+    /**
+     * The constructor
+     */
+    public SecoPlugin()
+    {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
+     * )
+     */
+    public void start(BundleContext context) throws Exception
+    {
+        super.start(context);
+        plugin = this;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
+     * )
+     */
+    public void stop(BundleContext context) throws Exception
+    {
+        ThisNiche.guiController.exit();
+        plugin = null;
+        super.stop(context);
+    }
+
+    /**
+     * Returns the shared instance
+     * 
+     * @return the shared instance
+     */
+    public static SecoPlugin getDefault()
+    {
+        if (plugin == null)
+            plugin = (SecoPlugin) Platform.getPlugin(SecoPlugin.PLUGIN_ID);
+        return plugin;
+    }
+
+    public String getNicheLocation()
     {
         return nicheLocation;
     }
 
     public void setNicheLocation(String _nicheLocation)
     {
-        if(_nicheLocation != null && _nicheLocation.equals(nicheLocation))
+        if (_nicheLocation != null && _nicheLocation.equals(nicheLocation))
             return;
-        if(_nicheLocation == null && nicheLocation == null) return;
-        if(nicheLocation != null)
-            closeNiche();
+        if (_nicheLocation == null && nicheLocation == null) return;
+        if (nicheLocation != null) closeNiche();
         this.nicheLocation = _nicheLocation;
         SecoView view = PluginU.getSecoView();
-        if(view != null)
-           view.update();
+        if (view != null) view.update();
         else
-           PluginU.openSecoView();
+            PluginU.openSecoView();
     }
 
     void closeNiche()
     {
-        if(ThisNiche.graph != null){
-           ThisNiche.guiController.exit();
-           ThisNiche.graph.close();
+        try
+        {
+            if (ThisNiche.graph != null)
+            {
+                ThisNiche.guiController.exit();
+                ThisNiche.graph.close();
+            }
         }
-        ThisNiche.graph = null;
-        ThisNiche.guiController = null;
+//        catch (Exception ex)
+//        {
+//           ex.printStackTrace();  
+//        }
+        finally
+        {
+            ThisNiche.graph = null;
+            ThisNiche.guiController = null;
+        }
     }
-    
+
+    static GoToDeclarationAction goToDeclarationAction = new GoToDeclarationAction();
+
+    boolean setupNiche()
+    {
+        ThisNiche.guiController = new SecoEclipseGUIController();
+        try
+        {
+            HGEnvironment.get(plugin.getNicheLocation());
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+            return false;
+        }
+        // something went wrong
+        if (ThisNiche.getTopContext() == null) return false;
+        File f = AppConfig.getJarDirectory(Platform.class);
+        ThisNiche.getTopContext().getRuntimeContext().getClassPath().add(
+                new ClassPathEntry(f));
+        ThisNiche.getTopContext().getRuntimeContext().getBindings().put(
+                "plugin", plugin);
+        ThisNiche.getTopContext().getRuntimeContext().getBindings().put(
+                "workspace", ResourcesPlugin.getWorkspace());
+        ThisNiche.getTopContext().getRuntimeContext().getBindings().put(
+                "frame", null);
+        // try
+        // {
+        // BshScriptEngineEx eng = (BshScriptEngineEx) ThisNiche
+        // .getEvaluationContext(ThisNiche.TOP_CONTEXT_HANDLE)
+        // .getEngine("beanshell");
+        // eng.importPackage("seco.eclipse");
+        // }
+        // catch (Exception ex)
+        // {
+        // ex.printStackTrace();
+        // }
+
+        if (!Arrays.asList(NotebookUI.getPopupMenu().getComponents()).contains(
+                goToDeclarationAction))
+        {
+            NotebookUI.getPopupMenu().add(goToDeclarationAction);
+            ActionManager.getInstance().putAction(goToDeclarationAction, false);
+        }
+        // JavaDocManager.getInstance().addJavaDocProvider(new
+        // EclipseJavaDocProvider());
+
+        return true;
+    }
+
     /**
-	 * The constructor
-	 */
-	public SecoPlugin() {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext context) throws Exception 
-	{
-	    ThisNiche.guiController.exit();
-		plugin = null;
-		super.stop(context);
-	}
-
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static SecoPlugin getDefault() {
-		return plugin;
-	}
-
-	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path
-	 *
-	 * @param path the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
-	}
+     * Returns an image descriptor for the image file at the given plug-in
+     * relative path
+     * 
+     * @param path
+     *            the path
+     * @return the image descriptor
+     */
+    public static ImageDescriptor getImageDescriptor(String path)
+    {
+        return imageDescriptorFromPlugin(PLUGIN_ID, path);
+    }
 }

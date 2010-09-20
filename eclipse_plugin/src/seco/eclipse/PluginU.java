@@ -14,16 +14,23 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.WorkingCopyOwner;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.core.search.SearchMatch;
-import org.eclipse.jdt.core.search.SearchParticipant;
 import org.eclipse.jdt.core.search.SearchPattern;
-import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jdt.core.search.TypeNameMatch;
 import org.eclipse.jdt.core.search.TypeNameMatchRequestor;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -33,25 +40,7 @@ import seco.notebook.storage.ClassRepository;
 
 public class PluginU
 {
-    // static File _pluginFolder;
-    //
-    // public static File getPluginFolder() {
-    // if(_pluginFolder == null) {
-    // URL url = Platform.getBundle(
-    // SecoPlugin.PLUGIN_ID).getEntry("/");
-    // try {
-    // url = Platform.resolve(url);
-    // }
-    // catch(IOException ex) {
-    // ex.printStackTrace();
-    // }
-    // _pluginFolder = new File(url.getPath());
-    // }
-    //
-    // return _pluginFolder;
-    // }
-
-    static SecoView view;
+    private static SecoView view;
 
     public static SecoView getSecoView()
     {
@@ -61,13 +50,16 @@ public class PluginU
         if (win.getActiveWorkbenchWindow() == null) return null;
         IWorkbenchPage activePage = win.getActiveWorkbenchWindow()
                 .getActivePage();
-        return (activePage != null) ? view = (SecoView) activePage
+        IViewPart part =  (activePage != null) ? activePage
                 .findView(SecoView.ID) : null;
+        return part instanceof SecoView ? view = (SecoView) part : null;        
     }
 
-    public static SecoPlugin getSecoPlugin()
+    public static void showMessage(String message)
     {
-        return (SecoPlugin) Platform.getPlugin(SecoPlugin.PLUGIN_ID);
+        if (getSecoView() != null)
+            MessageDialog.openInformation(getSecoView().getSite().getShell(),
+                    "Seco", message);
     }
 
     public static void openNichesDlg(IWorkbenchWindow window)
@@ -99,8 +91,7 @@ public class PluginU
             String nicheLocation = (String) run.getResult();
             try
             {
-                SecoPlugin plugin = PluginU.getSecoPlugin();
-                plugin.setNicheLocation(nicheLocation);
+                SecoPlugin.getDefault().setNicheLocation(nicheLocation);
             }
             catch (Throwable t)
             {
@@ -202,6 +193,92 @@ public class PluginU
         Display display = PlatformUI.getWorkbench().getDisplay();
         display.syncExec(r);
     }
+    
+    public static void setStatusLineMsg(final String message)
+    {
+        final Display display = Display.getDefault();
+
+        new Thread() {
+
+            public void run()
+            {
+
+                display.syncExec(new Runnable() {
+
+                    public void run()
+                    {
+
+                        IWorkbench wb = PlatformUI.getWorkbench();
+                        IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+
+                        IWorkbenchPage page = win.getActivePage();
+
+                        IWorkbenchPart part = page.getActivePart();
+                        IWorkbenchPartSite site = part.getSite();
+
+                        IViewSite vSite = (IViewSite) site;
+
+                        IActionBars actionBars = vSite.getActionBars();
+
+                        if (actionBars == null) return;
+
+                        IStatusLineManager statusLineManager = actionBars
+                                .getStatusLineManager();
+
+                        if (statusLineManager == null) return;
+
+                        statusLineManager.setMessage(message);
+                    }
+                });
+            }
+        }.start();
+    }
+    
+    /**
+     * makes a window request a users attention
+     * @param tempMessage a message for the user to know why attention is needed
+     */
+    static void requestUserAttention (String tempMessage)
+    {
+        //rate at which the title will change in milliseconds
+        int rateOfChange = 1000;
+        
+        final Shell window = getSecoView().getSite().getShell();
+        //flash 10 times and thats it
+        final String orgText = window.getText();
+        final String message = tempMessage;
+        
+        window.setData("requestUserAttention", true);
+        window.addShellListener(new ShellAdapter (){
+            @Override
+            public void shellActivated (ShellEvent e)
+            {
+                window.setData("requestUserAttention", false);
+            }
+        });
+        for (int x=0;x<10;x++)
+        {
+            window.getDisplay().timerExec(2*rateOfChange*x-rateOfChange, new Runnable (){
+                @Override
+                public void run ()
+                {
+                    if (((Boolean)window.getData("requestUserAttention")))
+                    {
+                        window.setText(message);
+                    }
+                }});
+            window.getDisplay().timerExec(2*rateOfChange*x, new Runnable (){
+                @Override
+                public void run ()
+                {
+                    if (((Boolean)window.getData("requestUserAttention")) || window.getText().equals(message))
+                    {
+                        window.setText(orgText);
+                    }
+                }});
+        }
+    }
+
 
     public static IType getClassIType(Class<?> cls)
     {
@@ -237,7 +314,7 @@ public class PluginU
     public static IMethod getIMethod(Method m)
     {
         IType cl = getClassIType(m.getDeclaringClass());
-        if(cl == null) return null; 
+        if (cl == null) return null;
         String[] params = new String[m.getParameterTypes().length];
         for (int i = 0; i < params.length; i++)
         {
@@ -247,4 +324,22 @@ public class PluginU
 
         return cl.getMethod(m.getName(), params);
     }
+    
+    // static File _pluginFolder;
+    //
+    // public static File getPluginFolder() {
+    // if(_pluginFolder == null) {
+    // URL url = Platform.getBundle(
+    // SecoPlugin.PLUGIN_ID).getEntry("/");
+    // try {
+    // url = Platform.resolve(url);
+    // }
+    // catch(IOException ex) {
+    // ex.printStackTrace();
+    // }
+    // _pluginFolder = new File(url.getPath());
+    // }
+    //
+    // return _pluginFolder;
+    // }
 }
