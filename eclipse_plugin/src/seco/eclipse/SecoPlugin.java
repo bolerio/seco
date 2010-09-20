@@ -119,15 +119,15 @@ public class SecoPlugin extends AbstractUIPlugin
     boolean setupNiche()
     {
         ThisNiche.guiController = new SecoEclipseGUIController();
-        try
-        {
+        // try
+       // {
             HGEnvironment.get(plugin.getNicheLocation());
-        }
-        catch (Throwable t)
-        {
-            t.printStackTrace();
-            return false;
-        }
+//        }
+//        catch (Throwable t)
+//        {
+//            t.printStackTrace();
+//            return false;
+//        }
         // something went wrong
         if (ThisNiche.getTopContext() == null) return false;
         File f = AppConfig.getJarDirectory(Platform.class);

@@ -18,7 +18,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/packer.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/piccolo.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/piccolox.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/seco.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/seco.jar" sourcepath="/seco/core/src"/>
 	<classpathentry exported="true" kind="lib" path="lib/smack.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/smackx.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swing-layout-1.0.jar"/>
