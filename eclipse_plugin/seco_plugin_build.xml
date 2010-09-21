@@ -1,32 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project default="plugin_export" name="build">
-<property name="jar-name" value="seco.jar"/>
+<project default="headless_plugin_export" name="build">
+	<!-- The plugins directory of the Eclipse distribution-->
+	<property name="eclipse_plugins_dir" value="C:/eclipse/plugins" />
+	
+	 <!-- these create the eclipse plugin file name edit as needed --> 
+	 <property name="majorversion" value="1.0.0" /> 
+	 <property name="fullpluginname" value="seco.eclipse.plugin_${majorversion}.jar" /> 
 	
 	<!-- The directory containing seco lib files -->
 	<property name="seco_top_dir" value="../core" />
-	
+
 	<!-- The directory containing seco lib files -->
 	<property name="lib" value="${seco_top_dir}/lib" />
 
-	<!-- The path to seco.jar -->
+	<!-- The path to generated seco.jar as defined in core/build.xml -->
 	<property name="seco_jar" value="${seco_top_dir}/build/seco/seco.jar" />
 
-	<!-- The directory containing distribution jar -->
-	<property name="dist" value="${basedir}/dist"/>
-	
-	<target name="prepare" description="Copy Seco lib files to build directory.">
+	<!-- The directory where the plugin classes will be build -->
+	<property name="build" value="${basedir}/bin" />
+	<!-- The directory where the distribution jar will be created-->
+	<property name="dist" value="${basedir}/dist" />
+
+	<!-- classpath for compiling-->
+	<path id="classpath">
+		<fileset dir="lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${eclipse_plugins_dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean" description="Clean up">
+		<delete file="${seco_jar}" />
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+
+	<target name="compile" depends="prepare" description="compile the Seco plug-in source">
+		<javac source="1.5" classpathref="classpath" destdir="${build}" srcdir="${basedir}/src" />
+	</target>
+
+	<target name="prepare" depends="clean" description="Copy Seco lib files to build directory.">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
 		<!-- Build seco.jar -->
-		<ant antfile="${seco_top_dir}/build.xml" dir="${seco_top_dir}" target="jars"/>
+		<ant antfile="${seco_top_dir}/build.xml" dir="${seco_top_dir}" target="jars" inheritAll="false" />
 		<!-- Copy seco lib files to build tree -->
 		<copy todir="${basedir}/lib">
 			<fileset dir="${lib}">
-				 <include name="**/*.jar"/>
+				<include name="**/*.jar" />
 			</fileset>
-	    </copy>
+		</copy>
 		<copy file="${seco_jar}" tofile="${basedir}/lib/seco.jar" />
 	</target>
-	
-	<target name="plugin_export" depends="prepare">
-		<pde.exportPlugins destination="${dist}" exportSource="false" exportType="directory" plugins="seco.eclipse.plugin" useJARFormat="true"/>
+
+	<target name="headless_plugin_export" depends="compile">
+		<!-- copy the icons -->
+		<copy todir="${build}/icons">
+			<fileset dir="${basedir}/icons">
+				<exclude name="**/SVN" />
+			</fileset>
+		</copy>
+
+		<!-- copy the meta-inf -->
+		<copy todir="${build}/META-INF">
+			<fileset dir="${basedir}/META-INF">
+				<exclude name="**/SVN" />
+			</fileset>
+		</copy>
+		<!-- copy the lib -->
+		<copy todir="${build}/lib">
+			<fileset dir="${basedir}/lib">
+				<exclude name="**/SVN" />
+			</fileset>
+		</copy>
+		<!-- <copy file="${basedir}/build.properties" todir="${build}" />-->
+		<copy file="${basedir}/plugin.xml" todir="${build}" />
+		<copy file="${basedir}/contexts.xml" todir="${build}" />
+
+		<jar destfile="${dist}/${fullpluginname}" basedir="${build}" />
+	</target>
+
+	<target name="plugin_export" depends="compile">
+		<pde.exportPlugins destination="${dist}" exportSource="false" exportType="directory" plugins="seco.eclipse.plugin" useJARFormat="true" />
 	</target>
 </project>
