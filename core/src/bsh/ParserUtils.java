@@ -7,7 +7,17 @@
  */
 package bsh;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.text.Element;
+
+import seco.notebook.NotebookDocument;
+import seco.notebook.syntax.ScriptSupport;
+import seco.notebook.syntax.completion.CompletionResultSet;
+import seco.notebook.syntax.completion.MethodParamsTipPaintComponent;
 
 public class ParserUtils
 {
@@ -107,4 +117,81 @@ public class ParserUtils
 	{
 		return n.lastToken.endColumn;
 	}
+	
+//	 public  static Method resolveMethod(
+//             NotebookDocument doc, int caretOffset)
+//     {
+//         ScriptSupport sup = doc.getScriptSupport(caretOffset);
+//         if (sup == null || !(sup.getParser() instanceof BshAst)) return null;
+//         BshAst p = (BshAst) sup.getParser();
+//         if (p.getRootNode() == null)
+//         {
+//            
+//         }
+//         SimpleNode n = ParserUtils.getASTNodeAtOffset(sup.getElement(), p
+//                 .getRootNode(), caretOffset - 1);
+//         SimpleNode outer = n;
+//         if (outer != null)
+//             outer = ParserUtils.getParentOfType(n,
+//                     BSHMethodInvocation.class);
+//         String methodName = "";
+//         int offset = 0;
+//         if (outer == null)
+//         {
+//             outer = ParserUtils.getParentOfType(n, BSHPrimarySuffix.class);
+//             if (outer != null
+//                     && ((BSHPrimarySuffix) outer).operation == BSHPrimarySuffix.NAME)
+//             {
+//                 methodName = ((BSHPrimarySuffix) outer).field;
+//                 offset = sup.lineToOffset(outer.firstToken.beginLine - 1,
+//                         outer.firstToken.beginColumn);
+//             }
+//         }
+//         else
+//         {
+//             methodName = ((SimpleNode) outer.children[0]).getText();
+//         }
+//         // System.out.println("BshCompletion - tooltipQuery - node: " + n +
+//         // ":" + methodName);
+//         if (n == null)
+//         {
+//             resultSet.finish();
+//             return;
+//         }
+//         int idx = methodName.lastIndexOf(".");
+//         List<List<String>> list = new ArrayList<List<String>>();
+//         try
+//         {
+//             if (idx > 0)
+//             {
+//                 Object obj = p.resolveVar(methodName.substring(0, idx)
+//                         .trim(), caretOffset);
+//                 //if (obj != null)
+//                 //    populateResult(list, obj.getClass(), methodName
+//                 //            .substring(idx + 1).trim(), Modifier.PUBLIC);
+//             }
+//             else
+//             {
+//                 //if (offset == 0)
+//                 //    offset = caretOffset - methodName.length();
+//                 //Object obj = p.resolveVar(sup.getCommandBeforePt(offset),
+//                //         sup.offsetToLineCol(offset)[1]);
+//                // if (obj != null)
+//                //     populateResult(list, obj.getClass(), methodName,
+//                //             Modifier.PUBLIC);
+//             }
+//         }
+//         catch (Exception ex)
+//         {
+//             // stay silent on eval error
+//             if (!(ex instanceof UtilEvalError || ex instanceof EvalError))
+//                 ex.printStackTrace();
+//         }
+//     }
+
+    private ParserUtils()
+    {
+    }
+	
+	
 }

@@ -113,9 +113,16 @@ public class BshAst extends NBParser
         else
             root = root.getChild(lineCol[0]);
         SimpleNode n = root.getChild(0);
-        // System.out.println("resolveMethod0: " + n.getClass() + ":" + root);
-        if (!(n instanceof BSHMethodInvocation)) return null;
-        BSHMethodInvocation m = (BSHMethodInvocation) n;
+        BSHMethodInvocation m = null;
+        if (!(n instanceof BSHMethodInvocation)) 
+        {
+            SimpleNode outer = ParserUtils.getASTNodeAtOffset(
+                    support.getElement(), n, offset - 1);
+            if (outer != null)
+                m = (BSHMethodInvocation) ParserUtils.getParentOfType(n, BSHMethodInvocation.class);
+        }else
+           m = (BSHMethodInvocation) n;
+        if(m == null) return null;
         String text = m.getNameNode().text;
         int dot = text.lastIndexOf('.');
         if (dot == -1) return null;
