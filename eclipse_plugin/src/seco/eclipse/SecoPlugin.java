@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.hypergraphdb.HGEnvironment;
+import org.hypergraphdb.storage.BDBConfig;
 import org.osgi.framework.BundleContext;
 
 import seco.ThisNiche;
@@ -14,6 +15,7 @@ import seco.eclipse.SecoView.GoToDeclarationAction;
 import seco.notebook.ActionManager;
 import seco.notebook.AppConfig;
 import seco.notebook.NotebookUI;
+import seco.notebook.storage.ClassRepository;
 import seco.rtenv.ClassPathEntry;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
@@ -71,7 +73,17 @@ public class SecoPlugin extends AbstractUIPlugin
     public static SecoPlugin getDefault()
     {
         if (plugin == null)
+        {
             plugin = (SecoPlugin) Platform.getPlugin(SecoPlugin.PLUGIN_ID);
+            try{
+                ClassRepository.getInstance();
+            }catch(Exception ex)
+            {
+                File f = AppConfig.getJarDirectory(BDBConfig.class);
+                System.out.println("DB.jar dir: " + f.getAbsolutePath());
+                ex.printStackTrace();
+            }
+        }
         return plugin;
     }
 

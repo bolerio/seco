@@ -280,7 +280,7 @@ public class SecoView extends ViewPart
             throws BadLocationException
     {
         return Utilities.find(doc, new FinderFactory.AcceptorBwdFinder(
-                new SmartAcceptor()), offset, 0);
+                new SmartBwdAcceptor()), offset, 0);
     }
 
     public static int getWordEnd(NotebookDocument doc, int offset)
@@ -292,7 +292,7 @@ public class SecoView extends ViewPart
         return (ret > 0) ? ret : doc.getLength();
     }
     
-    static class SmartAcceptor implements Acceptor
+    static class SmartBwdAcceptor implements Acceptor
     {
 
         @Override
@@ -313,15 +313,15 @@ public class SecoView extends ViewPart
     
     static class FwdAcceptor implements Acceptor
     {
-        boolean inParanthes = false;
+        int numParanthes = 0;
         @Override
         public boolean accept(char ch)
         {
             if(ch == '(')
-                inParanthes = true;
+                numParanthes++;
             if(ch == ')')
-                inParanthes = false;
-            if(!inParanthes && ch == '.')
+                numParanthes--;
+            if(numParanthes == 0 && (ch == '.'|| ch == ' ' || ch == ','))
                 return true;
             return ch != ';' && ch != '\n' && ch != '=';
         }

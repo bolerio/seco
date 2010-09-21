@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.albireo.core.AwtEnvironment;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
@@ -36,7 +35,6 @@ import org.eclipse.ui.PlatformUI;
 
 import seco.boot.NicheManager;
 import seco.boot.NicheSelectDialog;
-import seco.notebook.storage.ClassRepository;
 
 public class PluginU
 {
@@ -72,7 +70,6 @@ public class PluginU
 
             public void run()
             {
-                ClassRepository.getInstance();
                 dlg = new NicheSelectDialog();
                 dlg.setNiches(niches);
                 dlg.setVisible(true);
@@ -244,7 +241,8 @@ public class PluginU
         int rateOfChange = 1000;
         
         final Shell window = getSecoView().getSite().getShell();
-        //flash 10 times and thats it
+        //flash n times and thats it
+        int n = 5;
         final String orgText = window.getText();
         final String message = tempMessage;
         
@@ -256,7 +254,7 @@ public class PluginU
                 window.setData("requestUserAttention", false);
             }
         });
-        for (int x=0;x<10;x++)
+        for (int x=0;x<n;x++)
         {
             window.getDisplay().timerExec(2*rateOfChange*x-rateOfChange, new Runnable (){
                 @Override
