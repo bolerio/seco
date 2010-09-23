@@ -87,14 +87,13 @@ public class ParserUtils
 		        return (in != null) ? in : (SimpleNode) e;
 		     }
 		}
-		return null;
+		return root;
 	}
 	
 	static int getElementIndex(SimpleNode n, int offset)
 	{
-		//System.out.println("ParserUtils - getElementIndex: " + offset + ":" + getEndOffset(n));
 		if (n == null || n.children == null ||
-				n.children.length == 0 || offset >= getEndOffset(n))
+				n.children.length == 0 || offset > getEndOffset(n))
 			return -1;
 		
 		for(int i = 0; i < n.children.length; i++)

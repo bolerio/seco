@@ -20,8 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.swing.text.*;
-import javax.swing.undo.UndoManager;
+import javax.script.Bindings;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JDialog;
@@ -29,21 +28,33 @@ import javax.swing.JEditorPane;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Caret;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.Position;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledEditorKit;
+import javax.swing.text.TextAction;
+import javax.swing.text.View;
+import javax.swing.text.ViewFactory;
+import javax.swing.undo.UndoManager;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
 import seco.gui.GUIHelper;
-import seco.gui.TopFrame;
-import seco.notebook.NotebookDocument.UpdateAction;
+import seco.gui.ObjectInspector;
 import seco.notebook.gui.DialogDescriptor;
 import seco.notebook.gui.DialogDisplayer;
 import seco.notebook.gui.FindDialog;
@@ -112,6 +123,7 @@ public class NotebookEditorKit extends StyledEditorKit
     public static final String findAction = "Find...";
     public static final String mergeCellsAction = "Merge Input Cells";
     public static final String addRemoveCommentsAction = "Comment/Uncomment";
+    public static final String openObjectInspectorAction = "Inspect variable";
 
     static
     {
@@ -127,15 +139,15 @@ public class NotebookEditorKit extends StyledEditorKit
             new DeleteCellAction(), new DeleteSelectedElementsAction(),
             new SelectCellHandleAction(), new ImportAction(), new HTMLAction(),
             new ShowInputTypePopupAction(), new ClearEngineContextAction(),
-            /*new ResetCellNumAction(),*/ new JavaDocManagerAction(),
-            new CtxInspectorAction(),  new ShortcutInspectorAction(),
-            new FindReplaceAction(true),
-            new FindReplaceAction(false), new RemoveTabAction(),
-            new MergeCellsAction(), new SelectWordAction(),
-            new SelectLineAction(), new SelectAllAction(), 
-            new VerticalPageAction(pageUpAction, -1, false), 
+            /* new ResetCellNumAction(), */new JavaDocManagerAction(),
+            new CtxInspectorAction(), new ShortcutInspectorAction(),
+            new FindReplaceAction(true), new FindReplaceAction(false),
+            new RemoveTabAction(), new MergeCellsAction(),
+            new SelectWordAction(), new SelectLineAction(),
+            new SelectAllAction(),
+            new VerticalPageAction(pageUpAction, -1, false),
             new VerticalPageAction(pageDownAction, 1, false),
-            new AddRemoveCommentsAction()};
+            new AddRemoveCommentsAction(), new OpenObjectInspectorAction() };
     private static HashMap<String, Action> actions;
 
     /** Creates a new instance of NotebookEditorKit */
@@ -174,7 +186,8 @@ public class NotebookEditorKit extends StyledEditorKit
     public static final String DEFAULT_DOC_NAME = "NotebookEditorKit.DefaultDocumentName";
     public static final CellGroup DEFAULT_TOP_GROUP = new CellGroup(
             DEFAULT_DOC_NAME);
-    static final HGPersistentHandle DOC_HANDLE = UUIDHandleFactory.I.makeHandle("50593b0e-d0c2-11dc-99fb-e94ae2f056ca");
+    static final HGPersistentHandle DOC_HANDLE = UUIDHandleFactory.I
+            .makeHandle("50593b0e-d0c2-11dc-99fb-e94ae2f056ca");
 
     public Document createDefaultDocument()
     {
@@ -183,7 +196,8 @@ public class NotebookEditorKit extends StyledEditorKit
 
     public static NotebookDocument getDefaultDocument()
     {
-        NotebookDocument doc = (NotebookDocument) ThisNiche.graph.get(DOC_HANDLE);
+        NotebookDocument doc = (NotebookDocument) ThisNiche.graph
+                .get(DOC_HANDLE);
         if (doc != null) return doc;
 
         doc = new NotebookDocument(ThisNiche.graph.add(DEFAULT_TOP_GROUP),
@@ -260,8 +274,8 @@ public class NotebookEditorKit extends StyledEditorKit
         public EvalAction()
         {
             super(evalAction);
-            putValue(ACCELERATOR_KEY, 
-                    KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK));
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
+                    InputEvent.SHIFT_DOWN_MASK));
         }
 
         protected void action(final NotebookUI ui) throws Exception
@@ -281,8 +295,8 @@ public class NotebookEditorKit extends StyledEditorKit
             if (containerV != null && containerV instanceof CellHandleView)
                 ((CellHandleView) containerV).setCollapsed(false);
 
-            doc.evalCellInAuxThread(el); 
-          
+            doc.evalCellInAuxThread(el);
+
             Utilities.adjustScrollBar(ui, pos, Position.Bias.Forward);
         }
 
@@ -443,7 +457,7 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             NotebookDocument doc = ui.getDoc();
             doc.beginCompoundEdit("Output Cells Eval");
-            doc.evalGroup((CellGroup)doc.getBook());
+            doc.evalGroup((CellGroup) doc.getBook());
             doc.endCompoundEdit();
         }
     }
@@ -464,8 +478,8 @@ public class NotebookEditorKit extends StyledEditorKit
                 try
                 {
                     doc.beginCompoundEdit("CellGroup Eval");
-                    doc.evalGroup((CellGroup)NotebookDocument.getLowerElement(gr,
-                            ElementType.cellGroup));
+                    doc.evalGroup((CellGroup) NotebookDocument.getLowerElement(
+                            gr, ElementType.cellGroup));
                 }
                 catch (Exception ex)
                 {
@@ -597,7 +611,7 @@ public class NotebookEditorKit extends StyledEditorKit
             int dot = caret.getDot();
             int mark = caret.getMark();
             if (doc.isOutputCell(dot - 1) || doc.isInsertionPoint(dot - 1)
-                    || doc.isCellHandle(dot-1))
+                    || doc.isCellHandle(dot - 1))
             {
                 UIManager.getLookAndFeel().provideErrorFeedback(ui);
                 return;
@@ -735,7 +749,8 @@ public class NotebookEditorKit extends StyledEditorKit
         protected void action(NotebookUI ui) throws Exception
         {
             int count = Utilities.getTabSpacesCount();
-            int[] offs = Utilities.getSelectionStartOffsets(ui, Utilities.getTabSubstitute());
+            int[] offs = Utilities.getSelectionStartOffsets(ui, Utilities
+                    .getTabSubstitute());
             if (offs == null) return;
             NotebookDocument doc = ui.getDoc();
             try
@@ -754,38 +769,39 @@ public class NotebookEditorKit extends StyledEditorKit
             }
         }
     }
-    
+
     public static class AddRemoveCommentsAction extends BaseAction
     {
         public AddRemoveCommentsAction()
         {
             super(addRemoveCommentsAction);
         }
-        
+
         protected void action(NotebookUI ui) throws Exception
         {
             String comment = "//";
             int count = comment.length();
-            
+
             int[] offs = Utilities.getSelectionStartOffsets(ui);
             if (offs == null || offs.length == 0) return;
             NotebookDocument doc = ui.getDoc();
             try
             {
-                boolean addOrRemove = !comment.equals(doc.getText(offs[0], count));
-                if(!addOrRemove)
+                boolean addOrRemove = !comment.equals(doc.getText(offs[0],
+                        count));
+                if (!addOrRemove)
                 {
-                    //check if all lines are commented
+                    // check if all lines are commented
                     offs = Utilities.getSelectionStartOffsets(ui, comment);
                     if (offs == null || offs.length == 0) return;
                 }
                 doc.beginCompoundEdit("Comment");
                 for (int i = 0; i < offs.length; i++)
                 {
-                    if(addOrRemove)
-                      doc.insertString(offs[i] + i * count, comment, null);  
+                    if (addOrRemove) doc.insertString(offs[i] + i * count,
+                            comment, null);
                     else
-                      doc.remove(offs[i] - i * count, count);
+                        doc.remove(offs[i] - i * count, count);
                 }
             }
             catch (Exception ex)
@@ -890,18 +906,18 @@ public class NotebookEditorKit extends StyledEditorKit
         }
     }
 
-//    static final class ResetCellNumAction extends BaseAction
-//    {
-//        public ResetCellNumAction()
-//        {
-//            super(resetCellNumAction);
-//        }
-//
-//        protected void action(NotebookUI ui) throws Exception
-//        {
-//            // ui.getDoc().reNumberCells();
-//        }
-//    }
+    // static final class ResetCellNumAction extends BaseAction
+    // {
+    // public ResetCellNumAction()
+    // {
+    // super(resetCellNumAction);
+    // }
+    //
+    // protected void action(NotebookUI ui) throws Exception
+    // {
+    // // ui.getDoc().reNumberCells();
+    // }
+    // }
 
     static final class JavaDocManagerAction extends AbstractAction
     {
@@ -912,8 +928,8 @@ public class NotebookEditorKit extends StyledEditorKit
 
         public void actionPerformed(ActionEvent evt)
         {
-            JDialog dialog = new JDialog(GUIUtilities.getFrame((Component)evt.getSource()),
-                    javaDocManagerAction);
+            JDialog dialog = new JDialog(GUIUtilities.getFrame((Component) evt
+                    .getSource()), javaDocManagerAction);
             dialog.setSize(500, 500);
             dialog.add(new JavaDocPanel());
             dialog.setVisible(true);
@@ -936,7 +952,7 @@ public class NotebookEditorKit extends StyledEditorKit
             dialog.setVisible(true);
         }
     }
-    
+
     public static final class ShortcutInspectorAction extends AbstractAction
     {
         public ShortcutInspectorAction()
@@ -944,16 +960,15 @@ public class NotebookEditorKit extends StyledEditorKit
             super(shortcutInspectorAction);
         }
 
-        public void actionPerformed(ActionEvent e) 
+        public void actionPerformed(ActionEvent e)
         {
-            JDialog dialog = new JDialog(GUIUtilities.getFrame((Component)e.getSource()),
-                    shortcutInspectorAction);
+            JDialog dialog = new JDialog(GUIUtilities.getFrame((Component) e
+                    .getSource()), shortcutInspectorAction);
             dialog.setSize(500, 500);
             dialog.add(new ShortcutPanel());
             dialog.setVisible(true);
         }
     }
-
 
     public static class FindReplaceAction extends BaseAction
     {
@@ -1083,171 +1098,239 @@ public class NotebookEditorKit extends StyledEditorKit
         protected void action(final NotebookUI ui) throws Exception
         {
             Element el = ui.getSelectedContentCellElement();
-           // System.out.println("SelectAllAction: " + el);
+            // System.out.println("SelectAllAction: " + el);
             if (el == null) return;
             ui.setCaretPosition(el.getStartOffset());
             ui.moveCaretPosition(el.getEndOffset() - 1);
         }
     }
-    
-    static class VerticalPageAction extends TextAction {
+
+    static class VerticalPageAction extends TextAction
+    {
 
         /** Create this object with the appropriate identifier. */
-        public VerticalPageAction(String nm, int direction, boolean select) {
+        public VerticalPageAction(String nm, int direction, boolean select)
+        {
             super(nm);
             this.select = select;
-                this.direction = direction;
+            this.direction = direction;
         }
 
         /** The operation to perform when this action is triggered. */
-            public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e)
+        {
             JTextComponent target = getTextComponent(e);
-            if (target != null) {
-            Rectangle visible = target.getVisibleRect();
-                    Rectangle newVis = new Rectangle(visible);
-                    int selectedIndex = target.getCaretPosition();
-                    int scrollAmount = direction *
-                            target.getScrollableBlockIncrement(
-                                      visible, SwingConstants.VERTICAL, direction); 
-                    int initialY = visible.y;
-                    Caret caret = target.getCaret();
-                    Point magicPosition = caret.getMagicCaretPosition();
+            if (target != null)
+            {
+                Rectangle visible = target.getVisibleRect();
+                Rectangle newVis = new Rectangle(visible);
+                int selectedIndex = target.getCaretPosition();
+                int scrollAmount = direction
+                        * target.getScrollableBlockIncrement(visible,
+                                SwingConstants.VERTICAL, direction);
+                int initialY = visible.y;
+                Caret caret = target.getCaret();
+                Point magicPosition = caret.getMagicCaretPosition();
 
-                    if (selectedIndex != -1) {
-                        try {
-                            Rectangle dotBounds = target.modelToView(
-                                                         selectedIndex);
-                            int x = (magicPosition != null) ? magicPosition.x :
-                                                              dotBounds.x;
-                            int h = dotBounds.height;
-                            if (h > 0) {
-                                // We want to scroll by a multiple of caret height,
-                                // rounding towards lower integer
-                                scrollAmount = scrollAmount / h * h;
-                            }
-                            newVis.y = constrainY(target,
-                                    initialY + scrollAmount, visible.height);
+                if (selectedIndex != -1)
+                {
+                    try
+                    {
+                        Rectangle dotBounds = target.modelToView(selectedIndex);
+                        int x = (magicPosition != null) ? magicPosition.x
+                                : dotBounds.x;
+                        int h = dotBounds.height;
+                        if (h > 0)
+                        {
+                            // We want to scroll by a multiple of caret height,
+                            // rounding towards lower integer
+                            scrollAmount = scrollAmount / h * h;
+                        }
+                        newVis.y = constrainY(target, initialY + scrollAmount,
+                                visible.height);
 
-                            int newIndex;
+                        int newIndex;
 
-                            if (visible.contains(dotBounds.x, dotBounds.y)) {
-                                // Dot is currently visible, base the new
-                                // location off the old, or
-                                newIndex = target.viewToModel(
-                                    new Point(x, constrainY(target,
-                                              dotBounds.y + scrollAmount, 0)));
+                        if (visible.contains(dotBounds.x, dotBounds.y))
+                        {
+                            // Dot is currently visible, base the new
+                            // location off the old, or
+                            newIndex = target.viewToModel(new Point(x,
+                                    constrainY(target, dotBounds.y
+                                            + scrollAmount, 0)));
+                        }
+                        else
+                        {
+                            // Dot isn't visible, choose the top or the bottom
+                            // for the new location.
+                            if (direction == -1)
+                            {
+                                newIndex = target.viewToModel(new Point(x,
+                                        newVis.y));
                             }
-                            else {
-                                // Dot isn't visible, choose the top or the bottom
-                                // for the new location.
-                                if (direction == -1) {
-                                    newIndex = target.viewToModel(new Point(
-                                        x, newVis.y));
-                                }
-                                else {
-                                    newIndex = target.viewToModel(new Point(
-                                        x, newVis.y + visible.height));
-                                }
+                            else
+                            {
+                                newIndex = target.viewToModel(new Point(x,
+                                        newVis.y + visible.height));
                             }
-                            newIndex = constrainOffset(target, newIndex);
-                            if (newIndex != selectedIndex) {
-                                // Make sure the new visible location contains
-                                // the location of dot, otherwise Caret will
-                                // cause an additional scroll.
-                                adjustScrollIfNecessary(target, newVis, initialY,
-                                                        newIndex);
-                                if (select) {
-                                    target.moveCaretPosition(newIndex);
-                                }
-                                else {
-                                    target.setCaretPosition(newIndex);
-                                }
+                        }
+                        newIndex = constrainOffset(target, newIndex);
+                        if (newIndex != selectedIndex)
+                        {
+                            // Make sure the new visible location contains
+                            // the location of dot, otherwise Caret will
+                            // cause an additional scroll.
+                            adjustScrollIfNecessary(target, newVis, initialY,
+                                    newIndex);
+                            if (select)
+                            {
+                                target.moveCaretPosition(newIndex);
                             }
-                        } catch (BadLocationException ble) { }
-                    } else {
-                        newVis.y = constrainY(target,
-                                initialY + scrollAmount, visible.height);
+                            else
+                            {
+                                target.setCaretPosition(newIndex);
+                            }
+                        }
                     }
-                    if (magicPosition != null) {
-                        caret.setMagicCaretPosition(magicPosition);
+                    catch (BadLocationException ble)
+                    {
                     }
-            target.scrollRectToVisible(newVis);
+                }
+                else
+                {
+                    newVis.y = constrainY(target, initialY + scrollAmount,
+                            visible.height);
+                }
+                if (magicPosition != null)
+                {
+                    caret.setMagicCaretPosition(magicPosition);
+                }
+                target.scrollRectToVisible(newVis);
             }
         }
 
-            /**
-             * Makes sure <code>y</code> is a valid location in
-             * <code>target</code>.
-             */
-            private int constrainY(JTextComponent target, int y, int vis) {
-                if (y < 0) {
-                    y = 0;
-                }
-                else if (y + vis > target.getHeight()) {
-                    y = Math.max(0, target.getHeight() - vis);
-                }
-                return y;
+        /**
+         * Makes sure <code>y</code> is a valid location in <code>target</code>.
+         */
+        private int constrainY(JTextComponent target, int y, int vis)
+        {
+            if (y < 0)
+            {
+                y = 0;
             }
-
-            /**
-             * Ensures that <code>offset</code> is a valid offset into the
-             * model for <code>text</code>.
-             */
-            private int constrainOffset(JTextComponent text, int offset) {
-                Document doc = text.getDocument();
-
-                if ((offset != 0) && (offset > doc.getLength())) {
-                    offset = doc.getLength();
-                }
-                if (offset  < 0) {
-                    offset = 0;
-                }
-                return offset;
+            else if (y + vis > target.getHeight())
+            {
+                y = Math.max(0, target.getHeight() - vis);
             }
-
-            /**
-             * Adjusts the rectangle that indicates the location to scroll to
-             * after selecting <code>index</code>.
-             */
-            private void adjustScrollIfNecessary(JTextComponent text,
-                                                 Rectangle visible, int initialY,
-                                                 int index) {
-                try {
-                    Rectangle dotBounds = text.modelToView(index);
-
-                    if (dotBounds.y < visible.y ||
-                           (dotBounds.y > (visible.y + visible.height)) ||
-                           (dotBounds.y + dotBounds.height) >
-                           (visible.y + visible.height)) {
-                        int y;
-
-                        if (dotBounds.y < visible.y) {
-                            y = dotBounds.y;
-                        }
-                        else {
-                            y = dotBounds.y + dotBounds.height - visible.height;
-                        }
-                        if ((direction == -1 && y < initialY) ||
-                                            (direction == 1 && y > initialY)) {
-                            // Only adjust if won't cause scrolling upward.
-                            visible.y = y;
-                        }
-                    }
-                } catch (BadLocationException ble) {}
-            }
-
-            /**
-             * Adjusts the Rectangle to contain the bounds of the character at
-             * <code>index</code> in response to a page up.
-             */
-            private boolean select;
-
-            /**
-             * Direction to scroll, 1 is down, -1 is up.
-             */
-            private int direction;
+            return y;
         }
 
+        /**
+         * Ensures that <code>offset</code> is a valid offset into the model for
+         * <code>text</code>.
+         */
+        private int constrainOffset(JTextComponent text, int offset)
+        {
+            Document doc = text.getDocument();
+
+            if ((offset != 0) && (offset > doc.getLength()))
+            {
+                offset = doc.getLength();
+            }
+            if (offset < 0)
+            {
+                offset = 0;
+            }
+            return offset;
+        }
+
+        /**
+         * Adjusts the rectangle that indicates the location to scroll to after
+         * selecting <code>index</code>.
+         */
+        private void adjustScrollIfNecessary(JTextComponent text,
+                Rectangle visible, int initialY, int index)
+        {
+            try
+            {
+                Rectangle dotBounds = text.modelToView(index);
+
+                if (dotBounds.y < visible.y
+                        || (dotBounds.y > (visible.y + visible.height))
+                        || (dotBounds.y + dotBounds.height) > (visible.y + visible.height))
+                {
+                    int y;
+
+                    if (dotBounds.y < visible.y)
+                    {
+                        y = dotBounds.y;
+                    }
+                    else
+                    {
+                        y = dotBounds.y + dotBounds.height - visible.height;
+                    }
+                    if ((direction == -1 && y < initialY)
+                            || (direction == 1 && y > initialY))
+                    {
+                        // Only adjust if won't cause scrolling upward.
+                        visible.y = y;
+                    }
+                }
+            }
+            catch (BadLocationException ble)
+            {
+            }
+        }
+
+        /**
+         * Adjusts the Rectangle to contain the bounds of the character at
+         * <code>index</code> in response to a page up.
+         */
+        private boolean select;
+
+        /**
+         * Direction to scroll, 1 is down, -1 is up.
+         */
+        private int direction;
+    }
+
+    static class OpenObjectInspectorAction extends BaseAction
+    {
+
+        public OpenObjectInspectorAction()
+        {
+            super(openObjectInspectorAction);
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_I,
+                    InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
+        }
+
+        protected void action(final NotebookUI ui) throws Exception
+        {
+            try
+            {
+                int offs = ui.getCaretPosition();
+                int start = javax.swing.text.Utilities.getWordStart(ui, offs);
+                int end = javax.swing.text.Utilities.getWordEnd(ui, offs);
+                String s = ui.getDoc().getText(start, end - start);
+                Bindings binds = ui.getDoc().getEvaluationContext()
+                        .getRuntimeContext().getBindings();
+                Object value = binds.get(s);
+                if (value == null) return;
+                ObjectInspector propsPanel = new ObjectInspector(value);
+                DialogDescriptor dd = new DialogDescriptor(
+                        ThisNiche.guiController.getFrame(), 
+                        new JScrollPane(propsPanel),
+                      "Object Inspector: " + ((value == null)? 
+                              "null" : value.getClass().getName()));
+                DialogDisplayer.getDefault().notify(dd);
+            }
+            catch (BadLocationException bl)
+            {
+                UIManager.getLookAndFeel().provideErrorFeedback(ui);
+            }
+
+        }
+    }
 
     public static abstract class BaseAction extends StyledTextAction
     {

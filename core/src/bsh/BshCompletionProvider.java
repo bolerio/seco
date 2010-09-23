@@ -81,12 +81,7 @@ public class BshCompletionProvider implements CompletionProvider
             try
             {
                 String s = sup.getCommandBeforePt(offset);
-                // System.out.println("BshCompProv - query: " + s + ":" +
-                // offset);
                 Object obj = p.resolveVar(s, offset);
-                // System.out.println("BshCompProv - query - obj: " + obj +
-                // " cls:" + ((obj != null) ? obj.getClass(): "null") + ":" +
-                // p.evaled_or_guessed);
                 if (obj == null)
                 {
                     resultSet.finish();
@@ -311,7 +306,6 @@ public class BshCompletionProvider implements CompletionProvider
         protected void query(CompletionResultSet resultSet,
                 NotebookDocument doc, int caretOffset)
         {
-            // Position oldPos = queryMethodParamsStartPos;
             queryMethodParamsStartPos = null;
             ScriptSupport sup = doc.getScriptSupport(caretOffset);
             if (sup == null || !(sup.getParser() instanceof BshAst)) return;
@@ -327,74 +321,35 @@ public class BshCompletionProvider implements CompletionProvider
             if (outer != null)
                 outer = ParserUtils.getParentOfType(n,
                         BSHMethodInvocation.class);
-            // System.out.println("BshCompletion - tooltipQuery - outer: " +
-            // outer);
-            String methodName = "";
-            int offset = 0;
             if (outer == null)
-            {
                 outer = ParserUtils.getParentOfType(n, BSHPrimarySuffix.class);
-                if (outer != null
-                        && ((BSHPrimarySuffix) outer).operation == BSHPrimarySuffix.NAME)
-                {
-                    methodName = ((BSHPrimarySuffix) outer).field;
-                    offset = sup.lineToOffset(outer.firstToken.beginLine - 1,
-                            outer.firstToken.beginColumn);
-                }
-            }
-            else
-            {
-                methodName = ((SimpleNode) outer.children[0]).getText();
-            }
-            // System.out.println("BshCompletion - tooltipQuery - node: " + n +
-            // ":" + methodName);
-            if (n == null)
+            if (outer == null)
             {
                 resultSet.finish();
                 return;
             }
-            int idx = methodName.lastIndexOf(".");
-            List<List<String>> list = new ArrayList<List<String>>();
-            try
+            int offset = sup.lineToOffset(outer.lastToken.endLine - 1,
+                    outer.lastToken.endColumn) + 2;
+            Object obj = p.resolveVar(sup.getCommandBeforePt(offset), offset);
+            if (obj != null && obj instanceof Method)
             {
-                if (idx > 0)
-                {
-                    Object obj = p.resolveVar(methodName.substring(0, idx)
-                            .trim(), caretOffset);
-                    if (obj != null)
-                        populateResult(list, obj.getClass(), methodName
-                                .substring(idx + 1).trim(), Modifier.PUBLIC);
-                }
-                else
-                {
-                    if (offset == 0)
-                        offset = caretOffset - methodName.length();
-                    Object obj = p.resolveVar(sup.getCommandBeforePt(offset),
-                            sup.offsetToLineCol(offset)[1]);
-                    if (obj != null)
-                        populateResult(list, obj.getClass(), methodName,
-                                Modifier.PUBLIC);
-                }
+                List<List<String>> list = new ArrayList<List<String>>();
+                populateResult(list, ((Method)obj).getDeclaringClass(), 
+                        ((Method)obj).getName());
+                resultSet
+                .setToolTip(queryToolTip = new MethodParamsTipPaintComponent(
+                        list, -1));
             }
-            catch (Exception ex)
-            {
-                // stay silent on eval error
-                if (!(ex instanceof UtilEvalError || ex instanceof EvalError))
-                    ex.printStackTrace();
-            }
-            resultSet
-                    .setToolTip(queryToolTip = new MethodParamsTipPaintComponent(
-                            list, -1));
+           
             resultSet.finish();
         }
 
-        private void populateResult(List<List<String>> list, Class<?> cls,
-                String name, int modifiers)
+        private void populateResult(List<List<String>> list, Class<?> cls, String name)
         {
             Method[] ms = cls.getMethods();
             for (int i = 0; i < ms.length; i++)
             {
-                if (ms[i].getModifiers() != modifiers) continue;
+                //if (ms[i].getModifiers() != modifiers) continue;
                 if (!ms[i].getName().equals(name)) continue;
                 JavaResultItem item = new JavaResultItem.MethodItem(ms[i]);
                 List<String> parms = new ArrayList<String>();

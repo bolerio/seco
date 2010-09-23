@@ -144,23 +144,28 @@ public class ActionManager
                 false);
         NotebookEditorKit kit = new NotebookEditorKit();
         Action act = kit.getActionByName(DefaultEditorKit.cutAction);
+        if(act !=  null){
         act.putValue(Action.NAME, CUT);
         act.putValue(Action.SHORT_DESCRIPTION, "Cut");
         putAction(act, KeyStroke.getKeyStroke(KeyEvent.VK_X,
                 ActionEvent.CTRL_MASK), IconManager.resolveIcon("Cut16.gif"),
-                false);
+                false);}
         act = kit.getActionByName(DefaultEditorKit.copyAction);
+        if(act !=  null){
         act.putValue(Action.SHORT_DESCRIPTION, "Copy");
         act.putValue(Action.NAME, COPY);
         putAction(act, KeyStroke.getKeyStroke(KeyEvent.VK_C,
                 ActionEvent.CTRL_MASK), IconManager.resolveIcon("Copy16.gif"),
                 false);
+        }
         act = kit.getActionByName(DefaultEditorKit.pasteAction);
+        if(act !=  null){
         act.putValue(Action.NAME, PASTE);
         act.putValue(Action.SHORT_DESCRIPTION, "Paste");
         putAction(act, KeyStroke.getKeyStroke(KeyEvent.VK_V,
                 ActionEvent.CTRL_MASK), IconManager.resolveIcon("Paste16.gif"),
                 false);
+        }
 
         act = kit.getActionByName(DefaultEditorKit.selectAllAction);
         act.putValue(Action.NAME, "Select All");
@@ -219,6 +224,8 @@ public class ActionManager
                 InputEvent.CTRL_DOWN_MASK);
         putAction(kit.getActionByName(NotebookEditorKit.setCellLanguageAction),
                 key, false);
+        
+        putAction(kit.getActionByName(NotebookEditorKit.openObjectInspectorAction), false);
 
     }
 }
