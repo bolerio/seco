@@ -123,7 +123,7 @@ public class NotebookEditorKit extends StyledEditorKit
     public static final String findAction = "Find...";
     public static final String mergeCellsAction = "Merge Input Cells";
     public static final String addRemoveCommentsAction = "Comment/Uncomment";
-    public static final String openObjectInspectorAction = "Inspect variable";
+    //public static final String openObjectInspectorAction = "Inspect variable";
 
     static
     {
@@ -147,7 +147,8 @@ public class NotebookEditorKit extends StyledEditorKit
             new SelectAllAction(),
             new VerticalPageAction(pageUpAction, -1, false),
             new VerticalPageAction(pageDownAction, 1, false),
-            new AddRemoveCommentsAction(), new OpenObjectInspectorAction() };
+            new AddRemoveCommentsAction()//, new OpenObjectInspectorAction() 
+    };
     private static HashMap<String, Action> actions;
 
     /** Creates a new instance of NotebookEditorKit */
@@ -1294,43 +1295,43 @@ public class NotebookEditorKit extends StyledEditorKit
         private int direction;
     }
 
-    static class OpenObjectInspectorAction extends BaseAction
-    {
-
-        public OpenObjectInspectorAction()
-        {
-            super(openObjectInspectorAction);
-            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_I,
-                    InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
-        }
-
-        protected void action(final NotebookUI ui) throws Exception
-        {
-            try
-            {
-                int offs = ui.getCaretPosition();
-                int start = javax.swing.text.Utilities.getWordStart(ui, offs);
-                int end = javax.swing.text.Utilities.getWordEnd(ui, offs);
-                String s = ui.getDoc().getText(start, end - start);
-                Bindings binds = ui.getDoc().getEvaluationContext()
-                        .getRuntimeContext().getBindings();
-                Object value = binds.get(s);
-                if (value == null) return;
-                ObjectInspector propsPanel = new ObjectInspector(value);
-                DialogDescriptor dd = new DialogDescriptor(
-                        ThisNiche.guiController.getFrame(), 
-                        new JScrollPane(propsPanel),
-                      "Object Inspector: " + ((value == null)? 
-                              "null" : value.getClass().getName()));
-                DialogDisplayer.getDefault().notify(dd);
-            }
-            catch (BadLocationException bl)
-            {
-                UIManager.getLookAndFeel().provideErrorFeedback(ui);
-            }
-
-        }
-    }
+//    static class OpenObjectInspectorAction extends BaseAction
+//    {
+//
+//        public OpenObjectInspectorAction()
+//        {
+//            super(openObjectInspectorAction);
+//            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_I,
+//                    InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
+//        }
+//
+//        protected void action(final NotebookUI ui) throws Exception
+//        {
+//            try
+//            {
+//                int offs = ui.getCaretPosition();
+//                int start = javax.swing.text.Utilities.getWordStart(ui, offs);
+//                int end = javax.swing.text.Utilities.getWordEnd(ui, offs);
+//                String s = ui.getDoc().getText(start, end - start);
+//                Bindings binds = ui.getDoc().getEvaluationContext()
+//                        .getRuntimeContext().getBindings();
+//                Object value = binds.get(s);
+//                if (value == null) return;
+//                ObjectInspector propsPanel = new ObjectInspector(value);
+//                DialogDescriptor dd = new DialogDescriptor(
+//                        ThisNiche.guiController.getFrame(), 
+//                        new JScrollPane(propsPanel),
+//                      "Object Inspector: " + ((value == null)? 
+//                              "null" : value.getClass().getName()));
+//                DialogDisplayer.getDefault().notify(dd);
+//            }
+//            catch (BadLocationException bl)
+//            {
+//                UIManager.getLookAndFeel().provideErrorFeedback(ui);
+//            }
+//
+//        }
+//    }
 
     public static abstract class BaseAction extends StyledTextAction
     {

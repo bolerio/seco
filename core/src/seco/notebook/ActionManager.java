@@ -225,7 +225,7 @@ public class ActionManager
         putAction(kit.getActionByName(NotebookEditorKit.setCellLanguageAction),
                 key, false);
         
-        putAction(kit.getActionByName(NotebookEditorKit.openObjectInspectorAction), false);
+        //putAction(kit.getActionByName(NotebookEditorKit.openObjectInspectorAction), false);
 
     }
 }

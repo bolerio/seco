@@ -9,15 +9,12 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 
-import org.hypergraphdb.HGEnvironment;
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGTypeSystem;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.event.HGListenerAtom;
 import org.hypergraphdb.event.HGOpenedEvent;
-import org.hypergraphdb.handle.UUIDHandleFactory;
 import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.type.HGAtomType;
 import org.hypergraphdb.type.JavaTypeFactory;
@@ -242,7 +239,7 @@ public class NicheManager
                                         new String[] {},  
                                         "seco.langs.groovy.GroovyScriptSupportFactory"));            
         }
-        catch (ClassNotFoundException t) { }
+        catch (/*ClassNotFoundException*/Throwable t) { }
         try
         {
             Class.forName("seco.langs.ruby.JRubyScriptEngineFactory");
@@ -251,7 +248,7 @@ public class NicheManager
                                         new String[] {},   
                                         "seco.langs.ruby.RubyScriptSupportFactory"));
         }
-        catch (ClassNotFoundException t) { }
+        catch (/*ClassNotFoundException*/Throwable t) { }
         try
         {
             Class.forName("seco.langs.javafx.jsr.JavaFXScriptEngineFactory");
@@ -260,7 +257,7 @@ public class NicheManager
                                         new String[] {},      
                                         "seco.langs.javafx.JavaFxScriptSupportFactory"));            
         }
-        catch (ClassNotFoundException t) { }        
+        catch (/*ClassNotFoundException*/Throwable t) { }        
         try
         {
             Class.forName("alice.tuprologx.TuScriptEngineFactory");
@@ -269,7 +266,7 @@ public class NicheManager
                                         new String[] {},      
                                         "seco.langs.prolog.PrologScriptSupportFactory"));            
         }
-        catch (ClassNotFoundException t) { }       
+        catch (/*ClassNotFoundException*/Throwable t) { }       
         try
         {
             Class.forName("seco.langs.javascript.jsr.RhinoScriptEngineFactory");
@@ -278,7 +275,7 @@ public class NicheManager
                                         new String[] {},      
                                         "seco.langs.javascript.JSScriptSupportFactory"));            
         }
-        catch (ClassNotFoundException t) { }          
+        catch (/*ClassNotFoundException*/Throwable t) { }          
     }
     
     static void populateDefaultVisuals(HyperGraph graph)
