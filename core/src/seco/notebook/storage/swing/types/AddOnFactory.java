@@ -21,6 +21,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.plaf.BorderUIResource;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.tree.MutableTreeNode;
 
 import org.hypergraphdb.HGException;
@@ -224,14 +226,14 @@ public class AddOnFactory
         for (Object o : values)
             if (o != null)
             {
-                Object cs = getConstrints(l, (Component) o);
+                Object cs = getConstraints(l, (Component) o);
                 if (cs == null) cont.add((Component) o);
                 else
                     cont.add((Component) o, cs);
             }
     }
 
-    static Object getConstrints(LayoutManager l, Component c)
+    static Object getConstraints(LayoutManager l, Component c)
     {
         if (l instanceof GridBagLayout) return ((GridBagLayout) l)
                 .getConstraints(c);
@@ -305,7 +307,9 @@ public class AddOnFactory
                 if (types[i] == null)
                     System.err.println("NullParam at index: " + i + ":"
                             + beanClass);
-                types[i] = BonesOfBeans.primitiveEquivalentOf(types[i]);
+                Class<?> primitive = BonesOfBeans.primitiveEquivalentOf(types[i]);
+                if(primitive != null)
+                    types[i] = primitive;
             }
             try
             {
@@ -319,7 +323,7 @@ public class AddOnFactory
                         + beanClass + ":" + ex.toString());
                 for (int i = 0; i < args.length; i++)
                 {
-                    System.err.println("args: " + args[i] + ":" + types[i]);
+                    System.err.println("Args: " + types[i] + ":" + args[i]);
                 }
                 //ex.printStackTrace();
                 return null;

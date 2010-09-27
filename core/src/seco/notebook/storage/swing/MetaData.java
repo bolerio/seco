@@ -267,7 +267,8 @@ public class MetaData
         registerConstructor("javax.swing.plaf.FontUIResource", new String[] {
                 "name", "style", "size" });
         registerConstructor("javax.swing.plaf.ColorUIResource", new String[] {
-                "red", "green", "blue" });
+                "value"//"red", "green", "blue" 
+                });
         registerConstructor("javax.swing.tree.DefaultTreeModel",
                 new String[] { "root" }, new Class[] { TreeNode.class });
         registerConstructor("javax.swing.JTree", new String[] { "model" });

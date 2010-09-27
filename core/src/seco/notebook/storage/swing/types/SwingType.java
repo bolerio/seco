@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.plaf.BorderUIResource;
+
 import org.hypergraphdb.HGException;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGLink;
@@ -17,10 +19,14 @@ import org.hypergraphdb.annotation.AtomReference;
 import org.hypergraphdb.atom.AtomProjection;
 import org.hypergraphdb.atom.HGAtomRef;
 import org.hypergraphdb.atom.HGRelType;
+import org.hypergraphdb.type.AtomRefType;
 import org.hypergraphdb.type.BonesOfBeans;
+import org.hypergraphdb.type.HGAtomType;
 import org.hypergraphdb.type.JavaTypeFactory;
+import org.hypergraphdb.type.Record;
 import org.hypergraphdb.type.RecordType;
 import org.hypergraphdb.type.Slot;
+import org.hypergraphdb.type.TypeUtils;
 
 import seco.notebook.storage.swing.DefaultConverter;
 import seco.notebook.storage.swing.MetaData;
@@ -86,17 +92,14 @@ public class SwingType extends RecordType
 			}
 			return graph.add(new FactoryConstructorLink(targets));
 		}
+	
 		HGHandle[] targets = new HGHandle[args.length];
 		for (int i = 0; i < types.length; i++)
 		{
-			//HGHandle[] r = new HGHandle[] { slotHandles.get(args[i]) };
-			//if(targets[i] == null)
-			//	System.err.println("CTRLink: " + args[i] + ":" + javaClass);
-			if(types[i] == null)
+    		if(types[i] == null)
 				System.err.println("CTRLink - NULL type: " + args[i] + ":" + javaClass);
 			targets[i] = graph.add(new HGPlainLink(graph.add(types[i]),
 					  							   slotHandles.get(args[i])));
-			
 		}
 		return graph.add(new ConstructorLink(targets));
 	}
@@ -219,4 +222,63 @@ public class SwingType extends RecordType
 		slots.remove(i);
 		slotHandles.remove(s);
 	}
+	
+	public HGPersistentHandle store(Object instance)
+    {
+       // if (slots.isEmpty())
+       //     return graph.getHandleFactory().nullHandle();
+        HGPersistentHandle handle = TypeUtils.getNewHandleFor(graph, instance);
+        if (! (instance instanceof Record))
+            throw new HGException("RecordType.store: object is not of type Record.");
+        Record record = (Record)instance;
+        HGPersistentHandle [] layout = new HGPersistentHandle[slots.size() * 2];
+        for (int i = 0; i < slots.size(); i++)
+        {       
+            HGHandle slotHandle = getAt(i);
+            Slot slot = (Slot)graph.get(slotHandle);
+            Object value = record.get(slot);            
+            if (value == null)
+            {
+                layout[2*i] = graph.getPersistentHandle(slot.getValueType());
+                layout[2*i + 1] = graph.getHandleFactory().nullHandle();
+            }
+            else
+            {
+                HGAtomRef.Mode refMode = getReferenceMode(slotHandle);          
+                if (refMode == null)
+                {
+                    HGHandle actualTypeHandle = graph.getTypeSystem().getTypeHandle(value.getClass());
+                    if (actualTypeHandle == null)
+                        actualTypeHandle = slot.getValueType();
+                    else if (actualTypeHandle.equals(graph.getTypeSystem().getTop()))
+                        throw new HGException("Got TOP type for value for Java class " + value.getClass());
+                    HGAtomType type = graph.getTypeSystem().getType(actualTypeHandle);                
+                    layout[2*i] = graph.getPersistentHandle(actualTypeHandle);
+                    try
+                    {
+                        layout[2*i + 1] = TypeUtils.storeValue(graph, value, type);
+                    }
+                    catch (HGException ex)
+                    {
+                        throw ex;
+                    }
+                }
+                else
+                {
+                    layout[2*i] = graph.getPersistentHandle(slot.getValueType());
+                    if (value instanceof HGAtomRef)
+                    {
+                        AtomRefType refType = graph.getTypeSystem().getAtomType(HGAtomRef.class);
+                        layout[2*i + 1] = refType.store((HGAtomRef)value);
+                    }
+                    else
+                        throw new HGException("Slot " + slot.getLabel() + 
+                                              " should have an atom reference for record " + 
+                                              graph.getHandle(this));
+                }
+            }
+        }
+        graph.getStore().store(handle, layout);
+        return handle;
+    }
 }

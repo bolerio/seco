@@ -3,7 +3,9 @@ package seco.notebook.storage.swing.types;
 import java.awt.event.ActionListener;
 import java.awt.event.ContainerListener;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.beans.EventSetDescriptor;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Field;
@@ -16,9 +18,11 @@ import java.util.Set;
 
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
+import javax.swing.ToolTipManager;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataListener;
+import javax.swing.plaf.BorderUIResource;
 import javax.swing.text.Caret;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
@@ -41,6 +45,7 @@ import org.hypergraphdb.type.Record;
 import org.hypergraphdb.type.Slot;
 import org.hypergraphdb.type.TypeUtils;
 
+import seco.gui.GUIHelper;
 import seco.notebook.storage.swing.DefaultConverter;
 
 public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
@@ -73,11 +78,12 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
         Object bean = null;
         try
         {
-            //current make mechanism impose some limitation: 
-            //class with special constructor can't contain properties
-            //that reference this class's instance  
-            boolean no_spec_ctr = hgType.getCtrHandle() == null ||
-                    graph.getHandleFactory().nullHandle().equals(hgType.getCtrHandle());
+            // current make mechanism impose some limitation:
+            // class with special constructor can't contain properties
+            // that reference this class's instance
+            boolean no_spec_ctr = hgType.getCtrHandle() == null
+                    || graph.getHandleFactory().nullHandle().equals(
+                            hgType.getCtrHandle());
             if (no_spec_ctr)
             {
                 bean = instantiate(hgType.getCtrHandle(), null);
@@ -89,19 +95,20 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
                 bean = instantiate(hgType.getCtrHandle(), record);
                 TypeUtils.setValueFor(graph, handle, bean);
             }
-            
-            if(bean instanceof JButton && "Connect".equals(
-                    ((JButton) bean).getText()))
+
+            // if(bean instanceof JButton && "Connect".equals(
+            // ((JButton) bean).getText()))
+            // {
+            // System.out.println("SwingBinding: " + handle + ":" + bean);
+            // }
+
+            if (bean == null)
             {
-                System.out.println("SwingBinding: " + handle + ":" + bean);
-            }
-            
-            if(bean == null) 
-            {
-                System.err.println("Unable to create bean fo type: " + hgType.getJavaClass());
+                System.err.println("Unable to create bean fo type: "
+                        + hgType.getJavaClass());
                 return null;
             }
-            
+
             makeBean(bean, record);
             // System.out.println("Make - res: " + bean);
             AddOnLink addons = (AddOnLink) graph.get(hgType.getAddOnsHandle());
@@ -125,7 +132,7 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
         if (result == null)
         {
             final Record record = new SwingRecord(typeHandle, instance);
-           	storeBean(instance, record);
+            storeBean(instance, record);
             result = hgType.store(record);
         }
         return result;
@@ -252,6 +259,10 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
 
     public void setValue(Record rec, String name, Object value)
     {
+//        if ("delegate".equals(name))
+//        {
+//            System.out.println("REMOVE ME");
+//        }
         HGHandle slotHandle = hgType.slotHandles.get(name);
         Slot slot = (Slot) graph.get(slotHandle);
         HGAtomRef.Mode refMode = hgType.getReferenceMode(slotHandle);
@@ -289,6 +300,10 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
 
     public Object getValue(Record record, String name)
     {
+//        if ("delegate".equals(name))
+//        {
+//            System.out.println("REMOVE ME");
+//        }
         HGHandle slotHandle = hgType.slotHandles.get(name);
         Slot slot = (Slot) graph.get(slotHandle);
         Object value = record.get(slot);
@@ -328,15 +343,14 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
             {
                 continue;
             }
-
-            if (e.getClass().isAnonymousClass())
+            int mode = e.getClass().getModifiers();
+            if (e.getClass().isAnonymousClass() || !Modifier.isPublic(mode))
             {
                 // System.err.println("Filtering0 " + e);
                 continue;
             }
 
-            if (e.getClass().isMemberClass()
-                    && !Modifier.isStatic(e.getClass().getModifiers()))
+            if (e.getClass().isMemberClass() && !Modifier.isStatic(mode))
             {
                 // System.err.println("Filtering1 " + e);
                 continue;
@@ -366,22 +380,24 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
                     && e instanceof FocusListener && e instanceof MouseListener)
                 continue;
 
+            if (e instanceof ToolTipManager)
+                continue;
             res.add(e);
         }
         return res.toArray(new EventListener[res.size()]);
     }
-    
-    public Iterator<String> getDimensionNames() 
+
+    public Iterator<String> getDimensionNames()
     {
         return hgType.getDimensionNames();
     }
 
-    public HGProjection getProjection(String dimensionName) 
+    public HGProjection getProjection(String dimensionName)
     {
         HGProjection p = hgType.getProjection(dimensionName);
-        if (p == null)
-            throw new HGException("Could not find projection for '" + dimensionName + 
-                    "' in HG type " + typeHandle + " for " + hgType.getJavaClass().getName());
+        if (p == null) throw new HGException("Could not find projection for '"
+                + dimensionName + "' in HG type " + typeHandle + " for "
+                + hgType.getJavaClass().getName());
         else
             return new BeanPropertyBasedProjection(p);
     }
