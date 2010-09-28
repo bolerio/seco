@@ -50,6 +50,7 @@
 		<copy todir="${basedir}/lib">
 			<fileset dir="${lib}">
 				<include name="**/*.jar" />
+				<include name="native/**" />
 			</fileset>
 		</copy>
 		<copy file="${seco_jar}" tofile="${basedir}/lib/seco.jar" />
@@ -79,7 +80,7 @@
 		<copy file="${basedir}/plugin.xml" todir="${build}" />
 		<copy file="${basedir}/contexts.xml" todir="${build}" />
 
-		<jar destfile="${dist}/${fullpluginname}" basedir="${build}" />
+		<jar destfile="${dist}/${fullpluginname}" basedir="${build}" manifest="${build}/META-INF/MANIFEST.mf"/>
 	</target>
 
 	<target name="plugin_export" depends="compile">
