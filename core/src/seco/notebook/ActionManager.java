@@ -23,7 +23,6 @@ import javax.swing.Icon;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
@@ -225,7 +224,7 @@ public class ActionManager
         putAction(kit.getActionByName(NotebookEditorKit.setCellLanguageAction),
                 key, false);
         
-        //putAction(kit.getActionByName(NotebookEditorKit.openObjectInspectorAction), false);
+        putAction(kit.getActionByName(NotebookEditorKit.openObjectInspectorAction), false);
 
     }
 }

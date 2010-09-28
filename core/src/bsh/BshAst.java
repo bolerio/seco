@@ -47,6 +47,7 @@ public class BshAst extends NBParser
         return astRoot;
     }
 
+    
     public Object resolveVar(String s, int offset) // throws EvalError
     {
         // TODO: maybe we could infere somehow non-iniatilized or null values
@@ -85,6 +86,14 @@ public class BshAst extends NBParser
             return (info.length > 0) ? new CompletionU.DBPackageInfo(info, s)
                     : null;
         }
+    }
+    
+    public Class<?> resolveVarAsClass(String s, int offset)
+    {
+        Object o = resolveVar(s, offset);
+        if(o == null) return null;
+        return (o.getClass().getName().equals(ClassIdentifier.class.getName()))?
+                BshAst.getClsFromClassIdentifier(o) : o.getClass();
     }
 
     public Method resolveMethod(String s, int offset)
