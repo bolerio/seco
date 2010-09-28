@@ -88,6 +88,7 @@ public class SecoEclipseGUIController implements GUIController
         public void caretUpdate(CaretEvent e)
         {
             NotebookUI ui = NotebookUI.getFocusedNotebookUI();
+            if (ui == null) return;
             NotebookDocument doc = ui.getDoc();
             int dot = e.getDot();
             StringBuffer buf = new StringBuffer();

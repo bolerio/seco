@@ -41,6 +41,7 @@ import seco.notebook.NotebookUI;
 import seco.notebook.Utilities;
 import seco.notebook.syntax.ScriptSupport;
 import bsh.BshAst;
+import bsh.ClassIdentifier;
 import edu.umd.cs.piccolox.swing.PScrollPane;
 
 /**
@@ -236,42 +237,48 @@ public class SecoView extends ViewPart
             {
                 if (ui.getSelectionStart() != ui.getSelectionEnd())
                 {
-                    PluginU.searchAndOpen(doc.getText(ui.getSelectionStart(),
-                            ui.getSelectionEnd() - ui.getSelectionStart()));
+                    resolveAndOpen(sup, doc.getText(ui.getSelectionStart(),
+                            ui.getSelectionEnd() - ui.getSelectionStart()), pos);
                     return;
                 }
                 //TODO: some NB bug to fix 
                 int start = getWordStart(ui.getDoc(), pos) + 1;
                 int end = getWordEnd(ui.getDoc(), pos);
-                String s = doc.getText(start, end - start);
-                if (sup.getParser() == null)
-                {
-                    PluginU.searchAndOpen(s);
-                    return;
-                }
-                // int offset = pos - start;
-                int dot = s.lastIndexOf(".");
-                if (dot > pos) s = s.substring(0, dot);
-                BshAst bsh = (BshAst) sup.getParser();
-                if (s.indexOf("(") > 0)
-                {
-                    Method m = bsh.resolveMethod(s, pos);
-                    if (m != null)
-                    {
-                        IMethod im = PluginU.getIMethod(m);
-                        if (im != null) PluginU.openInEditor(im);
-                    }
-                }
-                else
-                {
-                    Object o = bsh.resolveVar(s, pos);
-                    if (o != null)
-                        PluginU.searchAndOpen(o.getClass().getName());
-                }
+                resolveAndOpen(sup, doc.getText(start, end - start), pos);
             }
             catch (Exception ex)
             {
 
+            }
+        }
+        
+        private void resolveAndOpen(ScriptSupport sup, String s, int pos)
+        {
+            if (sup.getParser() == null)
+            {
+                PluginU.searchAndOpen(s);
+                return;
+            }
+            // int offset = pos - start;
+            int dot = s.lastIndexOf(".");
+            if (dot > pos) s = s.substring(0, dot);
+            BshAst bsh = (BshAst) sup.getParser();
+            if (s.indexOf("(") > 0)
+            {
+                Method m = bsh.resolveMethod(s, pos);
+                if (m != null)
+                {
+                    IMethod im = PluginU.getIMethod(m);
+                    if (im != null) PluginU.openInEditor(im);
+                }
+            }
+            else
+            {
+                Class<?> cls = bsh.resolveVarAsClass(s, pos);
+                if (cls != null)
+                    PluginU.searchAndOpen(cls.getName());
+                else
+                    PluginU.searchAndOpen(s);
             }
         }
     };
@@ -280,7 +287,8 @@ public class SecoView extends ViewPart
             throws BadLocationException
     {
         return Utilities.find(doc, new FinderFactory.AcceptorBwdFinder(
-                new SmartBwdAcceptor()), offset, 0);
+                new FwdAcceptor()
+                ), offset, 0);
     }
 
     public static int getWordEnd(NotebookDocument doc, int offset)
@@ -290,17 +298,6 @@ public class SecoView extends ViewPart
                 new SmartFwdFinder(), offset,
                 -1);
         return (ret > 0) ? ret : doc.getLength();
-    }
-    
-    static class SmartBwdAcceptor implements Acceptor
-    {
-
-        @Override
-        public boolean accept(char ch)
-        {
-            return ch != ';' && ch != '\n' && ch != '=';
-        }
-        
     }
     
     static class SmartFwdFinder extends FinderFactory.AcceptorFwdFinder
@@ -322,10 +319,18 @@ public class SecoView extends ViewPart
             if(ch == ')')
                 numParanthes--;
             if(numParanthes == 0 && (ch == '.'|| ch == ' ' || ch == ','))
-                return true;
+                return false;
             return ch != ';' && ch != '\n' && ch != '=';
         }
-        
     }
+    
+//    static class SmartBwdAcceptor implements Acceptor
+//    {
+//        @Override
+//        public boolean accept(char ch)
+//        {
+//            return ch != ';' && ch != '\n' && ch != '=';
+//        }
+//    }
 
 }

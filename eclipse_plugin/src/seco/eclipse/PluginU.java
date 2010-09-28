@@ -32,6 +32,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 import seco.boot.NicheManager;
 import seco.boot.NicheSelectDialog;
@@ -237,6 +238,12 @@ public class PluginU
      */
     static void requestUserAttention (String tempMessage)
     {
+        if(getSecoView() == null)return;
+        IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService)
+        getSecoView().getSite().getService(IWorkbenchSiteProgressService.class);
+        // notify the user by turning the workbench part's title bold
+        service.warnOfContentChange();
+     
         //rate at which the title will change in milliseconds
         int rateOfChange = 1000;
         
