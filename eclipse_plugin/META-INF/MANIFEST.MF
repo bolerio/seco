@@ -35,7 +35,8 @@ Bundle-ClassPath: .,
  lib/smack.jar,
  lib/smackx.jar,
  lib/swing-layout-1.0.jar,
- lib/swingutil1.5.jar
+ lib/swingutil1.5.jar,
+ lib/native/
 Export-Package: .,
  bsh,
  bsh.classpath,
