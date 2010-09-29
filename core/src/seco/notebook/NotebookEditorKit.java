@@ -1,9 +1,9 @@
 /*
- * This file is part of the Scriba source distribution. This is free, open-source 
+ * This file is part of the Seco source distribution. This is free, open-source 
  * software. For full licensing information, please see the LicensingInformation file
  * at the root level of the distribution.
  *
- * Copyright (c) 2006-2007 Kobrix Software, Inc.
+ * Copyright (c) 2006-2010 Kobrix Software, Inc.
  */
 package seco.notebook;
 
@@ -139,16 +139,14 @@ public class NotebookEditorKit extends StyledEditorKit
             new DeleteCellAction(), new DeleteSelectedElementsAction(),
             new SelectCellHandleAction(), new ImportAction(), new HTMLAction(),
             new ShowInputTypePopupAction(), new ClearEngineContextAction(),
-            /* new ResetCellNumAction(), */new JavaDocManagerAction(),
+            new JavaDocManagerAction(), new SelectAllAction(),
             new CtxInspectorAction(), new ShortcutInspectorAction(),
             new FindReplaceAction(true), new FindReplaceAction(false),
             new RemoveTabAction(), new MergeCellsAction(),
             new SelectWordAction(), new SelectLineAction(),
-            new SelectAllAction(),
             new VerticalPageAction(pageUpAction, -1, false),
             new VerticalPageAction(pageDownAction, 1, false),
-            new AddRemoveCommentsAction(),
-            new OpenObjectInspectorAction()
+            new AddRemoveCommentsAction(), new OpenObjectInspectorAction()
     };
     private static HashMap<String, Action> actions;
 
@@ -204,7 +202,7 @@ public class NotebookEditorKit extends StyledEditorKit
 
         doc = new NotebookDocument(ThisNiche.graph.add(DEFAULT_TOP_GROUP),
                 ThisNiche.getTopContext());
-        System.out.println("Adding DOC: " + DEFAULT_TOP_GROUP);
+        //System.out.println("Adding DOC: " + DEFAULT_TOP_GROUP);
         ThisNiche.graph.define(DOC_HANDLE, doc);
         doc.init();
         return doc;
@@ -228,8 +226,6 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             Object o = elem.getAttributes().getAttribute(
                     StyleConstants.NameAttribute);
-            // System.out.println("ViewFactory: " + elem.getClass() + ":" + o +
-            // ":" + elem.getName());
             if (o instanceof ElementType)
             {
                 switch ((ElementType) o)
@@ -328,7 +324,6 @@ public class NotebookEditorKit extends StyledEditorKit
             int start = javax.swing.text.Utilities.getWordStart(ui, pos);
             int end = javax.swing.text.Utilities.getWordEnd(ui, pos);
             String cls = doc.getText(start, end - start);
-            // System.out.println("IMPORT ACTION - sup: " + cls);
             Class<?>[] classes = ClassRepository.getInstance().findClass(cls);
             if (classes.length == 0) return;
             String res = null;
@@ -657,10 +652,10 @@ public class NotebookEditorKit extends StyledEditorKit
      * 
      * @see DefaultEditorKit#getActions
      */
-    static class DeleteNextCharAction extends BaseAction
+    public static class DeleteNextCharAction extends BaseAction
     {
         /* Create this object with the appropriate identifier. */
-        DeleteNextCharAction()
+        public DeleteNextCharAction()
         {
             super(DefaultEditorKit.deleteNextCharAction);
         }
@@ -829,13 +824,10 @@ public class NotebookEditorKit extends StyledEditorKit
         public void actionPerformed(ActionEvent e)
         {
             JEditorPane editor = getEditor(e);
-            // System.out.println("HTMLAction: " + editor);
             if (editor != null)
             {
                 if (editor instanceof NotebookUI)
                 {
-                    // ((NotebookDocument) editor.getDocument())
-                    // .toggleHTMLCell(editor.getCaretPosition());
                     Element el = ((NotebookDocument) editor.getDocument())
                             .getEnclosingCellElement(editor.getCaretPosition());
                     if (el != null)
@@ -846,8 +838,6 @@ public class NotebookEditorKit extends StyledEditorKit
                 {
                     Element el = ((HtmlView.InnerHTMLEditor) editor)
                             .getElement();
-                    // ((NotebookDocument) el.getDocument()).toggleHTMLCell(el
-                    // .getStartOffset());
                     CellUtils.toggleAttribute(
                             NotebookDocument.getNBElement(el),
                             XMLConstants.ATTR_HTML);
@@ -908,20 +898,7 @@ public class NotebookEditorKit extends StyledEditorKit
         }
     }
 
-    // static final class ResetCellNumAction extends BaseAction
-    // {
-    // public ResetCellNumAction()
-    // {
-    // super(resetCellNumAction);
-    // }
-    //
-    // protected void action(NotebookUI ui) throws Exception
-    // {
-    // // ui.getDoc().reNumberCells();
-    // }
-    // }
-
-    static final class JavaDocManagerAction extends AbstractAction
+    public static final class JavaDocManagerAction extends AbstractAction
     {
         public JavaDocManagerAction()
         {
@@ -1048,8 +1025,6 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             final int s = Utilities.getWordStart(ui, ui.getCaretPosition());
             final int e = Utilities.getWordEnd(ui, ui.getCaretPosition());
-            // System.out.println("SelectWordAction: " +
-            // ui.getCaretPosition() + ":" + s + ":" + e + ":" + ui);
             ui.select(s, e);
         }
     }
@@ -1083,8 +1058,6 @@ public class NotebookEditorKit extends StyledEditorKit
             int offs = ui.getCaretPosition();
             int s = javax.swing.text.Utilities.getRowStart(ui, offs);
             int e = javax.swing.text.Utilities.getRowEnd(ui, offs);
-            // System.out.println("SelectLineAction: " + offs + ":" + s + ":" +
-            // e + ":" + ui);
             ui.select(s, e);
         }
     }
@@ -1100,7 +1073,6 @@ public class NotebookEditorKit extends StyledEditorKit
         protected void action(final NotebookUI ui) throws Exception
         {
             Element el = ui.getSelectedContentCellElement();
-            // System.out.println("SelectAllAction: " + el);
             if (el == null) return;
             ui.setCaretPosition(el.getStartOffset());
             ui.moveCaretPosition(el.getEndOffset() - 1);
@@ -1337,7 +1309,7 @@ public class NotebookEditorKit extends StyledEditorKit
             ObjectInspector propsPanel = new ObjectInspector(value);
             DialogDescriptor dd = new DialogDescriptor(ThisNiche.guiController
                     .getFrame(), new JScrollPane(propsPanel),
-                    "Object Inspector -> " + value + ":"
+                    "" + var + " -> " 
                             + value.getClass().getName());
             DialogDisplayer.getDefault().notify(dd);
         }
@@ -1352,11 +1324,8 @@ public class NotebookEditorKit extends StyledEditorKit
 
         public void actionPerformed(ActionEvent e)
         {
-            // System.out.println("BaseAction: " + this + ":" + isEnabled());
             if (!(this.isEnabled())) return;
             JEditorPane pane = getEditor(e);
-            // System.out
-            // .println("BaseAction1: " + pane + ":" + pane.isEditable());
             if (pane == null || !pane.isEditable()
                     || !(pane instanceof NotebookUI)) return;
             NotebookUI editor = (NotebookUI) pane;
