@@ -1,6 +1,8 @@
 package seco.boot;
 
 import java.io.BufferedReader;
+
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -8,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JComponent;
-
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGTypeSystem;

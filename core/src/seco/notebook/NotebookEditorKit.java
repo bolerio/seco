@@ -147,7 +147,8 @@ public class NotebookEditorKit extends StyledEditorKit
             new SelectAllAction(),
             new VerticalPageAction(pageUpAction, -1, false),
             new VerticalPageAction(pageDownAction, 1, false),
-            new AddRemoveCommentsAction() // , new OpenObjectInspectorAction()
+            new AddRemoveCommentsAction(),
+            new OpenObjectInspectorAction()
     };
     private static HashMap<String, Action> actions;
 
