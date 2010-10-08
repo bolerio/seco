@@ -73,7 +73,7 @@ public class ScriptletDocument extends NotebookDocument
             DocUtil.startTag(htmlCell, attr, 0, vec);
         String text = CellUtils.getText(cell);
         if (!text.endsWith("\n")) text += "\n";
-        DocUtil.addContent(text.toCharArray(), 0, vec, 0);
+        DocUtil.addContent(text, vec);
         DocUtil.endTag(vec);
         DocUtil.endTag(vec);
         CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, cellH,

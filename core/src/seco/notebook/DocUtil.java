@@ -45,7 +45,27 @@ abstract public class DocUtil
     static final String ATTR_CELL = "CELL";
     private static final char[] NEWLINE = new char[] { '\n' };
 
-    protected static void addSubContent(char[] data, int offs,
+    protected static void addContent(String data, Vector<ElementSpec> vec)
+    {
+        int currpos = 0;
+        boolean found = false;
+        for (int i = 0; i < data.length(); i++)
+        {
+            char c = data.charAt(i);
+            if (c == NEWLINE[0])
+            {
+                found = true;
+                char[] chunk = new char[(i + 1) - currpos];
+                data.getChars(currpos, currpos + chunk.length, chunk, 0);
+                addSubContent(chunk, 0, vec);
+                i++; currpos = i;
+            }
+        }
+        // if we are here, means no \n found at all
+        if (!found) addSubContent(data.toCharArray(), data.length(), vec);
+    }
+    
+    private static void addSubContent(char[] data, int offs,
             Vector<ElementSpec> vec)
     {
         ElementSpec es1 = new ElementSpec(NotebookDocument.charAttrSet,
@@ -55,30 +75,6 @@ abstract public class DocUtil
                 ElementSpec.ContentType, data, offs, data.length);
         vec.addElement(es);
         vec.addElement(new ElementSpec(null, ElementSpec.EndTagType));
-    }
-
-    protected static void addContent(char[] data, int offs,
-            Vector<ElementSpec> vec, int start)
-    {
-        int end = data.length;
-        if (start == end) return;
-        for (int i = start; i < end; i++)
-        {
-            char c = data[i];
-            if (c == NEWLINE[0])
-            {
-                char[] data1 = new char[(i + 1) - start];
-                System.arraycopy(data, start, data1, 0, data1.length);
-                addSubContent(data1, 0, vec);
-                addContent(data, 0, vec, i + 1);
-                return;
-            }
-        }
-        // if we are here, means no \n - add all
-        if (data.length == 0) return;
-        char[] data1 = new char[end - start];
-        System.arraycopy(data, start, data1, 0, data1.length);
-        addSubContent(data1, offs + end, vec);
     }
 
     protected static void startTag(ElementType e, MutableAttributeSet a,
@@ -160,7 +156,7 @@ abstract public class DocUtil
             startTag(htmlCell, attr, 0, vec);
         String text = CellUtils.getText(cell);
         if (!text.endsWith("\n")) text += "\n";
-        addContent(text.toCharArray(), 0, vec, 0);
+        addContent(text, vec);
         endTag(vec);
         attr.addAttribute(ATTR_CELL, cellH);
         createCellHandle(attr, vec);
@@ -241,7 +237,7 @@ abstract public class DocUtil
         if (comp == null)// text.length() > 0)
         {
             if (!text.endsWith("\n")) text += "\n";
-            addContent(text.toCharArray(), 0, vec, 0);
+            addContent(text, vec);
         }
         else
             createComponent(comp, attr, vec);

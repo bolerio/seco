@@ -584,6 +584,7 @@ public class ClassRepository
             try
             {
                 res = lookupAll(PCK_INDEX, PCK_NAME_PROP, name);
+                if(res != null)
                 while (res.hasNext())
                 {
                     HGHandle resH = (HGHandle) res.next();

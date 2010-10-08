@@ -223,62 +223,63 @@ public class SwingType extends RecordType
 		slotHandles.remove(s);
 	}
 	
-	public HGPersistentHandle store(Object instance)
-    {
-       // if (slots.isEmpty())
-       //     return graph.getHandleFactory().nullHandle();
-        HGPersistentHandle handle = TypeUtils.getNewHandleFor(graph, instance);
-        if (! (instance instanceof Record))
-            throw new HGException("RecordType.store: object is not of type Record.");
-        Record record = (Record)instance;
-        HGPersistentHandle [] layout = new HGPersistentHandle[slots.size() * 2];
-        for (int i = 0; i < slots.size(); i++)
-        {       
-            HGHandle slotHandle = getAt(i);
-            Slot slot = (Slot)graph.get(slotHandle);
-            Object value = record.get(slot);            
-            if (value == null)
-            {
-                layout[2*i] = graph.getPersistentHandle(slot.getValueType());
-                layout[2*i + 1] = graph.getHandleFactory().nullHandle();
-            }
-            else
-            {
-                HGAtomRef.Mode refMode = getReferenceMode(slotHandle);          
-                if (refMode == null)
-                {
-                    HGHandle actualTypeHandle = graph.getTypeSystem().getTypeHandle(value.getClass());
-                    if (actualTypeHandle == null)
-                        actualTypeHandle = slot.getValueType();
-                    else if (actualTypeHandle.equals(graph.getTypeSystem().getTop()))
-                        throw new HGException("Got TOP type for value for Java class " + value.getClass());
-                    HGAtomType type = graph.getTypeSystem().getType(actualTypeHandle);                
-                    layout[2*i] = graph.getPersistentHandle(actualTypeHandle);
-                    try
-                    {
-                        layout[2*i + 1] = TypeUtils.storeValue(graph, value, type);
-                    }
-                    catch (HGException ex)
-                    {
-                        throw ex;
-                    }
-                }
-                else
-                {
-                    layout[2*i] = graph.getPersistentHandle(slot.getValueType());
-                    if (value instanceof HGAtomRef)
-                    {
-                        AtomRefType refType = graph.getTypeSystem().getAtomType(HGAtomRef.class);
-                        layout[2*i + 1] = refType.store((HGAtomRef)value);
-                    }
-                    else
-                        throw new HGException("Slot " + slot.getLabel() + 
-                                              " should have an atom reference for record " + 
-                                              graph.getHandle(this));
-                }
-            }
-        }
-        graph.getStore().store(handle, layout);
-        return handle;
-    }
+//	public HGPersistentHandle store(Object instance)
+//    {
+//       // if (slots.isEmpty())
+//       //     return graph.getHandleFactory().nullHandle();
+//        HGPersistentHandle handle = TypeUtils.getNewHandleFor(graph, instance);
+//        if (! (instance instanceof Record))
+//            throw new HGException("RecordType.store: object is not of type Record.");
+//        Record record = (Record)instance;
+//        HGPersistentHandle [] layout = new HGPersistentHandle[slots.size() * 2];
+//        for (int i = 0; i < slots.size(); i++)
+//        {       
+//            HGHandle slotHandle = getAt(i);
+//            Slot slot = (Slot)graph.get(slotHandle);
+//            Object value = record.get(slot);            
+//            if (value == null)
+//            {
+//                layout[2*i] = graph.getPersistentHandle(slot.getValueType());
+//                layout[2*i + 1] = graph.getHandleFactory().nullHandle();
+//            }
+//            else
+//            {
+//                HGAtomRef.Mode refMode = getReferenceMode(slotHandle);          
+//                if (refMode == null)
+//                {
+//                    HGHandle actualTypeHandle = graph.getTypeSystem().getTypeHandle(value.getClass());
+//                    if (actualTypeHandle == null)
+//                        actualTypeHandle = slot.getValueType();
+//                    else if (actualTypeHandle.equals(graph.getTypeSystem().getTop()))
+//                        throw new HGException("Got TOP type for value for Java class " + value.getClass());
+//                    HGAtomType type = graph.getTypeSystem().getType(actualTypeHandle);                
+//                    layout[2*i] = graph.getPersistentHandle(actualTypeHandle);
+//                    try
+//                    {
+//                        layout[2*i + 1] = TypeUtils.storeValue(graph, value, type);
+//                    }
+//                    catch (HGException ex)
+//                    {
+//                        throw ex;
+//                    }
+//                }
+//                else
+//                {
+//                    layout[2*i] = graph.getPersistentHandle(slot.getValueType());
+//                    if (value instanceof HGAtomRef)
+//                    {
+//                        AtomRefType refType = graph.getTypeSystem().getAtomType(HGAtomRef.class);
+//                        layout[2*i + 1] = refType.store((HGAtomRef)value);
+//                    }
+//                    else
+//                        throw new HGException("Slot " + slot.getLabel() + 
+//                                              " should have an atom reference for record " + 
+//                                              graph.getHandle(this));
+//                }
+//            }
+//        }
+//        if (!slots.isEmpty())
+//        graph.getStore().store(handle, layout);
+//        return handle;
+//    }
 }
