@@ -125,7 +125,7 @@ public class RhinoScriptEngine extends AbstractScriptEngine
             // add top level functions
             String names[] = { "bindings", "scope", "sync"  };
             topLevel.defineFunctionProperties(names, RhinoScriptEngine.class, ScriptableObject.DONTENUM);
-            
+            topLevel.defineProperty("rhinoEngine", this, 0);
             processAllTopLevelScripts(cx);
         } finally {
             Context.exit();
@@ -294,8 +294,13 @@ public class RhinoScriptEngine extends AbstractScriptEngine
             "    } else if (str == null) {                 \n" +
             "        str = 'null';                         \n" +
             "    }                                         \n" +
-            "    context.getWriter().println(String(str)); \n" +
+            "    java.lang.System.out.println(String(str)); \n" +
             "}";
+
+    private static final String loadSource = 
+        "function load(script) {                           \n" +
+        "    rhinoEngine.loadTopLevelScript(script, org.mozilla.javascript.Context.getCurrentContext());   \n" +
+        "}";
     
     public ExternalScriptable getRuntimeScope(ScriptContext ctxt) {
         if (ctxt == null) {
@@ -315,7 +320,8 @@ public class RhinoScriptEngine extends AbstractScriptEngine
         // define "print" function in the new scope
         Context cx = enterContext();
         try {
-            cx.evaluateString(newScope, printSource, "print", 1, null);
+            cx.evaluateString(topLevel, printSource, "print", 1, null);
+            cx.evaluateString(topLevel, loadSource, "load", 1, null);
         } finally {
             Context.exit();
         }
@@ -356,7 +362,9 @@ public class RhinoScriptEngine extends AbstractScriptEngine
     static Context enterContext() {
         // call this always so that initializer of this class runs
         // and initializes custom wrap factory and class shutter.
-        return Context.enter();
+        Context ctx = Context.enter();
+        ctx.setOptimizationLevel(-1);
+        return ctx;
     }
 
     Object[] wrapArguments(Object[] args) {
@@ -386,7 +394,28 @@ public class RhinoScriptEngine extends AbstractScriptEngine
         processTopLevelScript(TOPLEVEL_SCRIPT_NAME, cx);
     }
 
-    protected void processTopLevelScript(String scriptName, Context cx) {    
+    public void loadTopLevelScript(String scriptFile, Context cx)
+    {
+    	InputStream toplevelScript = null;
+        try 
+        {
+        	toplevelScript = new FileInputStream(scriptFile);
+            Reader reader = new InputStreamReader(toplevelScript);            	
+            cx.evaluateReader(topLevel, reader, scriptFile, 1, null);
+        }
+        catch (Exception e) 
+        {
+            if (DEBUG) e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        finally 
+        {
+            try  { if (toplevelScript != null) toplevelScript.close(); } catch (IOException e) { }
+        }
+    }
+    
+    public void processTopLevelScript(String scriptName, Context cx) 
+    {    
         InputStream toplevelScript = this.getClass().getClassLoader().getResourceAsStream(scriptName);
         if (toplevelScript != null) {
             Reader reader = new InputStreamReader(toplevelScript);
