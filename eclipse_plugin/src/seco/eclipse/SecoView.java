@@ -202,6 +202,7 @@ public class SecoView extends ViewPart
             SelectionAdapter adapter = new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent event)
                 {
+                	 	
                     IWorkbench win = PlatformUI.getWorkbench();
                     PluginU.openNichesDlg(win.getActiveWorkbenchWindow());
                 }
