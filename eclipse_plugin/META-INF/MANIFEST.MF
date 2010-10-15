@@ -9,8 +9,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources;bundle-version="3.4.1",
  org.eclipse.jdt.core,
- org.eclipse.jdt.ui,
- org.eclipse.albireo.core;bundle-version="0.0.3"
+ org.eclipse.jdt.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  lib/asm-3.0.jar,
@@ -35,8 +34,7 @@ Bundle-ClassPath: .,
  lib/smack.jar,
  lib/smackx.jar,
  lib/swing-layout-1.0.jar,
- lib/swingutil1.5.jar,
- lib/native/
+ lib/swingutil1.5.jar
 Export-Package: .,
  bsh,
  bsh.classpath,
@@ -145,4 +143,3 @@ Export-Package: .,
  webapp.jscheme.lib
 Eclipse-AutoStart: true
 Bundle-ActivationPolicy: lazy
-Bundle-NativeCode: lib/native/windows/libdb-4.7.dll; lib/native/windows/libdb_java-4.7.dll; osname = win32; processor = x86; lib/native/windows/amd64/libdb-4.7.dll; lib/native/windows/amd64/libdb_java-4.7.dll; osname = win32; processor = x86-64; lib/native/linux/libdb-4.7.so; lib/native/linux/libdb_java-4.7.so; osname = Linux; processor = x86; lib/native/macos/libdb-4.7.dylib; lib/native/macos/libdb_java-4.7.jnilib; osname = "macos"
