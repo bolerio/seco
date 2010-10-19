@@ -2,11 +2,7 @@
 <project default="headless_plugin_export" name="build">
 	<!-- The plugins directory of the Eclipse distribution-->
 	<property name="eclipse_plugins_dir" value="F:/eclipse3.6.1/eclipse/plugins" />
-	
-	 <!-- these create the eclipse plugin file name edit as needed --> 
-	 <property name="majorversion" value="1.0.0" /> 
-	 <property name="fullpluginname" value="seco.eclipse.plugin_${majorversion}.jar" /> 
-	
+
 	<!-- The directory containing seco lib files -->
 	<property name="seco_top_dir" value="../core" />
 
@@ -18,8 +14,19 @@
 
 	<!-- The directory where the plugin classes will be build -->
 	<property name="build" value="${basedir}/bin" />
-	<!-- The directory where the distribution jar will be created-->
+	<!-- The directory where the update site will be created-->
 	<property name="dist" value="${basedir}/dist" />
+
+	<!-- these create the resulting plugin file names. Edit as needed -->
+	<property name="majorversion" value="1.0.0" />
+	<property name="fullpluginname" value="seco.eclipse.plugin_${majorversion}.jar" />
+	<property name="feature_name" value="seco.eclipse.plugin.feature" />
+	<property name="fragments" value="${basedir}/distribution/fragments/" />
+	<property name="lin64" value="seco.eclipse.plugin.linux.x64" />
+	<property name="lin32" value="seco.eclipse.plugin.linux.x86" />
+	<property name="win64" value="seco.eclipse.plugin.win32.x64" />
+	<property name="win32" value="seco.eclipse.plugin.win32.x86" />
+	<property name="macos" value="seco.eclipse.plugin.macos.x86" />
 
 	<!-- classpath for compiling-->
 	<path id="classpath">
@@ -73,22 +80,33 @@
 		<!-- copy the lib -->
 		<copy todir="${build}/lib">
 			<fileset dir="${basedir}/lib">
-				<exclude name="**/SVN" />
+				<include name="**/*.jar" />
 			</fileset>
 		</copy>
-		<!-- <copy file="${basedir}/build.properties" todir="${build}" />-->
 		<copy file="${basedir}/plugin.xml" todir="${build}" />
 		<copy file="${basedir}/contexts.xml" todir="${build}" />
-
-		<jar destfile="${dist}/${fullpluginname}" basedir="${build}" manifest="${build}/META-INF/MANIFEST.mf"/>
+		<mkdir dir="${dist}/plugins" />
+		<jar destfile="${dist}/plugins/${fullpluginname}" basedir="${build}" manifest="${build}/META-INF/MANIFEST.mf" />
+		<!-- build OS fragment -->
+		<jar destfile="${dist}/plugins/${lin64}_${majorversion}.jar" basedir="${fragments}/${lin64}" manifest="${fragments}/${lin64}/META-INF/MANIFEST.mf" />
+		<jar destfile="${dist}/plugins/${lin32}_${majorversion}.jar" basedir="${fragments}/${lin32}" manifest="${fragments}/${lin32}/META-INF/MANIFEST.mf" />
+		<jar destfile="${dist}/plugins/${win64}_${majorversion}.jar" basedir="${fragments}/${win64}" manifest="${fragments}/${win64}/META-INF/MANIFEST.mf" />
+		<jar destfile="${dist}/plugins/${win32}_${majorversion}.jar" basedir="${fragments}/${win32}" manifest="${fragments}/${win32}/META-INF/MANIFEST.mf" />
+		<jar destfile="${dist}/plugins/${macos}_${majorversion}.jar" basedir="${fragments}/${macos}" manifest="${fragments}/${macos}/META-INF/MANIFEST.mf" />
+		<!-- build the feature -->
+		<mkdir dir="${dist}/features" />
+		<jar destfile="${dist}/features/${feature_name}_${majorversion}.jar" basedir="${basedir}/distribution/${feature_name}" />
+		<!-- Copy the site.xml file -->
+		<copy file="${basedir}/distribution/seco.eclipse.plugin.update_site/site.xml" todir="${dist}" />
 	</target>
 
+	<!--
 	<target name="plugin_export" depends="compile">
 		<pde.exportPlugins destination="${dist}" exportSource="false" exportType="directory" plugins="seco.eclipse.plugin" useJARFormat="true" />
 	</target>
 	
-	<!-- <taskdef classname="org.eclipse.equinox.internal.p2.publisher.ant.FeaturesAndBundlesPublisherTask"
-        name="p2.publish.featuresAndBundles"/> -->
+	 <taskdef classname="org.eclipse.equinox.internal.p2.publisher.ant.FeaturesAndBundlesPublisherTask"
+        name="p2.publish.featuresAndBundles"/> 
 	<target name="site_pre_build">
 		<p2.publish.featuresAndBundles
 			repositoryName="Seco Test Site"
@@ -97,6 +115,6 @@
 		    publishArtifacts="true"
 		    compress="true"
 		    source="${basedir}"/>
-			
 	</target>
+	-->
 </project>

@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Seco Win 64bit Fragment
+Bundle-SymbolicName: seco.eclipse.plugin.win32.x64;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Vendor: Kobrix Software Inc.
+Fragment-Host: seco.eclipse.plugin;bundle-version="[1.0.0,5.0.0)"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-NativeCode: native/libdb50.dll; native/libdb_java50.dll; osname = win32; processor = x86_64
+Eclipse-PlatformFilter: (& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86_64))
