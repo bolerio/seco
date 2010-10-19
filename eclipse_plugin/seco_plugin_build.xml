@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="headless_plugin_export" name="build">
 	<!-- The plugins directory of the Eclipse distribution-->
-	<property name="eclipse_plugins_dir" value="C:/eclipse/plugins" />
+	<property name="eclipse_plugins_dir" value="F:/eclipse3.6.1/eclipse/plugins" />
 	
 	 <!-- these create the eclipse plugin file name edit as needed --> 
 	 <property name="majorversion" value="1.0.0" /> 
@@ -85,5 +85,18 @@
 
 	<target name="plugin_export" depends="compile">
 		<pde.exportPlugins destination="${dist}" exportSource="false" exportType="directory" plugins="seco.eclipse.plugin" useJARFormat="true" />
+	</target>
+	
+	<!-- <taskdef classname="org.eclipse.equinox.internal.p2.publisher.ant.FeaturesAndBundlesPublisherTask"
+        name="p2.publish.featuresAndBundles"/> -->
+	<target name="site_pre_build">
+		<p2.publish.featuresAndBundles
+			repositoryName="Seco Test Site"
+		    metadataRepository="${dist}"
+		    artifactRepository="${dist}"
+		    publishArtifacts="true"
+		    compress="true"
+		    source="${basedir}"/>
+			
 	</target>
 </project>

@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.hypergraphdb.HGEnvironment;
+import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.storage.BDBConfig;
 import org.osgi.framework.BundleContext;
 
@@ -132,7 +133,7 @@ public class SecoPlugin extends AbstractUIPlugin {
 		ThisNiche.guiController = new SecoEclipseGUIController();
 		// try
 		// {
-		HGEnvironment.get(plugin.getNicheLocation());
+		HyperGraph hg = HGEnvironment.get(plugin.getNicheLocation());
 		// }
 		// catch (Throwable t)
 		// {
@@ -140,7 +141,7 @@ public class SecoPlugin extends AbstractUIPlugin {
 		// return false;
 		// }
 		// something went wrong
-		if (ThisNiche.getTopContext() == null)
+		if (hg == null || ThisNiche.getTopContext() == null)
 			return false;
 		File f = AppConfig.getJarDirectory(Platform.class);
 		ThisNiche.getTopContext().getRuntimeContext().getClassPath()

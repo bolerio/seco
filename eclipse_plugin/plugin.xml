@@ -6,12 +6,12 @@
          point="org.eclipse.ui.views">
       <category
             name="Seco"
-            id="seco.plugin">
+            id="seco.eclipse">
       </category>
       <view
             name="Seco"
             icon="icons/logoicon.gif"
-            category="seco.plugin"
+            category="seco.eclipse"
             class="seco.eclipse.SecoView"
             id="seco.eclipse.SecoView">
       </view>
@@ -21,8 +21,8 @@
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaPerspective">
          <view
-               ratio="0.8"
-               relationship="right"
+               ratio="1.0"
+               relationship="fast"
                id="seco.eclipse.SecoView">
          </view>
       </perspectiveExtension>
@@ -42,9 +42,9 @@
           <action
                class="seco.eclipse.SecoProjectAction"
                icon="icons/logoicon.gif"
-               id="seco.eclipse.SecoAction"
+               id="seco.eclipse.SecoProjectAction"
                label="&amp;Open Niche"
-               toolbarPath="sampleGroup"
+               toolbarPath="secoGroup"
                tooltip="Seco project">
          </action>
       </actionSet>
