@@ -60,6 +60,17 @@ public class PluginU
             MessageDialog.openInformation(getSecoView().getSite().getShell(),
                     "Seco", message);
     }
+    
+    public static void  showError(final String message)
+    {
+    	runInEclipseGUIThread(new Runnable(){
+    		public void run()
+    		{
+    			Shell shell =  getSecoView() != null ? getSecoView().getSite().getShell(): null; 
+    			MessageDialog.openError(shell, "Seco", message);
+    		}
+    	});
+    }
 
     public static void openNichesDlg(IWorkbenchWindow window)
     {
@@ -93,7 +104,7 @@ public class PluginU
             }
             catch (Throwable t)
             {
-
+            	showError(t.toString());
             }
         }
     }

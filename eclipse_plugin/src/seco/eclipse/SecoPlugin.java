@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.hypergraphdb.HGEnvironment;
-import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.storage.BDBConfig;
 import org.osgi.framework.BundleContext;
 
@@ -131,30 +130,28 @@ public class SecoPlugin extends AbstractUIPlugin {
 
 	boolean setupNiche() {
 		ThisNiche.guiController = new SecoEclipseGUIController();
-		// try
-		// {
-		HyperGraph hg = HGEnvironment.get(plugin.getNicheLocation());
-		// }
-		// catch (Throwable t)
-		// {
-		// t.printStackTrace();
-		// return false;
-		// }
-		// something went wrong
-		if (hg == null || ThisNiche.getTopContext() == null)
+		try
+		{
+		  //HyperGraph hg = 
+			  HGEnvironment.get(plugin.getNicheLocation());
+		  }catch (Throwable t)
+	      {
+			nicheLocation = null;	
+			PluginU.showError(t.toString());
 			return false;
-		File f = AppConfig.getJarDirectory(Platform.class);
-		ThisNiche.getTopContext().getRuntimeContext().getClassPath()
-				.add(new ClassPathEntry(f));
-		ThisNiche.getTopContext().getRuntimeContext().getBindings()
-				.put("plugin", plugin);
-		ThisNiche.getTopContext().getRuntimeContext().getBindings()
-				.put("workspace", ResourcesPlugin.getWorkspace());
-		ThisNiche.getTopContext().getRuntimeContext().getBindings()
-				.put("frame", null);
-
+	      }    	
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
+				File f = AppConfig.getJarDirectory(Platform.class);
+				ThisNiche.getTopContext().getRuntimeContext().getClassPath()
+						.add(new ClassPathEntry(f));
+				ThisNiche.getTopContext().getRuntimeContext().getBindings()
+						.put("plugin", plugin);
+				ThisNiche.getTopContext().getRuntimeContext().getBindings()
+						.put("workspace", ResourcesPlugin.getWorkspace());
+				ThisNiche.getTopContext().getRuntimeContext().getBindings()
+						.put("frame", null);
 				if (!Arrays.asList(NotebookUI.getPopupMenu().getComponents())
 						.contains(goToDeclarationAction)) {
 					NotebookUI.getPopupMenu().add(goToDeclarationAction);
