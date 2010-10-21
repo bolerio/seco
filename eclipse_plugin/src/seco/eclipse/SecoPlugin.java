@@ -132,8 +132,7 @@ public class SecoPlugin extends AbstractUIPlugin {
 		ThisNiche.guiController = new SecoEclipseGUIController();
 		try
 		{
-		  //HyperGraph hg = 
-			  HGEnvironment.get(plugin.getNicheLocation());
+		 	  HGEnvironment.get(plugin.getNicheLocation());
 		  }catch (Throwable t)
 	      {
 			nicheLocation = null;	
