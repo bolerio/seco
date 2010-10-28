@@ -20,7 +20,10 @@ public class StartMeUp
     public static void main(String[] argv)
     {
     	System.out.println("java.library.path: " + System.getProperty("java.library.path"));
-    	ClassRepository.getInstance();
+    	 System.out.println("java.home: " + System.getProperty("java.home"));
+         //System.loadLibrary("libdb_java50.dll");
+         //System.loadLibrary("libdb50.dll");
+         ClassRepository.getInstance();
     	Map<String, File> niches = NicheManager.readNiches();
         NicheSelectDialog dlg = new NicheSelectDialog();
         dlg.setNiches(niches);
