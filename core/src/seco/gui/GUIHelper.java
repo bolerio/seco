@@ -94,10 +94,16 @@ import edu.umd.cs.piccolox.pswing.PSwing;
 
 public class GUIHelper
 {
-    public static final HGPersistentHandle TOOLBAR_HANDLE = UUIDHandleFactory.I.makeHandle("d40c99be-f108-11dc-a860-d9a9d2c59ef1");
-    public static final HGPersistentHandle MENUBAR_HANDLE = UUIDHandleFactory.I.makeHandle("1d3b7df9-f109-11dc-9512-073dfab2b15a");
-    public static final HGPersistentHandle HTML_TOOLBAR_HANDLE = UUIDHandleFactory.I.makeHandle("56371f73-025d-11dd-b650-ef87b987c94a");
-    public static final HGPersistentHandle WIN_ACTIONS_HANDLE = UUIDHandleFactory.I.makeHandle("8724b420-963b-11de-8a39-0800200c9a66");
+    public static final HGPersistentHandle TOOLBAR_HANDLE = UUIDHandleFactory.I
+            .makeHandle("d40c99be-f108-11dc-a860-d9a9d2c59ef1");
+    public static final HGPersistentHandle MENUBAR_HANDLE = UUIDHandleFactory.I
+            .makeHandle("1d3b7df9-f109-11dc-9512-073dfab2b15a");
+    public static final HGPersistentHandle HTML_TOOLBAR_HANDLE = UUIDHandleFactory.I
+            .makeHandle("56371f73-025d-11dd-b650-ef87b987c94a");
+    public static final HGPersistentHandle WIN_ACTIONS_HANDLE = UUIDHandleFactory.I
+            .makeHandle("8724b420-963b-11de-8a39-0800200c9a66");
+    public static final HGPersistentHandle OUTPUT_CONSOLE_HANDLE = UUIDHandleFactory.I
+            .makeHandle("6817db80-e35a-11df-85ca-0800200c9a66");
 
     public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
     // default rectangle used for adding containers
@@ -123,12 +129,11 @@ public class GUIHelper
         if (actions != null) return actions;
         actions = new ArrayList<Action>();
         // maximize
-        Action a = new ScriptletAction(
-                "node = canvas.getSelectedPSwingNode();"
-                        + "cgm = niche.get(node.getHandle());"
-                        + "if(seco.things.CellUtils.isMinimized(cgm))"
-                        + "seco.things.CellUtils.toggleMinimized(cgm);"
-                        + "seco.things.CellUtils.toggleMaximized(cgm);");
+        Action a = new ScriptletAction("node = canvas.getSelectedPSwingNode();"
+                + "cgm = niche.get(node.getHandle());"
+                + "if(seco.things.CellUtils.isMinimized(cgm))"
+                + "seco.things.CellUtils.toggleMinimized(cgm);"
+                + "seco.things.CellUtils.toggleMaximized(cgm);");
         a.putValue(Action.SMALL_ICON, IconManager.resolveIcon("Maximize.gif"));
         // a.putValue(ANOTHER_ICON, IconManager.resolveIcon("Restore.png"));
         a.putValue(Action.SHORT_DESCRIPTION, "Maximize/Restore");
@@ -195,6 +200,36 @@ public class GUIHelper
         htmlToolBar.setFloatable(false);
         ThisNiche.graph.define(GUIHelper.HTML_TOOLBAR_HANDLE, htmlToolBar);
         return htmlToolBar;
+    }
+
+    public static Component getOutputConsole()
+    {
+        JScrollPane pane = (JScrollPane) ThisNiche.graph
+                   .get(GUIHelper.OUTPUT_CONSOLE_HANDLE);
+        if (pane != null) return pane.getViewport().getView();
+        pane = new JScrollPane(new ConsoleTextArea());
+        ThisNiche.graph.define(GUIHelper.OUTPUT_CONSOLE_HANDLE, pane);
+        return pane.getViewport().getView();
+    }
+
+    public static void showOutputConsole()
+    {
+        getOutputConsole();
+        HGHandle existingH = GUIHelper.getCellHandleByValueHandle(
+                ThisNiche.TOP_CELL_GROUP_HANDLE, OUTPUT_CONSOLE_HANDLE);
+        if (existingH == null)
+        {
+            CellGroupMember cgm = ThisNiche.graph.get(GUIHelper.addToCellGroup(
+                    OUTPUT_CONSOLE_HANDLE, getTopCellGroup(), null, null,
+                    new Rectangle(5, 500, 600, 100), true));
+            CellUtils.setName(cgm, "Output Console");
+            cgm.setAttribute(VisualAttribs.showTitle, true);
+        }
+        else
+        {
+            PSwingNode n = ThisNiche.getCanvas().getPSwingNodeForHandle(existingH);
+            if(n!= null) n.blink();
+        }
     }
 
     // disable menuItems if no notebook presented
@@ -308,8 +343,8 @@ public class GUIHelper
         public ImportAction()
         {
             this.putValue(Action.NAME, Actions.IMPORT);
-            this.putValue(Action.SMALL_ICON, IconManager
-                    .resolveIcon("Open16.gif"));
+            this.putValue(Action.SMALL_ICON,
+                    IconManager.resolveIcon("Open16.gif"));
             this.putValue(Action.SHORT_DESCRIPTION, "Import Notebook");
         }
 
@@ -324,8 +359,8 @@ public class GUIHelper
         public ExportAction()
         {
             this.putValue(Action.NAME, EXPORT);
-            this.putValue(Action.SMALL_ICON, IconManager
-                    .resolveIcon("SaveAs16.gif"));
+            this.putValue(Action.SMALL_ICON,
+                    IconManager.resolveIcon("SaveAs16.gif"));
             this.putValue(Action.SHORT_DESCRIPTION, "Export Notebook As XML");
         }
 
@@ -337,8 +372,8 @@ public class GUIHelper
                     "Export Notebook As ...", FileUtil.SAVE, null);
             if (f != null)
             {
-                IOUtils.exportCellGroup((CellGroup) ui.getDoc().getBook(), f
-                        .getAbsolutePath());
+                IOUtils.exportCellGroup((CellGroup) ui.getDoc().getBook(),
+                        f.getAbsolutePath());
             }
         }
     }
@@ -377,19 +412,19 @@ public class GUIHelper
             openCellTree(book);
         }
     }
-    
+
     public static class DescriptionManagerAction implements ActionListener
     {
         public void actionPerformed(ActionEvent evt)
         {
             SearchDescriptionPanel p = new SearchDescriptionPanel();
-            JDialog dialog = new JDialog(ThisNiche.guiController.getFrame(), 
+            JDialog dialog = new JDialog(ThisNiche.guiController.getFrame(),
                     "Manage Descriptions");
             dialog.add(p);
             dialog.setSize(new Dimension(700, 500));
             dialog.setVisible(true);
         }
-     }
+    }
 
     public static class OpenAction extends AbstractAction
     {
@@ -402,8 +437,8 @@ public class GUIHelper
 
         public void actionPerformed(ActionEvent evt)
         {
-            JDialog dialog = new JDialog(GUIUtilities.getFrame((Component)evt.getSource()),
-                    "Open Or Delete CellGroup");
+            JDialog dialog = new JDialog(GUIUtilities.getFrame((Component) evt
+                    .getSource()), "Open Or Delete CellGroup");
             dialog.setSize(500, 500);
             dialog.add(new OpenBookPanel());
             dialog.setVisible(true);
@@ -444,6 +479,14 @@ public class GUIHelper
         public void actionPerformed(ActionEvent evt)
         {
             openParseTree();
+        }
+    }
+    
+    public static class ShowOutputConsoleAction implements ActionListener
+    {
+        public void actionPerformed(ActionEvent evt)
+        {
+           GUIHelper.showOutputConsole();
         }
     }
 
@@ -584,41 +627,48 @@ public class GUIHelper
         dialog.setVisible(true);
     }
 
-    public static void makeTopCellGroup(HyperGraph hg)
+    public static CellGroup getTopCellGroup()
     {
         CellGroup group = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         if (group == null)
         {
             group = new CellGroup("TOP_CELL_GROUP");
-            hg.define(ThisNiche.TOP_CELL_GROUP_HANDLE, group);
+            ThisNiche.graph.define(ThisNiche.TOP_CELL_GROUP_HANDLE, group);
         }
+        return group;
+    }
+
+    public static void makeTopCellGroup()
+    {
+        CellGroup group = getTopCellGroup();
         group.setVisual(CellContainerVisual.getHandle());
         getMenuBar();
         if (group.indexOf(GUIHelper.MENUBAR_HANDLE) < 0)
-            addToCellGroup(GUIHelper.MENUBAR_HANDLE, group, VisualsManager
-                    .defaultVisualForAtom(GUIHelper.MENUBAR_HANDLE),
+            addToCellGroup(GUIHelper.MENUBAR_HANDLE, group,
+                    VisualsManager
+                            .defaultVisualForAtom(GUIHelper.MENUBAR_HANDLE),
                     new DefaultLayoutHandler(new DRect(new DValue(0),
                             new DValue(0), new DValue(100, true),
                             new DValue(28)), RefPoint.TOP_LEFT), null, 0);
         getMainToolBar();
         if (group.indexOf(GUIHelper.TOOLBAR_HANDLE) < 0)
-            addToCellGroup(GUIHelper.TOOLBAR_HANDLE, group, VisualsManager
-                    .defaultVisualForAtom(GUIHelper.TOOLBAR_HANDLE),
+            addToCellGroup(GUIHelper.TOOLBAR_HANDLE, group,
+                    VisualsManager
+                            .defaultVisualForAtom(GUIHelper.TOOLBAR_HANDLE),
                     new DefaultLayoutHandler(new DRect(new DValue(0),
                             new DValue(28), new DValue(/* 280 */33, true),
                             new DValue(28)), RefPoint.TOP_LEFT), null, 1);
         getHTMLToolBar();
         if (group.indexOf(GUIHelper.HTML_TOOLBAR_HANDLE) < 0)
-            addToCellGroup(GUIHelper.HTML_TOOLBAR_HANDLE, group, VisualsManager
-                    .defaultVisualForAtom(GUIHelper.HTML_TOOLBAR_HANDLE),
+            addToCellGroup(
+                    GUIHelper.HTML_TOOLBAR_HANDLE,
+                    group,
+                    VisualsManager
+                            .defaultVisualForAtom(GUIHelper.HTML_TOOLBAR_HANDLE),
                     new DefaultLayoutHandler(new DRect(new DValue(/* 280 */33,
                             true), new DValue(28), new DValue(67, true),
                             new DValue(28)), RefPoint.TOP_LEFT), null, 2);
-
-        // getJTabbedPane();
-        // if(group.indexOf(ThisNiche.TABBED_PANE_GROUP_HANDLE) < 0)
-        // group.insert(group.getArity(), ThisNiche.TABBED_PANE_GROUP_HANDLE);
-    }
+   }
 
     public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
             HGHandle visualH, LayoutHandler lh, Rectangle r,
@@ -673,11 +723,12 @@ public class GUIHelper
             name = "CanvasCellGroup";
         CellGroup c = new CellGroup(name);
         HGHandle h = ThisNiche.graph.add(c);
-       // return addToTopCellGroup(h, visualH, null, CONTAINER_RECT);
         Map<Object, Object> attribs = new HashMap<Object, Object>();
         attribs.put(VisualAttribs.showTitle, true);
-       return addToCellGroup(h, (CellGroup) ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE),
-                visualH, null, CONTAINER_RECT, false, attribs, -1);
+        return addToCellGroup(h,
+                (CellGroup) ThisNiche.graph
+                        .get(ThisNiche.TOP_CELL_GROUP_HANDLE), visualH, null,
+                CONTAINER_RECT, false, attribs, -1);
     }
 
     public static HGHandle addToTopCellGroup(final Object x, final Rectangle r)
@@ -731,8 +782,8 @@ public class GUIHelper
                 Object visual = ThisNiche.graph.get(inner.getVisual());
                 if (visual instanceof GroupVisual)
                 {
-                    HGHandle inH = getCellHandleByValueHandle(ThisNiche
-                            .handleOf(inner), objectHandle);
+                    HGHandle inH = getCellHandleByValueHandle(
+                            ThisNiche.handleOf(inner), objectHandle);
                     if (inH != null) return inH;
                 }
             }
@@ -779,11 +830,10 @@ public class GUIHelper
 
     private static void addAsBook(HGHandle h)
     {
-        CellGroup group =
-        ThisNiche.graph.get(//(TopFrame.PICCOLO) ? 
+        CellGroup group = ThisNiche.graph.get(// (TopFrame.PICCOLO) ?
                 ThisNiche.TOP_CELL_GROUP_HANDLE);// :
-                    //(StandaloneFrame).tabbedPaneGroupHandle); 
-        
+        // (StandaloneFrame).tabbedPaneGroupHandle);
+
         if (CellUtils.isBackuped(h)) CellUtils.restoreCell(h);
         CellGroupMember child = ThisNiche.graph.get(h);
         child.setVisual(NBUIVisual.getHandle());
@@ -802,8 +852,8 @@ public class GUIHelper
 
     public static void openNotebook()
     {
-        File file = FileUtil.getFile(ThisNiche.guiController.getFrame(), "Load Notebook",
-                FileUtil.LOAD, null);
+        File file = FileUtil.getFile(ThisNiche.guiController.getFrame(),
+                "Load Notebook", FileUtil.LOAD, null);
         if (file == null) return;
         importGroup(file);
     }
@@ -840,9 +890,9 @@ public class GUIHelper
         // .getInstance().getCurrentRuntimeContext());
         String title = "[" + ThisNiche.graph.getLocation() + "] "
         /* + rcInstance.getName() + " " */+ name;
-        if(ThisNiche.guiController != null)
+        if (ThisNiche.guiController != null)
             ThisNiche.guiController.setTitle(title);
-        //ThisNiche.guiController.showHTMLToolBar(false);
+        // ThisNiche.guiController.showHTMLToolBar(false);
         GUIHelper.getHTMLToolBar().setEnabled(false);
     }
 
@@ -861,9 +911,7 @@ public class GUIHelper
         menu.add(new JMenuItem(man.getAction(Actions.COPY)));
         menu.add(new JMenuItem(man.getAction(Actions.PASTE)));
 
-        menu
-                .add(new JMenuItem(man
-                        .getAction(DefaultEditorKit.selectAllAction)));
+        menu.add(new JMenuItem(man.getAction(DefaultEditorKit.selectAllAction)));
         menu.addSeparator();
         menu.add(new JMenuItem(man.getAction(NotebookEditorKit.findAction)));
         menu.add(new JMenuItem(man.getAction(NotebookEditorKit.replaceAction)));
@@ -936,6 +984,9 @@ public class GUIHelper
         menu.add(new EnhancedMenu("CellGroup", new CellGroupPropsProvider()));
         menu.add(new EnhancedMenu("Notebook", new NotebookPropsProvider()));
         menu.add(new JSeparator());
+        mi = new GlobMenuItem("Show Output Console");
+        mi.addActionListener(new ShowOutputConsoleAction());
+        menu.add(mi);
         mi = new GlobMenuItem("Top CellGroup Tree");
         mi.addActionListener(new TopCellTreeAction());
         menu.add(mi);

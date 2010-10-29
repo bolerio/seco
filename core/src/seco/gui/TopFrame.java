@@ -143,10 +143,6 @@ public abstract class TopFrame extends JFrame implements GUIController
         }
     }
 
-//    public void showHTMLToolBar(boolean show_or_hide)
-//    {
-//    }
-
     public PiccoloCanvas getCanvas()
     {
         return null;
@@ -171,14 +167,5 @@ public abstract class TopFrame extends JFrame implements GUIController
         System.exit(0);
     }
 
-//    public HGHandle getFocusedContainerHandle()
-//    {
-//        return focusedContainerHandle;
-//    }
-//
-//    public void setFocusedContainerHandle(HGHandle focusedContainerHandle)
-//    {
-//        this.focusedContainerHandle = focusedContainerHandle;
-//    }
 
 }

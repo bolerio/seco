@@ -325,7 +325,7 @@ public class NicheManager
                     ScriptletDocument.class);
         }
         if(hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE) == null)
-           GUIHelper.makeTopCellGroup(hg);
+           GUIHelper.makeTopCellGroup();
     }   
         
     static void populateThisNiche()

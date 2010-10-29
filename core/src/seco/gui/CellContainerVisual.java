@@ -25,6 +25,7 @@ import seco.events.EvalCellEvent;
 import seco.events.EventHandler;
 import seco.gui.piccolo.AffineTransformEx;
 import seco.things.BaseCellGroupMember;
+import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
@@ -222,8 +223,15 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
         if (removed != null && removed.length > 0)
             for (int i = 0; i < removed.length; i++)
             {
+                //TODO: move away this check
+                CellGroupMember cgm = ThisNiche.graph.get(removed[i]);
+                if(cgm instanceof Cell && 
+                        GUIHelper.OUTPUT_CONSOLE_HANDLE.equals(((Cell)cgm).getAtomHandle()))
+                    ((ConsoleTextArea)GUIHelper.getOutputConsole()).restoreOldIO();
+                
                 PSwingNode ps = canvas.getPSwingNodeForHandle(removed[i]);
                 if (ps != null) ps.removeFromParent();
+                //if(removed[i])
                 CellUtils.removeEventPubSub(EvalCellEvent.HANDLE, removed[i],
                         getHandle(), getHandle());
                 CellUtils.removeEventPubSub(AttributeChangeEvent.HANDLE, removed[i],

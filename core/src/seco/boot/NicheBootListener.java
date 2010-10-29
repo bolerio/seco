@@ -41,7 +41,7 @@ public class NicheBootListener implements HGListener
         // We need to make sure that we have a TOP_CELL_GROUP, no matter what, even if
         // it was deleted by mistake.
         if (hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE) == null)
-            GUIHelper.makeTopCellGroup(hg);
+            GUIHelper.makeTopCellGroup();
         final CellGroup group = (CellGroup) hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         final CellVisual v = (CellVisual) hg.get(group.getVisual());
 //        try
