@@ -1,42 +1,6 @@
 package seco.gui;
 
-/* -*- Mode: java; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
- *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Rhino JavaScript Debugger code, released
- * November 21, 2000.
- *
- * The Initial Developer of the Original Code is
- * See Beyond Corporation.
- * Portions created by the Initial Developer are Copyright (C) 2000
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Christopher Oliver
- *
- * Alternatively, the contents of this file may be used under the terms of
- * the GNU General Public License Version 2 or later (the "GPL"), in which
- * case the provisions of the GPL are applicable instead of those above. If
- * you wish to allow use of your version of this file only under the terms of
- * the GPL and not to allow others to use your version of this file under the
- * MPL, indicate your decision by deleting the provisions above and replacing
- * them with the notice and other provisions required by the GPL. If you do
- * not delete the provisions above, a recipient may use your version of this
- * file under either the MPL or the GPL.
- *
- * ***** END LICENSE BLOCK ***** */
+
 import java.awt.Color;
 import java.awt.Font;
 import java.io.PrintStream;
@@ -49,10 +13,11 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 /*
- * Simple output console.
- * Loosely based on the org.mozilla.javascript.tools.ConsoleTextArea
+ * Simple output console GUI, that handles redirected System.out and System.err.
+ * Change the appearance of the err and out streams through the static err_attrs and out_attrs
+ * variables
  */
-public class ConsoleTextArea extends JTextPane implements  DocumentListener
+public class OutputConsole extends JTextPane implements  DocumentListener
 {
     private static final long serialVersionUID = -7922836398672418895L;
 
@@ -71,7 +36,7 @@ public class ConsoleTextArea extends JTextPane implements  DocumentListener
         StyleConstants.setForeground(out_attrs, Color.blue);
     }
 
-    public ConsoleTextArea()
+    public OutputConsole()
     {
         out = new PrintStream(new ConsoleWriter(false), true);
         err = new PrintStream(new ConsoleWriter(true), true);
@@ -172,10 +137,10 @@ public class ConsoleTextArea extends JTextPane implements  DocumentListener
     class ConsoleWrite implements Runnable
     {
         private boolean err_or_out;
-        private ConsoleTextArea textArea;
+        private OutputConsole textArea;
         private String str;
 
-        public ConsoleWrite(ConsoleTextArea textArea, String str,
+        public ConsoleWrite(OutputConsole textArea, String str,
                 boolean err_or_out)
         {
             this.textArea = textArea;
@@ -242,7 +207,7 @@ public class ConsoleTextArea extends JTextPane implements  DocumentListener
         {
             String str = buffer.toString();
             buffer.setLength(0);
-            SwingUtilities.invokeLater(new ConsoleWrite(ConsoleTextArea.this,
+            SwingUtilities.invokeLater(new ConsoleWrite(OutputConsole.this,
                     str, err_or_out));
         }
     }

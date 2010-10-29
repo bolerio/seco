@@ -207,7 +207,7 @@ public class GUIHelper
         JScrollPane pane = (JScrollPane) ThisNiche.graph
                    .get(GUIHelper.OUTPUT_CONSOLE_HANDLE);
         if (pane != null) return pane.getViewport().getView();
-        pane = new JScrollPane(new ConsoleTextArea());
+        pane = new JScrollPane(new OutputConsole());
         ThisNiche.graph.define(GUIHelper.OUTPUT_CONSOLE_HANDLE, pane);
         return pane.getViewport().getView();
     }

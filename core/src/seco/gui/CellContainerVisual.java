@@ -227,7 +227,7 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
                 CellGroupMember cgm = ThisNiche.graph.get(removed[i]);
                 if(cgm instanceof Cell && 
                         GUIHelper.OUTPUT_CONSOLE_HANDLE.equals(((Cell)cgm).getAtomHandle()))
-                    ((ConsoleTextArea)GUIHelper.getOutputConsole()).restoreOldIO();
+                    ((OutputConsole)GUIHelper.getOutputConsole()).restoreOldIO();
                 
                 PSwingNode ps = canvas.getPSwingNodeForHandle(removed[i]);
                 if (ps != null) ps.removeFromParent();
