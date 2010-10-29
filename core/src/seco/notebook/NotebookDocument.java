@@ -525,7 +525,6 @@ public class NotebookDocument extends DefaultStyledDocument
         if (offset < 0) return;
         try
         {
-            // beginCompoundEdit("cell eval");
             supressEvents = true;
             List<HGHandle> list = CellUtils.getOutCellHandles(cellH);
             for (HGHandle o : list)
@@ -542,7 +541,6 @@ public class NotebookDocument extends DefaultStyledDocument
         finally
         {
             supressEvents = false;
-            // endCompoundEdit();
         }
     }
 
@@ -558,7 +556,11 @@ public class NotebookDocument extends DefaultStyledDocument
         DocUtil.endTag(vec);
         DocUtil.createOutputCell(this, getNBElementH(el), attr, vec, true, e);
         insert(off, vec.toArray(new ElementSpec[vec.size()]));
-        fireCaretMoved(findNextInsPoint(off));
+        //on error it's better to stay in the input cell
+        if(e.isError())
+          fireCaretMoved(off - 3);
+        else
+          fireCaretMoved(findNextInsPoint(off));
     }
 
     // Element at offset should be InsertionPoint
@@ -1615,31 +1617,6 @@ public class NotebookDocument extends DefaultStyledDocument
             if (listeners[i] == CaretMoveListener.class)
                 ((CaretMoveListener) listeners[i + 1]).caretMoved(pos);
     }
-
-//    static final String bad = "javax.swing.plaf.basic.BasicTextUI";
-//
-//    @Override
-//    public void addDocumentListener(DocumentListener listener)
-//    {
-//        // check and remove duplicated
-//        // javax.swing.plaf.basic.BasicTextUI$UpdateHandler
-//        if (listener.getClass().getName().startsWith(bad))
-//        {
-//            Object[] listeners = listenerList
-//                    .getListeners(DocumentListener.class);
-//            for (int i = 0; i < listeners.length; i++)
-//                if (listeners[i].getClass().getName().startsWith(bad))
-//                {
-//                    System.out
-//                            .println("Remove Duplicated BasicTextUI$UpdateHandler");
-//                    removeDocumentListener((DocumentListener) listeners[i]);
-//                    Thread.dumpStack();
-//                    break;
-//                }
-//
-//        }
-//        super.addDocumentListener(listener);
-//    }
 
     public static interface ModificationListener extends EventListener
     {

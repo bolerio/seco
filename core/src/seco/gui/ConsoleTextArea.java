@@ -39,20 +39,20 @@ package seco.gui;
  * ***** END LICENSE BLOCK ***** */
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.io.PrintStream;
 
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 /*
  * Simple output console.
- * based on the org.mozilla.javascript.tools.ConsoleTextArea
+ * Loosely based on the org.mozilla.javascript.tools.ConsoleTextArea
  */
-public class ConsoleTextArea extends JTextArea implements DocumentListener
+public class ConsoleTextArea extends JTextPane implements  DocumentListener
 {
     private static final long serialVersionUID = -7922836398672418895L;
 
@@ -62,20 +62,25 @@ public class ConsoleTextArea extends JTextArea implements DocumentListener
 
     private PrintStream oldErr;
     private PrintStream oldOut;
-    
+
+    public static SimpleAttributeSet err_attrs = new SimpleAttributeSet();
+    public static SimpleAttributeSet out_attrs = new SimpleAttributeSet();
+    static
+    {
+        StyleConstants.setForeground(err_attrs, Color.red);
+        StyleConstants.setForeground(out_attrs, Color.blue);
+    }
+
     public ConsoleTextArea()
     {
-        ConsoleWriter console1 = new ConsoleWriter(this);
-        ConsoleWriter console2 = new ConsoleWriter(this);
-        out = new PrintStream(console1, true);
-        err = new PrintStream(console2, true);
+        out = new PrintStream(new ConsoleWriter(false), true);
+        err = new PrintStream(new ConsoleWriter(true), true);
         getDocument().addDocumentListener(this);
-        setLineWrap(true);
         setFont(new Font("Monospaced", 0, 12));
         setBackground(new Color(235, 235, 240));
     }
 
-     @Override
+    @Override
     public void addNotify()
     {
         super.addNotify();
@@ -85,7 +90,7 @@ public class ConsoleTextArea extends JTextArea implements DocumentListener
     @Override
     public void removeNotify()
     {
-        //restoreOldIO();
+        // restoreOldIO();
         super.removeNotify();
     }
 
@@ -99,19 +104,28 @@ public class ConsoleTextArea extends JTextArea implements DocumentListener
             System.setOut(getOut());
         }
     }
-    
+
     public void restoreOldIO()
     {
         System.setErr(oldErr);
         System.setOut(oldOut);
     }
 
-    public synchronized void write(String str)
+    public synchronized void write(String str, boolean err_or_out)
     {
-        insert(str, outputMark);
-        int len = str.length();
-        outputMark += len;
-        select(outputMark, outputMark);
+        try
+        {
+
+            getDocument().insertString(outputMark, str,
+                    (err_or_out) ? err_attrs : out_attrs);
+            int len = str.length();
+            outputMark += len;
+            select(outputMark, outputMark);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     public synchronized void insertUpdate(DocumentEvent e)
@@ -157,30 +171,33 @@ public class ConsoleTextArea extends JTextArea implements DocumentListener
 
     class ConsoleWrite implements Runnable
     {
+        private boolean err_or_out;
         private ConsoleTextArea textArea;
         private String str;
 
-        public ConsoleWrite(ConsoleTextArea textArea, String str)
+        public ConsoleWrite(ConsoleTextArea textArea, String str,
+                boolean err_or_out)
         {
             this.textArea = textArea;
             this.str = str;
+            this.err_or_out = err_or_out;
         }
 
         public void run()
         {
-            textArea.write(str);
+            textArea.write(str, err_or_out);
         }
     }
 
     class ConsoleWriter extends java.io.OutputStream
     {
-
-        private ConsoleTextArea textArea;
+        private boolean err_or_out;
+        // private ConsoleTextArea textArea;
         private StringBuffer buffer;
 
-        public ConsoleWriter(ConsoleTextArea textArea)
+        public ConsoleWriter(boolean err_or_out)
         {
-            this.textArea = textArea;
+            this.err_or_out = err_or_out;
             buffer = new StringBuffer();
         }
 
@@ -225,7 +242,8 @@ public class ConsoleTextArea extends JTextArea implements DocumentListener
         {
             String str = buffer.toString();
             buffer.setLength(0);
-            SwingUtilities.invokeLater(new ConsoleWrite(textArea, str));
+            SwingUtilities.invokeLater(new ConsoleWrite(ConsoleTextArea.this,
+                    str, err_or_out));
         }
     }
 }
