@@ -132,10 +132,17 @@ public class JSCompletionProvider implements CompletionProvider
                                 new CompletionU.DBPackageInfo(info, s),
                                 queryCaretOffset);
                 }
+            }else if(obj instanceof JavaScriptParser.JsType)
+            {
+                String type = ((JavaScriptParser.JsType) obj).getType();
+                if(type != null && BuiltIns.isBuiltInType(type))
+                    populateBuiltInObject(resultSet, type);
+                else       //TODO: find better way instead of fallback object
+                   populateBuiltInObject(resultSet, BuiltIns.OBJECT);
             }
-            else if (Object.class == obj) populateBuiltInObject(resultSet,
-                    BuiltIns.OBJECT);
-            else if (jsEquivalent(obj, resultSet)) ;
+            else if (Object.class == obj) 
+                populateBuiltInObject(resultSet, BuiltIns.OBJECT);
+            else if (tryPopulatingJsEquivalent(obj, resultSet)) ;
             else
             {
                 Class<?> cls = (Class<?>) obj.getClass();
@@ -146,11 +153,11 @@ public class JSCompletionProvider implements CompletionProvider
             resultSet.finish();
         }
 
-        private boolean jsEquivalent(Object o, CompletionResultSet resultSet)
+        private boolean tryPopulatingJsEquivalent(Object o, CompletionResultSet resultSet)
         {
             String name = null;
             if (o instanceof String) name = BuiltIns.STRING;
-            else if (o instanceof String) name = BuiltIns.NUM;
+            else if (o instanceof Number) name = BuiltIns.NUM;
             else if (o instanceof Date) name = BuiltIns.DATE;
             else if (o instanceof Boolean) name = BuiltIns.BOOL;
             // else if(o.getClass().isArray())

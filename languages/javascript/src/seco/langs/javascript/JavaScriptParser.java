@@ -13,13 +13,12 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.UniqueTag;
 import org.mozilla.nb.javascript.Node;
 
-import seco.notebook.csl.ParseException;
 import seco.langs.javascript.jsr.ExternalScriptable;
 import seco.langs.javascript.jsr.RhinoScriptEngine;
+import seco.notebook.csl.ParseException;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.NBParser;
 import seco.notebook.util.SegmentCache;
@@ -67,32 +66,25 @@ public class JavaScriptParser extends NBParser
         }
         catch (Exception err)
         {
- 
-            err.printStackTrace();
+            //err.printStackTrace();
             
         }finally
         {
             Context.exit();
         }
 
-//        JsAnalyzer an = new JsAnalyzer();
-//        JsParseResult info = parser.getResult();
-//      
-//        Node n = ParserUtils.getASTNodeAtOffset(support.getElement(),
-//                getRootNode(), offset - 1);
-//       
-//        JsTypeAnalyzer a = new JsTypeAnalyzer(info, getRootNode(), n, offset - 1, offset - 1);
-//        String type2 = a.getType(s);
-
+        //JsAnalyzer an = new JsAnalyzer();
+        JsParseResult info = parser.getResult();
       
-        return null;
+        Node n = ParserUtils.getASTNodeAtOffset(support.getElement(),
+                getRootNode(), offset - 1);
+        JsTypeAnalyzer a = new JsTypeAnalyzer(info, getRootNode(), n, offset - 1, offset - 1);
+        String type = a.getType(s);
+        return type != null ? new JsType(type) : null;
     }
 
     public Object resolveMethod(String s, int offset)
     {
-        //importPackage(javax.swing);
-        //importClass(java.awt.Frame);
-        
         //TODO: big work with function/object indexing, doc parsing and stuff 
         return Object.class;
     }
@@ -406,6 +398,22 @@ public class JavaScriptParser extends NBParser
                 }
             }
             return retNodes;
+        }
+    }
+    
+    class JsType
+    {
+        private String type;
+
+        public JsType(String type)
+        {
+            super();
+            this.type = type;
+        }
+
+        public String getType()
+        {
+            return type;
         }
     }
 }
