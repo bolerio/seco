@@ -4,13 +4,19 @@ package seco.gui;
 import java.awt.Color;
 import java.awt.Font;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.util.Iterator;
 
+import javax.script.AbstractScriptEngine;
+import javax.script.ScriptEngine;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+
+import seco.ThisNiche;
 
 /*
  * Simple output console GUI, that handles redirected System.out and System.err.
@@ -67,6 +73,17 @@ public class OutputConsole extends JTextPane implements  DocumentListener
             oldOut = System.out;
             System.setErr(getErr());
             System.setOut(getOut());
+          //get all abstract engines and set the writer of their SimpleScriptContext
+            for(Iterator<String> it = ThisNiche.getTopContext().getLanguages(); it.hasNext();)
+            {
+                String name = it.next();
+                ScriptEngine e = ThisNiche.getTopContext().getEngine(name);
+                if(e instanceof AbstractScriptEngine)
+                {
+                    ((AbstractScriptEngine) e).getContext().setWriter(new PrintWriter(getOut(), true));
+                    ((AbstractScriptEngine) e).getContext().setErrorWriter(new PrintWriter(getErr(), true));
+                }
+            }
         }
     }
 
@@ -74,13 +91,23 @@ public class OutputConsole extends JTextPane implements  DocumentListener
     {
         System.setErr(oldErr);
         System.setOut(oldOut);
+        //get all abstract engines and set the writers of their SimpleScriptContext
+        for(Iterator<String> it = ThisNiche.getTopContext().getLanguages(); it.hasNext();)
+        {
+            String name = it.next();
+            ScriptEngine e = ThisNiche.getTopContext().getEngine(name);
+            if(e instanceof AbstractScriptEngine)
+            {
+                ((AbstractScriptEngine) e).getContext().setWriter(new PrintWriter(oldOut, true));
+                ((AbstractScriptEngine) e).getContext().setErrorWriter(new PrintWriter(oldErr, true));
+            }
+        }
     }
 
     public synchronized void write(String str, boolean err_or_out)
     {
         try
         {
-
             getDocument().insertString(outputMark, str,
                     (err_or_out) ? err_attrs : out_attrs);
             int len = str.length();
