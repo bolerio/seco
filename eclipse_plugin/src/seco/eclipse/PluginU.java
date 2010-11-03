@@ -128,6 +128,11 @@ public class PluginU {
 			t.printStackTrace();
 		}
 	}
+	
+	public static void hideSecoView(){
+		SecoView view = getSecoView();
+	    view.getSite().getPage().hideView(view);
+	}
 
 	interface RunnableWithResult extends Runnable {
 		Object getResult();

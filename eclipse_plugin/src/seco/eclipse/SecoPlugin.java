@@ -14,6 +14,7 @@ import org.osgi.framework.BundleContext;
 
 import seco.ThisNiche;
 import seco.eclipse.SecoView.GoToDeclarationAction;
+import seco.gui.GUIHelper;
 import seco.notebook.ActionManager;
 import seco.notebook.AppConfig;
 import seco.notebook.NotebookUI;
@@ -51,10 +52,20 @@ public class SecoPlugin extends AbstractUIPlugin {
 		String osname = System.getProperty("os.name");
 		if (osname != null
 				&& (osname.indexOf("win") > -1 || osname.indexOf("Win") > -1)) {
-			// System.loadLibrary("MSVCR90.DLL");
 			System.loadLibrary("libdb50");
 			System.loadLibrary("libdb_java50");
 		}
+		
+		//System.setProperty("sun.awt.exception.handler", ExceptionHandler.class.getName()); 
+		
+		GUIHelper.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+		      public void uncaughtException(Thread t, Throwable e) {
+		    	  SecoPlugin.getDefault().nicheLocation = null;	
+					PluginU.showError(e.toString());
+					show_or_update_view();
+					throw new RuntimeException(e);
+			  }
+		    });
 	}
 
 	/*
@@ -102,6 +113,11 @@ public class SecoPlugin extends AbstractUIPlugin {
 		if (nicheLocation != null)
 			closeNiche();
 		this.nicheLocation = _nicheLocation;
+		show_or_update_view();
+	}
+	
+	private void show_or_update_view()
+	{
 		SecoView view = PluginU.getSecoView();
 		if (view != null)
 			view.update();
@@ -176,4 +192,13 @@ public class SecoPlugin extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
+	
+//	public static class ExceptionHandler { 
+//		public void handle(Throwable ex)
+//		{
+//			SecoPlugin.getDefault().nicheLocation = null;	
+//			PluginU.showError(ex.toString());
+//			throw new RuntimeException(ex);
+//		}
+//	} 
 }

@@ -122,7 +122,8 @@ public class SecoView extends ViewPart
                     }
                 };
         }
-        
+       
+        parent.pack(true);
         parent.layout();
     }
 
