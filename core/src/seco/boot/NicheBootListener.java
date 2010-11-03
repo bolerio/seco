@@ -66,7 +66,7 @@ public class NicheBootListener implements HGListener
                       f.setVisible(true);
                    ConnectionManager.startConnections();
                 }
-            	Thread.currentThread().setUncaughtExceptionHandler(new SecoUncaughtExceptionHandler());                
+            	Thread.currentThread().setUncaughtExceptionHandler(GUIHelper.getUncaughtExceptionHandler());                
             }
         });
         return Result.ok;

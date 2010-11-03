@@ -109,6 +109,9 @@ public class GUIHelper
     // default rectangle used for adding containers
     public static Rectangle CONTAINER_RECT = new Rectangle(20, 70, 300, 300);
 
+    private static Thread.UncaughtExceptionHandler uncaughtExceptionHandler = new SecoUncaughtExceptionHandler();
+
+  
     static
     {
         PlasticLookAndFeel.setPlasticTheme(new DesertBluer());
@@ -119,6 +122,17 @@ public class GUIHelper
         catch (Exception e)
         {
         }
+    }
+    
+    public static Thread.UncaughtExceptionHandler getUncaughtExceptionHandler()
+    {
+        return uncaughtExceptionHandler;
+    }
+
+    public static void setUncaughtExceptionHandler(
+            Thread.UncaughtExceptionHandler uncaughtExceptionHandler)
+    {
+        GUIHelper.uncaughtExceptionHandler = uncaughtExceptionHandler;
     }
 
     // public static final String ANOTHER_ICON = "ANOTHER_ICON";
@@ -205,7 +219,7 @@ public class GUIHelper
     public static Component getOutputConsole()
     {
         JScrollPane pane = (JScrollPane) ThisNiche.graph
-                   .get(GUIHelper.OUTPUT_CONSOLE_HANDLE);
+                .get(GUIHelper.OUTPUT_CONSOLE_HANDLE);
         if (pane != null) return pane.getViewport().getView();
         pane = new JScrollPane(new OutputConsole());
         ThisNiche.graph.define(GUIHelper.OUTPUT_CONSOLE_HANDLE, pane);
@@ -227,8 +241,9 @@ public class GUIHelper
         }
         else
         {
-            PSwingNode n = ThisNiche.getCanvas().getPSwingNodeForHandle(existingH);
-            if(n!= null) n.blink();
+            PSwingNode n = ThisNiche.getCanvas().getPSwingNodeForHandle(
+                    existingH);
+            if (n != null) n.blink();
         }
     }
 
@@ -481,12 +496,12 @@ public class GUIHelper
             openParseTree();
         }
     }
-    
+
     public static class ShowOutputConsoleAction implements ActionListener
     {
         public void actionPerformed(ActionEvent evt)
         {
-           GUIHelper.showOutputConsole();
+            GUIHelper.showOutputConsole();
         }
     }
 
@@ -668,7 +683,7 @@ public class GUIHelper
                     new DefaultLayoutHandler(new DRect(new DValue(/* 280 */33,
                             true), new DValue(28), new DValue(67, true),
                             new DValue(28)), RefPoint.TOP_LEFT), null, 2);
-   }
+    }
 
     public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
             HGHandle visualH, LayoutHandler lh, Rectangle r,

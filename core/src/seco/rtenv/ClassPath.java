@@ -7,10 +7,9 @@
  */
 package seco.rtenv;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.net.URLClassLoader;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.HashSet;
 
 public class ClassPath extends HashSet<ClassPathEntry>
 {

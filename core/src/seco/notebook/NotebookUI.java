@@ -353,6 +353,8 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             JMenu menu = new JMenu("Paste As");
             menu.add(new JMenuItem(
                     NotebookTransferHandler.javaStringPasteAction));
+            menu.add(new JMenuItem(
+                    NotebookTransferHandler.runnablePasteAction));
             popupMenu.add(menu);
             // popupMenu.addSeparator();
             // mi = new JMenuItem(kit.getActionByName(

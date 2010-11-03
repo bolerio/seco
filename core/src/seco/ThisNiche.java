@@ -12,24 +12,21 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.swing.JFrame;
-
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 import org.hypergraphdb.query.And;
 import org.hypergraphdb.query.AtomTypeCondition;
 import org.hypergraphdb.query.LinkCondition;
-import static org.hypergraphdb.HGQuery.hg;
+
 import seco.boot.NicheManager;
 import seco.classloader.AdaptiveClassLoader;
 import seco.gui.GUIController;
 import seco.gui.PiccoloCanvas;
 import seco.gui.PiccoloFrame;
-import seco.gui.StandaloneFrame;
 import seco.rtenv.ContextLink;
 import seco.rtenv.EvaluationContext;
 import seco.rtenv.SEDescriptor;
@@ -55,6 +52,7 @@ public final class ThisNiche
             .makeHandle("f00a2f20-e177-11dd-ad8b-0800200c9a66");
    // public static final HGPersistentHandle TABBED_PANE_GROUP_HANDLE = HGHandleFactory
    //         .makeHandle("7b01b680-e186-11dd-ad8b-0800200c9a66");
+    
 
     // we assume for now that an entity can only belong to a single context
     // this obviously doesn't make much sense "philosophically" ;)

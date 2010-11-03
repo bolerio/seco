@@ -172,10 +172,8 @@ public class NotebookTransferHandler extends TransferHandler
         return imported;
     }
 
-    public boolean importJavaStringData(JComponent comp, Transferable t,
-            boolean keep_newlines)
+    public boolean handlePaste(PasteableAction action, NotebookUI c, Transferable t)
     {
-        NotebookUI c = (NotebookUI) comp;
         // Don't drop on myself.
         if ((c == exportComp && c.getCaretPosition() >= p0 && c
                 .getCaretPosition() <= p1))
@@ -199,8 +197,7 @@ public class NotebookTransferHandler extends TransferHandler
                 shouldRemove = false;
                 return true;
             }
-            handleJavaStringImport((String) t.getTransferData(importFlavor), c,
-                    keep_newlines);
+            action.doPaste(c, (String) t.getTransferData(importFlavor));
             imported = true;
         }
         catch (UnsupportedFlavorException ufe)
@@ -217,53 +214,7 @@ public class NotebookTransferHandler extends TransferHandler
         }
         return imported;
     }
-
-    protected void handleJavaStringImport(String s, JTextComponent c,
-            boolean keep_newlines) throws BadLocationException
-    {
-        String tab = Utilities.getTabSubstitute();
-        StringBuffer sbuff = new StringBuffer(s);
-        StringBuffer out = new StringBuffer();
-        out.append("\"");
-        for (int i = 0; i < sbuff.length(); i++)
-        {
-            char ch = sbuff.charAt(i);
-            if (ch == '\n')
-            {
-                if (i != sbuff.length() - 1)
-                {
-
-                    if (keep_newlines)
-                    {
-                        out.append("\\n");
-                        out.append("\"+ \"");
-                    }
-                    else
-                        // not very clear if the \n should be considered as
-                        // a whitespace, but...
-                        out.append(' ');
-                }
-            }
-            else if (ch == '"') // || ch == '\'')
-            { // don't escape already escaped one
-                if ((i > 0 && sbuff.charAt(i - 1) != '\\') || i == 0)
-                    out.append('\\');
-                out.append(ch);
-            }
-            else if (ch == '\r') continue;
-            else if (ch == '\t') out.append(tab);
-            else
-                out.append(ch);
-        }
-        out.append("\"");
-        int start = c.getSelectionStart();
-        int end = c.getSelectionEnd();
-        int length = end - start;
-        Document doc = c.getDocument();
-        if (length > 0) doc.remove(start, length);
-        doc.insertString(start, out.toString(), null);
-    }
-
+    
     public boolean canImport(JComponent comp, DataFlavor[] flavors)
     {
         JTextComponent c = (JTextComponent) comp;
@@ -296,6 +247,14 @@ public class NotebookTransferHandler extends TransferHandler
             }
         }
         exportDone(comp, null, NONE);
+    }
+    
+    @Override
+    public void exportAsDrag(JComponent comp, InputEvent e, int action)
+    {
+        // System.out.println("exportAsDrag: " + (action == MOVE) + ":" + e);
+        shouldRemove = true;
+        super.exportAsDrag(comp, e, action);
     }
 
     /**
@@ -417,10 +376,37 @@ public class NotebookTransferHandler extends TransferHandler
     }
 
     public static JavaStringPasteAction javaStringPasteAction = new JavaStringPasteAction();
-
-    public static class JavaStringPasteAction extends TextAction implements
-            UIResource
+    public static RunnablePasteAction runnablePasteAction = new RunnablePasteAction();
+    
+    public abstract static class PasteableAction extends TextAction
     {
+        public PasteableAction(String name)
+        {
+            super(name);
+            // Will cause the system clipboard state to be updated.
+            canAccessSystemClipboard = true;
+            canAccessSystemClipboard();
+        }
+        
+        public void actionPerformed(ActionEvent e)
+        {
+            JTextComponent ui = getTextComponent(e);
+            if(!(ui instanceof NotebookUI)) return;
+            NotebookTransferHandler th = (NotebookTransferHandler) ui
+                    .getTransferHandler();
+            Clipboard clipboard = getClipboard(ui);
+            Transferable trans = clipboard.getContents(null);
+            if (trans != null) 
+                th.handlePaste(this, (NotebookUI) ui, trans); 
+        }
+        
+        abstract void doPaste(NotebookUI c, String s) throws BadLocationException;
+         
+    }
+    
+    public static class JavaStringPasteAction extends PasteableAction
+    {
+        boolean keep_newlines = true;
         public JavaStringPasteAction()
         {
             this("Java String");
@@ -429,86 +415,140 @@ public class NotebookTransferHandler extends TransferHandler
         JavaStringPasteAction(String name)
         {
             super(name);
-            // Will cause the system clipboard state to be updated.
-            canAccessSystemClipboard = true;
-            canAccessSystemClipboard();
         }
 
-        public void actionPerformed(ActionEvent e)
+        void doPaste(NotebookUI c, String s) throws BadLocationException
         {
-            JTextComponent ui = getTextComponent(e);
-            NotebookTransferHandler th = (NotebookTransferHandler) ui
-                    .getTransferHandler();
-            Clipboard clipboard = getClipboard(ui);
-            Transferable trans = clipboard.getContents(null);
-            if (trans != null) th.importJavaStringData(ui, trans, true);
-        }
-
-        private Clipboard getClipboard(JComponent c)
-        {
-            if (canAccessSystemClipboard()) { return c.getToolkit()
-                    .getSystemClipboard(); }
-            Clipboard clipboard = (Clipboard) sun.awt.AppContext
-                    .getAppContext().get(SandboxClipboardKey);
-            if (clipboard == null)
+            String tab = Utilities.getTabSubstitute();
+            StringBuffer sbuff = new StringBuffer(s);
+            StringBuffer out = new StringBuffer();
+            out.append("\"");
+            for (int i = 0; i < sbuff.length(); i++)
             {
-                clipboard = new Clipboard("Sandboxed Component Clipboard");
-                sun.awt.AppContext.getAppContext().put(SandboxClipboardKey,
-                        clipboard);
+                char ch = sbuff.charAt(i);
+                if (ch == '\n')
+                {
+                    if (i != sbuff.length() - 1)
+                    {
+
+                        if (keep_newlines)
+                        {
+                            out.append("\\n");
+                            out.append("\"+ \"");
+                        }
+                        else
+                            // not very clear if the \n should be considered as
+                            // a whitespace, but...
+                            out.append(' ');
+                    }
+                }
+                else if (ch == '"') // || ch == '\'')
+                { // don't escape already escaped one
+                    if ((i > 0 && sbuff.charAt(i - 1) != '\\') || i == 0)
+                        out.append('\\');
+                    out.append(ch);
+                }
+                else if (ch == '\r') continue;
+                else if (ch == '\t') out.append(tab);
+                else
+                    out.append(ch);
             }
-            return clipboard;
+            out.append("\"");
+            int start = c.getSelectionStart();
+            int end = c.getSelectionEnd();
+            int length = end - start;
+            Document doc = c.getDocument();
+            if (length > 0) doc.remove(start, length);
+            doc.insertString(start, out.toString(), null);
+        } 
+    }
+    
+    public static class RunnablePasteAction extends PasteableAction
+    {
+        boolean keep_newlines = true;
+        public RunnablePasteAction()
+        {
+            this("Runnable");
         }
 
-        /**
-         * Returns true if it is safe to access the system Clipboard. If the
-         * environment is headless or the security manager does not allow access
-         * to the system clipboard, a private clipboard is used.
-         */
-        private boolean canAccessSystemClipboard()
+        RunnablePasteAction(String name)
         {
-            if (canAccessSystemClipboard)
+            super(name);
+        }
+
+        void doPaste(NotebookUI c, String s) throws BadLocationException
+        {
+            StringBuffer out = new StringBuffer();
+            out.append("r = new Runnable() { public void run() {");
+            out.append(s);
+            out.append("  }};");
+            
+            int start = c.getSelectionStart();
+            int end = c.getSelectionEnd();
+            int length = end - start;
+            Document doc = c.getDocument();
+            if (length > 0) doc.remove(start, length);
+            doc.insertString(start, out.toString(), null);
+        } 
+    }
+
+    
+    private static Clipboard getClipboard(JComponent c)
+    {
+        if (canAccessSystemClipboard()) { return c.getToolkit()
+                .getSystemClipboard(); }
+        Clipboard clipboard = (Clipboard) sun.awt.AppContext
+                .getAppContext().get(SandboxClipboardKey);
+        if (clipboard == null)
+        {
+            clipboard = new Clipboard("Sandboxed Component Clipboard");
+            sun.awt.AppContext.getAppContext().put(SandboxClipboardKey,
+                    clipboard);
+        }
+        return clipboard;
+    }
+
+    /**
+     * Returns true if it is safe to access the system Clipboard. If the
+     * environment is headless or the security manager does not allow access
+     * to the system clipboard, a private clipboard is used.
+     */
+    private static boolean canAccessSystemClipboard()
+    {
+        if (canAccessSystemClipboard)
+        {
+            if (GraphicsEnvironment.isHeadless())
             {
-                if (GraphicsEnvironment.isHeadless())
+                canAccessSystemClipboard = false;
+                return false;
+            }
+            SecurityManager sm = System.getSecurityManager();
+            if (sm != null)
+            {
+                try
+                {
+                    sm.checkSystemClipboardAccess();
+                    return true;
+                }
+                catch (SecurityException se)
                 {
                     canAccessSystemClipboard = false;
                     return false;
                 }
-                SecurityManager sm = System.getSecurityManager();
-                if (sm != null)
-                {
-                    try
-                    {
-                        sm.checkSystemClipboardAccess();
-                        return true;
-                    }
-                    catch (SecurityException se)
-                    {
-                        canAccessSystemClipboard = false;
-                        return false;
-                    }
-                }
-                return true;
             }
-            return false;
+            return true;
         }
-
-        /**
-         * Indicates if it is safe to access the system clipboard. Once false,
-         * access will never be checked again.
-         */
-        private boolean canAccessSystemClipboard;
-        /**
-         * Key used in app context to lookup Clipboard to use if access to
-         * System clipboard is denied.
-         */
-        private static Object SandboxClipboardKey = new Object();
+        return false;
     }
 
-    @Override
-    public void exportAsDrag(JComponent comp, InputEvent e, int action)
-    {
-        // System.out.println("exportAsDrag: " + (action == MOVE) + ":" + e);
-        shouldRemove = true;
-        super.exportAsDrag(comp, e, action);
-    }
+    /**
+     * Indicates if it is safe to access the system clipboard. Once false,
+     * access will never be checked again.
+     */
+    private static boolean canAccessSystemClipboard;
+    /**
+     * Key used in app context to lookup Clipboard to use if access to
+     * System clipboard is denied.
+     */
+    private static Object SandboxClipboardKey = new Object();
 }
