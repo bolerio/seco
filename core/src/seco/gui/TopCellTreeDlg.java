@@ -31,14 +31,12 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
 import seco.boot.NicheBootListener;
 import seco.events.EventPubSub;
 import seco.notebook.gui.GUIUtilities;
-import seco.notebook.gui.OpenBookPanel;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -47,6 +45,7 @@ import seco.things.Scriptlet;
 
 public class TopCellTreeDlg extends JDialog
 {
+    private static final long serialVersionUID = -2464307372040778437L;
     protected CellGroupMember top;
     protected JTextArea output;
 
@@ -145,6 +144,8 @@ public class TopCellTreeDlg extends JDialog
 
     private class NotebookCellsTree extends JTree
     {
+        private static final long serialVersionUID = 4796662500258622613L;
+
         NotebookCellsTree()
         {
             addMouseListener(new MouseAdapter() {
@@ -170,12 +171,13 @@ public class TopCellTreeDlg extends JDialog
         private JPopupMenu makePopupMenu()
         {
             final CellGroupMember cgm = (CellGroupMember) getLastSelectedPathComponent();
-            TreePath selPath = getSelectionModel().getSelectionPath();
-            CellGroupMember par = null;
-            if (selPath != null && selPath.getParentPath() != null) par = (CellGroupMember) selPath
-                    .getParentPath().getLastPathComponent();
-            else
-                par = null;
+//            TreePath selPath = getSelectionModel().getSelectionPath();
+//            CellGroupMember par = null;
+//            if (selPath != null && selPath.getParentPath() != null) 
+//                par = (CellGroupMember) selPath
+//                    .getParentPath().getLastPathComponent();
+//            else
+//                par = null;
             JPopupMenu popup = new JPopupMenu();
             if (cgm instanceof Cell)
             {
@@ -319,6 +321,7 @@ public class TopCellTreeDlg extends JDialog
 
     private class EventPubSubsPanel extends JPanel
     {
+        private static final long serialVersionUID = 8356557825207310120L;
         private JList list;
         private List<EventPubSub> docs = null;
 
@@ -422,6 +425,7 @@ public class TopCellTreeDlg extends JDialog
 
     class RemoveAttribsPanel extends JPanel
     {
+        private static final long serialVersionUID = -6773439283916037035L;
         private JList list;
         private CellGroupMember cgm;
 

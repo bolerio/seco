@@ -544,20 +544,23 @@ public class GUIHelper
         JMenu menu = new PiccoloMenu("Runtime");
         menu.setMnemonic('r');
         String lang = "jscheme";
-        String code = "(load \"jscheme/scribaui.scm\")\n(.show (edit-context-dialog #null (RuntimeContext.)))";
-        ScriptletAction a = new ScriptletAction(lang, code);
+        //String code = "(load \"jscheme/scribaui.scm\")\n(.show (edit-context-dialog #null (RuntimeContext.)))";
+        String code = "new seco.gui.rtctx.NewRuntimeContextDialog().setVisible(true);";
+        ScriptletAction a = new ScriptletAction(code); //new ScriptletAction(lang, code);
         JMenuItem mi = new JMenuItem(a);
         mi.setText("New Context");
         menu.add(mi);
 
-        code = "(load \"jscheme/scribaui.scm\")\n(.show (edit-context-dialog ThisNiche.TOP_CONTEXT_HANDLE$ (.get niche ThisNiche.TOP_CONTEXT_HANDLE$))))";
-        a = new ScriptletAction(lang, code);
+        code ="new seco.gui.rtctx.EditRuntimeContextDialog( ThisNiche.graph.get(ThisNiche.TOP_CONTEXT_HANDLE)).setVisible(true)"; 
+            //"(load \"jscheme/scribaui.scm\")\n(.show (edit-context-dialog ThisNiche.TOP_CONTEXT_HANDLE$ (.get niche ThisNiche.TOP_CONTEXT_HANDLE$))))";
+        a = new ScriptletAction(code);//new ScriptletAction(lang, code);
         mi = new JMenuItem(a);
         mi.setText("Configure Current");
         menu.add(mi);
 
-        code = "(load \"jscheme/scribaui.scm\")\n(.show (manage-contexts-dialog))";
-        a = new ScriptletAction(lang, code);
+        code = "new seco.gui.rtctx.ManageRuntimeContextDialog().setVisible(true)";
+        //"(load \"jscheme/scribaui.scm\")\n(.show (manage-contexts-dialog))";
+        a = new ScriptletAction(code);//new ScriptletAction(lang, code);
         mi = new JMenuItem(a);
         mi.setText("Manage Contexts");
         menu.add(mi);
