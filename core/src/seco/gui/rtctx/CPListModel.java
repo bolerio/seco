@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.gui;
+package seco.gui.rtctx;
 
 import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
