@@ -11,10 +11,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 
 import seco.ThisNiche;
@@ -39,8 +39,7 @@ public class CellGroupPropsProvider extends CellPropsProvider
         // final NotebookDocument doc = nbui.getDoc();
         final Element el = nbui.getSelectedGroupElement();
         boolean enabled = (el != null);
-        final CellGroupMember nb = (enabled) ? NotebookDocument
-                .getNBElement(el) : null;
+        final CellGroupMember nb = (enabled) ? NotebookDocument.getNBElement(el) : null;
         JCheckBoxMenuItem initCellCheck = new JCheckBoxMenuItem("Init Group");
         initCellCheck.setEnabled(enabled);
         if (enabled)
@@ -49,8 +48,7 @@ public class CellGroupPropsProvider extends CellPropsProvider
             initCellCheck.addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent e)
                 {
-                    // doc.toggleInitCell(el.getStartOffset(), false);
-                    CellUtils.toggleAttribute(nb, XMLConstants.ATTR_INIT_CELL);
+                   CellUtils.toggleAttribute(nb, XMLConstants.ATTR_INIT_CELL);
                 }
             });
         }

@@ -961,6 +961,8 @@ public class GUIHelper
         menu.add(new EnhancedMenu("Visual Properties", new VisPropsProvider()));
         menu.add(new GlobMenuItem(man
                 .getAction(NotebookEditorKit.shortcutInspectorAction)));
+        menu.add(new GlobMenuItem(man
+                .getAction(NotebookEditorKit.abbreviationManagerAction)));
         Action act = kit.getActionByName(NotebookEditorKit.formatAction);
         if (act != null)
         {

@@ -429,7 +429,7 @@ public class IOUtils
 
     private static String writeCell(Cell gr, int depth)
     {
-        //TODO: deal wit output cells
+        //TODO: deal with output cells
         if(!CellUtils.isInputCell(gr))return "";
         String s = XMLConstants.makeIndent(depth) + "<" + XMLConstants.CELL;
          if (CellUtils.isInitCell(gr))

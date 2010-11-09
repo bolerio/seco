@@ -222,23 +222,19 @@ CaretListener, KeyListener, FocusListener, ListSelectionListener, ChangeListener
     public void insertUpdate(DocumentEvent e, ScriptSupport sup) {
        
     	// Ignore insertions done outside of the AWT (various content generation)
-        //???if (!SwingUtilities.isEventDispatchThread()) {
-        //    return;
-       // }
+        if (!SwingUtilities.isEventDispatchThread()) {
+            return;
+        }
               
         stateChanged(null);
         activeProviders = sup.getCompletionProviders();
         if (activeProviders != null) {
             try {
                 modEndOffset = e.getOffset() + e.getLength();
-                //System.out.println("Completion - insertUpdate()1: " + 
-                //		getActiveComponent().getCaretPosition() + ":" + modEndOffset +
-                //		":" + e.getOffset() + ":" + e.getLength());
                 if (getActiveComponent() == null || getActiveComponent().getCaretPosition() != e.getOffset()+1)
                     return;
 
                 String typedText = e.getDocument().getText(e.getOffset(), e.getLength());
-                //System.out.println("Completion - insertUpdate(): " + typedText);
                 for (int i = 0; i < activeProviders.length; i++) {
                     int type = activeProviders[i].getAutoQueryTypes(getActiveComponent(), typedText);
                     boolean completionResultNull;

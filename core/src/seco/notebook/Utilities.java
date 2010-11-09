@@ -513,10 +513,8 @@ public class Utilities
 	public static int getFirstNonWhiteBwd(NotebookDocument doc, int offset,
 			int limitPos) throws BadLocationException
 	{
-		// TODO:???
-		return offset - 1;// doc.find(new
-							// FinderFactory.NonWhiteBwdFinder(doc), offset,
-							// limitPos);
+		return find(doc, new FinderFactory.NonWhiteBwdFinder(doc), offset,
+							 limitPos);
 	}
 
 	/**

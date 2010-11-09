@@ -1,9 +1,9 @@
 /*
- * This file is part of the Scriba source distribution. This is free, open-source 
+ * This file is part of the Seco source distribution. This is free, open-source 
  * software. For full licensing information, please see the LicensingInformation file
  * at the root level of the distribution.
  *
- * Copyright (c) 2006-2007 Kobrix Software, Inc.
+ * Copyright (c) 2006-2010 Kobrix Software, Inc.
  */
 package seco.notebook.gui.menu;
 
@@ -32,7 +32,6 @@ import seco.things.CellUtils;
 
 public class CellPropsProvider implements DynamicMenuProvider
 {
-    
    private static final long serialVersionUID = 8668523086705739697L;
 
    public void update(final JMenu menu)
@@ -132,7 +131,6 @@ public class CellPropsProvider implements DynamicMenuProvider
                             .handleOf(nb));
                     for (HGHandle h : outs)
                         ThisNiche.graph.remove(h, true);
-
                 }
             });
             menu.add(mi);

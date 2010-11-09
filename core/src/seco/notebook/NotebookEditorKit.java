@@ -53,6 +53,7 @@ import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
+import seco.gui.AbbreviationPanel;
 import seco.gui.GUIHelper;
 import seco.gui.ObjectInspector;
 import seco.notebook.gui.DialogDescriptor;
@@ -119,6 +120,7 @@ public class NotebookEditorKit extends StyledEditorKit
     public static final String javaDocManagerAction = "JavaDoc Manager";
     public static final String ctxInspectorAction = "RuntimeContext Inspector";
     public static final String shortcutInspectorAction = "KeyStroke Inspector";
+    public static final String abbreviationManagerAction = "AbbreviationManager";
     public static final String replaceAction = "Replace...";
     public static final String findAction = "Find...";
     public static final String mergeCellsAction = "Merge Input Cells";
@@ -146,8 +148,8 @@ public class NotebookEditorKit extends StyledEditorKit
             new SelectWordAction(), new SelectLineAction(),
             new VerticalPageAction(pageUpAction, -1, false),
             new VerticalPageAction(pageDownAction, 1, false),
-            new AddRemoveCommentsAction(), new OpenObjectInspectorAction()
-    };
+            new AddRemoveCommentsAction(), new OpenObjectInspectorAction(),
+            new AbbreviationManagerAction() };
     private static HashMap<String, Action> actions;
 
     /** Creates a new instance of NotebookEditorKit */
@@ -202,7 +204,7 @@ public class NotebookEditorKit extends StyledEditorKit
 
         doc = new NotebookDocument(ThisNiche.graph.add(DEFAULT_TOP_GROUP),
                 ThisNiche.getTopContext());
-        //System.out.println("Adding DOC: " + DEFAULT_TOP_GROUP);
+        // System.out.println("Adding DOC: " + DEFAULT_TOP_GROUP);
         ThisNiche.graph.define(DOC_HANDLE, doc);
         doc.init();
         return doc;
@@ -334,8 +336,9 @@ public class NotebookEditorKit extends StyledEditorKit
                     names[i] = classes[i].getName();
                 JList list = new JList(names);
                 list.setPreferredSize(new Dimension(200, 100));
-                DialogDescriptor dd = new DialogDescriptor(GUIUtilities
-                        .getFrame(ui), list, "Select the class to import");
+                DialogDescriptor dd = new DialogDescriptor(
+                        GUIUtilities.getFrame(ui), list,
+                        "Select the class to import");
                 if (DialogDisplayer.getDefault().notify(dd) != NotifyDescriptor.OK_OPTION)
                     return;
                 res = (String) list.getSelectedValue();
@@ -379,9 +382,9 @@ public class NotebookEditorKit extends StyledEditorKit
                     processCellGroup(doc, (CellGroup) m);
             }
             if (rem.size() == 0) return;
-            CellGroupChangeEvent e = new CellGroupChangeEvent(ThisNiche
-                    .handleOf(g), -1, new HGHandle[0], rem
-                    .toArray(new HGHandle[rem.size()]));
+            CellGroupChangeEvent e = new CellGroupChangeEvent(
+                    ThisNiche.handleOf(g), -1, new HGHandle[0],
+                    rem.toArray(new HGHandle[rem.size()]));
             // g.batchProcess(e);
             doc.fireCellGroupChanged(e);
         }
@@ -672,8 +675,8 @@ public class NotebookEditorKit extends StyledEditorKit
                 int cc_pos = -1;
                 if (dot != mark)
                 {
-                    cc_pos = doc.removeEx(Math.min(dot, mark), Math.abs(dot
-                            - mark));
+                    cc_pos = doc.removeEx(Math.min(dot, mark),
+                            Math.abs(dot - mark));
                 }
                 else if (dot < doc.getLength())
                 {
@@ -746,8 +749,8 @@ public class NotebookEditorKit extends StyledEditorKit
         protected void action(NotebookUI ui) throws Exception
         {
             int count = Utilities.getTabSpacesCount();
-            int[] offs = Utilities.getSelectionStartOffsets(ui, Utilities
-                    .getTabSubstitute());
+            int[] offs = Utilities.getSelectionStartOffsets(ui,
+                    Utilities.getTabSubstitute());
             if (offs == null) return;
             NotebookDocument doc = ui.getDoc();
             try
@@ -831,8 +834,9 @@ public class NotebookEditorKit extends StyledEditorKit
                     Element el = ((NotebookDocument) editor.getDocument())
                             .getEnclosingCellElement(editor.getCaretPosition());
                     if (el != null)
-                        CellUtils.toggleAttribute(NotebookDocument
-                                .getNBElement(el), XMLConstants.ATTR_HTML);
+                        CellUtils.toggleAttribute(
+                                NotebookDocument.getNBElement(el),
+                                XMLConstants.ATTR_HTML);
                 }
                 else if (editor instanceof HtmlView.InnerHTMLEditor)
                 {
@@ -949,6 +953,23 @@ public class NotebookEditorKit extends StyledEditorKit
         }
     }
 
+    public static final class AbbreviationManagerAction extends AbstractAction
+    {
+        public AbbreviationManagerAction()
+        {
+            super(abbreviationManagerAction);
+        }
+
+        public void actionPerformed(ActionEvent e)
+        {
+            AbbreviationPanel p = new AbbreviationPanel();
+            DialogDescriptor dd = new DialogDescriptor(
+                    GUIUtilities.getFrame((Component) e.getSource()), p,
+                    "Abbreviation Manager");
+            DialogDisplayer.getDefault().notify(dd);
+        }
+    }
+
     public static class FindReplaceAction extends BaseAction
     {
         private static final long serialVersionUID = -5658596134377861525L;
@@ -987,8 +1008,8 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             this.findOrReplace = findOrReplace;
             putValue(Action.NAME, (findOrReplace) ? findAction : replaceAction);
-            putValue(Action.SMALL_ICON, IconManager
-                    .resolveIcon((findOrReplace) ? "Find16.gif"
+            putValue(Action.SMALL_ICON,
+                    IconManager.resolveIcon((findOrReplace) ? "Find16.gif"
                             : "Replace16.gif"));
         }
     }
@@ -1274,8 +1295,10 @@ public class NotebookEditorKit extends StyledEditorKit
         public OpenObjectInspectorAction()
         {
             super(openObjectInspectorAction);
-            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_I,
-                    InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
+            putValue(
+                    ACCELERATOR_KEY,
+                    KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.SHIFT_MASK
+                            | InputEvent.CTRL_MASK));
         }
 
         protected void action(final NotebookUI ui) throws Exception
@@ -1284,8 +1307,11 @@ public class NotebookEditorKit extends StyledEditorKit
             {
                 if (ui.getSelectionStart() != ui.getSelectionEnd())
                 {
-                    open(ui, ui.getDoc().getText(ui.getSelectionStart(),
-                            ui.getSelectionEnd() - ui.getSelectionStart()));
+                    open(ui,
+                            ui.getDoc().getText(
+                                    ui.getSelectionStart(),
+                                    ui.getSelectionEnd()
+                                            - ui.getSelectionStart()));
                     return;
                 }
                 int offs = ui.getCaretPosition();
@@ -1307,9 +1333,9 @@ public class NotebookEditorKit extends StyledEditorKit
             Object value = binds.get(var);
             if (value == null) return;
             ObjectInspector propsPanel = new ObjectInspector(value);
-            DialogDescriptor dd = new DialogDescriptor(ThisNiche.guiController
-                    .getFrame(), new JScrollPane(propsPanel),
-                    "" + var + " -> " 
+            DialogDescriptor dd = new DialogDescriptor(
+                    ThisNiche.guiController.getFrame(), new JScrollPane(
+                            propsPanel), "" + var + " -> "
                             + value.getClass().getName());
             DialogDisplayer.getDefault().notify(dd);
         }

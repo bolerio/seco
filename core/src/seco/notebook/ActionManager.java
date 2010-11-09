@@ -179,6 +179,8 @@ public class ActionManager
         //Format
         putAction(kit.getActionByName(NotebookEditorKit.shortcutInspectorAction),
                 false);
+        putAction(kit.getActionByName(NotebookEditorKit.abbreviationManagerAction),
+                false);
         // Tools
         putAction(kit.getActionByName(NotebookEditorKit.evalAction), false);
         putAction(kit.getActionByName(NotebookEditorKit.mergeCellsAction),

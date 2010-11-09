@@ -225,7 +225,7 @@ public class CellHandleView extends HidableComponentView
 					processArrowKeys(b.view, e);
 			}
 		};
-
+		
 		@Override
 		public boolean isVisible()
 		{
@@ -240,6 +240,7 @@ public class CellHandleView extends HidableComponentView
 			addMouseListener(m);
 			addMouseMotionListener(m);
 			putClientProperty("Plastic.is3D", Boolean.FALSE);
+			
 		}
 
 		private static void processArrowKeys(CellHandleView view, KeyEvent e)
