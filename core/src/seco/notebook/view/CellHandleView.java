@@ -90,7 +90,8 @@ public class CellHandleView extends HidableComponentView
 	    if (axis == Y_AXIS)
 	    {
 	       float sup = super.getPreferredSpan(axis);
-	       View prev = getParent().getView(getParent().getViewCount()- 2);
+	       View prev = (getParent().getViewCount() > 1) ? 
+	               getParent().getView(getParent().getViewCount()- 2): null;
 	       return (prev != null) ?
 	           prev.getPreferredSpan(axis) : sup;
 	       

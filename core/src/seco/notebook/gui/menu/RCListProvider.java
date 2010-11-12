@@ -31,20 +31,22 @@ import seco.things.CellGroupMember;
 public class RCListProvider implements DynamicMenuProvider
 {
     private static final long serialVersionUID = 3127888958558526166L;
-
-    private CellGroupMember owner;
+    protected boolean cellOrGroup;
     public RCListProvider()
     {
         
     }
     
-    public RCListProvider(CellGroupMember owner)
+    public RCListProvider(boolean cellOrGroup)
     {
-        this.owner = owner;
+        this.cellOrGroup = cellOrGroup;
     }
+    
+    
     
     public void update(JMenu m)
     {
+        CellGroupMember owner = null;
         if (owner == null && NotebookUI.getFocusedNotebookUI() == null) return;
         if(owner == null)
            owner = NotebookUI.getFocusedNotebookUI().getDoc().getBook();

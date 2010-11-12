@@ -8,7 +8,6 @@ import java.util.List;
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
 
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
@@ -29,8 +28,8 @@ public class ContextMenuHandler extends PBasicInputEventHandler
 
     protected JPopupMenu global_menu;
     protected JPopupMenu node_menu;
-    protected List<ScriptletAction> global_actions;
-    protected List<ScriptletAction> node_actions;
+    protected List<Action> global_actions;
+    protected List<Action> node_actions;
 
     public ContextMenuHandler()
     {
@@ -103,24 +102,23 @@ public class ContextMenuHandler extends PBasicInputEventHandler
     {
         ScriptletAction a = new ScriptletAction("beanshell", code);
         a.putValue(Action.NAME, label);
-        // return new JMenuItem(a);
         return a;
     }
 
-    private static JPopupMenu makeJPopupMenu(Collection<ScriptletAction> set)
+    private static JPopupMenu makeJPopupMenu(Collection<Action> set)
     {
         JPopupMenu menu = new JPopupMenu();
-        for (ScriptletAction a : set)
+        for (Action a : set)
             menu.add(a);
         return menu;
     }
 
-    public List<ScriptletAction> getGlobalActions()
+    public List<Action> getGlobalActions()
     {
         global_actions = ThisNiche.graph.get(GLOBAL_ACTION_SET_HANDLE);
         if (global_actions == null)
         {
-            global_actions = new ArrayList<ScriptletAction>();
+            global_actions = new ArrayList<Action>();
             init_global_actions();
             ThisNiche.graph.define(GLOBAL_ACTION_SET_HANDLE, global_actions);
         }
@@ -141,12 +139,12 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         // "seco.gui.CommonActions.testEmbededContainer();"));
     }
 
-    public List<ScriptletAction> getNodeActions()
+    public List<Action> getNodeActions()
     {
         node_actions = ThisNiche.graph.get(NODE_ACTION_SET_HANDLE);
         if (node_actions == null)
         {
-            node_actions = new ArrayList<ScriptletAction>();
+            node_actions = new ArrayList<Action>();
             init_node_actions();
             ThisNiche.graph.define(NODE_ACTION_SET_HANDLE, node_actions);
         }

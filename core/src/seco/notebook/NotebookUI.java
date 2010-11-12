@@ -32,6 +32,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
@@ -75,8 +76,10 @@ import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.handle.UUIDHandleFactory;
+import org.hypergraphdb.type.TypeUtils;
 
 import seco.ThisNiche;
+import seco.gui.CGMActionsHelper;
 import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
 import seco.gui.GUIHelper.CellTreeAction;
@@ -362,12 +365,15 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             // NotebookEditorKit.deleteSelectedElementsAction));
             popupMenu.add(mi);
             popupMenu.addSeparator();
-            popupMenu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
-            // popupMenu.addSeparator();
-            popupMenu.add(new EnhancedMenu("Cell Group",
-                    new CellGroupPropsProvider()));
-            popupMenu.add(new EnhancedMenu("Notebook",
-                    new NotebookPropsProvider()));
+            //popupMenu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
+            //popupMenu.add(new EnhancedMenu("Cell Group",
+            //        new CellGroupPropsProvider()));
+            //popupMenu.add(new EnhancedMenu("Notebook",
+            //        new NotebookPropsProvider()));
+            popupMenu.add(CGMActionsHelper.getCellMenu());
+            popupMenu.add(CGMActionsHelper.getCellGroupMenu());
+            popupMenu.add(CGMActionsHelper.getNotebookMenu());
+            
             popupMenu.addSeparator();
             popupMenu.add(new EnhancedMenu("Grouping", new GroupingProvider()));
             popupMenu.addSeparator();
@@ -380,6 +386,17 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             mi = new JMenuItem("View Parse Tree");
             mi.addActionListener(new ParseTreeAction());
             popupMenu.add(mi);
+            
+//            HGHandle typeHandle = ThisNiche.graph.getTypeSystem().getTypeHandle(Serializable.class);
+//            try{
+//                 ThisNiche.graph.remove(ThisNiche.graph.getTypeSystem().getTypeHandle(JComponent.class));
+//                //TypeUtils.deleteType(ThisNiche.graph, ThisNiche.graph.getTypeSystem().getTypeHandle(JComponent.class), true);
+//                TypeUtils.deleteType(ThisNiche.graph, typeHandle, true);
+//            }catch(Throwable t)
+//            {
+//                t.printStackTrace();
+//                //TypeUtils.deleteType(ThisNiche.graph, typeHandle);
+//            }
 
             ThisNiche.graph.define(POPUP_HANDLE, popupMenu);
         }

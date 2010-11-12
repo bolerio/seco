@@ -36,7 +36,6 @@ public class CellGroupPropsProvider extends CellPropsProvider
 
     protected void _update(JMenu menu, final NotebookUI nbui, final int off)
     {
-        // final NotebookDocument doc = nbui.getDoc();
         final Element el = nbui.getSelectedGroupElement();
         boolean enabled = (el != null);
         final CellGroupMember nb = (enabled) ? NotebookDocument.getNBElement(el) : null;
@@ -80,7 +79,7 @@ public class CellGroupPropsProvider extends CellPropsProvider
             menu.add(m);
             
             menu.add(new EnhancedMenu("Set Runtime Context",
-                    new RCListProvider(nb)));
+                    new RCListProvider()));
             
             m = new JMenuItem("Add/Edit Description");
             m.addActionListener(new ActionListener() {

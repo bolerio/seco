@@ -101,7 +101,8 @@ public class CellPropsProvider implements DynamicMenuProvider
             outputCellCheck.addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent e)
                 {
-                    CellUtils.toggleAttribute(out, XMLConstants.ATTR_ERROR);
+                    CellUtils.setBoolAttribute(out, XMLConstants.ATTR_ERROR,
+                              e.getStateChange() == ItemEvent.SELECTED);
                 }
             });
             menu.add(outputCellCheck);
@@ -135,7 +136,7 @@ public class CellPropsProvider implements DynamicMenuProvider
             });
             menu.add(mi);
             menu.add(new EnhancedMenu("Set Runtime Context",
-                    new RCListProvider(nb)));
+                    new RCListProvider()));
             
             m = new JMenuItem("Add/Edit Description");
             m.addActionListener(new ActionListener() {
@@ -153,4 +154,5 @@ public class CellPropsProvider implements DynamicMenuProvider
         return true;
     }
 
+   
 }

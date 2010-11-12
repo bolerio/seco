@@ -29,15 +29,13 @@
 
 package seco.notebook.gui.menu;
 
-import java.io.Serializable;
-
 import javax.swing.JMenu;
 
 /**
  * Interface for a menu whose contents are determined at runtime.<p>
  *
  */
-public interface DynamicMenuProvider extends Serializable
+public interface DynamicMenuProvider //extends Serializable
 {
 	/**
 	 * Returns true if the menu should be updated each time it is shown.

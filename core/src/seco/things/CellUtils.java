@@ -315,13 +315,13 @@ public class CellUtils
         return CellUtils.getOrCreateCellHForRefH(h);
     }
 
-    public static boolean isHTML(Cell c)
+    public static boolean isHTML(CellGroupMember c)
     {
         Boolean b = (Boolean) c.getAttribute(XMLConstants.ATTR_HTML);
         return b != null && b.booleanValue();
     }
 
-    public static void setHTML(Cell c, boolean html)
+    public static void setHTML(CellGroupMember c, boolean html)
     {
         c.setAttribute(XMLConstants.ATTR_HTML, html);
     }
@@ -499,6 +499,13 @@ public class CellUtils
         Object attr = c.getAttribute(attr_name);
         boolean b = attr != null ? ((Boolean) attr).booleanValue() : false;
         c.setAttribute(attr_name, !b);
+    }
+    
+    public static void setBoolAttribute(CellGroupMember c, Object attr_name, boolean value)
+    {
+        Object attr = c.getAttribute(attr_name);
+        boolean b = attr != null ? ((Boolean) attr).booleanValue() : false;
+        if(value != b) c.setAttribute(attr_name, value);
     }
 
     public static String getText(Cell c)

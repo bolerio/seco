@@ -104,17 +104,29 @@ public class CommonActions
         ThisNiche.getCanvas().removeAllNodes();
         CellGroup group = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         CellVisual v = ThisNiche.graph.get(group.getVisual());
-        ThisNiche.graph.remove(GUIHelper.MENUBAR_HANDLE, true);
-        ThisNiche.graph.remove(GUIHelper.TOOLBAR_HANDLE, true);
-        ThisNiche.graph.remove(GUIHelper.HTML_TOOLBAR_HANDLE, true);
-        ThisNiche.graph.remove(GUIHelper.WIN_ACTIONS_HANDLE, true);
-        ThisNiche.graph.remove(NotebookUI.POPUP_HANDLE, true);
-        ThisNiche.graph.remove(ContextMenuHandler.GLOBAL_ACTION_SET_HANDLE, true);
-        ThisNiche.graph.remove(ContextMenuHandler.NODE_ACTION_SET_HANDLE, true);
-        ThisNiche.graph.remove(ActionManager.HANDLE, true);
+        
+        complete_remove(GUIHelper.MENUBAR_HANDLE);
+        complete_remove(GUIHelper.TOOLBAR_HANDLE);
+        complete_remove(GUIHelper.HTML_TOOLBAR_HANDLE);
+        complete_remove(GUIHelper.WIN_ACTIONS_HANDLE);
+        complete_remove(NotebookUI.POPUP_HANDLE);
+        complete_remove(ContextMenuHandler.GLOBAL_ACTION_SET_HANDLE);
+        complete_remove(ContextMenuHandler.NODE_ACTION_SET_HANDLE);
+        complete_remove(ActionManager.HANDLE);
                 
         GUIHelper.makeTopCellGroup();
         v.bind(group);
+    }
+    
+    private static void complete_remove(HGPersistentHandle h)
+    {
+ //       try
+ //       {
+            ThisNiche.graph.remove(h, true);
+//        }catch(Throwable t)
+//        {
+//            ThisNiche.graph.define(h, null);
+//        }
     }
     
     public static void resetZoom()

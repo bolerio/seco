@@ -30,8 +30,14 @@
 package seco.notebook.gui.menu;
 
 
-import javax.swing.event.*;
-import javax.swing.*;
+import java.awt.Component;
+
+import javax.swing.Action;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 
 
 public class EnhancedMenu extends JMenu implements MenuListener
@@ -79,7 +85,7 @@ public class EnhancedMenu extends JMenu implements MenuListener
 	{
 		SwingUtilities.invokeLater(new Runnable(){
 			public void run(){
-				init();
+				update();
 			}
 		});
 	} 
@@ -88,17 +94,32 @@ public class EnhancedMenu extends JMenu implements MenuListener
 
 	public void menuCanceled(MenuEvent e) {}
 
-	public void init()  
+	public void update()  
 	{
 		if(provider == null)
-			return;
-		
-		if(provider.updateEveryTime())
+		    updateMenuElements();
+		else if(provider.updateEveryTime())
 		{
 			removeAll(); 
 			provider.update(this);
 		}
     }
+	
+	private void updateMenuElements()
+	{
+	    int c = getComponentCount();
+        for (int i = 0; i < c; i++)
+        {
+            Component m = getComponent(i);
+            if (m instanceof JMenuItem)
+            {
+                JMenuItem mi = (JMenuItem) m;
+                Action a = mi.getAction();
+                if (a != null) 
+                    mi.setEnabled(a.isEnabled());
+            }  
+        }
+	}
 
 	public DynamicMenuProvider getProvider()
 	{
@@ -109,4 +130,6 @@ public class EnhancedMenu extends JMenu implements MenuListener
 	{
 		this.provider = provider;
 	} 
+	
+	
 }

@@ -49,7 +49,6 @@ import javax.swing.tree.TreeNode;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPersistentHandle;
-import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
@@ -610,7 +609,7 @@ public class GUIHelper
 
     public static final NotebookEditorKit kit = new NotebookEditorKit();
 
-    public static void openElementTree()
+    static void openElementTree()
     {
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
         if (ui == null) return;
@@ -624,7 +623,7 @@ public class GUIHelper
         dialog.setVisible(true);
     }
 
-    public static void openParseTree()
+    static void openParseTree()
     {
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
         if (ui == null) return;
@@ -638,7 +637,7 @@ public class GUIHelper
         dialog.setVisible(true);
     }
 
-    public static void openCellTree(CellGroupMember cell)
+    static void openCellTree(CellGroupMember cell)
     {
         JDialog dialog = new TopCellTreeDlg(cell);
         dialog.setSize(500, 800);
@@ -868,7 +867,7 @@ public class GUIHelper
         addAsBook(nbHandle);
     }
 
-    public static void openNotebook()
+    static void openNotebook()
     {
         File file = FileUtil.getFile(ThisNiche.guiController.getFrame(),
                 "Load Notebook", FileUtil.LOAD, null);
@@ -898,7 +897,7 @@ public class GUIHelper
         }
     }
 
-    public static void updateFrameTitle(HGHandle h)
+    static void updateFrameTitle(HGHandle h)
     {
         CellGroupMember book = ThisNiche.graph.get(h);
         String name = CellUtils.getName(book);
@@ -1000,9 +999,12 @@ public class GUIHelper
         GlobMenuItem mi = new GlobMenuItem("Manage Cell Descriptions");
         mi.addActionListener(new DescriptionManagerAction());
         menu.add(mi);
-        menu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
-        menu.add(new EnhancedMenu("CellGroup", new CellGroupPropsProvider()));
-        menu.add(new EnhancedMenu("Notebook", new NotebookPropsProvider()));
+//        menu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
+//        menu.add(new EnhancedMenu("CellGroup", new CellGroupPropsProvider()));
+//        menu.add(new EnhancedMenu("Notebook", new NotebookPropsProvider()));
+        menu.add(CGMActionsHelper.getCellMenu());
+        menu.add(CGMActionsHelper.getCellGroupMenu());
+        menu.add(CGMActionsHelper.getNotebookMenu());
         menu.add(new JSeparator());
         mi = new GlobMenuItem("Show Output Console");
         mi.addActionListener(new ShowOutputConsoleAction());
@@ -1040,7 +1042,7 @@ public class GUIHelper
         }
     }
 
-    public static void handleTitle(PSwingNode node)
+    static void handleTitle(PSwingNode node)
     {
         CellGroupMember cgm = ThisNiche.graph.get(node.getHandle());
         if (CellUtils.isMinimized(cgm))
