@@ -8,8 +8,6 @@ import java.util.List;
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
 
-import org.hypergraphdb.HGPersistentHandle;
-import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.notebook.ScriptletAction;
@@ -22,10 +20,6 @@ import edu.umd.cs.piccolo.event.PInputEvent;
  */
 public class ContextMenuHandler extends PBasicInputEventHandler
 {
-    public static final HGPersistentHandle GLOBAL_ACTION_SET_HANDLE = UUIDHandleFactory.I
-            .makeHandle("12231b80-7b7e-11de-8a39-0800200c9a66");
-    public static final HGPersistentHandle NODE_ACTION_SET_HANDLE = UUIDHandleFactory.I.makeHandle("1cfd4670-7b7e-11de-8a39-0800200c9a66");
-
     protected JPopupMenu global_menu;
     protected JPopupMenu node_menu;
     protected List<Action> global_actions;
@@ -37,14 +31,14 @@ public class ContextMenuHandler extends PBasicInputEventHandler
     
     static void clear()
     {
-        ThisNiche.graph.remove(GLOBAL_ACTION_SET_HANDLE);
-        ThisNiche.graph.remove(NODE_ACTION_SET_HANDLE);
+        ThisNiche.graph.remove(GUIHelper.CANVAS_GLOBAL_ACTION_SET_HANDLE);
+        ThisNiche.graph.remove(GUIHelper.CANVAS_NODE_ACTION_SET_HANDLE);
     }
 
     public void addGlobalMenuAction(ScriptletAction a)
     {
-        getGlobalActions().add(a);
-        ThisNiche.graph.update(getGlobalActions());
+        getCanvasGlobalActions().add(a);
+        ThisNiche.graph.update(getCanvasGlobalActions());
         global_menu = null;
     }
 
@@ -78,7 +72,7 @@ public class ContextMenuHandler extends PBasicInputEventHandler
     public void showGlobMenu(PInputEvent event)
     {
         if (global_menu == null)
-            global_menu = makeJPopupMenu(getGlobalActions());
+            global_menu = makeJPopupMenu(getCanvasGlobalActions());
         show_menu(event, global_menu);
     }
 
@@ -113,14 +107,14 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         return menu;
     }
 
-    public List<Action> getGlobalActions()
+    public List<Action> getCanvasGlobalActions()
     {
-        global_actions = ThisNiche.graph.get(GLOBAL_ACTION_SET_HANDLE);
+        global_actions = ThisNiche.graph.get(GUIHelper.CANVAS_GLOBAL_ACTION_SET_HANDLE);
         if (global_actions == null)
         {
             global_actions = new ArrayList<Action>();
             init_global_actions();
-            ThisNiche.graph.define(GLOBAL_ACTION_SET_HANDLE, global_actions);
+            ThisNiche.graph.define(GUIHelper.CANVAS_GLOBAL_ACTION_SET_HANDLE, global_actions);
         }
         return global_actions;
     }
@@ -141,12 +135,12 @@ public class ContextMenuHandler extends PBasicInputEventHandler
 
     public List<Action> getNodeActions()
     {
-        node_actions = ThisNiche.graph.get(NODE_ACTION_SET_HANDLE);
+        node_actions = ThisNiche.graph.get(GUIHelper.CANVAS_NODE_ACTION_SET_HANDLE);
         if (node_actions == null)
         {
             node_actions = new ArrayList<Action>();
             init_node_actions();
-            ThisNiche.graph.define(NODE_ACTION_SET_HANDLE, node_actions);
+            ThisNiche.graph.define(GUIHelper.CANVAS_NODE_ACTION_SET_HANDLE, node_actions);
         }
         return node_actions;
     }

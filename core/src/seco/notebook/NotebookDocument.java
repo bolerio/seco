@@ -1424,14 +1424,17 @@ public class NotebookDocument extends DefaultStyledDocument
         Element el = getEnclosingCellElement(offset);
         if (el == null) return;
         Cell cell = (Cell) getNBElement(el);
+        el = getUpperElement(offset, commonCell);
         try
         {
             Style attr = (CellUtils.isError(cell)) ? DocUtil.getDocStyle(this,
                     StyleType.error) : DocUtil.getDocStyle(this,
                     StyleType.outputCell);
+            //should re-apply this attribute...
+            attr.addAttribute(StyleConstants.NameAttribute, commonCell);
             writeLock();
             ((AbstractDocument.AbstractElement) el).addAttributes(attr);
-            updateElement(getWholeCellElement(offset));
+            updateElement(getUpperElement(offset, outputCellBox));
         }
         catch (Exception ex)
         {

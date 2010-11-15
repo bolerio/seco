@@ -13,6 +13,7 @@ import javax.swing.JTextArea;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.U;
@@ -109,10 +110,13 @@ public class CommonActions
         complete_remove(GUIHelper.TOOLBAR_HANDLE);
         complete_remove(GUIHelper.HTML_TOOLBAR_HANDLE);
         complete_remove(GUIHelper.WIN_ACTIONS_HANDLE);
-        complete_remove(NotebookUI.POPUP_HANDLE);
-        complete_remove(ContextMenuHandler.GLOBAL_ACTION_SET_HANDLE);
-        complete_remove(ContextMenuHandler.NODE_ACTION_SET_HANDLE);
+        complete_remove(GUIHelper.CANVAS_GLOBAL_ACTION_SET_HANDLE);
+        complete_remove(GUIHelper.CANVAS_NODE_ACTION_SET_HANDLE);
+        complete_remove(GUIHelper.CELL_MENU_HANDLE);
+        complete_remove(GUIHelper.CELL_GROUP_MENU_HANDLE); 
+        complete_remove(GUIHelper.NOTEBOOK_MENU_HANDLE);
         complete_remove(ActionManager.HANDLE);
+        complete_remove(NotebookUI.POPUP_HANDLE);
                 
         GUIHelper.makeTopCellGroup();
         v.bind(group);

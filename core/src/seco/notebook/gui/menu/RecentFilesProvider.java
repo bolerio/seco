@@ -36,11 +36,8 @@ public class RecentFilesProvider implements DynamicMenuProvider, Serializable
 {
 	private static final long serialVersionUID = 8629428510393152418L;
 	
-    //transient MouseListener mouseListener;
-	
 	public RecentFilesProvider()
 	{
-		//mouseListener = new RFMouseListener();
 	}
 	
 	public boolean updateEveryTime()
@@ -84,23 +81,7 @@ public class RecentFilesProvider implements DynamicMenuProvider, Serializable
 		            //TopFrame.getInstance().setStatusBarMessage(null);
 		        }
 		    } );
-			//menuItem.addMouseListener(mouseListener);
 			menu.add(menuItem);
 		}
     }
-	
-//	public static class RFMouseListener extends MouseAdapter
-//	{
-//		public void mouseEntered(MouseEvent evt)
-//		{
-//		    TopFrame.getInstance().setStatusBarMessage(
-//				((JMenuItem)evt.getSource())
-//				.getActionCommand());
-//		}
-//
-//		public void mouseExited(MouseEvent evt)
-//		{
-//		    TopFrame.getInstance().setStatusBarMessage(null);
-//		}
-//	} 
 }

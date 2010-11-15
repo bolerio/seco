@@ -126,7 +126,7 @@ public class NotebookEditorKit extends StyledEditorKit
     public static final String mergeCellsAction = "Merge Input Cells";
     public static final String addRemoveCommentsAction = "Comment/Uncomment";
     public static final String openObjectInspectorAction = "Inspect variable";
-
+    public static final String selectAllAction = "Select All";
     static
     {
         JEditorPane.registerEditorKitForContentType(CONTENT_TYPE,
@@ -1335,7 +1335,7 @@ public class NotebookEditorKit extends StyledEditorKit
             ObjectInspector propsPanel = new ObjectInspector(value);
             DialogDescriptor dd = new DialogDescriptor(
                     ThisNiche.guiController.getFrame(), new JScrollPane(
-                            propsPanel), "" + var + " -> "
+                            propsPanel), "ObjectInspector:" + var + " -> "
                             + value.getClass().getName());
             DialogDisplayer.getDefault().notify(dd);
         }

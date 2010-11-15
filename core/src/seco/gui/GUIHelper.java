@@ -44,7 +44,6 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-import javax.swing.text.DefaultEditorKit;
 import javax.swing.tree.TreeNode;
 
 import org.hypergraphdb.HGHandle;
@@ -69,10 +68,7 @@ import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.NotifyDescriptor;
 import seco.notebook.gui.OpenBookPanel;
 import seco.notebook.gui.ToolbarButton;
-import seco.notebook.gui.menu.CellGroupPropsProvider;
-import seco.notebook.gui.menu.CellPropsProvider;
 import seco.notebook.gui.menu.EnhancedMenu;
-import seco.notebook.gui.menu.NotebookPropsProvider;
 import seco.notebook.gui.menu.RecentFilesProvider;
 import seco.notebook.gui.menu.VisPropsProvider;
 import seco.notebook.html.HTMLToolBar;
@@ -103,14 +99,25 @@ public class GUIHelper
             .makeHandle("8724b420-963b-11de-8a39-0800200c9a66");
     public static final HGPersistentHandle OUTPUT_CONSOLE_HANDLE = UUIDHandleFactory.I
             .makeHandle("6817db80-e35a-11df-85ca-0800200c9a66");
+    public static final HGPersistentHandle CELL_MENU_HANDLE = UUIDHandleFactory.I
+            .makeHandle("b26a4220-ee65-11df-98cf-0800200c9a66");
+    public static final HGPersistentHandle CELL_GROUP_MENU_HANDLE = UUIDHandleFactory.I
+            .makeHandle("1aee3830-ee78-11df-98cf-0800200c9a66");
+    public static final HGPersistentHandle NOTEBOOK_MENU_HANDLE = UUIDHandleFactory.I
+            .makeHandle("2f844cd0-ee78-11df-98cf-0800200c9a66");
+    public static final HGPersistentHandle CANVAS_NODE_ACTION_SET_HANDLE = UUIDHandleFactory.I
+            .makeHandle("1cfd4670-7b7e-11de-8a39-0800200c9a66");
+    public static final HGPersistentHandle CANVAS_GLOBAL_ACTION_SET_HANDLE = UUIDHandleFactory.I
+            .makeHandle("12231b80-7b7e-11de-8a39-0800200c9a66");
 
     public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
     // default rectangle used for adding containers
     public static Rectangle CONTAINER_RECT = new Rectangle(20, 70, 300, 300);
+    // default size of the minimized components
+    static Dimension MINIMIZED_COMPONENT_SIZE = new Dimension(64, 64);
 
     private static Thread.UncaughtExceptionHandler uncaughtExceptionHandler = new SecoUncaughtExceptionHandler();
 
-  
     static
     {
         PlasticLookAndFeel.setPlasticTheme(new DesertBluer());
@@ -122,7 +129,7 @@ public class GUIHelper
         {
         }
     }
-    
+
     public static Thread.UncaughtExceptionHandler getUncaughtExceptionHandler()
     {
         return uncaughtExceptionHandler;
@@ -134,9 +141,34 @@ public class GUIHelper
         GUIHelper.uncaughtExceptionHandler = uncaughtExceptionHandler;
     }
 
-    // public static final String ANOTHER_ICON = "ANOTHER_ICON";
+    public static boolean showConfirmDlg(String message)
+    {
+        NotifyDescriptor d = new NotifyDescriptor.Confirmation(
+                ThisNiche.guiController.getFrame(), message,
+                NotifyDescriptor.OK_CANCEL_OPTION);
+        return DialogDisplayer.getDefault().notify(d) == NotifyDescriptor.OK_OPTION;
+    }
+
+    /**
+     * Creates and returns predefined actions displayed in icon form in the
+     * right hand side of each canvas component title bar. The default ones are:
+     * Maximize and Minimize. You could add your own ones, just make sure an
+     * icon is defined. The following example shows the beanshell code
+     * for the Maximize action: <code>
+     * 
+     * node = canvas.getSelectedPSwingNode();
+     * cgm = niche.get(node.getHandle()); 
+     * //if minimized, unminimized it first
+     * if(CellUtils.isMinimized(cgm))
+     *    CellUtils.toggleMinimized(cgm);
+     * CellUtils.toggleMaximized(cgm);
+     * </code>
+     * 
+     * @return list with the actions
+     */
     public static List<Action> getWinTitleActions()
     {
+        @SuppressWarnings("unchecked")
         List<Action> actions = (List<Action>) ThisNiche.graph
                 .get(WIN_ACTIONS_HANDLE);
         if (actions != null) return actions;
@@ -148,7 +180,6 @@ public class GUIHelper
                 + "seco.things.CellUtils.toggleMinimized(cgm);"
                 + "seco.things.CellUtils.toggleMaximized(cgm);");
         a.putValue(Action.SMALL_ICON, IconManager.resolveIcon("Maximize.gif"));
-        // a.putValue(ANOTHER_ICON, IconManager.resolveIcon("Restore.png"));
         a.putValue(Action.SHORT_DESCRIPTION, "Maximize/Restore");
         actions.add(a);
         // minimize
@@ -156,7 +187,6 @@ public class GUIHelper
                 "node = canvas.getSelectedPSwingNode();"
                         + "seco.things.CellUtils.toggleMinimized(niche.get(node.getHandle()))");
         a.putValue(Action.SMALL_ICON, IconManager.resolveIcon("Minimize.gif"));
-        // a.putValue(ANOTHER_ICON, IconManager.resolveIcon("Restore.png"));
         a.putValue(Action.SHORT_DESCRIPTION, "Minimize/Restore");
         actions.add(a);
 
@@ -164,6 +194,12 @@ public class GUIHelper
         return actions;
     }
 
+    /**
+     * Creates(if not already created) and returns the default application
+     * toolbar. Use this method to add your own toolbar buttons.
+     * 
+     * @return the default application toolbar
+     */
     public static JToolBar getMainToolBar()
     {
         JToolBar toolBar = (JToolBar) ThisNiche.graph
@@ -202,6 +238,12 @@ public class GUIHelper
         return toolBar;
     }
 
+    /**
+     * Creates(if not already created) and returns the default toolbar for the
+     * HTML component. Use this method to add your own toolbar buttons.
+     * 
+     * @return the default application toolbar
+     */
     public static HTMLToolBar getHTMLToolBar()
     {
         HTMLToolBar htmlToolBar = (HTMLToolBar) ThisNiche.graph
@@ -517,6 +559,12 @@ public class GUIHelper
         }
     }
 
+    /**
+     * Creates(if not already created) and returns the default application menu
+     * bar. Use this method to add your own menus and menu items.
+     * 
+     * @return the default application menu bar
+     */
     public static JMenuBar getMenuBar()
     {
         JMenuBar menuBar = ThisNiche.graph.get(GUIHelper.MENUBAR_HANDLE);
@@ -542,25 +590,18 @@ public class GUIHelper
     {
         JMenu menu = new PiccoloMenu("Runtime");
         menu.setMnemonic('r');
-        String lang = "jscheme";
-        //String code = "(load \"jscheme/scribaui.scm\")\n(.show (edit-context-dialog #null (RuntimeContext.)))";
         String code = "new seco.gui.rtctx.NewRuntimeContextDialog().setVisible(true);";
-        ScriptletAction a = new ScriptletAction(code); //new ScriptletAction(lang, code);
-        JMenuItem mi = new JMenuItem(a);
+        JMenuItem mi = new JMenuItem(new ScriptletAction(code));
         mi.setText("New Context");
         menu.add(mi);
 
-        code ="new seco.gui.rtctx.EditRuntimeContextDialog( ThisNiche.graph.get(ThisNiche.TOP_CONTEXT_HANDLE)).setVisible(true)"; 
-            //"(load \"jscheme/scribaui.scm\")\n(.show (edit-context-dialog ThisNiche.TOP_CONTEXT_HANDLE$ (.get niche ThisNiche.TOP_CONTEXT_HANDLE$))))";
-        a = new ScriptletAction(code);//new ScriptletAction(lang, code);
-        mi = new JMenuItem(a);
+        code = "new seco.gui.rtctx.EditRuntimeContextDialog( ThisNiche.graph.get(ThisNiche.TOP_CONTEXT_HANDLE)).setVisible(true)";
+        mi = new JMenuItem(new ScriptletAction(code));
         mi.setText("Configure Current");
         menu.add(mi);
 
         code = "new seco.gui.rtctx.ManageRuntimeContextDialog().setVisible(true)";
-        //"(load \"jscheme/scribaui.scm\")\n(.show (manage-contexts-dialog))";
-        a = new ScriptletAction(code);//new ScriptletAction(lang, code);
-        mi = new JMenuItem(a);
+        mi = new JMenuItem(new ScriptletAction(code));
         mi.setText("Manage Contexts");
         menu.add(mi);
         return menu;
@@ -571,26 +612,17 @@ public class GUIHelper
         JMenu top_menu = new PiccoloMenu("Window");
         top_menu.setMnemonic('w');
         JMenu menu = new PiccoloMenu("Add");
-        String lang = "beanshell";
         String code = "import seco.gui.*; GUIHelper.addContainer(CellContainerVisual.getHandle());";
-        ScriptletAction a = new ScriptletAction(lang, code);
-        JMenuItem mi = new JMenuItem(a);
+        JMenuItem mi = new JMenuItem(new ScriptletAction(code));
         mi.setText("Container");
         menu.add(mi);
 
         code = "import seco.gui.*;GUIHelper.addContainer(TabbedPaneVisual.getHandle());";
-        a = new ScriptletAction(lang, code);
-        mi = new JMenuItem(a);
+        mi = new JMenuItem(new ScriptletAction(code));
         mi.setText("Tabbed Pane");
         menu.add(mi);
-
-        // code =
-        // "(load \"jscheme/scribaui.scm\")\n(.show (manage-contexts-dialog))";
-        // a = new ScriptletAction(lang, code);
-        // mi = new JMenuItem(a);
-        // mi.setText("Manage Contexts");
-        // menu.add(mi);
         top_menu.add(menu);
+
         return top_menu;
     }
 
@@ -711,7 +743,7 @@ public class GUIHelper
         return addToCellGroup(h, group, visualH, lh, r, create_cell, null, -1);
     }
 
-    public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
+    static HGHandle addToCellGroup(HGHandle h, CellGroup group,
             HGHandle visualH, LayoutHandler lh, Rectangle r,
             boolean create_cell, int index)
     {
@@ -719,7 +751,7 @@ public class GUIHelper
                 index);
     }
 
-    public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
+    static HGHandle addToCellGroup(HGHandle h, CellGroup group,
             HGHandle visualH, LayoutHandler lh, Rectangle r, int index)
     {
         return addToCellGroup(h, group, visualH, lh, r, true, index);
@@ -732,6 +764,14 @@ public class GUIHelper
         return addToCellGroup(h, top, visualH, lh, r, false);
     }
 
+    /**
+     * Shortcut method that creates an empty container and assigns it default
+     * name and size.
+     * 
+     * @param visualH
+     *            CellVisual's handle
+     * @return the handle to the newly created container's cell
+     */
     public static HGHandle addContainer(HGHandle visualH)
     {
         String name = "ContainerCellGroup";
@@ -761,14 +801,52 @@ public class GUIHelper
                 });
     }
 
+    /**
+     * Adds a new object in the given group by wrapping it as a cell value if
+     * it's not a CellGroupMember instance. If the object is already present in
+     * the group, returns a handle to it's wrapping cell
+     * 
+     * @param groupHandle
+     *            Handle of the group where the new object will be inserted
+     * @param objectHandle
+     *            Handle to the object to be inserted
+     * @param visualHandle
+     *            Handle to the CellVisual that will be used for presentation.
+     *            Could be null.
+     * @param layoutHandler
+     *            LayoutHandler to be used. Could be null.
+     * @param r
+     *            Rectangle specifying the position and size of the component
+     * @return the handle to the newly created or existing cell
+     */
     public static HGHandle addIfNotThere(HGHandle groupHandle,
-            HGHandle objectHandle, HGHandle visualHandle, LayoutHandler lh,
-            Rectangle r)
+            HGHandle objectHandle, HGHandle visualHandle,
+            LayoutHandler layoutHandler, Rectangle r)
     {
-        return addIfNotThere(groupHandle, objectHandle, visualHandle, lh, r,
-                null);
+        return addIfNotThere(groupHandle, objectHandle, visualHandle,
+                layoutHandler, r, null);
     }
 
+    /**
+     * Adds a new object in the given group by wrapping it as a cell value if
+     * it's not a CellGroupMember instance. If the object is already present in
+     * the group, returns a handle to it's wrapping cell
+     * 
+     * @param groupHandle
+     *            Handle of the group where the new object will be inserted
+     * @param objectHandle
+     *            Handle to the object to be inserted
+     * @param visualHandle
+     *            Handle to the CellVisual that will be used for presentation.
+     *            Could be null.
+     * @param layoutHandler
+     *            LayoutHandler to be used. Could be null.
+     * @param r
+     *            Rectangle specifying the position and size of the component
+     * @param     addit_attribs Map with values that will be assigned as attributes
+     * to the newly created cell
+     * @return the handle to the newly created or existing cell
+     */
     public static HGHandle addIfNotThere(HGHandle groupHandle,
             HGHandle objectHandle, HGHandle visualHandle, LayoutHandler lh,
             Rectangle r, Map<Object, Object> addit_attribs)
@@ -783,6 +861,13 @@ public class GUIHelper
                 !(x instanceof CellGroupMember), addit_attribs, -1);
     }
 
+    /**
+     * Search in a specified group for a cell containing given value handle. 
+     * Inner groups are searched only if their CellVisual is implementing GroupVisual  
+     * @param groupHandle The group where to search
+     * @param objectHandle The value handle to search
+     * @return The cell which meets the search criteria or null
+     */
     public static HGHandle getCellHandleByValueHandle(HGHandle groupHandle,
             HGHandle objectHandle)
     {
@@ -808,13 +893,17 @@ public class GUIHelper
         return null;
     }
 
-    public static void removeFromCellGroup(HGHandle groupH, HGHandle h,
-            boolean backup)
+    static void removeFromCellGroup(HGHandle groupH, HGHandle h, boolean backup)
     {
         CellGroup top = ThisNiche.graph.get(groupH);
         top.remove((CellGroupMember) ThisNiche.graph.get(h), backup);
     }
 
+    /**
+     * Helper method that returns the PSwingNode of a given component displayed in the canvas  
+     * @param c The component
+     * @return the PSwingNode
+     */
     public static PSwingNode getPSwingNode(JComponent c)
     {
         if (c == null) return null;
@@ -826,6 +915,13 @@ public class GUIHelper
         return null;
     }
 
+    /**
+     * Helper method that performs the necessary transformations to adjust coordinates 
+     * of a point given the component to which it belongs  
+     * @param c The component displayed in canvas
+     * @param pt The point
+     * @return adjusted point
+     */
     public static Point adjustPointInPicollo(JComponent c, Point pt)
     {
         PSwingNode ps = getPSwingNode(c);
@@ -839,6 +935,11 @@ public class GUIHelper
         return new Point((int) (r.getX() + pt.x), (int) (r.getY() + pt.y));
     }
 
+    /**
+     * Opens a given notebook(that is already stored in the niche) in the canvas.
+     * Do nothing if the notebook is already opened.
+     * @param bookH The notebook's handle 
+     */
     public static void openNotebook(HGHandle bookH)
     {
         if (getOpenedBooks().contains(bookH)) return;
@@ -860,7 +961,7 @@ public class GUIHelper
         group.insert(group.getArity(), h);
     }
 
-    public static void newNotebook()
+    static void newNotebook()
     {
         CellGroup nb = new CellGroup("CG");
         HGHandle nbHandle = ThisNiche.graph.add(nb);
@@ -928,7 +1029,7 @@ public class GUIHelper
         menu.add(new JMenuItem(man.getAction(Actions.COPY)));
         menu.add(new JMenuItem(man.getAction(Actions.PASTE)));
 
-        menu.add(new JMenuItem(man.getAction(DefaultEditorKit.selectAllAction)));
+        menu.add(new JMenuItem(man.getAction(NotebookEditorKit.selectAllAction)));
         menu.addSeparator();
         menu.add(new JMenuItem(man.getAction(NotebookEditorKit.findAction)));
         menu.add(new JMenuItem(man.getAction(NotebookEditorKit.replaceAction)));
@@ -999,12 +1100,13 @@ public class GUIHelper
         GlobMenuItem mi = new GlobMenuItem("Manage Cell Descriptions");
         mi.addActionListener(new DescriptionManagerAction());
         menu.add(mi);
-//        menu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
-//        menu.add(new EnhancedMenu("CellGroup", new CellGroupPropsProvider()));
-//        menu.add(new EnhancedMenu("Notebook", new NotebookPropsProvider()));
-        menu.add(CGMActionsHelper.getCellMenu());
-        menu.add(CGMActionsHelper.getCellGroupMenu());
-        menu.add(CGMActionsHelper.getNotebookMenu());
+        // menu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
+        // menu.add(new EnhancedMenu("CellGroup", new
+        // CellGroupPropsProvider()));
+        // menu.add(new EnhancedMenu("Notebook", new NotebookPropsProvider()));
+        menu.add(GUIHelper.getCellMenu());
+        menu.add(GUIHelper.getCellGroupMenu());
+        menu.add(GUIHelper.getNotebookMenu());
         menu.add(new JSeparator());
         mi = new GlobMenuItem("Show Output Console");
         mi.addActionListener(new ShowOutputConsoleAction());
@@ -1063,9 +1165,6 @@ public class GUIHelper
         }
     }
 
-    // size of the minimized components
-    static Dimension MINIMIZED_COMPONENT_SIZE = new Dimension(64, 64);
-
     static JComponent getMinimizedUI(final CellGroupMember cgm)
     {
         return new MinimizedUI(cgm);
@@ -1082,5 +1181,82 @@ public class GUIHelper
         if (text == null) text = "Untitled";
         MinimizedUI ui = (MinimizedUI) node.getComponent();
         ui.setTitle(text);
+    }
+
+    public static JMenu getNotebookMenu()
+    {
+        JMenu menu = ThisNiche.graph.get(NOTEBOOK_MENU_HANDLE);
+        if (menu == null)
+        {
+            menu = new CGMActionsHelper.Menu("Book",
+                    CGMActionsHelper.Scope.book);
+            menu.add(new JCheckBoxMenuItem(new CGMActionsHelper.InitCellAction(
+                    CGMActionsHelper.Scope.book)));
+            menu.add(new JCheckBoxMenuItem(
+                    new CGMActionsHelper.ReadOnlyCellAction(
+                            CGMActionsHelper.Scope.book)));
+            // menu.add(new JMenuItem(new EvalAction(Scope.group)));
+            menu.add(new EnhancedMenu(CGMActionsHelper.LABEL_RUNTIME_CONTEXT,
+                    new CGMActionsHelper.RCListProvider(
+                            CGMActionsHelper.Scope.book)));
+            // menu.add(new JMenuItem(new DescriptionAction(Scope.group)));
+
+            ThisNiche.graph.define(NOTEBOOK_MENU_HANDLE, menu);
+        }
+        return menu;
+    }
+
+    public static JMenu getCellGroupMenu()
+    {
+        JMenu menu = ThisNiche.graph.get(CELL_GROUP_MENU_HANDLE);
+        if (menu == null)
+        {
+            menu = new CGMActionsHelper.Menu("Cell Group",
+                    CGMActionsHelper.Scope.group);
+            menu.add(new JCheckBoxMenuItem(new CGMActionsHelper.InitCellAction(
+                    CGMActionsHelper.Scope.group)));
+            menu.add(new JCheckBoxMenuItem(
+                    new CGMActionsHelper.ReadOnlyCellAction(
+                            CGMActionsHelper.Scope.group)));
+            menu.add(new JMenuItem(new CGMActionsHelper.EvalAction(
+                    CGMActionsHelper.Scope.group)));
+            menu.add(new EnhancedMenu(CGMActionsHelper.LABEL_RUNTIME_CONTEXT,
+                    new CGMActionsHelper.RCListProvider(
+                            CGMActionsHelper.Scope.group)));
+            menu.add(new JMenuItem(new CGMActionsHelper.DescriptionAction(
+                    CGMActionsHelper.Scope.group)));
+            ThisNiche.graph.define(CELL_GROUP_MENU_HANDLE, menu);
+        }
+        return menu;
+    }
+
+    public static JMenu getCellMenu()
+    {
+        JMenu menu = ThisNiche.graph.get(CELL_MENU_HANDLE);
+        if (menu == null)
+        {
+            menu = new CGMActionsHelper.Menu("Cell",
+                    CGMActionsHelper.Scope.cell);
+            menu.add(new JCheckBoxMenuItem(
+                    new CGMActionsHelper.InitCellAction()));
+            menu.add(new JCheckBoxMenuItem(
+                    new CGMActionsHelper.ReadOnlyCellAction()));
+            menu.add(new JCheckBoxMenuItem(
+                    new CGMActionsHelper.HtmlCellAction()));
+            // TODO: fix the bug in the action
+            menu.add(new JCheckBoxMenuItem(
+                    new CGMActionsHelper.ErrorCellAction()));
+
+            menu.add(new JMenuItem(new CGMActionsHelper.EvalAction()));
+            menu.add(new JMenuItem(
+                    new CGMActionsHelper.RemoveOutputCellsAction()));
+            menu.add(new EnhancedMenu(CGMActionsHelper.LABEL_RUNTIME_CONTEXT,
+                    new CGMActionsHelper.RCListProvider(
+                            CGMActionsHelper.Scope.cell)));
+            menu.add(new JMenuItem(new CGMActionsHelper.DescriptionAction()));
+
+            ThisNiche.graph.define(CELL_MENU_HANDLE, menu);
+        }
+        return menu;
     }
 }

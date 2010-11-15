@@ -1,6 +1,7 @@
 package seco.gui.rtctx;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -17,6 +18,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -32,6 +34,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
 import seco.notebook.gui.DialogDescriptor;
 import seco.notebook.gui.DialogDisplayer;
 import seco.notebook.gui.NotifyDescriptor;
@@ -49,7 +52,7 @@ public class EditRuntimeContextDialog extends JDialog
         super(ThisNiche.guiController.getFrame(), "Manage Runtime Context");
         top = ctx;
         getContentPane().add(new RtConfigPanel());
-        setSize(480,350);
+        setSize(480, 350);
     };
 
     public class RtConfigPanel extends JPanel
@@ -73,20 +76,20 @@ public class EditRuntimeContextDialog extends JDialog
             JLabel jLabel2 = new JLabel("Context Tree");
             tree = new RtTree();
             tree.setCellRenderer(new RtCellRenderer());
-            tree.getSelectionModel().setSelectionMode
-            (TreeSelectionModel.SINGLE_TREE_SELECTION);
-            tree.addTreeSelectionListener(new TreeSelectionListener (){
+            tree.getSelectionModel().setSelectionMode(
+                    TreeSelectionModel.SINGLE_TREE_SELECTION);
+            tree.addTreeSelectionListener(new TreeSelectionListener() {
                 public void valueChanged(TreeSelectionEvent e)
                 {
-                    RuntimeContext rc = (RuntimeContext)
-                    tree.getLastSelectedPathComponent();
+                    RuntimeContext rc = (RuntimeContext) tree
+                            .getLastSelectedPathComponent();
                     if (rc == null) return;
                     textRtCtx.setText(rc.getName());
                     cpPanel.setRuntimeContext(rc);
                 }
             });
             cpPanel = new ClassPathPanel();
-            JScrollPane jScrollPane1 = new JScrollPane(tree); 
+            JScrollPane jScrollPane1 = new JScrollPane(tree);
             setLayout(new GridBagLayout());
             JPanel jPanel1 = new JPanel();
             GridBagConstraints gridBagConstraints = new GridBagConstraints();
@@ -152,19 +155,19 @@ public class EditRuntimeContextDialog extends JDialog
     {
         public Object getChild(Object parent, int index)
         {
-            List<RuntimeContext> list = RtU.getNestedContexts(ThisNiche
+            List<RuntimeContext> list = RtU.getChildContexts(ThisNiche
                     .handleOf(parent));
             return list.get(index);
         }
 
         public int getChildCount(Object parent)
         {
-            return RtU.getNestedContextLinks(ThisNiche.handleOf(parent)).size();
+            return RtU.getChildContextLinks(ThisNiche.handleOf(parent)).size();
         }
 
         public int getIndexOfChild(Object parent, Object child)
         {
-            List<RuntimeContext> list = RtU.getNestedContexts(ThisNiche
+            List<RuntimeContext> list = RtU.getChildContexts(ThisNiche
                     .handleOf(parent));
             return list.indexOf(child);
         }
@@ -220,43 +223,64 @@ public class EditRuntimeContextDialog extends JDialog
 
         private JPopupMenu makePopupMenu()
         {
-            final RuntimeContext ctx = (RuntimeContext) 
-                         getLastSelectedPathComponent();
+            final RuntimeContext ctx = (RuntimeContext) getLastSelectedPathComponent();
             JPopupMenu popup = new JPopupMenu();
             JMenuItem item = new JMenuItem("Add Runtime Context");
             item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-                      JList list = new JList();
-                      Collection<RuntimeContext> ctx_list =
-                          RtU.getAllRtContextsExcept(ctx);
-                      DefaultListModel m = new DefaultListModel();
-                      for(RuntimeContext rc : ctx_list)
-                          m.addElement(rc);
-                      list.setModel(m);
-                      list.setCellRenderer(new RtListCellRenderer());
-                      list.setSize(200, 50);
-                      DialogDescriptor d = new DialogDescriptor(
-                              ThisNiche.guiController.getFrame(),
-                              list, "Select RuntimeCOntext:");
-                      d.setModal(true);
-                      d.setMessageType(NotifyDescriptor.QUESTION_MESSAGE);
-                      d.setOptionType(NotifyDescriptor.OK_CANCEL_OPTION);
-                      if (DialogDisplayer.getDefault().notify(d) == NotifyDescriptor.OK_OPTION)
-                      {
-                          RuntimeContext new_ctx = (RuntimeContext) list.getSelectedValue();
-                          ThisNiche.graph.add(new NestedContextLink(ThisNiche.handleOf(ctx),
-                                  ThisNiche.handleOf(new_ctx)));
-                          //RtConfigPanel.this.tree.setModel(new RtTreeModel());
-                      }
+                    Collection<RuntimeContext> ctx_list = RtU
+                            .getAllRtContextsExcept(ctx);
+                    if (ctx_list.isEmpty())
+                    {
+                        JOptionPane.showMessageDialog(
+                                ThisNiche.guiController.getFrame(),
+                                "No available runtime contexts.");
+                        return;
+                    }
+                    JList list = new JList();
+                    DefaultListModel m = new DefaultListModel();
+                    for (RuntimeContext rc : ctx_list)
+                        m.addElement(rc);
+                    list.setModel(m);
+                    list.setCellRenderer(new RtListCellRenderer());
+                    list.setPreferredSize(new Dimension(200, 150));
+                    // list.setBorder(new TitledBorder("Runtime Contexts"));
+                    DialogDescriptor d = new DialogDescriptor(
+                            ThisNiche.guiController.getFrame(),
+                            new JScrollPane(list), "Select RuntimeContext:");
+                    d.setModal(true);
+                    d.setMessageType(NotifyDescriptor.QUESTION_MESSAGE);
+                    d.setOptionType(NotifyDescriptor.OK_CANCEL_OPTION);
+                    if (DialogDisplayer.getDefault().notify(d) == NotifyDescriptor.OK_OPTION)
+                    {
+                        RuntimeContext new_ctx = (RuntimeContext) list
+                                .getSelectedValue();
+                        if (new_ctx != null)
+                            ThisNiche.graph.add(new NestedContextLink(ThisNiche
+                                    .handleOf(ctx), ThisNiche.handleOf(new_ctx)));
+                        RtTree.this.setModel(new RtTreeModel());
+                    }
                 }
             });
             popup.add(item);
-            item = new JMenuItem("Delete");
+            item = new JMenuItem("Remove");
             item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-
+                    if (GUIHelper
+                            .showConfirmDlg("The relationships to this RuntimeContext will be permanently deleted. Are you sure?"))
+                    {
+                        List<NestedContextLink> list = RtU
+                                .getChildContextLinks(ThisNiche.handleOf(ctx));
+                        for (NestedContextLink l : list)
+                            ThisNiche.graph.remove(ThisNiche.handleOf(l));
+                        list = RtU.getParentContextLinks(ThisNiche
+                                .handleOf(ctx));
+                        for (NestedContextLink l : list)
+                            ThisNiche.graph.remove(ThisNiche.handleOf(l));
+                        RtTree.this.setModel(new RtTreeModel());
+                    }
                 }
             });
             popup.add(item);
@@ -264,8 +288,11 @@ public class EditRuntimeContextDialog extends JDialog
         }
     }
 
-    class RtCellRenderer extends DefaultTreeCellRenderer
+    static class RtCellRenderer extends DefaultTreeCellRenderer
     {
+
+        private static final long serialVersionUID = 4314887120842416201L;
+
         public Component getTreeCellRendererComponent(JTree tree, Object value,
                 boolean sel, boolean expanded, boolean leaf, int row,
                 boolean hasFocus)
@@ -274,13 +301,12 @@ public class EditRuntimeContextDialog extends JDialog
             super.getTreeCellRendererComponent(tree, value, sel, expanded,
                     leaf, row, hasFocus);
             adjustText(value);
-
+            setIcon(null);
             return this;
         }
 
         private void adjustText(Object value)
         {
-
             if (value instanceof RuntimeContext)
             {
                 RuntimeContext rc = (RuntimeContext) value;
@@ -288,16 +314,17 @@ public class EditRuntimeContextDialog extends JDialog
             }
         }
     }
-    
-    class RtListCellRenderer extends DefaultListCellRenderer
+
+    static class RtListCellRenderer extends DefaultListCellRenderer
     {
-        public Component getListCellRendererComponent(
-                JList list, Object value, int index,
-                boolean isSelected, boolean cellHasFocus)
+        private static final long serialVersionUID = -3342353797704430123L;
+
+        public Component getListCellRendererComponent(JList list, Object value,
+                int index, boolean isSelected, boolean cellHasFocus)
         {
-            Component c = super.getListCellRendererComponent(
-                   list, value,index,isSelected, cellHasFocus);
-            setText(((RuntimeContext)value).getName());
+            Component c = super.getListCellRendererComponent(list, value,
+                    index, isSelected, cellHasFocus);
+            setText(((RuntimeContext) value).getName());
             return c;
         }
     }

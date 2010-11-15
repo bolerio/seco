@@ -8,11 +8,15 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 import seco.ThisNiche;
 import seco.notebook.AbbreviationManager;
@@ -93,8 +97,7 @@ public class AbbreviationPanel extends JPanel
 
     private void addProperty()
     {
-        NameValuePanel panel = new NameValuePanel("Abbreviation: ",
-                "Full Text: ");
+        NameTextAreaInputPanel panel = new NameTextAreaInputPanel();
         DialogDescriptor d = new DialogDescriptor(ThisNiche.guiController.getFrame(),
                 panel, "Add Abrreviation");
         d.setModal(true);
@@ -291,4 +294,72 @@ public class AbbreviationPanel extends JPanel
             AbbreviationManager.getInstance().addAbbreviation(key, value);
         }
     }
+    
+    public static class NameTextAreaInputPanel extends JPanel 
+    {
+        private static final long serialVersionUID = 2941023799059546189L;
+        private JTextField nameLabel;
+        private JTextArea textArea;
+        
+        public NameTextAreaInputPanel() {
+            initComponents();
+        }
+        
+        public String getName()
+        {
+            return nameLabel.getText();
+        }
+        
+        public String getValue()
+        {
+            return textArea.getText();
+        }
+
+        private void initComponents() {
+
+            JLabel jLabel1 = new JLabel("Abbreviation: ");
+            JLabel jLabel2 = new JLabel("Full Text: ");
+            nameLabel = new JTextField();
+            JScrollPane jScrollPane1 = new JScrollPane();
+            textArea = new JTextArea();
+            textArea.setColumns(20);
+            textArea.setRows(5);
+            textArea.setWrapStyleWord(true);
+            jScrollPane1.setViewportView(textArea);
+
+            GroupLayout layout = new GroupLayout(this);
+            this.setLayout(layout);
+            layout.setHorizontalGroup(
+                layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addPreferredGap(ComponentPlacement.UNRELATED)
+                            .addComponent(nameLabel, GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel2)
+                            .addPreferredGap(ComponentPlacement.UNRELATED)
+                            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)))
+                    .addContainerGap())
+            );
+            layout.setVerticalGroup(
+                layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(nameLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGap(18, 18, 18)
+                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel2)
+                            .addGap(92, 92, 92))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
+                            .addContainerGap())))
+            );
+        }
+     }
 }

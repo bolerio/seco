@@ -19,9 +19,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
-import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper.PiccoloMenu;
@@ -29,7 +27,6 @@ import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.XMLConstants;
 import seco.notebook.gui.menu.DynamicMenuProvider;
-import seco.notebook.gui.menu.EnhancedMenu;
 import seco.rtenv.RuntimeContext;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -37,18 +34,11 @@ import seco.things.CellUtils;
 
 public class CGMActionsHelper
 {
+    static final String LABEL_RUNTIME_CONTEXT = "Set Runtime Context";
     public static enum Scope
     {
         cell, group, book
     }
-    
-    private static final String LABEL_RUNTIME_CONTEXT = "Set Runtime Context";
-    public static final HGPersistentHandle CELL_MENU_HANDLE = UUIDHandleFactory.I
-            .makeHandle("b26a4220-ee65-11df-98cf-0800200c9a66");
-    public static final HGPersistentHandle CELL_GROUP_MENU_HANDLE = UUIDHandleFactory.I
-          .makeHandle("1aee3830-ee78-11df-98cf-0800200c9a66");
-    public static final HGPersistentHandle NOTEBOOK_MENU_HANDLE = UUIDHandleFactory.I
-           .makeHandle("2f844cd0-ee78-11df-98cf-0800200c9a66");
 
     public static Element getOwnerElement(Scope cellOrGroup)
     {
@@ -402,65 +392,6 @@ public class CGMActionsHelper
         }
     }
 
-    public static JMenu getCellMenu()
-    {
-        JMenu menu = ThisNiche.graph.get(CELL_MENU_HANDLE);
-        if (menu == null)
-        {
-            menu = new Menu("Cell", Scope.cell);
-            menu.add(new JCheckBoxMenuItem(new InitCellAction()));
-            menu.add(new JCheckBoxMenuItem(new ReadOnlyCellAction()));
-            menu.add(new JCheckBoxMenuItem(new HtmlCellAction()));
-            //TODO: fix the bug in the action
-            //menu.add(new JCheckBoxMenuItem(new ErrorCellAction()));
-
-            menu.add(new JMenuItem(new EvalAction()));
-            menu.add(new JMenuItem(new RemoveOutputCellsAction()));
-            menu.add(new EnhancedMenu(LABEL_RUNTIME_CONTEXT,
-                    new RCListProvider(Scope.cell)));
-            menu.add(new JMenuItem(new DescriptionAction()));
-
-            ThisNiche.graph.define(CELL_MENU_HANDLE, menu);
-        }
-        return menu;
-    }
-    
-    public static JMenu getCellGroupMenu()
-    {
-        JMenu menu = ThisNiche.graph.get(CELL_GROUP_MENU_HANDLE);
-        if (menu == null)
-        {
-            menu = new Menu("Cell Group", Scope.group);
-            menu.add(new JCheckBoxMenuItem(new InitCellAction(Scope.group)));
-            menu.add(new JCheckBoxMenuItem(new ReadOnlyCellAction(Scope.group)));
-            menu.add(new JMenuItem(new EvalAction(Scope.group)));
-            menu.add(new EnhancedMenu(LABEL_RUNTIME_CONTEXT,
-                    new RCListProvider(Scope.group)));
-            menu.add(new JMenuItem(new DescriptionAction(Scope.group)));
-            ThisNiche.graph.define(CELL_GROUP_MENU_HANDLE, menu);
-        }
-        return menu;
-    }
-    
-    public static JMenu getNotebookMenu()
-    {
-        JMenu menu = ThisNiche.graph.get(NOTEBOOK_MENU_HANDLE);
-        if (menu == null)
-        {
-            menu = new Menu("Book", Scope.book);
-            menu.add(new JCheckBoxMenuItem(new InitCellAction(Scope.book)));
-            menu.add(new JCheckBoxMenuItem(new ReadOnlyCellAction(Scope.book)));
-            //menu.add(new JMenuItem(new EvalAction(Scope.group)));
-            menu.add(new EnhancedMenu(LABEL_RUNTIME_CONTEXT,
-                    new RCListProvider(Scope.book)));
-            //menu.add(new JMenuItem(new DescriptionAction(Scope.group)));
-            
-            ThisNiche.graph.define(NOTEBOOK_MENU_HANDLE, menu);
-        }
-        return menu;
-    }
-    
-    
     public static class Menu extends PiccoloMenu implements MenuListener
     {
         protected Scope scope;

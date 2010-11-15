@@ -35,7 +35,6 @@ import seco.notebook.util.IconManager;
 
 public class ActionManager
 {
-   // private static final long serialVersionUID = 6622882133321172241L;
     public static final HGPersistentHandle HANDLE = UUIDHandleFactory.I.makeHandle("73723e60-043c-11df-8a39-0800200c9a66");
     private static ActionManager instance;
     private Map<String, Action> actionMap = new HashMap<String, Action>();
@@ -166,7 +165,7 @@ public class ActionManager
                 false);
         }
 
-        act = kit.getActionByName(DefaultEditorKit.selectAllAction);
+        act = kit.getActionByName(NotebookEditorKit.selectAllAction);
         act.putValue(Action.NAME, "Select All");
         putAction(act, KeyStroke.getKeyStroke(KeyEvent.VK_A,
                 ActionEvent.CTRL_MASK), false);

@@ -32,7 +32,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
@@ -72,30 +71,23 @@ import javax.swing.text.View;
 import javax.swing.undo.UndoManager;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.handle.UUIDHandleFactory;
-import org.hypergraphdb.type.TypeUtils;
 
 import seco.ThisNiche;
-import seco.gui.CGMActionsHelper;
 import seco.gui.GUIHelper;
-import seco.gui.TopFrame;
 import seco.gui.GUIHelper.CellTreeAction;
 import seco.gui.GUIHelper.ElementTreeAction;
 import seco.gui.GUIHelper.ParseTreeAction;
+import seco.gui.TopFrame;
 import seco.notebook.gui.GUIUtilities;
 import seco.notebook.gui.ScriptEngineProvider;
 import seco.notebook.gui.UpdatablePopupMenu;
-import seco.notebook.gui.menu.CellGroupPropsProvider;
 import seco.notebook.gui.menu.CellLangProvider;
-import seco.notebook.gui.menu.CellPropsProvider;
 import seco.notebook.gui.menu.EnhancedMenu;
 import seco.notebook.gui.menu.GroupingProvider;
-import seco.notebook.gui.menu.NotebookPropsProvider;
 import seco.notebook.html.HTMLEditor;
-import seco.notebook.syntax.Mode;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.view.HtmlView;
 import seco.rtenv.EvaluationContext;
@@ -365,14 +357,10 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             // NotebookEditorKit.deleteSelectedElementsAction));
             popupMenu.add(mi);
             popupMenu.addSeparator();
-            //popupMenu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
-            //popupMenu.add(new EnhancedMenu("Cell Group",
-            //        new CellGroupPropsProvider()));
-            //popupMenu.add(new EnhancedMenu("Notebook",
-            //        new NotebookPropsProvider()));
-            popupMenu.add(CGMActionsHelper.getCellMenu());
-            popupMenu.add(CGMActionsHelper.getCellGroupMenu());
-            popupMenu.add(CGMActionsHelper.getNotebookMenu());
+         
+            popupMenu.add(GUIHelper.getCellMenu());
+            popupMenu.add(GUIHelper.getCellGroupMenu());
+            popupMenu.add(GUIHelper.getNotebookMenu());
             
             popupMenu.addSeparator();
             popupMenu.add(new EnhancedMenu("Grouping", new GroupingProvider()));
@@ -884,9 +872,11 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     private boolean check_and_apply_abbrevs(DocumentEvent e)
     {
         if (e.getLength() != 1) return false;
+        NotebookDocument doc = getDoc();
+        boolean editMade = false;
         try
         {
-            String text = getDoc().getText(e.getOffset(), e.getLength());
+            String text = doc.getText(e.getOffset(), e.getLength());
             if (" ".equals(text))
             {
                 int i = Utilities.getFirstNonWhiteBwd(getDoc(), e.getOffset(),
@@ -895,14 +885,18 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 String word = Utilities.getWord(this, e.getOffset());
                 String abrev = AbbreviationManager.getInstance().getAbbreviation(word);
                 if(abrev == null) return false;
-                getDoc().remove(e.getOffset() - word.length(), word.length());
-                getDoc().insertString(e.getOffset() - word.length(), abrev, null);
+                doc.beginCompoundEdit("Abbreviation");
+                editMade = true;
+                doc.remove(e.getOffset() - word.length(), word.length());
+                doc.insertString(e.getOffset() - word.length(), abrev, null);
                 return true;
             }
         }
         catch (Throwable t)
         {
 
+        }finally{
+            if(editMade)  doc.endCompoundEdit();
         }
         return false;
     }
@@ -1127,6 +1121,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 
     public static class FixedCaret extends DefaultCaret
     {
+        private static final long serialVersionUID = 5209924809542152840L;
         private boolean dont_fire;
 
         // preventing IllegalArgumentException which randomly occurs

@@ -1,5 +1,7 @@
 package seco.gui;
 
+import javax.swing.JLabel;
+
 
 /**
  * Common panel for getting name/value user input 
@@ -9,6 +11,8 @@ public class NameValuePanel extends javax.swing.JPanel
     private static final long serialVersionUID = 4095194169787038584L;
     private String label1 = "Name:"; 
     private String label3 = "Value:";
+    private javax.swing.JTextField name;
+    private javax.swing.JTextArea value;
     private final static String DEF = "";//<default>";
     
     /** Creates new form BeanForm */
@@ -33,11 +37,10 @@ public class NameValuePanel extends javax.swing.JPanel
     private void initComponents()//GEN-BEGIN:initComponents
     {
         java.awt.GridBagConstraints gridBagConstraints;
-
-        jLabel1 = new javax.swing.JLabel();
+        JLabel jLabel1 = new javax.swing.JLabel();
         name = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        value = new javax.swing.JTextField();
+        JLabel jLabel3 = new javax.swing.JLabel();
+        value = new javax.swing.JTextArea();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -59,7 +62,6 @@ public class NameValuePanel extends javax.swing.JPanel
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         add(jLabel3, gridBagConstraints);
 
-        value.setColumns(20);
         value.setText(DEF);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -69,13 +71,6 @@ public class NameValuePanel extends javax.swing.JPanel
 
     }//GEN-END:initComponents
     
-    
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JTextField name;
-    private javax.swing.JTextField value;
-    // End of variables declaration//GEN-END:variables
     
     public String getName()
     {
@@ -96,32 +91,4 @@ public class NameValuePanel extends javax.swing.JPanel
     {
         value.setText(_name);
     }
-    
-    public void disableField(int i)
-    {
-        if(i==0)
-          name.setEnabled(false);
-        else if(i==1)
-          value.setEnabled(false);
-    }
-    
-    public void enableField(int i)
-    {
-        name.setEnabled(i==0 || i==1);
-    }
-    
-    public void hideEntry(int i)
-    {
-        if(i==0)
-        {
-           name.setVisible(false);
-           jLabel1.setVisible(false); 
-        }
-        else if(i==1)
-        {
-           value.setVisible(false);
-           jLabel3.setVisible(false);
-        }
-    }
-   
 }
