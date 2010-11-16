@@ -72,19 +72,11 @@ class GlyphPainter0 extends GlyphView.GlyphPainter
 				//width = (!multiline) ?
 				//		(int) Chunk.offsetToX(lineInfo.chunks, info[1]):
 				//		(int) Chunk.offsetToX(lineInfo.chunks, info[1] - (p1 - p0), info[1]);
-					
-				//System.out.println("GlyphPainter -getWidth: " + width + 
-				//		":" + p0 + ":" + p1);
 				return width;
 			}
 		}
 				
 		Segment text = v.getText(p0, p1);
-		//if(multiline){
-		//	System.out.println("GlyphPainter -getWidth: " + width + 
-		//			":" + p0 + ":" + p1 + ":" + v.getStartOffset() +
-		//			":" + v.getEndOffset() + ":" + text);
-		//}
 		width = Utilities.getTabbedTextWidth(text, metrics, (int) x, e, p0);
 		SegmentCache.releaseSharedSegment(text);
 		return width;
@@ -140,11 +132,7 @@ class GlyphPainter0 extends GlyphView.GlyphPainter
 		int p2 = v.getElement().getStartOffset();
 		if (sup != null)
 		{
-			//System.out.println("GlyphPainter0 - paint: " + x + ":" + p +
-			//		 ":" + p0 + ":" + v.getElement().getStartOffset() + ":"
-			//		 + p1 + ":" + line);
 			paintSyntaxLine(g, expander, sup, info[0], x, y, p0 - p2, p1 - p2);
-			//paintSyntaxLine(g, expander, sup, line, x, y, p0, p1);
 		} else{
 			Segment text = v.getText(p0, p1);
 			Utilities.drawTabbedText(text, x, y, g, expander, p0);
@@ -176,11 +164,7 @@ class GlyphPainter0 extends GlyphView.GlyphPainter
 		ChunkCache.LineInfo lineInfo = cache.getLineInfo(line);
 		if (lineInfo != null && lineInfo.chunks != null)
 		{
-			//System.out.println("paintSyntaxLine: " + line
-			// + ":" + x + ":" + y + ":" + p + ":" + p1 + ":"
-			// + lineInfo.chunks.offset + ":" + sup.getDocument().getInputCellFont()
-			// );
-			Chunk.paintChunkList(lineInfo.chunks, (Graphics2D) gfx, (float) x,
+		    Chunk.paintChunkList(lineInfo.chunks, (Graphics2D) gfx, (float) x,
 					(float) y, p, p1);
 		}
 	}

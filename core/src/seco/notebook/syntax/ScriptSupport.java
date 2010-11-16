@@ -108,9 +108,6 @@ public abstract class ScriptSupport
 		if (lineInfo.chunks != null)
 		{
 			Chunk chunks = Chunk.getChunkAtOffset(lineInfo.chunks, lineCol[1]);
-			// System.out.println("isCommentOrLiteral: " + chunks.str + ":" +
-			// chunks.id);
-			if (chunks != null)
 			{
 				if (chunks.id >= Chunk.COMMENT1 && chunks.id <= Chunk.COMMENT4)
 					return true;

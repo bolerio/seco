@@ -1100,10 +1100,6 @@ public class GUIHelper
         GlobMenuItem mi = new GlobMenuItem("Manage Cell Descriptions");
         mi.addActionListener(new DescriptionManagerAction());
         menu.add(mi);
-        // menu.add(new EnhancedMenu("Cell", new CellPropsProvider()));
-        // menu.add(new EnhancedMenu("CellGroup", new
-        // CellGroupPropsProvider()));
-        // menu.add(new EnhancedMenu("Notebook", new NotebookPropsProvider()));
         menu.add(GUIHelper.getCellMenu());
         menu.add(GUIHelper.getCellGroupMenu());
         menu.add(GUIHelper.getNotebookMenu());
@@ -1243,7 +1239,6 @@ public class GUIHelper
                     new CGMActionsHelper.ReadOnlyCellAction()));
             menu.add(new JCheckBoxMenuItem(
                     new CGMActionsHelper.HtmlCellAction()));
-            // TODO: fix the bug in the action
             menu.add(new JCheckBoxMenuItem(
                     new CGMActionsHelper.ErrorCellAction()));
 

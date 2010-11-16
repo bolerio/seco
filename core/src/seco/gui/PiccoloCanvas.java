@@ -342,8 +342,8 @@ public class PiccoloCanvas extends PSwingCanvas
         }
     }
     
-    private static int offset_y = 16;
-    private static int offset_x = 16;
+    private static int offset_y = 2; //16;
+    private static int offset_x = 2;//16;
 
     private void adjust_maximized_node()
     {
@@ -353,7 +353,6 @@ public class PiccoloCanvas extends PSwingCanvas
         double h = getBounds().getHeight();
         maximizedNode.setBounds(0, 0, w - offset_x, h - 2*offset_y);
         PBounds b = maximizedNode.getFullBounds();
-        //System.out.println("bounds:" + b);
         maximizedNode.translate(-b.x + offset_x / 2, -b.y + offset_y/ 2);
     }
 

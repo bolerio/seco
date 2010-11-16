@@ -1,8 +1,6 @@
 package seco.notebook;
 
 import java.awt.event.ActionEvent;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import javax.script.ScriptException;
 import javax.swing.AbstractAction;

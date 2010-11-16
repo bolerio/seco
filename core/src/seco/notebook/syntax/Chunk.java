@@ -29,11 +29,17 @@
  */
 package seco.notebook.syntax;
 
-import javax.swing.text.*;
-import java.awt.font.*;
-import java.awt.geom.*;
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
-import java.awt.*;
+
+import javax.swing.text.Segment;
+import javax.swing.text.TabExpander;
 
 /**
  * A syntax token with extra information required for painting it on screen.

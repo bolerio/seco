@@ -1169,7 +1169,13 @@ public class CellUtils
                 {
                     ex.printStackTrace();
                     HGHandle t = ts.getTypeHandle(Serializable.class);
+                    try{
                     h = ThisNiche.graph.add(o, t);
+                    }catch(Throwable tt)
+                    {
+                        h = ThisNiche.graph.add(ex.toString() + 
+                                ":" + tt.toString());
+                    }
                 }
                 finally
                 {
