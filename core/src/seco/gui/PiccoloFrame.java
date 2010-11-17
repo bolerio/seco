@@ -7,6 +7,7 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
 import seco.ThisNiche;
+import seco.gui.visual.VisualAttribs;
 import seco.things.CellGroup;
 import edu.umd.cs.piccolox.swing.PScrollPane;
 

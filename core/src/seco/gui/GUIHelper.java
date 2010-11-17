@@ -63,6 +63,12 @@ import seco.gui.menu.EnhancedMenu;
 import seco.gui.menu.RecentFilesProvider;
 import seco.gui.menu.VisPropsProvider;
 import seco.gui.piccolo.TitlePaneNode;
+import seco.gui.visual.CellContainerVisual;
+import seco.gui.visual.GroupVisual;
+import seco.gui.visual.NBUIVisual;
+import seco.gui.visual.TabbedPaneVisual;
+import seco.gui.visual.VisualAttribs;
+import seco.gui.visual.VisualsManager;
 import seco.notebook.ActionManager;
 import seco.notebook.Actions;
 import seco.notebook.AppConfig;
@@ -1139,7 +1145,7 @@ public class GUIHelper
         }
     }
 
-    static void handleTitle(PSwingNode node)
+    public static void handleTitle(PSwingNode node)
     {
         CellGroupMember cgm = ThisNiche.graph.get(node.getHandle());
         if (CellUtils.isMinimized(cgm))
@@ -1160,7 +1166,7 @@ public class GUIHelper
         }
     }
 
-    static JComponent getMinimizedUI(final CellGroupMember cgm)
+    public static JComponent getMinimizedUI(final CellGroupMember cgm)
     {
         return new MinimizedUI(cgm);
     }

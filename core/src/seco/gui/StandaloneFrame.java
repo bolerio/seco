@@ -26,6 +26,7 @@ import javax.swing.event.CaretListener;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
+import seco.gui.visual.TabbedPaneVisual;
 import seco.notebook.StatusBar;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;

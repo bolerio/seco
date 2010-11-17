@@ -18,6 +18,7 @@ import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EvalCellEvent;
+import seco.gui.visual.CellContainerVisual;
 import seco.things.CellGroup;
 import seco.things.CellUtils;
 

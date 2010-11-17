@@ -28,6 +28,7 @@ import seco.ThisNiche;
 import seco.gui.layout.LayoutHandler;
 import seco.gui.piccolo.AffineTransformEx;
 import seco.gui.piccolo.PToolTipHandler;
+import seco.gui.visual.VisualAttribs;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.things.CellGroupMember;
@@ -400,7 +401,7 @@ public class PiccoloCanvas extends PSwingCanvas
         }
     }
 
-    PSwingNode addComponent(JComponent comp, CellGroupMember cell)
+    public PSwingNode addComponent(JComponent comp, CellGroupMember cell)
     {
         HGHandle cellH = ThisNiche.handleOf(cell);
         PSwingNode p = null;

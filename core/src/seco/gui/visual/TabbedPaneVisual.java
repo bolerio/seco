@@ -1,4 +1,4 @@
-package seco.gui;
+package seco.gui.visual;
 
 import java.awt.Component;
 
@@ -13,6 +13,8 @@ import org.hypergraphdb.handle.UUIDHandleFactory;
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EventHandler;
+import seco.gui.GUIHelper;
+import seco.gui.TabbedPaneU;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;

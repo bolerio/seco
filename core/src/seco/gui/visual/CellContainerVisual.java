@@ -1,4 +1,4 @@
-package seco.gui;
+package seco.gui.visual;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -23,6 +23,10 @@ import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EvalCellEvent;
 import seco.events.EventHandler;
+import seco.gui.GUIHelper;
+import seco.gui.OutputConsole;
+import seco.gui.PSwingNode;
+import seco.gui.PiccoloCanvas;
 import seco.gui.piccolo.AffineTransformEx;
 import seco.things.BaseCellGroupMember;
 import seco.things.Cell;

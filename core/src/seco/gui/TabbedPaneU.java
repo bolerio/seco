@@ -29,6 +29,7 @@ import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EvalCellEvent;
 import seco.gui.menu.EnhancedMenu;
+import seco.gui.visual.CellContainerVisual;
 import seco.notebook.NotebookUI;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;

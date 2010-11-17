@@ -16,7 +16,7 @@ import seco.ThisNiche;
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
 import seco.gui.TopFrame;
-import seco.gui.VisualAttribs;
+import seco.gui.visual.VisualAttribs;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 

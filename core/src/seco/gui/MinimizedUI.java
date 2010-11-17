@@ -30,6 +30,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import seco.gui.visual.CellContainerVisual;
+import seco.gui.visual.TabbedPaneVisual;
 import seco.notebook.util.IconManager;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;

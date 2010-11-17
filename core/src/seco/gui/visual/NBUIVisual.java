@@ -1,4 +1,4 @@
-package seco.gui;
+package seco.gui.visual;
 
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -12,6 +12,9 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
+import seco.gui.TabbedPaneU;
+import seco.gui.TopFrame;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.rtenv.ContextLink;

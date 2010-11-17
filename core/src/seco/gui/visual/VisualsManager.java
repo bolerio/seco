@@ -1,4 +1,4 @@
-package seco.gui;
+package seco.gui.visual;
 
 import java.util.ArrayList;
 import java.util.List;
