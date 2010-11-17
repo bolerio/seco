@@ -40,7 +40,7 @@ import seco.events.EvalCellEvent;
 import seco.events.EventPubSub;
 import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
-import seco.gui.VisualAttribs;
+import seco.gui.visual.VisualAttribs;
 import seco.things.Cell;
 import seco.things.CellGroup;
 

@@ -17,7 +17,7 @@ import org.hypergraphdb.HGLink;
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EventDispatcher;
-import seco.gui.VisualAttribs;
+import seco.gui.visual.VisualAttribs;
 
 
 

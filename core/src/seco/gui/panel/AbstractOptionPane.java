@@ -11,7 +11,7 @@ package seco.gui.panel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.*;
 
-import seco.gui.OptionPane;
+import seco.gui.common.OptionPane;
 import seco.notebook.NotebookUI;
 
 import java.awt.*;

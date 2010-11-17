@@ -12,7 +12,7 @@ import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import seco.gui.OptionPane;
+import seco.gui.common.OptionPane;
 import seco.notebook.AppConfig;
 import seco.notebook.NotebookUI;
 import seco.notebook.Utilities;

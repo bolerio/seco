@@ -22,11 +22,11 @@ import org.hypergraphdb.type.JavaTypeFactory;
 
 import seco.ThisNiche;
 import seco.U;
-import seco.gui.CellContainerVisual;
 import seco.gui.GUIHelper;
-import seco.gui.JComponentVisual;
-import seco.gui.NBUIVisual;
-import seco.gui.TabbedPaneVisual;
+import seco.gui.visual.CellContainerVisual;
+import seco.gui.visual.JComponentVisual;
+import seco.gui.visual.NBUIVisual;
+import seco.gui.visual.TabbedPaneVisual;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookDocumentType;
 import seco.notebook.NotebookUI;

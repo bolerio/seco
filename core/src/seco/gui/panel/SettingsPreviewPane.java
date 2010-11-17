@@ -24,7 +24,7 @@ import javax.swing.border.TitledBorder;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
-import seco.gui.OptionPane;
+import seco.gui.common.OptionPane;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.things.CellGroup;

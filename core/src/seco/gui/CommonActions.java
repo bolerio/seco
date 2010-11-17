@@ -20,6 +20,7 @@ import seco.gui.dialog.DialogDescriptor;
 import seco.gui.dialog.DialogDisplayer;
 import seco.gui.dialog.NotifyDescriptor;
 import seco.gui.layout.LayoutSettingsPanel;
+import seco.gui.piccolo.BirdsEyeView;
 import seco.gui.visual.CellContainerVisual;
 import seco.gui.visual.VisualAttribs;
 import seco.notebook.ActionManager;
