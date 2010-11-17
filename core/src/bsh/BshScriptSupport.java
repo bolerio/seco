@@ -12,7 +12,7 @@ import java.util.List;
 
 import javax.swing.text.Element;
 
-import seco.notebook.AppConfig;
+import seco.AppConfig;
 import seco.notebook.syntax.Formatter;
 import seco.notebook.syntax.Mode;
 import seco.notebook.syntax.ScriptSupport;

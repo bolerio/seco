@@ -148,7 +148,7 @@ public class DefaultConverter // implements Converter
     /*
      * (non-Javadoc)
      * 
-     * @see seco.notebook.storage.swing.Converter#getSlots()
+     * @see seco.storage.swing.Converter#getSlots()
      */
     public Map<String, Class<?>> getSlots()
     {

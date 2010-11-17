@@ -21,11 +21,11 @@ import javax.swing.text.Element;
 import javax.swing.text.Segment;
 import javax.swing.tree.TreePath;
 
-import seco.notebook.storage.ClassRepository;
-import seco.notebook.storage.NamedInfo;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.CompletionU;
 import seco.notebook.syntax.completion.NBParser;
+import seco.storage.ClassRepository;
+import seco.storage.NamedInfo;
 import seco.util.SegmentCache;
 
 public class BshAst extends NBParser

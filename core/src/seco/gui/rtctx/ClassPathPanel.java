@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.viewer.util.GUIUtilities;
 
 import seco.ThisNiche;
 import seco.rtenv.ClassPath;
@@ -118,7 +117,7 @@ public class ClassPathPanel extends JPanel
         chooser.setDialogTitle("Select JAR or Directory");
         chooser.setMultiSelectionEnabled(true);
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        if (chooser.showDialog(GUIUtilities.getFrame(), "Select") == JFileChooser.APPROVE_OPTION)
+        if (chooser.showDialog(ThisNiche.guiController.getFrame(), "Select") == JFileChooser.APPROVE_OPTION)
         {
             CPListModel model = (CPListModel) cpList.getModel();
             for (File f : chooser.getSelectedFiles())
