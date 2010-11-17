@@ -37,7 +37,7 @@ import javax.swing.border.EtchedBorder;
 
 import seco.U;
 import seco.gui.GUIHelper;
-import seco.notebook.util.RequestProcessor;
+import seco.util.RequestProcessor;
 
 /**
  * 

@@ -31,7 +31,7 @@ import seco.gui.GUIHelper.ExportAction;
 import seco.gui.GUIHelper.ImportAction;
 import seco.gui.GUIHelper.NewAction;
 import seco.gui.GUIHelper.OpenAction;
-import seco.notebook.util.IconManager;
+import seco.util.IconManager;
 
 public class ActionManager
 {

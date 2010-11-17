@@ -47,9 +47,9 @@ import seco.notebook.syntax.completion.Completion;
 import seco.notebook.syntax.completion.CompletionItem;
 import seco.notebook.syntax.completion.CompletionTask;
 import seco.notebook.syntax.util.JMIUtils;
-import seco.notebook.util.CharSequenceUtilities;
-import seco.notebook.util.DocumentUtilities;
-import seco.notebook.util.RequestProcessor;
+import seco.util.CharSequenceUtilities;
+import seco.util.DocumentUtilities;
+import seco.util.RequestProcessor;
 import bsh.BshCompletionProvider;
 
 /**

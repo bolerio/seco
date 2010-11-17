@@ -50,11 +50,11 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
 import seco.gui.GUIUtilities;
-import seco.gui.dialog.DialogDescriptor;
-import seco.gui.dialog.DialogDisplayer;
+import seco.gui.common.DialogDescriptor;
+import seco.gui.common.DialogDisplayer;
+import seco.gui.common.NotifyDescriptor;
 import seco.gui.dialog.FindDialog;
 import seco.gui.dialog.FontDialog;
-import seco.gui.dialog.NotifyDescriptor;
 import seco.gui.menu.CellLangProvider;
 import seco.notebook.FontEx;
 import seco.notebook.NotebookDocument;
@@ -64,9 +64,9 @@ import seco.notebook.NotebookEditorKit.BaseAction;
 import seco.notebook.NotebookEditorKit.FindReplaceAction;
 import seco.notebook.html.view.HTMLTableView;
 import seco.notebook.html.view.InvisibleView;
-import seco.notebook.util.IconManager;
 import seco.notebook.view.HtmlView;
 import seco.things.CellUtils;
+import seco.util.IconManager;
 
 
 public class MyHTMLEditorKit extends HTMLEditorKit

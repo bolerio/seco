@@ -9,15 +9,13 @@ package seco.notebook.syntax;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
-import javax.swing.text.Element;
-import javax.swing.text.Segment;
 import javax.swing.text.*;
 
 import seco.notebook.NotebookDocument;
 import seco.notebook.syntax.completion.Completion;
 import seco.notebook.syntax.completion.CompletionProvider;
 import seco.notebook.syntax.completion.NBParser;
-import seco.notebook.util.DocumentUtilities;
+import seco.util.DocumentUtilities;
 
 public abstract class ScriptSupport
 {

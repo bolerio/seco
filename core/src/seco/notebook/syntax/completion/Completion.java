@@ -58,7 +58,7 @@ import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.Utilities;
 import seco.notebook.syntax.ScriptSupport;
-import seco.notebook.util.DocumentUtilities;
+import seco.util.DocumentUtilities;
 import bsh.BshCompletionProvider;
 
 /**

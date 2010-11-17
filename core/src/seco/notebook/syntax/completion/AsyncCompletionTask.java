@@ -24,7 +24,7 @@ import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
 import seco.notebook.NotebookDocument;
-import seco.notebook.util.RequestProcessor;
+import seco.util.RequestProcessor;
 
 
 

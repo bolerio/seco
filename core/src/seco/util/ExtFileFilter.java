@@ -35,7 +35,7 @@
  **/
 
 
-package seco.notebook.util;
+package seco.util;
 //---------------------------------------------------------------------------
 import java.lang.Runtime;
 import java.io.File;

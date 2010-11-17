@@ -25,8 +25,8 @@ import org.jivesoftware.smackx.muc.ParticipantStatusListener;
 
 import seco.ThisNiche;
 import seco.api.Callback;
-import seco.notebook.util.RequestProcessor;
 import seco.talk.PeerList.PeerListModel;
+import seco.util.RequestProcessor;
 
 public class RoomPanel extends BaseChatPanel
 {

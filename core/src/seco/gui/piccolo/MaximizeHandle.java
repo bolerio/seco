@@ -8,9 +8,9 @@ import javax.swing.ImageIcon;
 
 import seco.ThisNiche;
 import seco.gui.PSwingNode;
-import seco.notebook.util.IconManager;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import seco.util.IconManager;
 import edu.umd.cs.piccolo.event.PInputEvent;
 
 public class MaximizeHandle extends CommandHandle

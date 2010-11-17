@@ -26,7 +26,7 @@ import seco.notebook.storage.NamedInfo;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.CompletionU;
 import seco.notebook.syntax.completion.NBParser;
-import seco.notebook.util.SegmentCache;
+import seco.util.SegmentCache;
 
 public class BshAst extends NBParser
 {

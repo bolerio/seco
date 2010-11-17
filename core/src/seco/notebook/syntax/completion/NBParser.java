@@ -11,8 +11,8 @@ import javax.swing.JTree;
 import javax.swing.event.DocumentEvent;
 
 import seco.notebook.syntax.ScriptSupport;
-import seco.notebook.util.RequestProcessor;
-import seco.notebook.util.RequestProcessor.Task;
+import seco.util.RequestProcessor;
+import seco.util.RequestProcessor.Task;
 
 
 public abstract class NBParser

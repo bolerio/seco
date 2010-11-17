@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.notebook.util;
+package seco.util;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -475,7 +475,7 @@ public final class RequestProcessor {
      * The task describing the request sent to the processor.
      * Cancellable since 4.1.
      */
-    public final class Task extends seco.notebook.util.Task //implements Cancellable 
+    public final class Task extends seco.util.Task //implements Cancellable 
     {
         private Item item;
         private int priority = Thread.MIN_PRIORITY;

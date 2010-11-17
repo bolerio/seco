@@ -18,7 +18,7 @@ import javax.swing.text.Utilities;
 import seco.notebook.syntax.Chunk;
 import seco.notebook.syntax.ChunkCache;
 import seco.notebook.syntax.ScriptSupport;
-import seco.notebook.util.SegmentCache;
+import seco.util.SegmentCache;
 
 
 /**

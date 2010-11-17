@@ -40,7 +40,7 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.Keymap;
 import javax.swing.text.html.HTMLDocument;
 
-import seco.notebook.util.IconManager;
+import seco.util.IconManager;
 
 /**
  *

@@ -32,9 +32,9 @@ import javax.swing.JTextArea;
 
 import seco.gui.visual.CellContainerVisual;
 import seco.gui.visual.TabbedPaneVisual;
-import seco.notebook.util.IconManager;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import seco.util.IconManager;
 
 /**
  * Panel representing a PSwingNode in minimized state

@@ -36,7 +36,7 @@ import javax.swing.text.Segment;
 import javax.swing.text.TabExpander;
 
 import seco.notebook.NotebookUI;
-import seco.notebook.util.SegmentCache;
+import seco.util.SegmentCache;
 
 
 /**

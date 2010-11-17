@@ -24,7 +24,7 @@ import seco.notebook.ElementType;
 import seco.notebook.NotebookDocument;
 import seco.notebook.StyleType;
 import seco.notebook.syntax.ScriptSupport;
-import seco.notebook.util.SegmentCache;
+import seco.util.SegmentCache;
 
 /**
  */

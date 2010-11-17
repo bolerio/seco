@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.notebook.util;
+package seco.util;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;

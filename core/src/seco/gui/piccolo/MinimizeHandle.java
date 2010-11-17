@@ -11,10 +11,10 @@ import seco.ThisNiche;
 import seco.gui.PSwingNode;
 import seco.gui.TopFrame;
 import seco.notebook.ScriptletAction;
-import seco.notebook.util.IconManager;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.Scriptlet;
+import seco.util.IconManager;
 import edu.umd.cs.piccolo.event.PInputEvent;
 
 public class MinimizeHandle extends CommandHandle

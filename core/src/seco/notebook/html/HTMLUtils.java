@@ -13,7 +13,7 @@ import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
 
-import seco.notebook.util.IconManager;
+import seco.util.IconManager;
 
 public class HTMLUtils
 {

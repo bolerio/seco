@@ -31,7 +31,6 @@ import seco.events.handlers.AttributeChangeHandler;
 import seco.events.handlers.CellGroupChangeHandler;
 import seco.events.handlers.CellTextChangeHandler;
 import seco.events.handlers.EvalCellHandler;
-import seco.notebook.util.RequestProcessor;
 import seco.rtenv.EvaluationContext;
 import seco.rtenv.RuntimeContext;
 import seco.things.Cell;
@@ -39,6 +38,7 @@ import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.IOUtils;
+import seco.util.RequestProcessor;
 
 abstract public class DocUtil
 {

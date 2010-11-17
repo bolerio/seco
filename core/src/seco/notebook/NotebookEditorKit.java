@@ -56,10 +56,10 @@ import seco.events.CellGroupChangeEvent;
 import seco.gui.GUIHelper;
 import seco.gui.GUIUtilities;
 import seco.gui.ObjectInspector;
-import seco.gui.dialog.DialogDescriptor;
-import seco.gui.dialog.DialogDisplayer;
+import seco.gui.common.DialogDescriptor;
+import seco.gui.common.DialogDisplayer;
+import seco.gui.common.NotifyDescriptor;
 import seco.gui.dialog.FindDialog;
-import seco.gui.dialog.NotifyDescriptor;
 import seco.gui.menu.CellLangProvider;
 import seco.gui.panel.AbbreviationPanel;
 import seco.gui.panel.JavaDocPanel;
@@ -69,7 +69,6 @@ import seco.notebook.html.HTMLUtils;
 import seco.notebook.storage.ClassRepository;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.Completion;
-import seco.notebook.util.IconManager;
 import seco.notebook.view.CellBoxView;
 import seco.notebook.view.CellHandleView;
 import seco.notebook.view.CellParagraphView;
@@ -87,6 +86,7 @@ import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import seco.util.IconManager;
 
 /**
  * 

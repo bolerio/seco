@@ -10,7 +10,7 @@ import javax.swing.ImageIcon;
 import seco.ThisNiche;
 import seco.gui.PSwingNode;
 import seco.gui.TopFrame;
-import seco.notebook.util.IconManager;
+import seco.util.IconManager;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolox.util.PBoundsLocator;
 import edu.umd.cs.piccolox.util.PLocator;

@@ -33,13 +33,13 @@ import seco.ThisNiche;
 import seco.gui.GUIHelper;
 import seco.gui.GUIUtilities;
 import seco.gui.PSwingNode;
-import seco.gui.ToolbarButton;
-import seco.gui.dialog.DialogDescriptor;
-import seco.gui.dialog.DialogDisplayer;
+import seco.gui.common.DialogDescriptor;
+import seco.gui.common.DialogDisplayer;
+import seco.gui.common.ToolbarButton;
 import seco.notebook.ScriptletAction;
-import seco.notebook.util.IconManager;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import seco.util.IconManager;
 
 /**
  * <p>

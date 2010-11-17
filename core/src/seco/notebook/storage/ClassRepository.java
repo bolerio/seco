@@ -36,7 +36,7 @@ import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.query.AtomTypeCondition;
 import seco.U;
 import seco.notebook.AppConfig;
-import seco.notebook.util.RequestProcessor;
+import seco.util.RequestProcessor;
 
 
 public class ClassRepository

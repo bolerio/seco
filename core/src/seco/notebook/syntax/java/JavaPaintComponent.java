@@ -41,7 +41,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import seco.notebook.util.IconManager;
+import seco.util.IconManager;
 
 
 /**

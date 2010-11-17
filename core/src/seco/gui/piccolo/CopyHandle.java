@@ -12,7 +12,7 @@ import seco.ThisNiche;
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
 import seco.gui.TopFrame;
-import seco.notebook.util.IconManager;
+import seco.util.IconManager;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.util.PDimension;
 

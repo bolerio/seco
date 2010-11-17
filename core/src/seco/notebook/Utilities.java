@@ -22,9 +22,9 @@ import javax.swing.text.Element;
 import javax.swing.text.View;
 
 import seco.notebook.syntax.ScriptSupport;
-import seco.notebook.util.CharSequenceUtilities;
-import seco.notebook.util.DocumentUtilities;
-import seco.notebook.util.SegmentCache;
+import seco.util.CharSequenceUtilities;
+import seco.util.DocumentUtilities;
+import seco.util.SegmentCache;
 
 
 /**

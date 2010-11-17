@@ -71,12 +71,12 @@ import seco.notebook.syntax.ScriptSupportFactory;
 import seco.notebook.syntax.SyntaxStyle;
 import seco.notebook.syntax.SyntaxStyleBean;
 import seco.notebook.syntax.SyntaxUtilities;
-import seco.notebook.util.Log;
 import seco.rtenv.EvaluationContext;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import seco.util.Log;
 
 /**
  * 

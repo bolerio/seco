@@ -36,7 +36,7 @@ import seco.notebook.syntax.completion.CompletionU;
 import seco.notebook.syntax.completion.JavaDocManager;
 import seco.notebook.syntax.completion.MethodParamsTipPaintComponent;
 import seco.notebook.syntax.java.JavaResultItem;
-import seco.notebook.util.DocumentUtilities;
+import seco.util.DocumentUtilities;
 
 public class BshCompletionProvider implements CompletionProvider
 {

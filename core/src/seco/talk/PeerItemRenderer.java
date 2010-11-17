@@ -14,7 +14,7 @@ import org.hypergraphdb.peer.HGPeerIdentity;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.Occupant;
 
-import seco.notebook.util.IconManager;
+import seco.util.IconManager;
 
 class PeerItemRenderer extends JLabel implements ListCellRenderer 
 {
