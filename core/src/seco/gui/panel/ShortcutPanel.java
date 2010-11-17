@@ -30,9 +30,9 @@ import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import seco.ThisNiche;
-import seco.gui.dialog.DialogDescriptor;
-import seco.gui.dialog.DialogDisplayer;
-import seco.gui.dialog.NotifyDescriptor;
+import seco.gui.common.DialogDescriptor;
+import seco.gui.common.DialogDisplayer;
+import seco.gui.common.NotifyDescriptor;
 import seco.notebook.ActionManager;
 import seco.notebook.NotebookUI;
 

@@ -19,8 +19,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import seco.ThisNiche;
 import seco.gui.ObjectInspector;
-import seco.gui.dialog.DialogDescriptor;
-import seco.gui.dialog.DialogDisplayer;
+import seco.gui.common.DialogDescriptor;
+import seco.gui.common.DialogDisplayer;
 import seco.notebook.NotebookUI;
 
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor;

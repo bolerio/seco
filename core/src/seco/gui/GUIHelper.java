@@ -52,8 +52,8 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
-import seco.gui.dialog.DialogDisplayer;
-import seco.gui.dialog.NotifyDescriptor;
+import seco.gui.common.DialogDisplayer;
+import seco.gui.common.NotifyDescriptor;
 import seco.gui.layout.DRect;
 import seco.gui.layout.DValue;
 import seco.gui.layout.DefaultLayoutHandler;

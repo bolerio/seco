@@ -39,8 +39,8 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
-import seco.gui.dialog.DialogDescriptor;
-import seco.gui.dialog.DialogDisplayer;
+import seco.gui.common.DialogDescriptor;
+import seco.gui.common.DialogDisplayer;
 import seco.notebook.NotebookUI;
 import seco.things.DescriptionLink;
 

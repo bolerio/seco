@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.gui.dialog;
+package seco.gui.common;
 
 import java.awt.Frame;
 import java.awt.event.ActionListener;

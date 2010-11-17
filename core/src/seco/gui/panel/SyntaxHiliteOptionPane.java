@@ -46,7 +46,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import seco.gui.GUIUtilities;
-import seco.gui.dialog.EnhancedDialog;
+import seco.gui.common.EnhancedDialog;
 import seco.notebook.AppConfig;
 import seco.notebook.NotebookUI;
 import seco.notebook.Utilities;

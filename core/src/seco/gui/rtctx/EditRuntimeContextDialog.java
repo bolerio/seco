@@ -35,9 +35,9 @@ import javax.swing.tree.TreeSelectionModel;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
-import seco.gui.dialog.DialogDescriptor;
-import seco.gui.dialog.DialogDisplayer;
-import seco.gui.dialog.NotifyDescriptor;
+import seco.gui.common.DialogDescriptor;
+import seco.gui.common.DialogDisplayer;
+import seco.gui.common.NotifyDescriptor;
 import seco.rtenv.NestedContextLink;
 import seco.rtenv.RtU;
 import seco.rtenv.RuntimeContext;
