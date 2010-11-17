@@ -36,7 +36,6 @@ import org.hypergraphdb.HGQuery.hg;
 import seco.ThisNiche;
 import seco.boot.NicheBootListener;
 import seco.events.EventPubSub;
-import seco.notebook.gui.GUIUtilities;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;

@@ -39,9 +39,9 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
+import seco.gui.dialog.DialogDescriptor;
+import seco.gui.dialog.DialogDisplayer;
 import seco.notebook.NotebookUI;
-import seco.notebook.gui.DialogDescriptor;
-import seco.notebook.gui.DialogDisplayer;
 import seco.things.DescriptionLink;
 
 public class SearchDescriptionPanel extends javax.swing.JPanel

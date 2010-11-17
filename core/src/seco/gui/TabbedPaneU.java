@@ -1,7 +1,6 @@
 package seco.gui;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -29,14 +28,8 @@ import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EvalCellEvent;
+import seco.gui.menu.EnhancedMenu;
 import seco.notebook.NotebookUI;
-import seco.notebook.gui.CloseableDnDTabbedPane;
-import seco.notebook.gui.DialogDisplayer;
-import seco.notebook.gui.GUIUtilities;
-import seco.notebook.gui.NotifyDescriptor;
-import seco.notebook.gui.ScriptEngineProvider;
-import seco.notebook.gui.menu.EnhancedMenu;
-import seco.notebook.gui.menu.RCListProvider;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
@@ -144,7 +137,7 @@ public class TabbedPaneU
         tabPopupMenu.add(new EnhancedMenu("Set Default Language",
                 new ScriptEngineProvider()));
         tabPopupMenu.add(new EnhancedMenu("Set Runtime Context",
-                new RCListProvider()));
+                new CGMActionsHelper.RCListProvider(CGMActionsHelper.Scope.book)));
         act = new AbstractAction("Rename") {
             public void actionPerformed(ActionEvent e)
             {

@@ -11,21 +11,17 @@ import javax.swing.JDialog;
 import javax.swing.JTextArea;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
-import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.U;
 import seco.boot.NicheManager;
+import seco.gui.dialog.DialogDescriptor;
+import seco.gui.dialog.DialogDisplayer;
+import seco.gui.dialog.NotifyDescriptor;
 import seco.gui.layout.LayoutSettingsPanel;
 import seco.notebook.ActionManager;
-import seco.notebook.AppConfig;
 import seco.notebook.NotebookUI;
-import seco.notebook.gui.DialogDescriptor;
-import seco.notebook.gui.DialogDisplayer;
-import seco.notebook.gui.GUIUtilities;
-import seco.notebook.gui.NotifyDescriptor;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -112,9 +108,9 @@ public class CommonActions
         complete_remove(GUIHelper.WIN_ACTIONS_HANDLE);
         complete_remove(GUIHelper.CANVAS_GLOBAL_ACTION_SET_HANDLE);
         complete_remove(GUIHelper.CANVAS_NODE_ACTION_SET_HANDLE);
-        complete_remove(GUIHelper.CELL_MENU_HANDLE);
-        complete_remove(GUIHelper.CELL_GROUP_MENU_HANDLE); 
-        complete_remove(GUIHelper.NOTEBOOK_MENU_HANDLE);
+        complete_remove(GUIHelper.CELL_MENU_ITEMS_HANDLE);
+        complete_remove(GUIHelper.CELL_GROUP_MENU_ITEMS_HANDLE); 
+        complete_remove(GUIHelper.NOTEBOOK_MENU_ITEMS_HANDLE);
         complete_remove(ActionManager.HANDLE);
         complete_remove(NotebookUI.POPUP_HANDLE);
                 

@@ -64,7 +64,7 @@ import javax.swing.text.html.HTML;
 import edu.umd.cs.piccolox.pswing.PSwing;
 
 import seco.gui.GUIHelper;
-import seco.notebook.gui.ToolbarButton;
+import seco.gui.ToolbarButton;
 
 public class HTMLToolBar extends JToolBar
 {

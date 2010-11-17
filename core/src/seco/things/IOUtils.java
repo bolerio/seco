@@ -384,6 +384,7 @@ public class IOUtils
                         + CellUtils.getEngine(gr) + "\"");
             ;
             fw.write(">\n");
+            @SuppressWarnings("unchecked")
             Map<StyleType, NBStyle> map= (Map<StyleType, NBStyle>) gr
             .getAttribute(XMLConstants.CELL_STYLE);
             if(map != null)

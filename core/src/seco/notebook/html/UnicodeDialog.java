@@ -55,7 +55,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
-import seco.notebook.gui.GUIUtilities;
+import seco.gui.GUIUtilities;
 
 public class UnicodeDialog extends JDialog implements ActionListener
 {

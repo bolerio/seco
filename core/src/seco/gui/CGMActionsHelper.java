@@ -2,8 +2,8 @@ package seco.gui;
 
 import static seco.U.hget;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -19,14 +19,15 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper.PiccoloMenu;
+import seco.gui.menu.DynamicMenuProvider;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.XMLConstants;
-import seco.notebook.gui.menu.DynamicMenuProvider;
 import seco.rtenv.RuntimeContext;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -392,20 +393,22 @@ public class CGMActionsHelper
         }
     }
 
-    public static class Menu extends PiccoloMenu implements MenuListener
+    public static class DynamicMenu extends PiccoloMenu implements MenuListener
     {
+        protected HGPersistentHandle menuItemsHandle;
         protected Scope scope;
-        
-        public Menu()
+
+        public DynamicMenu()
         {
             super();
             addMenuListener(this);
         }
-
-        public Menu(String s, Scope scope)
+        
+        public DynamicMenu(HGPersistentHandle actionsHandle, String s, Scope scope)
         {
             super(s);
             this.scope = scope;
+            this.menuItemsHandle = actionsHandle;
             addMenuListener(this);
         }
 
@@ -418,27 +421,37 @@ public class CGMActionsHelper
         {
             this.scope = scope;
         }
+        
+        public HGPersistentHandle getMenuItemsHandle()
+        {
+            return menuItemsHandle;
+        }
+
+        public void setMenuItemsHandle(HGPersistentHandle menuItemsHandle)
+        {
+            this.menuItemsHandle = menuItemsHandle;
+        }
 
         public void menuSelected(MenuEvent e)
         {
+            removeAll();
             boolean b = CGMActionsHelper.getOwnerCGM(scope) != null;
-            for (int i = 0; i < getMenuComponentCount(); i++)
+            Collection<JMenuItem> menuList = ThisNiche.graph.get(menuItemsHandle);
+            for (JMenuItem mi: menuList)
             {
-                Component c = getMenuComponent(i);
-                if (c instanceof JMenuItem)
-                {
-                    Action a = ((JMenuItem) c).getAction();
-                    if (a != null) 
-                        b = a.isEnabled();
-                    if(b && c instanceof JCheckBoxMenuItem && a instanceof SelectableAction)
-                        ((JCheckBoxMenuItem) c).setSelected(((SelectableAction)a).isSelected());
-                }
-                c.setEnabled(b);
-                c.setVisible(b);
+                Action a = mi.getAction();
+                if (a != null) 
+                    b = a.isEnabled();
+                if(b && mi instanceof JCheckBoxMenuItem && a instanceof SelectableAction)
+                        ((JCheckBoxMenuItem) mi).setSelected(((SelectableAction)a).isSelected());
+                mi.setEnabled(b);
+                //c.setVisible(b);
+                if(b) add(mi);
+                    
             }
             getPopupMenu().invalidate();
         }
-
+        
         public void menuCanceled(MenuEvent e)
         {
         }

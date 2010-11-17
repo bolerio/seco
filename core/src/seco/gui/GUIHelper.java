@@ -21,6 +21,7 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,11 +52,16 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
+import seco.gui.dialog.DialogDisplayer;
+import seco.gui.dialog.NotifyDescriptor;
 import seco.gui.layout.DRect;
 import seco.gui.layout.DValue;
 import seco.gui.layout.DefaultLayoutHandler;
 import seco.gui.layout.LayoutHandler;
 import seco.gui.layout.RefPoint;
+import seco.gui.menu.EnhancedMenu;
+import seco.gui.menu.RecentFilesProvider;
+import seco.gui.menu.VisPropsProvider;
 import seco.gui.piccolo.TitlePaneNode;
 import seco.notebook.ActionManager;
 import seco.notebook.Actions;
@@ -63,14 +69,6 @@ import seco.notebook.AppConfig;
 import seco.notebook.NotebookEditorKit;
 import seco.notebook.NotebookUI;
 import seco.notebook.ScriptletAction;
-import seco.notebook.gui.DialogDisplayer;
-import seco.notebook.gui.GUIUtilities;
-import seco.notebook.gui.NotifyDescriptor;
-import seco.notebook.gui.OpenBookPanel;
-import seco.notebook.gui.ToolbarButton;
-import seco.notebook.gui.menu.EnhancedMenu;
-import seco.notebook.gui.menu.RecentFilesProvider;
-import seco.notebook.gui.menu.VisPropsProvider;
 import seco.notebook.html.HTMLToolBar;
 import seco.notebook.util.FileUtil;
 import seco.notebook.util.IconManager;
@@ -99,11 +97,11 @@ public class GUIHelper
             .makeHandle("8724b420-963b-11de-8a39-0800200c9a66");
     public static final HGPersistentHandle OUTPUT_CONSOLE_HANDLE = UUIDHandleFactory.I
             .makeHandle("6817db80-e35a-11df-85ca-0800200c9a66");
-    public static final HGPersistentHandle CELL_MENU_HANDLE = UUIDHandleFactory.I
+    public static final HGPersistentHandle CELL_MENU_ITEMS_HANDLE = UUIDHandleFactory.I
             .makeHandle("b26a4220-ee65-11df-98cf-0800200c9a66");
-    public static final HGPersistentHandle CELL_GROUP_MENU_HANDLE = UUIDHandleFactory.I
+    public static final HGPersistentHandle CELL_GROUP_MENU_ITEMS_HANDLE = UUIDHandleFactory.I
             .makeHandle("1aee3830-ee78-11df-98cf-0800200c9a66");
-    public static final HGPersistentHandle NOTEBOOK_MENU_HANDLE = UUIDHandleFactory.I
+    public static final HGPersistentHandle NOTEBOOK_MENU_ITEMS_HANDLE = UUIDHandleFactory.I
             .makeHandle("2f844cd0-ee78-11df-98cf-0800200c9a66");
     public static final HGPersistentHandle CANVAS_NODE_ACTION_SET_HANDLE = UUIDHandleFactory.I
             .makeHandle("1cfd4670-7b7e-11de-8a39-0800200c9a66");
@@ -717,6 +715,7 @@ public class GUIHelper
                     new DefaultLayoutHandler(new DRect(new DValue(/* 280 */33,
                             true), new DValue(28), new DValue(67, true),
                             new DValue(28)), RefPoint.TOP_LEFT), null, 2);
+        initCGMActions();
     }
 
     public static HGHandle addToCellGroup(HGHandle h, CellGroup group,
@@ -1100,9 +1099,9 @@ public class GUIHelper
         GlobMenuItem mi = new GlobMenuItem("Manage Cell Descriptions");
         mi.addActionListener(new DescriptionManagerAction());
         menu.add(mi);
-        menu.add(GUIHelper.getCellMenu());
-        menu.add(GUIHelper.getCellGroupMenu());
-        menu.add(GUIHelper.getNotebookMenu());
+        menu.add(GUIHelper.makeCellMenu());
+        menu.add(GUIHelper.makeCellGroupMenu());
+        menu.add(GUIHelper.makeNotebookMenu());
         menu.add(new JSeparator());
         mi = new GlobMenuItem("Show Output Console");
         mi.addActionListener(new ShowOutputConsoleAction());
@@ -1179,13 +1178,19 @@ public class GUIHelper
         ui.setTitle(text);
     }
 
-    public static JMenu getNotebookMenu()
+    public static JMenu makeNotebookMenu()
     {
-        JMenu menu = ThisNiche.graph.get(NOTEBOOK_MENU_HANDLE);
+        return new CGMActionsHelper.DynamicMenu(NOTEBOOK_MENU_ITEMS_HANDLE, 
+                "Book",
+                CGMActionsHelper.Scope.book); 
+    }
+    
+    private static void initNotebookMenuItems()
+    {
+        Collection<JMenuItem> menu = ThisNiche.graph.get(NOTEBOOK_MENU_ITEMS_HANDLE);
         if (menu == null)
         {
-            menu = new CGMActionsHelper.Menu("Book",
-                    CGMActionsHelper.Scope.book);
+            menu = new ArrayList<JMenuItem>();
             menu.add(new JCheckBoxMenuItem(new CGMActionsHelper.InitCellAction(
                     CGMActionsHelper.Scope.book)));
             menu.add(new JCheckBoxMenuItem(
@@ -1197,18 +1202,21 @@ public class GUIHelper
                             CGMActionsHelper.Scope.book)));
             // menu.add(new JMenuItem(new DescriptionAction(Scope.group)));
 
-            ThisNiche.graph.define(NOTEBOOK_MENU_HANDLE, menu);
+            ThisNiche.graph.define(NOTEBOOK_MENU_ITEMS_HANDLE, menu);
         }
-        return menu;
     }
 
-    public static JMenu getCellGroupMenu()
+    public static JMenu makeCellGroupMenu()
     {
-        JMenu menu = ThisNiche.graph.get(CELL_GROUP_MENU_HANDLE);
+        return new CGMActionsHelper.DynamicMenu(CELL_GROUP_MENU_ITEMS_HANDLE, 
+                "Cell Group", CGMActionsHelper.Scope.group); 
+    }
+    
+    private static void initCellGroupMenuItems()   { 
+        Collection<JMenuItem> menu  = ThisNiche.graph.get(CELL_GROUP_MENU_ITEMS_HANDLE);
         if (menu == null)
         {
-            menu = new CGMActionsHelper.Menu("Cell Group",
-                    CGMActionsHelper.Scope.group);
+            menu = new ArrayList<JMenuItem>();
             menu.add(new JCheckBoxMenuItem(new CGMActionsHelper.InitCellAction(
                     CGMActionsHelper.Scope.group)));
             menu.add(new JCheckBoxMenuItem(
@@ -1221,18 +1229,23 @@ public class GUIHelper
                             CGMActionsHelper.Scope.group)));
             menu.add(new JMenuItem(new CGMActionsHelper.DescriptionAction(
                     CGMActionsHelper.Scope.group)));
-            ThisNiche.graph.define(CELL_GROUP_MENU_HANDLE, menu);
+            ThisNiche.graph.define(CELL_GROUP_MENU_ITEMS_HANDLE, menu);
         }
-        return menu;
+    }
+    
+    private static void initCGMActions()
+    {
+        initCellMenuItems();
+        initCellGroupMenuItems();
+        initNotebookMenuItems();
     }
 
-    public static JMenu getCellMenu()
+    private static void initCellMenuItems()
     {
-        JMenu menu = ThisNiche.graph.get(CELL_MENU_HANDLE);
+        Collection<JMenuItem> menu = ThisNiche.graph.get(CELL_MENU_ITEMS_HANDLE);
         if (menu == null)
         {
-            menu = new CGMActionsHelper.Menu("Cell",
-                    CGMActionsHelper.Scope.cell);
+            menu = new ArrayList<JMenuItem>();
             menu.add(new JCheckBoxMenuItem(
                     new CGMActionsHelper.InitCellAction()));
             menu.add(new JCheckBoxMenuItem(
@@ -1249,9 +1262,12 @@ public class GUIHelper
                     new CGMActionsHelper.RCListProvider(
                             CGMActionsHelper.Scope.cell)));
             menu.add(new JMenuItem(new CGMActionsHelper.DescriptionAction()));
-
-            ThisNiche.graph.define(CELL_MENU_HANDLE, menu);
+            ThisNiche.graph.define(CELL_MENU_ITEMS_HANDLE, menu);
         }
-        return menu;
+    }
+    
+    public static JMenu makeCellMenu()
+    {
+      return new CGMActionsHelper.DynamicMenu(CELL_MENU_ITEMS_HANDLE, "Cell", CGMActionsHelper.Scope.cell);
     }
 }

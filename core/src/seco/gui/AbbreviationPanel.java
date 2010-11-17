@@ -19,10 +19,10 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import seco.ThisNiche;
+import seco.gui.dialog.DialogDescriptor;
+import seco.gui.dialog.DialogDisplayer;
+import seco.gui.dialog.NotifyDescriptor;
 import seco.notebook.AbbreviationManager;
-import seco.notebook.gui.DialogDescriptor;
-import seco.notebook.gui.DialogDisplayer;
-import seco.notebook.gui.NotifyDescriptor;
 
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor;
 import com.l2fprod.common.propertysheet.DefaultProperty;

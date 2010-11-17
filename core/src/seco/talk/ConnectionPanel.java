@@ -31,12 +31,12 @@ import edu.umd.cs.piccolox.pswing.PSwing;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
+import seco.gui.GUIUtilities;
 import seco.gui.PSwingNode;
+import seco.gui.ToolbarButton;
+import seco.gui.dialog.DialogDescriptor;
+import seco.gui.dialog.DialogDisplayer;
 import seco.notebook.ScriptletAction;
-import seco.notebook.gui.DialogDescriptor;
-import seco.notebook.gui.DialogDisplayer;
-import seco.notebook.gui.GUIUtilities;
-import seco.notebook.gui.ToolbarButton;
 import seco.notebook.util.IconManager;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;

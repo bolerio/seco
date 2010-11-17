@@ -25,28 +25,26 @@
  */
 package seco.notebook.html;
 
-import java.net.URL;
 import java.awt.Component;
-import javax.swing.JOptionPane;
-import java.awt.Dimension;
-import java.awt.Point;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.html.StyleSheet;
-import javax.swing.text.Element;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import javax.swing.JComponent;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.Enumeration;
-import java.util.Vector;
-import javax.swing.text.html.HTML;
-import java.util.StringTokenizer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Enumeration;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.StyleSheet;
 
 /**
  * Utility methods for application SimplyHTML.
@@ -403,7 +401,7 @@ public class Util
 	}
 
 	/**
-	 * Get an arry of strings from a given string having several entries
+	 * Get an array of strings from a given string having several entries
 	 * delimited by blanks.
 	 * 
 	 * <p>
@@ -502,7 +500,7 @@ public class Util
 	 * @param gy the value to use for GridBagConstraints.gridy
 	 * @param a the value to use for GridBagConstraints.anchor
 	 * @param gw the value to use for GridBagConstraints.gridwidth
-	 * @param gh teh value to use for GridBagConstraints.gridheight
+	 * @param gh the value to use for GridBagConstraints.gridheight
 	 * @param f the value to use for GridBagConstraints.fill
 	 */
 	public static void addGridBagComponent(JComponent container,
@@ -760,7 +758,7 @@ public class Util
 		SimpleAttributeSet set = new SimpleAttributeSet();
 		if (style != null)
 		{
-			Enumeration names = style.getAttributeNames();
+			Enumeration<?> names = style.getAttributeNames();
 			Object value;
 			Object key;
 			while (names.hasMoreElements())

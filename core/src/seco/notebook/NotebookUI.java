@@ -77,16 +77,16 @@ import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
+import seco.gui.GUIUtilities;
+import seco.gui.ScriptEngineProvider;
 import seco.gui.GUIHelper.CellTreeAction;
 import seco.gui.GUIHelper.ElementTreeAction;
 import seco.gui.GUIHelper.ParseTreeAction;
+import seco.gui.menu.CellLangProvider;
+import seco.gui.menu.EnhancedMenu;
+import seco.gui.menu.GroupingProvider;
+import seco.gui.menu.UpdatablePopupMenu;
 import seco.gui.TopFrame;
-import seco.notebook.gui.GUIUtilities;
-import seco.notebook.gui.ScriptEngineProvider;
-import seco.notebook.gui.UpdatablePopupMenu;
-import seco.notebook.gui.menu.CellLangProvider;
-import seco.notebook.gui.menu.EnhancedMenu;
-import seco.notebook.gui.menu.GroupingProvider;
 import seco.notebook.html.HTMLEditor;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.view.HtmlView;
@@ -267,10 +267,10 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         {
             visibleRect.setBounds(0, 0, bounds.width, bounds.height);
         }
-        else if (TopFrame.PICCOLO)// && p instanceof PiccoloCanvas)
-        {
-            visibleRect.setBounds(0, 0, bounds.width, bounds.height);
-        }
+//        else if (TopFrame.PICCOLO)// && p instanceof PiccoloCanvas)
+//        {
+//            visibleRect.setBounds(0, 0, bounds.width, bounds.height);
+//        }
         else
         {
             computeVisibleRect(p, visibleRect);
@@ -328,7 +328,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 
     private static void createPopup()
     {
-        if (popupMenu != null) return;
+        //if (popupMenu != null) return;
         popupMenu = (UpdatablePopupMenu) ThisNiche.graph.get(POPUP_HANDLE);
         if (popupMenu == null)
         {
@@ -358,9 +358,9 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             popupMenu.add(mi);
             popupMenu.addSeparator();
          
-            popupMenu.add(GUIHelper.getCellMenu());
-            popupMenu.add(GUIHelper.getCellGroupMenu());
-            popupMenu.add(GUIHelper.getNotebookMenu());
+            popupMenu.add(GUIHelper.makeCellMenu());
+            popupMenu.add(GUIHelper.makeCellGroupMenu());
+            popupMenu.add(GUIHelper.makeNotebookMenu());
             
             popupMenu.addSeparator();
             popupMenu.add(new EnhancedMenu("Grouping", new GroupingProvider()));
@@ -375,17 +375,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             mi.addActionListener(new ParseTreeAction());
             popupMenu.add(mi);
             
-//            HGHandle typeHandle = ThisNiche.graph.getTypeSystem().getTypeHandle(Serializable.class);
-//            try{
-//                 ThisNiche.graph.remove(ThisNiche.graph.getTypeSystem().getTypeHandle(JComponent.class));
-//                //TypeUtils.deleteType(ThisNiche.graph, ThisNiche.graph.getTypeSystem().getTypeHandle(JComponent.class), true);
-//                TypeUtils.deleteType(ThisNiche.graph, typeHandle, true);
-//            }catch(Throwable t)
-//            {
-//                t.printStackTrace();
-//                //TypeUtils.deleteType(ThisNiche.graph, typeHandle);
-//            }
-
             ThisNiche.graph.define(POPUP_HANDLE, popupMenu);
         }
     }
@@ -397,7 +386,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
 
     public NotebookDocument getDoc()
     {
-        return (NotebookDocument) this.getDocument();
+        return (NotebookDocument) getDocument();
     }
 
     public boolean isDrawCellNums()
@@ -994,7 +983,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         {
             Color color = getColor();
             g.setColor((color == null) ? c.getSelectionColor() : color);
-            // System.out.println("paintLayer: " + offs0 + ":" + offs1);
             if (offs0 == view.getStartOffset() && offs1 == view.getEndOffset()
                     && offs0 == view.getElement().getStartOffset()
                     && offs1 == view.getElement().getEndOffset())
@@ -1002,7 +990,6 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                 // Contained in view, can just use bounds.
                 Rectangle alloc = (bounds instanceof Rectangle) ? (Rectangle) bounds
                         : bounds.getBounds();
-                // System.out.println("paintLayer1: " + offs0 + ":" + offs1);
                 g.fillRect(alloc.x, alloc.y, alloc.width, alloc.height);
                 return alloc;
             }
@@ -1132,7 +1119,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             super.setDot(dot, dotBias);
         }
 
-        // this is fired to often and erases the selection
+        // this is fired too often and erases the selection
         public void focusLost(FocusEvent e)
         {
             // setVisible(false);
@@ -1155,7 +1142,5 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             }
             super.fireStateChanged();
         }
-
     }
-
 }

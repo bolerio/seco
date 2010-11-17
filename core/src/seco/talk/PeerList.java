@@ -24,8 +24,8 @@ import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.Occupant;
 
 import seco.gui.GUIHelper;
-import seco.notebook.gui.GUIUtilities;
-import seco.notebook.gui.UpdatablePopupMenu;
+import seco.gui.GUIUtilities;
+import seco.gui.menu.UpdatablePopupMenu;
 
 public class PeerList extends JPanel
 {

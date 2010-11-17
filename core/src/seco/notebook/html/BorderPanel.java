@@ -25,19 +25,19 @@
  */
 package seco.notebook.html;
 
-import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.EtchedBorder;
-import java.util.Vector;
-import javax.swing.JLabel;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.CSS;
-import java.util.Enumeration;
-import java.util.prefs.*;
 
 /**
  * Panel to show and manipulate border settings for a rectangular object such as

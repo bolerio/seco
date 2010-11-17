@@ -33,12 +33,12 @@ import javax.swing.text.Position.Bias;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
+import seco.gui.GUIUtilities;
 import seco.gui.TopFrame;
+import seco.gui.menu.UpdatablePopupMenu;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.NotebookDocument.UpdateAction;
-import seco.notebook.gui.GUIUtilities;
-import seco.notebook.gui.UpdatablePopupMenu;
 import seco.notebook.html.HTMLEditor;
 import seco.notebook.html.MyHTMLEditorKit;
 import seco.things.Cell;

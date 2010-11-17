@@ -53,8 +53,8 @@ import javax.swing.text.html.StyleSheet;
 import javax.swing.undo.UndoManager;
 
 import seco.gui.GUIHelper;
-import seco.notebook.gui.GUIUtilities;
-import seco.notebook.gui.UpdatablePopupMenu;
+import seco.gui.GUIUtilities;
+import seco.gui.menu.UpdatablePopupMenu;
 import sun.awt.AppContext;
 
 public class HTMLEditor extends JTextPane

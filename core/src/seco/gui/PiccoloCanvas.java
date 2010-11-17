@@ -12,6 +12,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
@@ -50,6 +51,10 @@ import edu.umd.cs.piccolox.swing.PScrollPane;
 /*
  * Main Piccolo container.
  */
+/**
+ * @author Administrator
+ *
+ */
 public class PiccoloCanvas extends PSwingCanvas
 {
     private static final long serialVersionUID = 8650227944556777541L;
@@ -80,7 +85,8 @@ public class PiccoloCanvas extends PSwingCanvas
                 new PropertyChangeListener() {
                     public void propertyChange(PropertyChangeEvent evt)
                     {
-                        relayout();
+                    	PBounds b = (PBounds) evt.getNewValue();
+                    	relayout(b);
                     }
                 });
         // camera.addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM,
@@ -165,13 +171,26 @@ public class PiccoloCanvas extends PSwingCanvas
         }
     }
 
+    /**
+     * Re-layout canvas components using current bounds 
+     */ 
     public void relayout()
+    {
+    	relayout(null);
+    }
+    
+    /**
+     * Re-layout canvas components according to the passed bounds 
+     * @param bounds The new bounds for the canvas
+     */
+    public void relayout(Rectangle2D bounds)
     {
         if (maximizedNode != null)
         {
-            adjust_maximized_node();
+            adjust_maximized_node(bounds);
             return;
         }
+        
         for (int i = 0; i < getCamera().getChildrenCount(); i++)
         {
             PNode o = getCamera().getChild(i);
@@ -302,7 +321,7 @@ public class PiccoloCanvas extends PSwingCanvas
             if (!o.equals(n)) o.setVisible(false);
         }
 
-        adjust_maximized_node();
+        adjust_maximized_node(null);
         n.moveToFront();
         toggle_scroll_bars(false);
     }
@@ -345,12 +364,10 @@ public class PiccoloCanvas extends PSwingCanvas
     private static int offset_y = 2; //16;
     private static int offset_x = 2;//16;
 
-    private void adjust_maximized_node()
+    private void adjust_maximized_node(Rectangle2D bounds)
     {
-       // double w = (nested) ? getBounds().getWidth() :TopFrame.getInstance().getContentPane().getWidth();
-      //  double h = (nested) ? getBounds().getHeight() :TopFrame.getInstance().getContentPane().getHeight();
-        double w = getBounds().getWidth(); 
-        double h = getBounds().getHeight();
+        double w = (bounds != null) ? bounds.getWidth() : getBounds().getWidth(); 
+        double h = (bounds != null) ? bounds.getHeight() : getBounds().getHeight();
         maximizedNode.setBounds(0, 0, w - offset_x, h - 2*offset_y);
         PBounds b = maximizedNode.getFullBounds();
         maximizedNode.translate(-b.x + offset_x / 2, -b.y + offset_y/ 2);

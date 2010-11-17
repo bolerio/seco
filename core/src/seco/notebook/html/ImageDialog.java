@@ -67,7 +67,7 @@ import java.io.StringWriter;
 import javax.swing.text.AttributeSet;
 import javax.swing.JOptionPane;
 
-import seco.notebook.gui.ExampleFileFilter;
+import seco.gui.ExampleFileFilter;
 
 /**
  * A dialog providing an image repository and a way to edit display options for
