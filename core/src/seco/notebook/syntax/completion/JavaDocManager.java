@@ -17,9 +17,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import seco.notebook.storage.ClassRepository;
-import seco.notebook.storage.DocInfo;
-import seco.notebook.storage.PackageInfo;
+import seco.storage.ClassRepository;
+import seco.storage.DocInfo;
+import seco.storage.PackageInfo;
 
 public class JavaDocManager  
 {

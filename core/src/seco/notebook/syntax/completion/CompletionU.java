@@ -7,10 +7,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import seco.notebook.storage.ClassInfo;
-import seco.notebook.storage.NamedInfo;
-import seco.notebook.storage.PackageInfo;
 import seco.notebook.syntax.java.JavaResultItem;
+import seco.storage.ClassInfo;
+import seco.storage.NamedInfo;
+import seco.storage.PackageInfo;
 
 public class CompletionU
 {

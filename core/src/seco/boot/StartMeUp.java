@@ -13,7 +13,7 @@ import java.util.*;
 import javax.swing.UIManager;
 
 import seco.classloader.AdaptiveClassLoader;
-import seco.notebook.storage.ClassRepository;
+import seco.storage.ClassRepository;
 
 public class StartMeUp
 {

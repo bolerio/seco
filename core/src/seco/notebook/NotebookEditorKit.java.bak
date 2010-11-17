@@ -54,20 +54,21 @@ import org.hypergraphdb.handle.UUIDHandleFactory;
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
 import seco.gui.GUIHelper;
-import seco.gui.GUIUtilities;
 import seco.gui.ObjectInspector;
-import seco.gui.common.DialogDescriptor;
-import seco.gui.common.DialogDisplayer;
-import seco.gui.common.NotifyDescriptor;
-import seco.gui.dialog.FindDialog;
-import seco.gui.menu.CellLangProvider;
-import seco.gui.panel.AbbreviationPanel;
-import seco.gui.panel.JavaDocPanel;
-import seco.gui.panel.RuntimeContextPanel;
-import seco.gui.panel.ShortcutPanel;
+import seco.notebook.gui.DialogDescriptor;
+import seco.notebook.gui.DialogDisplayer;
+import seco.notebook.gui.FindDialog;
+import seco.notebook.gui.GUIUtilities;
+import seco.notebook.gui.JavaDocPanel;
+import seco.notebook.gui.NotifyDescriptor;
+import seco.notebook.gui.RuntimeContextPanel;
+import seco.notebook.gui.ShortcutPanel;
+import seco.notebook.gui.menu.CellLangProvider;
 import seco.notebook.html.HTMLUtils;
+import seco.notebook.storage.ClassRepository;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.Completion;
+import seco.notebook.util.IconManager;
 import seco.notebook.view.CellBoxView;
 import seco.notebook.view.CellHandleView;
 import seco.notebook.view.CellParagraphView;
@@ -81,12 +82,10 @@ import seco.notebook.view.NotebookView;
 import seco.notebook.view.ResizableComponentView;
 import seco.notebook.view.ViewUtils;
 import seco.notebook.view.WholeCellView;
-import seco.storage.ClassRepository;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
-import seco.util.IconManager;
 
 /**
  * 
@@ -120,13 +119,12 @@ public class NotebookEditorKit extends StyledEditorKit
     public static final String javaDocManagerAction = "JavaDoc Manager";
     public static final String ctxInspectorAction = "RuntimeContext Inspector";
     public static final String shortcutInspectorAction = "KeyStroke Inspector";
-    public static final String abbreviationManagerAction = "AbbreviationManager";
     public static final String replaceAction = "Replace...";
     public static final String findAction = "Find...";
     public static final String mergeCellsAction = "Merge Input Cells";
     public static final String addRemoveCommentsAction = "Comment/Uncomment";
     public static final String openObjectInspectorAction = "Inspect variable";
-    public static final String selectAllAction = "Select All";
+
     static
     {
         JEditorPane.registerEditorKitForContentType(CONTENT_TYPE,
@@ -148,8 +146,13 @@ public class NotebookEditorKit extends StyledEditorKit
             new SelectWordAction(), new SelectLineAction(),
             new VerticalPageAction(pageUpAction, -1, false),
             new VerticalPageAction(pageDownAction, 1, false),
-            new AddRemoveCommentsAction(), new OpenObjectInspectorAction(),
-            new AbbreviationManagerAction() };
+<<<<<<< .mine
+            new AddRemoveCommentsAction(), new OpenObjectInspectorAction()
+=======
+            new AddRemoveCommentsAction(),
+            new OpenObjectInspectorAction()
+>>>>>>> .r408
+    };
     private static HashMap<String, Action> actions;
 
     /** Creates a new instance of NotebookEditorKit */
@@ -204,7 +207,7 @@ public class NotebookEditorKit extends StyledEditorKit
 
         doc = new NotebookDocument(ThisNiche.graph.add(DEFAULT_TOP_GROUP),
                 ThisNiche.getTopContext());
-        // System.out.println("Adding DOC: " + DEFAULT_TOP_GROUP);
+        System.out.println("Adding DOC: " + DEFAULT_TOP_GROUP);
         ThisNiche.graph.define(DOC_HANDLE, doc);
         doc.init();
         return doc;
@@ -228,6 +231,8 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             Object o = elem.getAttributes().getAttribute(
                     StyleConstants.NameAttribute);
+            // System.out.println("ViewFactory: " + elem.getClass() + ":" + o +
+            // ":" + elem.getName());
             if (o instanceof ElementType)
             {
                 switch ((ElementType) o)
@@ -326,6 +331,7 @@ public class NotebookEditorKit extends StyledEditorKit
             int start = javax.swing.text.Utilities.getWordStart(ui, pos);
             int end = javax.swing.text.Utilities.getWordEnd(ui, pos);
             String cls = doc.getText(start, end - start);
+            // System.out.println("IMPORT ACTION - sup: " + cls);
             Class<?>[] classes = ClassRepository.getInstance().findClass(cls);
             if (classes.length == 0) return;
             String res = null;
@@ -336,9 +342,8 @@ public class NotebookEditorKit extends StyledEditorKit
                     names[i] = classes[i].getName();
                 JList list = new JList(names);
                 list.setPreferredSize(new Dimension(200, 100));
-                DialogDescriptor dd = new DialogDescriptor(
-                        GUIUtilities.getFrame(ui), list,
-                        "Select the class to import");
+                DialogDescriptor dd = new DialogDescriptor(GUIUtilities
+                        .getFrame(ui), list, "Select the class to import");
                 if (DialogDisplayer.getDefault().notify(dd) != NotifyDescriptor.OK_OPTION)
                     return;
                 res = (String) list.getSelectedValue();
@@ -382,9 +387,9 @@ public class NotebookEditorKit extends StyledEditorKit
                     processCellGroup(doc, (CellGroup) m);
             }
             if (rem.size() == 0) return;
-            CellGroupChangeEvent e = new CellGroupChangeEvent(
-                    ThisNiche.handleOf(g), -1, new HGHandle[0],
-                    rem.toArray(new HGHandle[rem.size()]));
+            CellGroupChangeEvent e = new CellGroupChangeEvent(ThisNiche
+                    .handleOf(g), -1, new HGHandle[0], rem
+                    .toArray(new HGHandle[rem.size()]));
             // g.batchProcess(e);
             doc.fireCellGroupChanged(e);
         }
@@ -655,10 +660,10 @@ public class NotebookEditorKit extends StyledEditorKit
      * 
      * @see DefaultEditorKit#getActions
      */
-    public static class DeleteNextCharAction extends BaseAction
+    static class DeleteNextCharAction extends BaseAction
     {
         /* Create this object with the appropriate identifier. */
-        public DeleteNextCharAction()
+        DeleteNextCharAction()
         {
             super(DefaultEditorKit.deleteNextCharAction);
         }
@@ -675,8 +680,8 @@ public class NotebookEditorKit extends StyledEditorKit
                 int cc_pos = -1;
                 if (dot != mark)
                 {
-                    cc_pos = doc.removeEx(Math.min(dot, mark),
-                            Math.abs(dot - mark));
+                    cc_pos = doc.removeEx(Math.min(dot, mark), Math.abs(dot
+                            - mark));
                 }
                 else if (dot < doc.getLength())
                 {
@@ -749,8 +754,8 @@ public class NotebookEditorKit extends StyledEditorKit
         protected void action(NotebookUI ui) throws Exception
         {
             int count = Utilities.getTabSpacesCount();
-            int[] offs = Utilities.getSelectionStartOffsets(ui,
-                    Utilities.getTabSubstitute());
+            int[] offs = Utilities.getSelectionStartOffsets(ui, Utilities
+                    .getTabSubstitute());
             if (offs == null) return;
             NotebookDocument doc = ui.getDoc();
             try
@@ -827,21 +832,25 @@ public class NotebookEditorKit extends StyledEditorKit
         public void actionPerformed(ActionEvent e)
         {
             JEditorPane editor = getEditor(e);
+            // System.out.println("HTMLAction: " + editor);
             if (editor != null)
             {
                 if (editor instanceof NotebookUI)
                 {
+                    // ((NotebookDocument) editor.getDocument())
+                    // .toggleHTMLCell(editor.getCaretPosition());
                     Element el = ((NotebookDocument) editor.getDocument())
                             .getEnclosingCellElement(editor.getCaretPosition());
                     if (el != null)
-                        CellUtils.toggleAttribute(
-                                NotebookDocument.getNBElement(el),
-                                XMLConstants.ATTR_HTML);
+                        CellUtils.toggleAttribute(NotebookDocument
+                                .getNBElement(el), XMLConstants.ATTR_HTML);
                 }
                 else if (editor instanceof HtmlView.InnerHTMLEditor)
                 {
                     Element el = ((HtmlView.InnerHTMLEditor) editor)
                             .getElement();
+                    // ((NotebookDocument) el.getDocument()).toggleHTMLCell(el
+                    // .getStartOffset());
                     CellUtils.toggleAttribute(
                             NotebookDocument.getNBElement(el),
                             XMLConstants.ATTR_HTML);
@@ -953,23 +962,6 @@ public class NotebookEditorKit extends StyledEditorKit
         }
     }
 
-    public static final class AbbreviationManagerAction extends AbstractAction
-    {
-        public AbbreviationManagerAction()
-        {
-            super(abbreviationManagerAction);
-        }
-
-        public void actionPerformed(ActionEvent e)
-        {
-            AbbreviationPanel p = new AbbreviationPanel();
-            DialogDescriptor dd = new DialogDescriptor(
-                    GUIUtilities.getFrame((Component) e.getSource()), p,
-                    "Abbreviation Manager");
-            DialogDisplayer.getDefault().notify(dd);
-        }
-    }
-
     public static class FindReplaceAction extends BaseAction
     {
         private static final long serialVersionUID = -5658596134377861525L;
@@ -1008,8 +1000,8 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             this.findOrReplace = findOrReplace;
             putValue(Action.NAME, (findOrReplace) ? findAction : replaceAction);
-            putValue(Action.SMALL_ICON,
-                    IconManager.resolveIcon((findOrReplace) ? "Find16.gif"
+            putValue(Action.SMALL_ICON, IconManager
+                    .resolveIcon((findOrReplace) ? "Find16.gif"
                             : "Replace16.gif"));
         }
     }
@@ -1046,6 +1038,8 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             final int s = Utilities.getWordStart(ui, ui.getCaretPosition());
             final int e = Utilities.getWordEnd(ui, ui.getCaretPosition());
+            // System.out.println("SelectWordAction: " +
+            // ui.getCaretPosition() + ":" + s + ":" + e + ":" + ui);
             ui.select(s, e);
         }
     }
@@ -1079,6 +1073,8 @@ public class NotebookEditorKit extends StyledEditorKit
             int offs = ui.getCaretPosition();
             int s = javax.swing.text.Utilities.getRowStart(ui, offs);
             int e = javax.swing.text.Utilities.getRowEnd(ui, offs);
+            // System.out.println("SelectLineAction: " + offs + ":" + s + ":" +
+            // e + ":" + ui);
             ui.select(s, e);
         }
     }
@@ -1094,6 +1090,7 @@ public class NotebookEditorKit extends StyledEditorKit
         protected void action(final NotebookUI ui) throws Exception
         {
             Element el = ui.getSelectedContentCellElement();
+            // System.out.println("SelectAllAction: " + el);
             if (el == null) return;
             ui.setCaretPosition(el.getStartOffset());
             ui.moveCaretPosition(el.getEndOffset() - 1);
@@ -1295,10 +1292,8 @@ public class NotebookEditorKit extends StyledEditorKit
         public OpenObjectInspectorAction()
         {
             super(openObjectInspectorAction);
-            putValue(
-                    ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.SHIFT_MASK
-                            | InputEvent.CTRL_MASK));
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_I,
+                    InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK));
         }
 
         protected void action(final NotebookUI ui) throws Exception
@@ -1307,11 +1302,8 @@ public class NotebookEditorKit extends StyledEditorKit
             {
                 if (ui.getSelectionStart() != ui.getSelectionEnd())
                 {
-                    open(ui,
-                            ui.getDoc().getText(
-                                    ui.getSelectionStart(),
-                                    ui.getSelectionEnd()
-                                            - ui.getSelectionStart()));
+                    open(ui, ui.getDoc().getText(ui.getSelectionStart(),
+                            ui.getSelectionEnd() - ui.getSelectionStart()));
                     return;
                 }
                 int offs = ui.getCaretPosition();
@@ -1333,9 +1325,9 @@ public class NotebookEditorKit extends StyledEditorKit
             Object value = binds.get(var);
             if (value == null) return;
             ObjectInspector propsPanel = new ObjectInspector(value);
-            DialogDescriptor dd = new DialogDescriptor(
-                    ThisNiche.guiController.getFrame(), new JScrollPane(
-                            propsPanel), "ObjectInspector:" + var + " -> "
+            DialogDescriptor dd = new DialogDescriptor(ThisNiche.guiController
+                    .getFrame(), new JScrollPane(propsPanel),
+                    "" + var + " -> " 
                             + value.getClass().getName());
             DialogDisplayer.getDefault().notify(dd);
         }

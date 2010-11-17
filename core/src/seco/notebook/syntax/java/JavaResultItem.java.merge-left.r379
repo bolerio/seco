@@ -41,15 +41,15 @@ import javax.swing.text.JTextComponent;
 
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
+import seco.notebook.storage.PackageInfo;
 import seco.notebook.syntax.completion.AsyncCompletionTask;
 import seco.notebook.syntax.completion.Completion;
 import seco.notebook.syntax.completion.CompletionItem;
 import seco.notebook.syntax.completion.CompletionTask;
 import seco.notebook.syntax.util.JMIUtils;
-import seco.storage.PackageInfo;
-import seco.util.CharSequenceUtilities;
-import seco.util.DocumentUtilities;
-import seco.util.RequestProcessor;
+import seco.notebook.util.CharSequenceUtilities;
+import seco.notebook.util.DocumentUtilities;
+import seco.notebook.util.RequestProcessor;
 import bsh.BshCompletionProvider;
 
 /**
@@ -69,8 +69,6 @@ public abstract class JavaResultItem implements CompletionItem
      *         length
      */
     public abstract String getItemText();
-
-    public abstract Object getAssociatedObject();
 
     protected static Color getTypeColor(Object typ)
     {

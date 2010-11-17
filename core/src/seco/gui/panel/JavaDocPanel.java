@@ -11,10 +11,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
-import seco.notebook.storage.ClassRepository;
-import seco.notebook.storage.DocInfo;
-import seco.notebook.storage.JarInfo;
-import seco.notebook.storage.RtDocInfo;
+import seco.storage.ClassRepository;
+import seco.storage.DocInfo;
+import seco.storage.JarInfo;
+import seco.storage.RtDocInfo;
 
 import com.l2fprod.common.beans.editor.DirectoryPropertyEditor;
 import com.l2fprod.common.propertysheet.DefaultProperty;
