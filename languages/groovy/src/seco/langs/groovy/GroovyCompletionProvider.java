@@ -29,8 +29,6 @@ import org.codehaus.groovy.runtime.MethodClosure;
 import seco.langs.groovy.GroovyScriptSupport.GroovyScriptParser;
 import seco.langs.groovy.jsr.GroovyScriptEngine;
 import seco.notebook.NotebookDocument;
-import seco.notebook.storage.ClassRepository;
-import seco.notebook.storage.NamedInfo;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.AsyncCompletionQuery;
 import seco.notebook.syntax.completion.AsyncCompletionTask;
@@ -44,7 +42,9 @@ import seco.notebook.syntax.completion.CompletionTask;
 import seco.notebook.syntax.completion.CompletionU;
 import seco.notebook.syntax.completion.JavaDocManager;
 import seco.notebook.syntax.java.JavaResultItem;
-import seco.notebook.util.DocumentUtilities;
+import seco.storage.ClassRepository;
+import seco.storage.NamedInfo;
+import seco.util.DocumentUtilities;
 
 public class GroovyCompletionProvider implements CompletionProvider
 {

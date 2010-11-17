@@ -21,8 +21,8 @@ import org.codehaus.groovy.control.messages.Message;
 import org.codehaus.groovy.control.messages.SyntaxErrorMessage;
 import org.codehaus.groovy.syntax.SyntaxException;
 
+import seco.AppConfig;
 import seco.langs.groovy.jsr.GroovyScriptEngine;
-import seco.notebook.AppConfig;
 import seco.notebook.syntax.Formatter;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.ScriptSupportFactory;
@@ -30,7 +30,7 @@ import seco.notebook.syntax.completion.CompletionProvider;
 import seco.notebook.syntax.completion.NBParser;
 import seco.notebook.syntax.java.JavaFormatter;
 import seco.notebook.syntax.java.JavaFormatterOptions;
-import seco.notebook.util.SegmentCache;
+import seco.util.SegmentCache;
 
 public class GroovyScriptSupport extends ScriptSupport
 {

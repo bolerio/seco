@@ -45,7 +45,7 @@ import seco.notebook.csl.GsfUtilities;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.NBParser;
 import seco.notebook.syntax.completion.NBParser.ParserRunnable;
-import seco.notebook.util.SegmentCache;
+import seco.util.SegmentCache;
 
 public class PythonParser extends NBParser
 {

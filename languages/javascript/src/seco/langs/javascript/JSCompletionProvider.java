@@ -25,9 +25,6 @@ import org.mozilla.javascript.ScriptableObject;
 
 import seco.notebook.NotebookDocument;
 import seco.langs.javascript.jsr.ExternalScriptable;
-import seco.notebook.storage.ClassRepository;
-import seco.notebook.storage.NamedInfo;
-import seco.notebook.storage.PackageInfo;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.AsyncCompletionQuery;
 import seco.notebook.syntax.completion.AsyncCompletionTask;
@@ -44,7 +41,10 @@ import seco.notebook.syntax.java.JavaPaintComponent;
 import seco.notebook.syntax.java.JavaResultItem;
 import seco.notebook.syntax.java.JavaPaintComponent.MethodPaintComponent;
 import seco.notebook.syntax.util.JMIUtils;
-import seco.notebook.util.DocumentUtilities;
+import seco.storage.ClassRepository;
+import seco.storage.NamedInfo;
+import seco.storage.PackageInfo;
+import seco.util.DocumentUtilities;
 
 public class JSCompletionProvider implements CompletionProvider
 {

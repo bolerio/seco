@@ -24,10 +24,10 @@ import org.jruby.runtime.DynamicScope;
 import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.scope.ManyVarsDynamicScope;
 
-import seco.notebook.storage.ClassRepository;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.NBParser;
-import seco.notebook.util.SegmentCache;
+import seco.storage.ClassRepository;
+import seco.util.SegmentCache;
 
 public class RubyParser extends NBParser
 {

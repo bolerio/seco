@@ -21,7 +21,7 @@ import seco.langs.javascript.jsr.RhinoScriptEngine;
 import seco.notebook.csl.ParseException;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.NBParser;
-import seco.notebook.util.SegmentCache;
+import seco.util.SegmentCache;
 
 
 public class JavaScriptParser extends NBParser

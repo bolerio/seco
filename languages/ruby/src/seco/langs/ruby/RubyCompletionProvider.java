@@ -37,7 +37,7 @@ import seco.notebook.syntax.completion.CompletionTask;
 import seco.notebook.syntax.completion.JavaDocManager;
 import seco.notebook.syntax.java.JavaPaintComponent;
 import seco.notebook.syntax.java.JavaResultItem;
-import seco.notebook.util.DocumentUtilities;
+import seco.util.DocumentUtilities;
 
 
 public class RubyCompletionProvider implements CompletionProvider
