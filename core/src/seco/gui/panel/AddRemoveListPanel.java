@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.gui;
+package seco.gui.panel;
 
 import java.util.List;
 import javax.swing.DefaultListModel;

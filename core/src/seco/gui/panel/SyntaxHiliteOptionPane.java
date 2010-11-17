@@ -5,12 +5,14 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.gui;
+package seco.gui.panel;
 
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 import javax.swing.*;
 
+import seco.gui.ColorWellButton;
+import seco.gui.GUIUtilities;
 import seco.gui.dialog.EnhancedDialog;
 import seco.notebook.AppConfig;
 import seco.notebook.NotebookUI;

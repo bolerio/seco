@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.gui;
+package seco.gui.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -24,6 +24,7 @@ import javax.swing.border.TitledBorder;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
+import seco.gui.OptionPane;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.things.CellGroup;

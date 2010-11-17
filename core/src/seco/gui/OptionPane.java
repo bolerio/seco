@@ -9,6 +9,7 @@ package seco.gui;
 
 import java.awt.Component;
 
+import seco.gui.panel.AbstractOptionPane;
 import seco.notebook.NotebookUI;
 
 /**

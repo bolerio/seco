@@ -1,4 +1,4 @@
-package seco.gui;
+package seco.gui.visual;
 
 import java.awt.Color;
 
@@ -11,6 +11,7 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
 import seco.things.Cell;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;

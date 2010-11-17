@@ -22,6 +22,7 @@ import org.hypergraphdb.util.Pair;
 import edu.umd.cs.piccolo.util.PBounds;
 
 import seco.ThisNiche;
+import seco.gui.visual.JComponentVisual;
 import seco.gui.visual.NBUIVisual;
 import seco.gui.visual.VisualAttribs;
 import seco.notebook.NotebookDocument;

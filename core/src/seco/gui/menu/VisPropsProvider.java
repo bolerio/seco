@@ -9,12 +9,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import seco.gui.GUIUtilities;
-import seco.gui.SettingsPreviewPane;
-import seco.gui.SyntaxHiliteOptionPane;
 import seco.gui.dialog.CellPropsDialog;
 import seco.gui.dialog.DialogDescriptor;
 import seco.gui.dialog.DialogDisplayer;
 import seco.gui.dialog.NotifyDescriptor;
+import seco.gui.panel.SettingsPreviewPane;
+import seco.gui.panel.SyntaxHiliteOptionPane;
 import seco.notebook.NotebookUI;
 import seco.notebook.StyleType;
 import seco.notebook.syntax.ScriptSupport;

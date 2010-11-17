@@ -1,4 +1,4 @@
-package seco.gui;
+package seco.gui.panel;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;

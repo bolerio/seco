@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.gui;
+package seco.gui.panel;
 
 import java.awt.event.ActionEvent;
 
@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import seco.ThisNiche;
+import seco.gui.ObjectInspector;
 import seco.gui.dialog.DialogDescriptor;
 import seco.gui.dialog.DialogDisplayer;
 import seco.notebook.NotebookUI;
