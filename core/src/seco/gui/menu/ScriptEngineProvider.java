@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.gui;
+package seco.gui.menu;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -14,7 +14,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 
-import seco.gui.menu.DynamicMenuProvider;
 import seco.notebook.NotebookUI;
 
 

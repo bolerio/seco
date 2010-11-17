@@ -1,4 +1,4 @@
-package seco.gui;
+package seco.gui.panel;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -16,6 +16,7 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookEditorKit;
 import seco.things.CellGroup;

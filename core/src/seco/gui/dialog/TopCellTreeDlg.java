@@ -1,4 +1,4 @@
-package seco.gui;
+package seco.gui.dialog;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -36,6 +36,7 @@ import org.hypergraphdb.HGQuery.hg;
 import seco.ThisNiche;
 import seco.boot.NicheBootListener;
 import seco.events.EventPubSub;
+import seco.gui.GUIUtilities;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;

@@ -1,4 +1,4 @@
-package seco.gui;
+package seco.gui.panel;
 
 /*
  * SearchDescriptionPanel.java
