@@ -35,7 +35,7 @@ import java.util.List;
 import javax.swing.text.Segment;
 import javax.swing.text.Style;
 
-import seco.notebook.AppConfig;
+import seco.AppConfig;
 import seco.notebook.StyleAttribs;
 
 /**

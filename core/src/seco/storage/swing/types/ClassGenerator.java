@@ -46,7 +46,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
-import seco.notebook.AppConfig;
+import seco.AppConfig;
 import seco.storage.swing.DefaultConverter;
 import seco.storage.swing.GenUtils;
 

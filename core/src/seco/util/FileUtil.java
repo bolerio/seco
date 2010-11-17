@@ -11,8 +11,8 @@ import java.awt.FileDialog;
 import java.awt.Frame;
 import javax.swing.JFileChooser;
 
+import seco.AppConfig;
 import seco.gui.StandaloneFrame;
-import seco.notebook.AppConfig;
 
 import java.io.File;
 import java.util.Iterator;

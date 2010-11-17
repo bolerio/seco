@@ -21,6 +21,7 @@ import javax.swing.plaf.TextUI;
 import javax.swing.text.Element;
 import javax.swing.text.View;
 
+import seco.AppConfig;
 import seco.notebook.syntax.ScriptSupport;
 import seco.util.CharSequenceUtilities;
 import seco.util.DocumentUtilities;

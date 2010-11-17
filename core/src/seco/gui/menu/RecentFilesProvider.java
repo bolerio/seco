@@ -22,10 +22,10 @@ import javax.swing.JMenuItem;
 
 import org.hypergraphdb.HGHandle;
 
+import seco.AppConfig;
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
-import seco.notebook.AppConfig;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 

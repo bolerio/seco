@@ -34,8 +34,9 @@ import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.query.AtomTypeCondition;
+
+import seco.AppConfig;
 import seco.U;
-import seco.notebook.AppConfig;
 import seco.util.RequestProcessor;
 
 

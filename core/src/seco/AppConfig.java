@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.notebook;
+package seco;
 
 import java.io.File;
 import java.net.URL;
@@ -20,7 +20,6 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.HGQuery.hg;
 
-import seco.ThisNiche;
 import seco.gui.StandaloneFrame;
 
 

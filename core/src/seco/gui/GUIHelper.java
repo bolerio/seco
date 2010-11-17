@@ -51,6 +51,7 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
+import seco.AppConfig;
 import seco.ThisNiche;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;
@@ -75,7 +76,6 @@ import seco.gui.visual.VisualAttribs;
 import seco.gui.visual.VisualsManager;
 import seco.notebook.ActionManager;
 import seco.notebook.Actions;
-import seco.notebook.AppConfig;
 import seco.notebook.NotebookEditorKit;
 import seco.notebook.NotebookUI;
 import seco.notebook.ScriptletAction;
