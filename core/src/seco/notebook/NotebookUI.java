@@ -7,6 +7,9 @@
  */
 package seco.notebook;
 
+import static seco.gui.CommonActions.COPY;
+import static seco.gui.CommonActions.CUT;
+import static seco.gui.CommonActions.PASTE;
 import static seco.notebook.ElementType.cellGroupBox;
 import static seco.notebook.ElementType.commonCell;
 import static seco.notebook.ElementType.inputCellBox;
@@ -77,10 +80,11 @@ import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ActionManager;
 import seco.ThisNiche;
+import seco.gui.CommonActions;
+import seco.gui.CommonActions.CellTreeAction;
+import seco.gui.CommonActions.ElementTreeAction;
+import seco.gui.CommonActions.ParseTreeAction;
 import seco.gui.GUIHelper;
-import seco.gui.GUIHelper.CellTreeAction;
-import seco.gui.GUIHelper.ElementTreeAction;
-import seco.gui.GUIHelper.ParseTreeAction;
 import seco.gui.menu.CellLangProvider;
 import seco.gui.menu.EnhancedMenu;
 import seco.gui.menu.GroupingProvider;
@@ -338,15 +342,19 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             NotebookEditorKit kit = new NotebookEditorKit();
             popupMenu
                     .add(new EnhancedMenu("Input Type", new CellLangProvider()));
-            Action act = kit.getActionByName("Cut");
-            JMenuItem mi = new JMenuItem(act);
-            popupMenu.add(mi);
-            act = kit.getActionByName("Copy");
-            mi = new JMenuItem(act);
-            popupMenu.add(mi);
-            act = kit.getActionByName("Paste");
-            mi = new JMenuItem(act);
-            popupMenu.add(mi);
+//            Action act = kit.getActionByName("Cut");
+//            JMenuItem mi = new JMenuItem(act);
+//            popupMenu.add(mi);
+//            act = kit.getActionByName("Copy");
+//            mi = new JMenuItem(act);
+//            popupMenu.add(mi);
+//            act = kit.getActionByName("Paste");
+//            mi = new JMenuItem(act);
+//            popupMenu.add(mi);
+            ActionManager man = ActionManager.getInstance();
+            popupMenu.add(new JMenuItem(man.getAction(CUT)));
+            popupMenu.add(new JMenuItem(man.getAction(COPY)));
+            popupMenu.add(new JMenuItem(man.getAction(PASTE)));
             JMenu menu = new JMenu("Paste As");
             menu.add(new JMenuItem(
                     NotebookTransferHandler.javaStringPasteAction));
@@ -355,7 +363,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             // popupMenu.addSeparator();
             // mi = new JMenuItem(kit.getActionByName(
             // NotebookEditorKit.deleteSelectedElementsAction));
-            popupMenu.add(mi);
+            //popupMenu.add(mi);
             popupMenu.addSeparator();
          
             popupMenu.add(GUIHelper.makeCellMenu());
@@ -365,14 +373,14 @@ public class NotebookUI extends JTextPane implements DocumentListener,
             popupMenu.addSeparator();
             popupMenu.add(new EnhancedMenu("Grouping", new GroupingProvider()));
             popupMenu.addSeparator();
-            mi = new JMenuItem("View Element Tree");
-            mi.addActionListener(new ElementTreeAction());
+            JMenuItem mi = new JMenuItem("View Element Tree");
+            mi.addActionListener(new CommonActions.ElementTreeAction());
             popupMenu.add(mi);
             mi = new JMenuItem("View Cells Tree");
-            mi.addActionListener(new CellTreeAction());
+            mi.addActionListener(new CommonActions.CellTreeAction());
             popupMenu.add(mi);
             mi = new JMenuItem("View Parse Tree");
-            mi.addActionListener(new ParseTreeAction());
+            mi.addActionListener(new CommonActions.ParseTreeAction());
             popupMenu.add(mi);
             
             ThisNiche.graph.define(POPUP_HANDLE, popupMenu);

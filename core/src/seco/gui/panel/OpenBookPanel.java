@@ -16,7 +16,7 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
-import seco.gui.GUIHelper;
+import seco.gui.CommonActions;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookEditorKit;
 import seco.things.CellGroup;
@@ -42,7 +42,7 @@ public class OpenBookPanel extends JPanel
     private void filterDocs()
     {
         docs.remove(NotebookEditorKit.getDefaultDocument());
-        Set<HGHandle> opened = GUIHelper.getOpenedBooks();
+        Set<HGHandle> opened = CommonActions.getOpenedBooks();
         for (NotebookDocument doc : new LinkedList<NotebookDocument>(docs))
         {
             if (opened.contains(doc.getBookHandle())) docs.remove(doc);
@@ -132,7 +132,7 @@ public class OpenBookPanel extends JPanel
         for (int i = 0; i < removed.length; i++)
         {
             NotebookDocument gr = (NotebookDocument) removed[i];
-            GUIHelper.openNotebook(gr.getBookHandle());
+            CommonActions.openNotebook(gr.getBookHandle());
             docs.remove(removed[i]);
         }
         list.setListData(docs.toArray());

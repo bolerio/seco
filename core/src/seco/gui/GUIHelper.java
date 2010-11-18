@@ -1,13 +1,12 @@
 package seco.gui;
 
-import static seco.notebook.Actions.COPY;
-import static seco.notebook.Actions.CUT;
-import static seco.notebook.Actions.EXIT;
-import static seco.notebook.Actions.EXPORT;
-import static seco.notebook.Actions.IMPORT;
-import static seco.notebook.Actions.NEW;
-import static seco.notebook.Actions.OPEN;
-import static seco.notebook.Actions.PASTE;
+import static seco.gui.CommonActions.COPY;
+import static seco.gui.CommonActions.CUT;
+import static seco.gui.CommonActions.EXPORT;
+import static seco.gui.CommonActions.IMPORT;
+import static seco.gui.CommonActions.NEW;
+import static seco.gui.CommonActions.OPEN;
+import static seco.gui.CommonActions.PASTE;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -16,20 +15,14 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -40,25 +33,20 @@ import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
-import javax.swing.JTree;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-import javax.swing.tree.TreeNode;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ActionManager;
-import seco.AppConfig;
 import seco.ThisNiche;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;
 import seco.gui.common.ToolbarButton;
-import seco.gui.dialog.TopCellTreeDlg;
 import seco.gui.layout.DRect;
 import seco.gui.layout.DValue;
 import seco.gui.layout.DefaultLayoutHandler;
@@ -67,16 +55,11 @@ import seco.gui.layout.RefPoint;
 import seco.gui.menu.EnhancedMenu;
 import seco.gui.menu.RecentFilesProvider;
 import seco.gui.menu.VisPropsProvider;
-import seco.gui.panel.OpenBookPanel;
-import seco.gui.panel.SearchDescriptionPanel;
 import seco.gui.piccolo.TitlePaneNode;
 import seco.gui.visual.CellContainerVisual;
 import seco.gui.visual.GroupVisual;
-import seco.gui.visual.NBUIVisual;
-import seco.gui.visual.TabbedPaneVisual;
 import seco.gui.visual.VisualAttribs;
 import seco.gui.visual.VisualsManager;
-import seco.notebook.Actions;
 import seco.notebook.NotebookEditorKit;
 import seco.notebook.NotebookUI;
 import seco.notebook.ScriptletAction;
@@ -85,8 +68,6 @@ import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
-import seco.things.IOUtils;
-import seco.util.FileUtil;
 import seco.util.IconManager;
 import seco.util.SecoUncaughtExceptionHandler;
 
@@ -277,293 +258,7 @@ public class GUIHelper
         return pane.getViewport().getView();
     }
 
-    static void showOutputConsole()
-    {
-        getOutputConsole();
-        HGHandle existingH = GUIHelper.getCellHandleByValueHandle(
-                ThisNiche.TOP_CELL_GROUP_HANDLE, OUTPUT_CONSOLE_HANDLE);
-        if (existingH == null)
-        {
-            CellGroupMember cgm = ThisNiche.graph.get(GUIHelper.addToCellGroup(
-                    OUTPUT_CONSOLE_HANDLE, getTopCellGroup(), null, null,
-                    new Rectangle(5, 500, 600, 100), true));
-            CellUtils.setName(cgm, "Output Console");
-            cgm.setAttribute(VisualAttribs.showTitle, true);
-        }
-        else
-        {
-            PSwingNode n = ThisNiche.getCanvas().getPSwingNodeForHandle(
-                    existingH);
-            if (n != null) n.blink();
-        }
-    }
-
-    // disable menuItems if no notebook presented
-    // use GlobMenuItem to prevent disabling
-    public static class NBMenu extends PiccoloMenu implements MenuListener
-    {
-        public NBMenu()
-        {
-            super();
-            addMenuListener(this);
-        }
-
-        public NBMenu(String s)
-        {
-            super(s);
-            addMenuListener(this);
-        }
-
-        public void menuSelected(MenuEvent e)
-        {
-            boolean b = NotebookUI.getFocusedNotebookUI() != null;
-            for (int i = 0; i < getMenuComponentCount(); i++)
-            {
-                Component c = getMenuComponent(i);
-                if (/* b == true && */c instanceof JMenuItem)
-                {
-                    Action a = ((JMenuItem) c).getAction();
-                    if (a != null) b = a.isEnabled();
-                }
-                c.setEnabled(b);
-            }
-        }
-
-        public void menuCanceled(MenuEvent e)
-        {
-        }
-
-        public void menuDeselected(MenuEvent e)
-        {
-        }
-    }
-
-    public static class PiccoloMenu extends JMenu
-    {
-        public PiccoloMenu()
-        {
-            super();
-        }
-
-        public PiccoloMenu(String s)
-        {
-            super(s);
-        }
-
-        @Override
-        protected Point getPopupMenuOrigin()
-        {
-            Point pt = super.getPopupMenuOrigin();
-            if (getParent() != null && getParent() instanceof JComponent)
-                return adjustPointInPicollo((JComponent) getParent(), pt);
-            return pt;
-        }
-    }
-
-    // JMenuItem that can't be disabled
-    public static class GlobMenuItem extends JMenuItem
-    {
-        public GlobMenuItem()
-        {
-        }
-
-        public GlobMenuItem(String text)
-        {
-            super(text);
-        }
-
-        public GlobMenuItem(Action a)
-        {
-            super(a);
-        }
-
-        @Override
-        public boolean isEnabled()
-        {
-            return true;
-        }
-
-        public void setEnabled(boolean b)
-        {
-            // DO NOTHING
-        }
-    }
-
-    public static class NewAction extends AbstractAction
-    {
-        public NewAction()
-        {
-            putValue(Action.NAME, NEW);
-            putValue(Action.SMALL_ICON, IconManager.resolveIcon("New16.gif"));
-            putValue(Action.SHORT_DESCRIPTION, "Create New Notebook");
-        }
-
-        public void actionPerformed(java.awt.event.ActionEvent evt)
-        {
-            newNotebook();
-        }
-    }
-
-    public static class ImportAction extends AbstractAction
-    {
-        public ImportAction()
-        {
-            this.putValue(Action.NAME, Actions.IMPORT);
-            this.putValue(Action.SMALL_ICON,
-                    IconManager.resolveIcon("Open16.gif"));
-            this.putValue(Action.SHORT_DESCRIPTION, "Import Notebook");
-        }
-
-        public void actionPerformed(java.awt.event.ActionEvent evt)
-        {
-            openNotebook();
-        }
-    }
-
-    public static class ExportAction extends AbstractAction
-    {
-        public ExportAction()
-        {
-            this.putValue(Action.NAME, EXPORT);
-            this.putValue(Action.SMALL_ICON,
-                    IconManager.resolveIcon("SaveAs16.gif"));
-            this.putValue(Action.SHORT_DESCRIPTION, "Export Notebook As XML");
-        }
-
-        public void actionPerformed(ActionEvent evt)
-        {
-            NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-            if (ui == null) return;
-            File f = FileUtil.getFile(GUIHelper.getFrame(ui),
-                    "Export Notebook As ...", FileUtil.SAVE, null);
-            if (f != null)
-            {
-                IOUtils.exportCellGroup((CellGroup) ui.getDoc().getBook(),
-                        f.getAbsolutePath());
-            }
-        }
-    }
-
-    public static class ExitAction extends AbstractAction
-    {
-        public ExitAction()
-        {
-            this.putValue(Action.NAME, EXIT);
-            this.putValue(Action.SHORT_DESCRIPTION, "Exit Seco");
-        }
-
-        public void actionPerformed(java.awt.event.ActionEvent evt)
-        {
-            ThisNiche.guiController.exit();
-        }
-    }
-
-    public static class CellTreeAction implements ActionListener
-    {
-        public void actionPerformed(ActionEvent evt)
-        {
-            NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-            if (ui == null) return;
-            CellGroupMember book = ui.getDoc().getBook();
-            openCellTree(book);
-        }
-    }
-
-    public static class TopCellTreeAction implements ActionListener
-    {
-        public void actionPerformed(ActionEvent evt)
-        {
-            CellGroupMember book = ThisNiche.graph
-                    .get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-            openCellTree(book);
-        }
-    }
-
-    public static class DescriptionManagerAction implements ActionListener
-    {
-        public void actionPerformed(ActionEvent evt)
-        {
-            SearchDescriptionPanel p = new SearchDescriptionPanel();
-            JDialog dialog = new JDialog(ThisNiche.guiController.getFrame(),
-                    "Manage Descriptions");
-            dialog.add(p);
-            dialog.setSize(new Dimension(700, 500));
-            dialog.setVisible(true);
-            GUIHelper.centerOnScreen(dialog);
-        }
-    }
-
-    public static class OpenAction extends AbstractAction
-    {
-        public OpenAction()
-        {
-            putValue(Action.NAME, OPEN);
-            putValue(Action.SMALL_ICON, IconManager.resolveIcon("Open16.gif"));
-            putValue(Action.SHORT_DESCRIPTION, "Import Notebook");
-        }
-
-        public void actionPerformed(ActionEvent evt)
-        {
-            JDialog dialog = new JDialog(GUIHelper.getFrame((Component) evt
-                    .getSource()), "Open Or Delete CellGroup");
-            dialog.setSize(500, 500);
-            dialog.add(new OpenBookPanel());
-            dialog.setVisible(true);
-            GUIHelper.centerOnScreen(dialog);
-        }
-    }
-
-    public static class EditMenuListener implements MenuListener
-    {
-        public void menuSelected(MenuEvent e)
-        {
-            NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-            if (ui != null)
-            {
-                NotebookEditorKit.undo.updateUndoState(ui.getUndoManager());
-                NotebookEditorKit.redo.updateRedoState(ui.getUndoManager());
-            }
-        }
-
-        public void menuCanceled(MenuEvent e)
-        {
-        }
-
-        public void menuDeselected(MenuEvent e)
-        {
-        }
-    }
-
-    public static class ElementTreeAction implements ActionListener
-    {
-        public void actionPerformed(ActionEvent evt)
-        {
-            openElementTree();
-        }
-    }
-
-    public static class ParseTreeAction implements ActionListener
-    {
-        public void actionPerformed(ActionEvent evt)
-        {
-            openParseTree();
-        }
-    }
-
-    public static class ShowOutputConsoleAction implements ActionListener
-    {
-        public void actionPerformed(ActionEvent evt)
-        {
-            SwingUtilities.invokeLater(new Runnable(){
-                public void run()
-                {
-                    GUIHelper.showOutputConsole();
-                }
-            });
-        }
-    }
-
-     /**
+    /**
      * Creates(if not already created) and returns the default application menu
      * bar. Use this method to add your own menus and menu items.
      * 
@@ -616,12 +311,12 @@ public class GUIHelper
         JMenu top_menu = new PiccoloMenu("Window");
         top_menu.setMnemonic('w');
         JMenu menu = new PiccoloMenu("Add");
-        String code = "import seco.gui.*; GUIHelper.addContainer(CellContainerVisual.getHandle());";
+        String code = "import seco.gui.visual.*; CommonActions.addContainer(CellContainerVisual.getHandle());";
         JMenuItem mi = new JMenuItem(new ScriptletAction(code));
         mi.setText("Container");
         menu.add(mi);
 
-        code = "import seco.gui.*;GUIHelper.addContainer(TabbedPaneVisual.getHandle());";
+        code = "import seco.gui.visual.*;CommonActions.addContainer(TabbedPaneVisual.getHandle());";
         mi = new JMenuItem(new ScriptletAction(code));
         mi.setText("Tabbed Pane");
         menu.add(mi);
@@ -644,43 +339,6 @@ public class GUIHelper
     }
 
     public static final NotebookEditorKit kit = new NotebookEditorKit();
-
-    static void openElementTree()
-    {
-        NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-        if (ui == null) return;
-        String title = "Elements Hierarchy";
-        JDialog dialog = new JDialog(GUIHelper.getFrame(ui), title);
-        dialog.setSize(500, 800);
-        JTree tree = new JTree((TreeNode) ui.getDocument()
-                .getDefaultRootElement());
-        JScrollPane pane = new JScrollPane(tree);
-        dialog.add(pane);
-        dialog.setVisible(true);
-        GUIHelper.centerOnScreen(dialog);
-    }
-
-    static void openParseTree()
-    {
-        NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-        if (ui == null) return;
-        String title = "Parsing Hierarchy";
-        JDialog dialog = new JDialog(GUIHelper.getFrame(ui), title);
-        dialog.setSize(500, 800);
-        JTree tree = ui.getParseTree(ui.getCaretPosition());
-        if (tree == null) return;
-        JScrollPane pane = new JScrollPane(tree);
-        dialog.add(pane);
-        dialog.setVisible(true);
-        GUIHelper.centerOnScreen(dialog);
-    }
-
-    static void openCellTree(CellGroupMember cell)
-    {
-        JDialog dialog = new TopCellTreeDlg(cell);
-        dialog.setSize(500, 800);
-        dialog.setVisible(true);
-    }
 
     public static CellGroup getTopCellGroup()
     {
@@ -769,30 +427,6 @@ public class GUIHelper
     {
         CellGroup top = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         return addToCellGroup(h, top, visualH, lh, r, false);
-    }
-
-    /**
-     * Shortcut method that creates an empty container and assigns it default
-     * name and size.
-     * 
-     * @param visualH
-     *            CellVisual's handle
-     * @return the handle to the newly created container's cell
-     */
-    public static HGHandle addContainer(HGHandle visualH)
-    {
-        String name = "ContainerCellGroup";
-        if (TabbedPaneVisual.getHandle().equals(visualH)) name = "TabbedPaneCellGroup";
-        else if (CellContainerVisual.getHandle().equals(visualH))
-            name = "CanvasCellGroup";
-        CellGroup c = new CellGroup(name);
-        HGHandle h = ThisNiche.graph.add(c);
-        Map<Object, Object> attribs = new HashMap<Object, Object>();
-        attribs.put(VisualAttribs.showTitle, true);
-        return addToCellGroup(h,
-                (CellGroup) ThisNiche.graph
-                        .get(ThisNiche.TOP_CELL_GROUP_HANDLE), visualH, null,
-                CONTAINER_RECT, false, attribs, -1);
     }
 
     public static HGHandle addToTopCellGroup(final Object x, final Rectangle r)
@@ -942,85 +576,6 @@ public class GUIHelper
         return new Point((int) (r.getX() + pt.x), (int) (r.getY() + pt.y));
     }
 
-    /**
-     * Opens a given notebook(that is already stored in the niche) in the canvas.
-     * Do nothing if the notebook is already opened.
-     * @param bookH The notebook's handle 
-     */
-    public static void openNotebook(HGHandle bookH)
-    {
-        if (getOpenedBooks().contains(bookH)) return;
-        addAsBook(bookH);
-    }
-
-    private static void addAsBook(HGHandle h)
-    {
-        CellGroup group = ThisNiche.graph.get(// (TopFrame.PICCOLO) ?
-                ThisNiche.TOP_CELL_GROUP_HANDLE);// :
-        // (StandaloneFrame).tabbedPaneGroupHandle);
-
-        if (CellUtils.isBackuped(h)) CellUtils.restoreCell(h);
-        CellGroupMember child = ThisNiche.graph.get(h);
-        child.setVisual(NBUIVisual.getHandle());
-        child.setAttribute(VisualAttribs.rect,
-                new Rectangle(100, 100, 500, 400));
-        if (!CellUtils.isShowTitle(child)) CellUtils.toggleShowTitle(child);
-        group.insert(group.getArity(), h);
-    }
-
-    static void newNotebook()
-    {
-        CellGroup nb = new CellGroup("CG");
-        HGHandle nbHandle = ThisNiche.graph.add(nb);
-        addAsBook(nbHandle);
-    }
-
-    static void openNotebook()
-    {
-        File file = FileUtil.getFile(ThisNiche.guiController.getFrame(),
-                "Load Notebook", FileUtil.LOAD, null);
-        if (file == null) return;
-        importGroup(file);
-    }
-
-    static void importGroup(File file)
-    {
-        try
-        {
-            String fn = file.getAbsolutePath();
-            HGHandle knownHandle = IOUtils.importCellGroup(fn);
-            addAsBook(knownHandle);
-            AppConfig.getInstance().getMRUF().add(knownHandle);
-            AppConfig.getInstance().setMRUD(file.getParent());
-        }
-        catch (Throwable t)
-        {
-            t.printStackTrace();
-            NotifyDescriptor.Exception ex = new NotifyDescriptor.Exception(
-                    ThisNiche.guiController.getFrame(), t, "Could not open: "
-                            + file.getAbsolutePath());
-            DialogDisplayer.getDefault().notify(ex);
-            // strange requirement to open new Notebook, if file doesn't exist
-            newNotebook();
-        }
-    }
-
-    static void updateFrameTitle(HGHandle h)
-    {
-        CellGroupMember book = ThisNiche.graph.get(h);
-        String name = CellUtils.getName(book);
-        if (name == null) name = "";
-        // RuntimeContext rcInstance = (RuntimeContext)
-        // ThisNiche.graph.get(TopFrame
-        // .getInstance().getCurrentRuntimeContext());
-        String title = "[" + ThisNiche.graph.getLocation() + "] "
-        /* + rcInstance.getName() + " " */+ name;
-        if (ThisNiche.guiController != null)
-            ThisNiche.guiController.setTitle(title);
-        // ThisNiche.guiController.showHTMLToolBar(false);
-        GUIHelper.getHTMLToolBar().setEnabled(false);
-    }
-
     // Create the edit menu.
     private static JMenu createEditMenu()
     {
@@ -1032,9 +587,9 @@ public class GUIHelper
         menu.addSeparator();
         menu.addMenuListener(new EditMenuListener());
 
-        menu.add(new JMenuItem(man.getAction(Actions.CUT)));
-        menu.add(new JMenuItem(man.getAction(Actions.COPY)));
-        menu.add(new JMenuItem(man.getAction(Actions.PASTE)));
+        menu.add(new JMenuItem(man.getAction(CUT)));
+        menu.add(new JMenuItem(man.getAction(COPY)));
+        menu.add(new JMenuItem(man.getAction(PASTE)));
 
         menu.add(new JMenuItem(man.getAction(NotebookEditorKit.selectAllAction)));
         menu.addSeparator();
@@ -1105,46 +660,19 @@ public class GUIHelper
         menu.add(new JMenuItem(man
                 .getAction(NotebookEditorKit.ctxInspectorAction)));
         GlobMenuItem mi = new GlobMenuItem("Manage Cell Descriptions");
-        mi.addActionListener(new DescriptionManagerAction());
+        mi.addActionListener(new CommonActions.DescriptionManagerAction());
         menu.add(mi);
         menu.add(GUIHelper.makeCellMenu());
         menu.add(GUIHelper.makeCellGroupMenu());
         menu.add(GUIHelper.makeNotebookMenu());
         menu.add(new JSeparator());
         mi = new GlobMenuItem("Show Output Console");
-        mi.addActionListener(new ShowOutputConsoleAction());
+        mi.addActionListener(new CommonActions.ShowOutputConsoleAction());
         menu.add(mi);
         mi = new GlobMenuItem("Top CellGroup Tree");
-        mi.addActionListener(new TopCellTreeAction());
+        mi.addActionListener(new CommonActions.TopCellTreeAction());
         menu.add(mi);
         return menu;
-    }
-
-    public static Set<HGHandle> getOpenedBooks()
-    {
-        Set<HGHandle> res = new HashSet<HGHandle>();
-
-        CellGroup top = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-        search_group(top, res);
-        return res;
-    }
-
-    private static void search_group(CellGroup top, Set<HGHandle> res)
-    {
-        for (int i = 0; i < top.getArity(); i++)
-        {
-            CellGroupMember cgm = top.getElement(i);
-            if (cgm == null) continue;
-            if (NBUIVisual.getHandle().equals(cgm.getVisual()))
-            {
-                res.add(top.getTargetAt(i));
-                continue;
-            }
-            if (cgm instanceof CellGroup)
-            {
-                search_group((CellGroup) cgm, res);
-            }
-        }
     }
 
     public static void handleTitle(PSwingNode node)
@@ -1166,6 +694,22 @@ public class GUIHelper
         {
             PCSelectionHandler.undecorateSelectedNode(node, true);
         }
+    }
+    
+    static void updateFrameTitle(HGHandle h)
+    {
+        CellGroupMember book = ThisNiche.graph.get(h);
+        String name = CellUtils.getName(book);
+        if (name == null) name = "";
+        // RuntimeContext rcInstance = (RuntimeContext)
+        // ThisNiche.graph.get(TopFrame
+        // .getInstance().getCurrentRuntimeContext());
+        String title = "[" + ThisNiche.graph.getLocation() + "] "
+        /* + rcInstance.getName() + " " */+ name;
+        if (ThisNiche.guiController != null)
+            ThisNiche.guiController.setTitle(title);
+        // ThisNiche.guiController.showHTMLToolBar(false);
+        GUIHelper.getHTMLToolBar().setEnabled(false);
     }
 
     public static JComponent getMinimizedUI(final CellGroupMember cgm)
@@ -1309,4 +853,117 @@ public class GUIHelper
         
         return (p instanceof Frame) ? (Frame) p : null;
     }
+    
+    // disable menuItems if no notebook presented
+    // use GlobMenuItem to prevent disabling
+    public static class NBMenu extends PiccoloMenu implements MenuListener
+    {
+        public NBMenu()
+        {
+            super();
+            addMenuListener(this);
+        }
+
+        public NBMenu(String s)
+        {
+            super(s);
+            addMenuListener(this);
+        }
+
+        public void menuSelected(MenuEvent e)
+        {
+            boolean b = NotebookUI.getFocusedNotebookUI() != null;
+            for (int i = 0; i < getMenuComponentCount(); i++)
+            {
+                Component c = getMenuComponent(i);
+                if (/* b == true && */c instanceof JMenuItem)
+                {
+                    Action a = ((JMenuItem) c).getAction();
+                    if (a != null) b = a.isEnabled();
+                }
+                c.setEnabled(b);
+            }
+        }
+
+        public void menuCanceled(MenuEvent e)
+        {
+        }
+
+        public void menuDeselected(MenuEvent e)
+        {
+        }
+    }
+
+    public static class PiccoloMenu extends JMenu
+    {
+        public PiccoloMenu()
+        {
+            super();
+        }
+
+        public PiccoloMenu(String s)
+        {
+            super(s);
+        }
+
+        @Override
+        protected Point getPopupMenuOrigin()
+        {
+            Point pt = super.getPopupMenuOrigin();
+            if (getParent() != null && getParent() instanceof JComponent)
+                return adjustPointInPicollo((JComponent) getParent(), pt);
+            return pt;
+        }
+    }
+
+    // JMenuItem that can't be disabled
+    public static class GlobMenuItem extends JMenuItem
+    {
+        public GlobMenuItem()
+        {
+        }
+
+        public GlobMenuItem(String text)
+        {
+            super(text);
+        }
+
+        public GlobMenuItem(Action a)
+        {
+            super(a);
+        }
+
+        @Override
+        public boolean isEnabled()
+        {
+            return true;
+        }
+
+        public void setEnabled(boolean b)
+        {
+            // DO NOTHING
+        }
+    }
+
+    public static class EditMenuListener implements MenuListener
+    {
+        public void menuSelected(MenuEvent e)
+        {
+            NotebookUI ui = NotebookUI.getFocusedNotebookUI();
+            if (ui != null)
+            {
+                NotebookEditorKit.undo.updateUndoState(ui.getUndoManager());
+                NotebookEditorKit.redo.updateRedoState(ui.getUndoManager());
+            }
+        }
+
+        public void menuCanceled(MenuEvent e)
+        {
+        }
+
+        public void menuDeselected(MenuEvent e)
+        {
+        }
+    }
+
 }

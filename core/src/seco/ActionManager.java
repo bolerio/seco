@@ -7,9 +7,9 @@
  */
 package seco;
 
-import static seco.notebook.Actions.COPY;
-import static seco.notebook.Actions.CUT;
-import static seco.notebook.Actions.PASTE;
+import static seco.gui.CommonActions.COPY;
+import static seco.gui.CommonActions.CUT;
+import static seco.gui.CommonActions.PASTE;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -26,10 +26,7 @@ import javax.swing.text.DefaultEditorKit;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
-import seco.gui.GUIHelper.ExportAction;
-import seco.gui.GUIHelper.ImportAction;
-import seco.gui.GUIHelper.NewAction;
-import seco.gui.GUIHelper.OpenAction;
+import seco.gui.CommonActions;
 import seco.notebook.NotebookEditorKit;
 import seco.util.IconManager;
 
@@ -128,13 +125,13 @@ public class ActionManager
         NotebookEditorKit kit = new NotebookEditorKit();
         
         // Notebook
-        putAction(new NewAction(), KeyStroke.getKeyStroke(KeyEvent.VK_N,
+        putAction(new CommonActions.NewAction(), KeyStroke.getKeyStroke(KeyEvent.VK_N,
                 ActionEvent.CTRL_MASK), false);
-        putAction(new OpenAction(), KeyStroke.getKeyStroke(KeyEvent.VK_O,
+        putAction(new CommonActions.OpenAction(), KeyStroke.getKeyStroke(KeyEvent.VK_O,
                 ActionEvent.CTRL_MASK), false);
-        putAction(new ImportAction(), KeyStroke.getKeyStroke(KeyEvent.VK_I,
+        putAction(new CommonActions.ImportAction(), KeyStroke.getKeyStroke(KeyEvent.VK_I,
                 ActionEvent.CTRL_MASK), false);
-        putAction(new ExportAction(), false);
+        putAction(new CommonActions.ExportAction(), false);
         // Edit
         putAction(NotebookEditorKit.undo, KeyStroke.getKeyStroke(KeyEvent.VK_Z,
                 ActionEvent.CTRL_MASK), IconManager.resolveIcon("Undo16.gif"),

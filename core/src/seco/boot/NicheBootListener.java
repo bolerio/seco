@@ -15,6 +15,7 @@ import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.event.HGEvent;
 import org.hypergraphdb.event.HGListener;
 import seco.ThisNiche;
+import seco.gui.CommonActions;
 import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
 import seco.rtenv.RuntimeContext;
@@ -57,7 +58,7 @@ public class NicheBootListener implements HGListener
             {
                 if(DEBUG_NICHE)
                 {
-                    new GUIHelper.TopCellTreeAction().actionPerformed(null);
+                    new CommonActions.TopCellTreeAction().actionPerformed(null);
                     DEBUG_NICHE = false; 
                 }else{
                    CellUtils.evaluateVisibleInitCells();

@@ -24,6 +24,7 @@ import org.hypergraphdb.HGHandle;
 
 import seco.AppConfig;
 import seco.ThisNiche;
+import seco.gui.CommonActions;
 import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
 import seco.things.CellGroupMember;
@@ -77,7 +78,7 @@ public class RecentFilesProvider implements DynamicMenuProvider, Serializable
 		        public void actionPerformed(ActionEvent evt)
 		        {
 		            int i = recentVector.indexOf(evt.getActionCommand());
-		            GUIHelper.openNotebook(recentH.get(i));
+		            CommonActions.openNotebook(recentH.get(i));
 		            //TopFrame.getInstance().setStatusBarMessage(null);
 		        }
 		    } );
