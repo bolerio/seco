@@ -38,6 +38,7 @@ import seco.gui.common.ToolbarButton;
 import seco.notebook.ScriptletAction;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import seco.util.GUIUtil;
 import seco.util.IconManager;
 
 /**
@@ -438,7 +439,7 @@ public class ConnectionPanel extends BaseChatPanel implements
             dlg.setTitle("Add To Roster");
             dlg.setSize(new Dimension(420, 400));
             dlg.setVisible(true);
-            GUIHelper.centerOnScreen(dlg);
+            GUIUtil.centerOnScreen(dlg);
         }
     }
 
@@ -459,7 +460,7 @@ public class ConnectionPanel extends BaseChatPanel implements
             dlg.setTitle("Remove From Roster");
             dlg.setSize(new Dimension(420, 400));
             dlg.setVisible(true);
-            GUIHelper.centerOnScreen(dlg);
+            GUIUtil.centerOnScreen(dlg);
         }
 
     }

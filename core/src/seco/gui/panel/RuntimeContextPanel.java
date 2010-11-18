@@ -22,6 +22,7 @@ import seco.gui.ObjectInspector;
 import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.notebook.NotebookUI;
+import seco.util.GUIUtil;
 
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor;
 import com.l2fprod.common.propertysheet.DefaultProperty;
@@ -141,7 +142,6 @@ public class RuntimeContextPanel extends PropertySheetPanel
 	
 	public class ObjectInspectorEditor extends AbstractPropertyEditor 
 	{
-
 	    protected JTextField textfield;
 	    private JButton button;
 	    private JButton cancelButton;
@@ -186,9 +186,7 @@ public class RuntimeContextPanel extends PropertySheetPanel
 	    protected void showInspector()
 	    {
 	        ObjectInspector propsPanel = new ObjectInspector(value);
-	        DialogDescriptor dd = new DialogDescriptor(
-	                ThisNiche.guiController.getFrame(), 
-	                new JScrollPane(propsPanel),
+	        DialogDescriptor dd = new DialogDescriptor(new JScrollPane(propsPanel),
 	              "Object Inspector: " + ((value == null)? 
 	                      "null" : value.getClass().getName()));
 	        Object o = DialogDisplayer.getDefault().notify(dd);

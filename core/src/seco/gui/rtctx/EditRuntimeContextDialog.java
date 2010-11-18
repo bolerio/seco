@@ -34,13 +34,13 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import seco.ThisNiche;
-import seco.gui.GUIHelper;
 import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;
 import seco.rtenv.NestedContextLink;
 import seco.rtenv.RtU;
 import seco.rtenv.RuntimeContext;
+import seco.util.GUIUtil;
 
 public class EditRuntimeContextDialog extends JDialog
 {
@@ -49,7 +49,7 @@ public class EditRuntimeContextDialog extends JDialog
 
     public EditRuntimeContextDialog(RuntimeContext ctx)
     {
-        super(ThisNiche.guiController.getFrame(), "Manage Runtime Context");
+        super(GUIUtil.getFrame(), "Manage Runtime Context");
         top = ctx;
         getContentPane().add(new RtConfigPanel());
         setSize(480, 350);
@@ -234,7 +234,7 @@ public class EditRuntimeContextDialog extends JDialog
                     if (ctx_list.isEmpty())
                     {
                         JOptionPane.showMessageDialog(
-                                ThisNiche.guiController.getFrame(),
+                                GUIUtil.getFrame(),
                                 "No available runtime contexts.");
                         return;
                     }
@@ -247,7 +247,6 @@ public class EditRuntimeContextDialog extends JDialog
                     list.setPreferredSize(new Dimension(200, 150));
                     // list.setBorder(new TitledBorder("Runtime Contexts"));
                     DialogDescriptor d = new DialogDescriptor(
-                            ThisNiche.guiController.getFrame(),
                             new JScrollPane(list), "Select RuntimeContext:");
                     d.setModal(true);
                     d.setMessageType(NotifyDescriptor.QUESTION_MESSAGE);
@@ -268,7 +267,7 @@ public class EditRuntimeContextDialog extends JDialog
             item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-                    if (GUIHelper
+                    if (GUIUtil
                             .showConfirmDlg("The relationships to this RuntimeContext will be permanently deleted. Are you sure?"))
                     {
                         List<NestedContextLink> list = RtU

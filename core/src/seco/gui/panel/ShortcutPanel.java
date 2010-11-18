@@ -35,6 +35,7 @@ import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;
 import seco.notebook.NotebookUI;
+import seco.util.GUIUtil;
 
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor;
 import com.l2fprod.common.propertysheet.DefaultProperty;
@@ -267,7 +268,7 @@ public class ShortcutPanel extends PropertySheetPanel
         protected void openEditor()
         {
             CustomEditor ed = new CustomEditor();
-            DialogDescriptor dd = new DialogDescriptor(ThisNiche.guiController.getFrame(), ed, "KeyStroke Editor");
+            DialogDescriptor dd = new DialogDescriptor(ed, "KeyStroke Editor");
             if(DialogDisplayer.getDefault().notify(dd) == NotifyDescriptor.OK_OPTION)
             {
                 Object old = getValue(); 

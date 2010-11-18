@@ -43,6 +43,7 @@ import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.notebook.NotebookUI;
 import seco.things.DescriptionLink;
+import seco.util.GUIUtil;
 
 public class SearchDescriptionPanel extends javax.swing.JPanel
 {
@@ -102,8 +103,7 @@ public class SearchDescriptionPanel extends javax.swing.JPanel
                         descrList.getSelectedIndex()).getDescriptionHandle());
                 JTextArea area = new JTextArea();
                 area.setPreferredSize(new Dimension(300, 200));
-                DialogDescriptor dd = new DialogDescriptor(
-                        ThisNiche.guiController.getFrame(), area,
+                DialogDescriptor dd = new DialogDescriptor( area,
                         "Cell/Group Description");
                 area.setText(desc);
                 DialogDisplayer.getDefault().notify(dd);

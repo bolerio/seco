@@ -34,8 +34,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 
 import seco.ThisNiche;
-import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
+import seco.util.GUIUtil;
 
 
 /**
@@ -235,7 +235,7 @@ abstract class CompletionLayoutPopup {
     protected void correctBounds(Rectangle r, boolean aboveOccupiedBounds)
     {
         if(ThisNiche.getCanvas() == null) return;
-        Point corr = GUIHelper.adjustPointInPicollo(getEditorComponent(), new Point(r.x, r.y));
+        Point corr = GUIUtil.adjustPointInPicollo(getEditorComponent(), new Point(r.x, r.y));
         //System.out.println("correctBounds: " + corr + ":" + r + ":" + aboveOccupiedBounds + ":" + this);
         r.x = corr.x; r.y = corr.y;
     }

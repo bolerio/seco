@@ -46,7 +46,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import seco.AppConfig;
-import seco.gui.GUIHelper;
 import seco.gui.common.EnhancedDialog;
 import seco.notebook.NotebookUI;
 import seco.notebook.Utilities;
@@ -54,6 +53,7 @@ import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.SyntaxStyleBean;
 import seco.notebook.syntax.SyntaxUtilities;
 import seco.notebook.syntax.Token;
+import seco.util.GUIUtil;
 
 /**
  * Style option pane.
@@ -287,7 +287,7 @@ class StyleEditor extends EnhancedDialog implements ActionListener
 {
 	StyleEditor(Component comp, SyntaxStyleBean style)
 	{
-		super(GUIHelper.getParentDialog(comp), "Style Editor", true);
+		super(GUIUtil.getParentDialog(comp), "Style Editor", true);
 		JPanel content = new JPanel(new BorderLayout(12, 12));
 		content.setBorder(new EmptyBorder(12, 12, 12, 12));
 		setContentPane(content);
@@ -328,7 +328,7 @@ class StyleEditor extends EnhancedDialog implements ActionListener
 		box.add(Box.createGlue());
 		content.add(BorderLayout.SOUTH, box);
 		pack();
-		setLocationRelativeTo(GUIHelper.getParentDialog(comp));
+		setLocationRelativeTo(GUIUtil.getParentDialog(comp));
 		setResizable(false);
 		setVisible(true);
 	}
@@ -413,7 +413,7 @@ class StyleEditor extends EnhancedDialog implements ActionListener
 	    {
 	        public void actionPerformed(ActionEvent evt)
 	        {
-	            JDialog parent = GUIHelper.getParentDialog(ColorWellButton.this);
+	            JDialog parent = GUIUtil.getParentDialog(ColorWellButton.this);
 	            JDialog dialog;
 	            if (parent != null)
 	            {
@@ -431,7 +431,7 @@ class StyleEditor extends EnhancedDialog implements ActionListener
 	            }
 	            dialog.pack();
 	            dialog.setVisible(true);
-	            GUIHelper.centerOnScreen(dialog);
+	            GUIUtil.centerOnScreen(dialog);
 	        }
 	    } //}}}
 

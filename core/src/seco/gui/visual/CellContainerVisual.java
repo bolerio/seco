@@ -34,6 +34,7 @@ import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.CellVisual;
+import seco.util.GUIUtil;
 
 public class CellContainerVisual implements CellVisual, GroupVisual, EventHandler
 {
@@ -60,8 +61,8 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
                ThisNiche.initGUIController();
             canvas = ThisNiche.getCanvas();
             Rectangle r = (Rectangle) element.getAttribute(VisualAttribs.rect);
-            if (r != null && ThisNiche.guiController.getFrame() != null) 
-                ThisNiche.guiController.getFrame().setBounds(r);
+            if (r != null && GUIUtil.getFrame() != null) 
+                GUIUtil.getFrame().setBounds(r);
         }
         else
         {
@@ -213,7 +214,7 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
                 || event.getName().equals(VisualAttribs.name))
         {
             if(ps == null) return;
-            GUIHelper.handleTitle(ps);
+            GUIHelper.updateTitle(ps);
         }
     }
 

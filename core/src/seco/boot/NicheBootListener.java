@@ -9,21 +9,20 @@ package seco.boot;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.event.HGEvent;
 import org.hypergraphdb.event.HGListener;
+
 import seco.ThisNiche;
 import seco.gui.CommonActions;
 import seco.gui.GUIHelper;
-import seco.gui.TopFrame;
 import seco.rtenv.RuntimeContext;
 import seco.talk.ConnectionManager;
 import seco.things.CellGroup;
 import seco.things.CellUtils;
 import seco.things.CellVisual;
-import seco.util.SecoUncaughtExceptionHandler;
+import seco.util.GUIUtil;
 
 public class NicheBootListener implements HGListener
 {
@@ -32,7 +31,7 @@ public class NicheBootListener implements HGListener
     {
     	ThisNiche.bindNiche(hg);
     	ThisNiche.initGUIController();
-    	final JFrame f = ThisNiche.guiController.getFrame();
+    	final JFrame f = GUIUtil.getFrame();
         RuntimeContext topRuntime = ThisNiche.getTopContext().getRuntimeContext(); 
         topRuntime.getBindings().put("desktop", ThisNiche.guiController);
         topRuntime.getBindings().put("canvas", ThisNiche.getCanvas());
@@ -43,8 +42,8 @@ public class NicheBootListener implements HGListener
         // it was deleted by mistake.
         if (hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE) == null)
             GUIHelper.makeTopCellGroup();
-        final CellGroup group = (CellGroup) hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-        final CellVisual v = (CellVisual) hg.get(group.getVisual());
+        final CellGroup group = hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        final CellVisual v = hg.get(group.getVisual());
 //        try
 //        {
 //            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");

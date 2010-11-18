@@ -23,6 +23,7 @@ import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;
 import seco.notebook.AbbreviationManager;
+import seco.util.GUIUtil;
 
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor;
 import com.l2fprod.common.propertysheet.DefaultProperty;
@@ -98,8 +99,7 @@ public class AbbreviationPanel extends JPanel
     private void addProperty()
     {
         NameTextAreaInputPanel panel = new NameTextAreaInputPanel();
-        DialogDescriptor d = new DialogDescriptor(ThisNiche.guiController.getFrame(),
-                panel, "Add Abrreviation");
+        DialogDescriptor d = new DialogDescriptor(panel, "Add Abrreviation");
         d.setModal(true);
         d.setOptionType(NotifyDescriptor.OK_CANCEL_OPTION);
         if (DialogDisplayer.getDefault().notify(d) == NotifyDescriptor.OK_OPTION)
@@ -189,8 +189,7 @@ public class AbbreviationPanel extends JPanel
             textarea.setWrapStyleWord (true);
             JScrollPane ed = new JScrollPane(textarea);
             ed.setSize(300, 300);
-            DialogDescriptor dd = new DialogDescriptor(ThisNiche.guiController.getFrame(),
-                    ed, "String Editor");
+            DialogDescriptor dd = new DialogDescriptor(ed, "String Editor");
             if(DialogDisplayer.getDefault().notify(dd) == NotifyDescriptor.OK_OPTION)
             {
                 Object old = getValue(); 

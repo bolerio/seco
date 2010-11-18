@@ -10,13 +10,10 @@ import static seco.gui.CommonActions.PASTE;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,7 +23,6 @@ import java.util.concurrent.Callable;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -44,8 +40,6 @@ import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ActionManager;
 import seco.ThisNiche;
-import seco.gui.common.DialogDisplayer;
-import seco.gui.common.NotifyDescriptor;
 import seco.gui.common.ToolbarButton;
 import seco.gui.layout.DRect;
 import seco.gui.layout.DValue;
@@ -68,6 +62,7 @@ import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import seco.util.GUIUtil;
 import seco.util.IconManager;
 import seco.util.SecoUncaughtExceptionHandler;
 
@@ -75,7 +70,6 @@ import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 import com.jgoodies.looks.plastic.theme.DesertBluer;
 
-import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolox.pswing.PSwing;
 
 public class GUIHelper
@@ -132,14 +126,6 @@ public class GUIHelper
         GUIHelper.uncaughtExceptionHandler = uncaughtExceptionHandler;
     }
 
-    public static boolean showConfirmDlg(String message)
-    {
-        NotifyDescriptor d = new NotifyDescriptor.Confirmation(
-                ThisNiche.guiController.getFrame(), message,
-                NotifyDescriptor.OK_CANCEL_OPTION);
-        return DialogDisplayer.getDefault().notify(d) == NotifyDescriptor.OK_OPTION;
-    }
-
     /**
      * Creates and returns predefined actions displayed in icon form in the
      * right hand side of each canvas component title bar. The default ones are:
@@ -193,8 +179,7 @@ public class GUIHelper
      */
     public static JToolBar getMainToolBar()
     {
-        JToolBar toolBar = (JToolBar) ThisNiche.graph
-                .get(GUIHelper.TOOLBAR_HANDLE);
+        JToolBar toolBar = ThisNiche.graph.get(TOOLBAR_HANDLE);
 
         if (toolBar != null) return toolBar;
 
@@ -225,7 +210,7 @@ public class GUIHelper
                 .getActionByName(NotebookEditorKit.htmlAction),
                 "HTML Preview ON/OFF"));
         toolBar.setFloatable(false);
-        ThisNiche.graph.define(GUIHelper.TOOLBAR_HANDLE, toolBar);
+        ThisNiche.graph.define(TOOLBAR_HANDLE, toolBar);
         return toolBar;
     }
 
@@ -237,24 +222,22 @@ public class GUIHelper
      */
     public static HTMLToolBar getHTMLToolBar()
     {
-        HTMLToolBar htmlToolBar = (HTMLToolBar) ThisNiche.graph
-                .get(GUIHelper.HTML_TOOLBAR_HANDLE);
+        HTMLToolBar htmlToolBar = ThisNiche.graph.get(HTML_TOOLBAR_HANDLE);
         if (htmlToolBar != null) return htmlToolBar;
         htmlToolBar = new HTMLToolBar();
         htmlToolBar.init();
         htmlToolBar.setEnabled(false);
         htmlToolBar.setFloatable(false);
-        ThisNiche.graph.define(GUIHelper.HTML_TOOLBAR_HANDLE, htmlToolBar);
+        ThisNiche.graph.define(HTML_TOOLBAR_HANDLE, htmlToolBar);
         return htmlToolBar;
     }
 
     public static Component getOutputConsole()
     {
-        JScrollPane pane = (JScrollPane) ThisNiche.graph
-                .get(GUIHelper.OUTPUT_CONSOLE_HANDLE);
+        JScrollPane pane = ThisNiche.graph.get(OUTPUT_CONSOLE_HANDLE);
         if (pane != null) return pane.getViewport().getView();
         pane = new JScrollPane(new OutputConsole());
-        ThisNiche.graph.define(GUIHelper.OUTPUT_CONSOLE_HANDLE, pane);
+        ThisNiche.graph.define(OUTPUT_CONSOLE_HANDLE, pane);
         return pane.getViewport().getView();
     }
 
@@ -266,7 +249,7 @@ public class GUIHelper
      */
     public static JMenuBar getMenuBar()
     {
-        JMenuBar menuBar = ThisNiche.graph.get(GUIHelper.MENUBAR_HANDLE);
+        JMenuBar menuBar = ThisNiche.graph.get(MENUBAR_HANDLE);
         if (menuBar == null)
         {
             menuBar = new JMenuBar();
@@ -278,7 +261,7 @@ public class GUIHelper
             menuBar.add(createWindowMenu());
             menuBar.add(createNetworkMenu());
 
-            ThisNiche.graph.define(GUIHelper.MENUBAR_HANDLE, menuBar);
+            ThisNiche.graph.define(MENUBAR_HANDLE, menuBar);
             // force the creation of the NotebookUI static popup
             NotebookUI.getPopupMenu();
         }
@@ -356,28 +339,28 @@ public class GUIHelper
         CellGroup group = getTopCellGroup();
         group.setVisual(CellContainerVisual.getHandle());
         getMenuBar();
-        if (group.indexOf(GUIHelper.MENUBAR_HANDLE) < 0)
-            addToCellGroup(GUIHelper.MENUBAR_HANDLE, group,
+        if (group.indexOf(MENUBAR_HANDLE) < 0)
+            addToCellGroup(MENUBAR_HANDLE, group,
                     VisualsManager
-                            .defaultVisualForAtom(GUIHelper.MENUBAR_HANDLE),
+                            .defaultVisualForAtom(MENUBAR_HANDLE),
                     new DefaultLayoutHandler(new DRect(new DValue(0),
                             new DValue(0), new DValue(100, true),
                             new DValue(28)), RefPoint.TOP_LEFT), null, 0);
         getMainToolBar();
-        if (group.indexOf(GUIHelper.TOOLBAR_HANDLE) < 0)
-            addToCellGroup(GUIHelper.TOOLBAR_HANDLE, group,
+        if (group.indexOf(TOOLBAR_HANDLE) < 0)
+            addToCellGroup(TOOLBAR_HANDLE, group,
                     VisualsManager
-                            .defaultVisualForAtom(GUIHelper.TOOLBAR_HANDLE),
+                            .defaultVisualForAtom(TOOLBAR_HANDLE),
                     new DefaultLayoutHandler(new DRect(new DValue(0),
                             new DValue(28), new DValue(/* 280 */33, true),
                             new DValue(28)), RefPoint.TOP_LEFT), null, 1);
         getHTMLToolBar();
-        if (group.indexOf(GUIHelper.HTML_TOOLBAR_HANDLE) < 0)
+        if (group.indexOf(HTML_TOOLBAR_HANDLE) < 0)
             addToCellGroup(
-                    GUIHelper.HTML_TOOLBAR_HANDLE,
+                    HTML_TOOLBAR_HANDLE,
                     group,
                     VisualsManager
-                            .defaultVisualForAtom(GUIHelper.HTML_TOOLBAR_HANDLE),
+                            .defaultVisualForAtom(HTML_TOOLBAR_HANDLE),
                     new DefaultLayoutHandler(new DRect(new DValue(/* 280 */33,
                             true), new DValue(28), new DValue(67, true),
                             new DValue(28)), RefPoint.TOP_LEFT), null, 2);
@@ -498,7 +481,7 @@ public class GUIHelper
 
         CellGroup group = ThisNiche.graph.get(groupHandle);
         Object x = ThisNiche.graph.get(objectHandle);
-        return GUIHelper.addToCellGroup(objectHandle, group, null, null, r,
+        return addToCellGroup(objectHandle, group, null, null, r,
                 !(x instanceof CellGroupMember), addit_attribs, -1);
     }
 
@@ -554,26 +537,6 @@ public class GUIHelper
         if (c.getParent() instanceof JComponent)
             return getPSwingNode((JComponent) c.getParent());
         return null;
-    }
-
-    /**
-     * Helper method that performs the necessary transformations to adjust coordinates 
-     * of a point given the component to which it belongs  
-     * @param c The component displayed in canvas
-     * @param pt The point
-     * @return adjusted point
-     */
-    public static Point adjustPointInPicollo(JComponent c, Point pt)
-    {
-        PSwingNode ps = getPSwingNode(c);
-        if (ps == null) return pt;
-        PiccoloCanvas canvas = ps.getCanvas();
-        PBounds r1c = ps.getBounds();
-        ps.localToGlobal(r1c);
-        canvas.getCamera().globalToLocal(r1c);
-        Rectangle2D r = canvas.getCamera().getViewTransform()
-                .createTransformedShape(r1c).getBounds2D();
-        return new Point((int) (r.getX() + pt.x), (int) (r.getY() + pt.y));
     }
 
     // Create the edit menu.
@@ -662,9 +625,9 @@ public class GUIHelper
         GlobMenuItem mi = new GlobMenuItem("Manage Cell Descriptions");
         mi.addActionListener(new CommonActions.DescriptionManagerAction());
         menu.add(mi);
-        menu.add(GUIHelper.makeCellMenu());
-        menu.add(GUIHelper.makeCellGroupMenu());
-        menu.add(GUIHelper.makeNotebookMenu());
+        menu.add(makeCellMenu());
+        menu.add(makeCellGroupMenu());
+        menu.add(makeNotebookMenu());
         menu.add(new JSeparator());
         mi = new GlobMenuItem("Show Output Console");
         mi.addActionListener(new CommonActions.ShowOutputConsoleAction());
@@ -675,7 +638,7 @@ public class GUIHelper
         return menu;
     }
 
-    public static void handleTitle(PSwingNode node)
+    public static void updateTitle(PSwingNode node)
     {
         CellGroupMember cgm = ThisNiche.graph.get(node.getHandle());
         if (CellUtils.isMinimized(cgm))
@@ -696,22 +659,6 @@ public class GUIHelper
         }
     }
     
-    public static void updateFrameTitle(HGHandle h)
-    {
-        CellGroupMember book = ThisNiche.graph.get(h);
-        String name = CellUtils.getName(book);
-        if (name == null) name = "";
-        // RuntimeContext rcInstance = (RuntimeContext)
-        // ThisNiche.graph.get(TopFrame
-        // .getInstance().getCurrentRuntimeContext());
-        String title = "[" + ThisNiche.graph.getLocation() + "] "
-        /* + rcInstance.getName() + " " */+ name;
-        if (ThisNiche.guiController != null)
-            ThisNiche.guiController.setTitle(title);
-        // ThisNiche.guiController.showHTMLToolBar(false);
-        GUIHelper.getHTMLToolBar().setEnabled(false);
-    }
-
     public static JComponent getMinimizedUI(final CellGroupMember cgm)
     {
         return new MinimizedUI(cgm);
@@ -823,41 +770,12 @@ public class GUIHelper
       return new CGMActionsHelper.DynamicMenu(CELL_MENU_ITEMS_HANDLE, "Cell", CGMActionsHelper.Scope.cell);
     }
 
-    public static void centerOnScreen(Component c)
-    {
-    	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
-    	int x = (screenSize.width - c.getWidth()) / 2;
-    	int y = (screenSize.height - c.getHeight()) / 2;
-    	c.setLocation(x, y);    	
-    }
-
-    /**
-     * Traverses the given component's parent tree looking for an
-     * instance of JDialog, and return it. If not found, return null.
-     * @param c The component
-     */
-    public static JDialog getParentDialog(Component c)
-    {
-        Component p = c.getParent();
-        while (p != null && !(p instanceof JDialog))
-            p = p.getParent();
-        
-        return (p instanceof JDialog) ? (JDialog) p : null;
-    }
-
-    public static Frame getFrame(Component c)
-    {
-        Component p = c.getParent();
-        while (p != null && !(p instanceof Frame))
-        	p = p.getParent();
-        
-        return (p instanceof Frame) ? (Frame) p : null;
-    }
-    
     // disable menuItems if no notebook presented
     // use GlobMenuItem to prevent disabling
     public static class NBMenu extends PiccoloMenu implements MenuListener
     {
+        private static final long serialVersionUID = -5533895410660331100L;
+
         public NBMenu()
         {
             super();
@@ -896,6 +814,8 @@ public class GUIHelper
 
     public static class PiccoloMenu extends JMenu
     {
+        private static final long serialVersionUID = 692192144872936080L;
+
         public PiccoloMenu()
         {
             super();
@@ -911,7 +831,7 @@ public class GUIHelper
         {
             Point pt = super.getPopupMenuOrigin();
             if (getParent() != null && getParent() instanceof JComponent)
-                return adjustPointInPicollo((JComponent) getParent(), pt);
+                return GUIUtil.adjustPointInPicollo((JComponent) getParent(), pt);
             return pt;
         }
     }
@@ -919,6 +839,8 @@ public class GUIHelper
     // JMenuItem that can't be disabled
     public static class GlobMenuItem extends JMenuItem
     {
+        private static final long serialVersionUID = 8450876487372709066L;
+
         public GlobMenuItem()
         {
         }

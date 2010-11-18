@@ -19,15 +19,15 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
-import seco.gui.GUIHelper;
 import seco.rtenv.RtU;
 import seco.rtenv.RuntimeContext;
+import seco.util.GUIUtil;
 
 public class ManageRuntimeContextDialog extends JDialog
 {
     public ManageRuntimeContextDialog()
     {
-        super(ThisNiche.guiController.getFrame(), "Manage Runtime Context");
+        super(GUIUtil.getFrame(), "Manage Runtime Context");
         getContentPane().add(new ManageRtCtxPanel());
         setSize(250, 160);
     };
@@ -67,7 +67,7 @@ public class ManageRuntimeContextDialog extends JDialog
                     EditRuntimeContextDialog dlg = new EditRuntimeContextDialog(
                             ManageRtCtxPanel.this.map.get(name));
                     dlg.setVisible(true);
-                    GUIHelper.centerOnScreen(dlg);
+                    GUIUtil.centerOnScreen(dlg);
                 }
             });
 
@@ -90,7 +90,7 @@ public class ManageRuntimeContextDialog extends JDialog
                 {
                     String name = (String) listCtx.getSelectedValue();
                     if (name == null) return;
-                    if (GUIHelper
+                    if (GUIUtil
                             .showConfirmDlg("The RuntimeContext will be permanently deleted. Are you sure?"))
                     {
                         HGHandle h = ThisNiche

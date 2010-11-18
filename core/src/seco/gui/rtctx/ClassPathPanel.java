@@ -18,6 +18,7 @@ import seco.ThisNiche;
 import seco.rtenv.ClassPath;
 import seco.rtenv.ClassPathEntry;
 import seco.rtenv.RuntimeContext;
+import seco.util.GUIUtil;
 
 /**
  * 
@@ -117,7 +118,7 @@ public class ClassPathPanel extends JPanel
         chooser.setDialogTitle("Select JAR or Directory");
         chooser.setMultiSelectionEnabled(true);
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        if (chooser.showDialog(ThisNiche.guiController.getFrame(), "Select") == JFileChooser.APPROVE_OPTION)
+        if (chooser.showDialog(GUIUtil.getFrame(evt), "Select") == JFileChooser.APPROVE_OPTION)
         {
             CPListModel model = (CPListModel) cpList.getModel();
             for (File f : chooser.getSelectedFiles())

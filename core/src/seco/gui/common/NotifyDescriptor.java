@@ -736,7 +736,7 @@ public class NotifyDescriptor extends Object {
             }
             // emphasize user-non-friendly exceptions
             if (this.getMessage() == null || "".equals(this.getMessage())) { // NOI18N
-                this.setMessage("A " +detail.getClass().getName() + "exception has occurred."); // NOI18N
+                this.setMessage("A " + detail.getClass().getName() + "exception has occurred."); // NOI18N
                 this.setTitle("Unexpected Exception");
             }
         }
@@ -750,7 +750,7 @@ public class NotifyDescriptor extends Object {
         public Exception(Frame frame, Throwable detail, Object message) {
             super(frame, message, DEFAULT_OPTION, ERROR_MESSAGE);
             // customize descriptor
-            //      this.setDetail(detail);
+            //this.setDetail(detail);
             this.setTitle("Exception");
         }
     }

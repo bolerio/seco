@@ -53,7 +53,6 @@ import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
-import seco.gui.GUIHelper;
 import seco.gui.ObjectInspector;
 import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
@@ -86,6 +85,7 @@ import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import seco.util.GUIUtil;
 import seco.util.IconManager;
 
 /**
@@ -171,7 +171,7 @@ public class NotebookEditorKit extends StyledEditorKit
 
     private void createActionTable()
     {
-        if(actions != null) return;
+        if (actions != null) return;
         actions = new HashMap<String, Action>();
         Action[] actionsArray = getActions();
         for (int i = 0; i < actionsArray.length; i++)
@@ -338,7 +338,7 @@ public class NotebookEditorKit extends StyledEditorKit
                 JList list = new JList(names);
                 list.setPreferredSize(new Dimension(200, 100));
                 DialogDescriptor dd = new DialogDescriptor(
-                        GUIHelper.getFrame(ui), list,
+                        GUIUtil.getFrame(ui), list,
                         "Select the class to import");
                 if (DialogDisplayer.getDefault().notify(dd) != NotifyDescriptor.OK_OPTION)
                     return;
@@ -870,13 +870,13 @@ public class NotebookEditorKit extends StyledEditorKit
                 editor.setCaretPosition(doc.insPointInsert(pos, ""));
                 return;
             }
-            Frame f = GUIHelper.getFrame(editor);
+            Frame f = GUIUtil.getFrame(editor);
             try
             {
                 Rectangle rect = editor.modelToView(pos);
                 Point pt = new Point(rect.x, rect.y);
                 pt = SwingUtilities.convertPoint(editor, rect.x, rect.y, f);
-                pt = GUIHelper.adjustPointInPicollo(editor, pt);
+                pt = GUIUtil.adjustPointInPicollo(editor, pt);
                 Collection<JMenuItem> items = CellLangProvider
                         .getLanguages(editor);
                 JPopupMenu popupMenu = new JPopupMenu();
@@ -910,14 +910,10 @@ public class NotebookEditorKit extends StyledEditorKit
             super(javaDocManagerAction);
         }
 
-        public void actionPerformed(ActionEvent evt)
+        public void actionPerformed(ActionEvent e)
         {
-            JDialog dialog = new JDialog(GUIHelper.getFrame((Component) evt
-                    .getSource()), javaDocManagerAction);
-            dialog.setSize(500, 500);
-            dialog.add(new JavaDocPanel());
-            dialog.setVisible(true);
-            GUIHelper.centerOnScreen(dialog);
+            GUIUtil.createAndShowDlg(GUIUtil.getFrame(e), javaDocManagerAction, 
+                    new JavaDocPanel(), new Dimension(500, 500));
         }
     }
 
@@ -930,12 +926,8 @@ public class NotebookEditorKit extends StyledEditorKit
 
         protected void action(NotebookUI ui) throws Exception
         {
-            JDialog dialog = new JDialog(GUIHelper.getFrame(ui),
-                    ctxInspectorAction);
-            dialog.setSize(500, 500);
-            dialog.add(new RuntimeContextPanel(ui));
-            dialog.setVisible(true);
-            GUIHelper.centerOnScreen(dialog);
+            GUIUtil.createAndShowDlg(GUIUtil.getFrame(ui), ctxInspectorAction,
+                    new RuntimeContextPanel(ui), new Dimension(500, 500));
         }
     }
 
@@ -948,12 +940,8 @@ public class NotebookEditorKit extends StyledEditorKit
 
         public void actionPerformed(ActionEvent e)
         {
-            JDialog dialog = new JDialog(GUIHelper.getFrame((Component) e
-                    .getSource()), shortcutInspectorAction);
-            dialog.setSize(500, 500);
-            dialog.add(new ShortcutPanel());
-            dialog.setVisible(true);
-            GUIHelper.centerOnScreen(dialog);
+            GUIUtil.createAndShowDlg(GUIUtil.getFrame(e),
+                    shortcutInspectorAction, new ShortcutPanel(), new Dimension(500, 500));
         }
     }
 
@@ -967,8 +955,7 @@ public class NotebookEditorKit extends StyledEditorKit
         public void actionPerformed(ActionEvent e)
         {
             AbbreviationPanel p = new AbbreviationPanel();
-            DialogDescriptor dd = new DialogDescriptor(
-                    GUIHelper.getFrame((Component) e.getSource()), p,
+            DialogDescriptor dd = new DialogDescriptor(GUIUtil.getFrame(e), p,
                     "Abbreviation Manager");
             DialogDisplayer.getDefault().notify(dd);
         }
@@ -1000,7 +987,7 @@ public class NotebookEditorKit extends StyledEditorKit
             else
                 findDialog.setSelectedIndex(index);
             findDialog.setVisible(true);
-            GUIHelper.centerOnScreen(findDialog);
+            GUIUtil.centerOnScreen(findDialog);
         }
 
         public boolean isFindOrReplace()
@@ -1337,10 +1324,9 @@ public class NotebookEditorKit extends StyledEditorKit
             Object value = binds.get(var);
             if (value == null) return;
             ObjectInspector propsPanel = new ObjectInspector(value);
-            DialogDescriptor dd = new DialogDescriptor(
-                    ThisNiche.guiController.getFrame(), new JScrollPane(
-                            propsPanel), "ObjectInspector:" + var + " -> "
-                            + value.getClass().getName());
+            DialogDescriptor dd = new DialogDescriptor(GUIUtil.getFrame(ui),
+                    new JScrollPane(propsPanel), "ObjectInspector:" + var
+                            + " -> " + value.getClass().getName());
             DialogDisplayer.getDefault().notify(dd);
         }
     }

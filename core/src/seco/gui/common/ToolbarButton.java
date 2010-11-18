@@ -19,8 +19,8 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.SoftBevelBorder;
 
-import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
+import seco.util.GUIUtil;
 
 
 public class ToolbarButton extends JButton implements MouseListener
@@ -111,7 +111,7 @@ public class ToolbarButton extends JButton implements MouseListener
     @Override
     public Point getToolTipLocation(MouseEvent e)
     {
-        return (TopFrame.PICCOLO) ? GUIHelper.adjustPointInPicollo(this, e.getPoint())
+        return (TopFrame.PICCOLO) ? GUIUtil.adjustPointInPicollo(this, e.getPoint())
                 : super.getToolTipLocation(e);
     }
 

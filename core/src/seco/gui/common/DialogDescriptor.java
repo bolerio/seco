@@ -10,6 +10,8 @@ package seco.gui.common;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
 
+import seco.util.GUIUtil;
+
 /** A description of a standard dialog.
  * It may be built later using {@link DialogDisplayer#createDialog} or shown with {@link DialogDisplayer#notify}.
 * It extends <code>NotifyDescriptor</code>'s capabilities by allowing specification of the
@@ -74,6 +76,11 @@ public class DialogDescriptor extends NotifyDescriptor
     /** array of options that close the dialog when pressed */
     private Object[] closingOptions = DEFAULT_CLOSING_OPTIONS;
 
+    public DialogDescriptor(final Object innerPane, final String title) 
+    {
+        this(GUIUtil.getFrame(), innerPane, title, true, OK_CANCEL_OPTION, OK_OPTION,
+             DEFAULT_ALIGN, null);
+    }
     /** Create modal dialog descriptor with given title and inner part,
     * with OK/Cancel buttons with default alignment,
     * no help available. All buttons will close the dialog and the getValue ()
@@ -81,7 +88,8 @@ public class DialogDescriptor extends NotifyDescriptor
     * @param innerPane inner component of the dialog, or String message
     * @param title title of the dialog
     */
-    public DialogDescriptor(final Frame frame, final Object innerPane, final String title) {
+    public DialogDescriptor(final Frame frame, final Object innerPane, final String title) 
+    {
         this(frame, innerPane, title, true, OK_CANCEL_OPTION, OK_OPTION,
              DEFAULT_ALIGN, null);
     }

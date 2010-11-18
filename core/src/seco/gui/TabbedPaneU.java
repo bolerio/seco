@@ -37,6 +37,7 @@ import seco.notebook.NotebookUI;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import seco.util.GUIUtil;
 
 public class TabbedPaneU
 {
@@ -80,7 +81,7 @@ public class TabbedPaneU
         if (tp.getTabCount() == 0 && ThisNiche.guiController.getFrame() != null) 
             ThisNiche.guiController.setTitle("Seco");
         else
-            GUIHelper.updateFrameTitle(
+            TabbedPaneU.updateFrameTitle(
                     getHandleAt(tp, tp.getSelectedIndex()));
     }
 
@@ -152,7 +153,7 @@ public class TabbedPaneU
                     currentTP.setTitleAt(currentTP.getSelectedIndex(), 
                             makeTabTitle(CellUtils.getName(
                                     (CellGroupMember) ThisNiche.graph.get(h))));
-                    GUIHelper.updateFrameTitle(h);
+                    TabbedPaneU.updateFrameTitle(h);
                 }
             }
         };
@@ -200,15 +201,15 @@ public class TabbedPaneU
                     getTabPopupMenu().putClientProperty(TAB_INDEX, i);
                     if (TopFrame.PICCOLO)
                     {
-                        Frame f = GUIHelper.getFrame(e.getComponent());
+                        Frame f = GUIUtil.getFrame(e.getComponent());
                         pt = getPoint(e, f);
                     }
                     getTabPopupMenu().show(tabbedPane, pt.x, pt.y);
                     break;
                 }
             }
-            if(ThisNiche.guiController.getFrame() != null)
-               ThisNiche.guiController.getFrame().repaint();
+            if(GUIUtil.getFrame() != null)
+                GUIUtil.getFrame().repaint();
             e.consume();
         }
         
@@ -216,7 +217,7 @@ public class TabbedPaneU
         {
             Point pt =  new Point(e.getX(), e.getY());
             if (e.getComponent() instanceof JComponent)
-                return GUIHelper.adjustPointInPicollo((JComponent) e.getComponent(), pt);
+                return GUIUtil.adjustPointInPicollo((JComponent) e.getComponent(), pt);
             return pt;
         }
     }
@@ -241,7 +242,7 @@ public class TabbedPaneU
             if (tabbedPane.getSelectedIndex() == -1) return;
             NotebookUI.setFocusedNotebookUI(
                     getNotebookUIAt(tabbedPane, tabbedPane.getSelectedIndex()));
-            GUIHelper.updateFrameTitle(
+            TabbedPaneU.updateFrameTitle(
                     getHandleAt(tabbedPane,tabbedPane.getSelectedIndex()));
         }
     }
@@ -291,5 +292,21 @@ public class TabbedPaneU
         tabbedPane.addMouseListener(new TabbedPaneMouseListener(tabbedPane));
         tabbedPane.addChangeListener(new TabbedPaneChangeListener(tabbedPane));
         return tabbedPane;
+    }
+
+    public static void updateFrameTitle(HGHandle h)
+    {
+        CellGroupMember book = ThisNiche.graph.get(h);
+        String name = CellUtils.getName(book);
+        if (name == null) name = "";
+        // RuntimeContext rcInstance = (RuntimeContext)
+        // ThisNiche.graph.get(TopFrame
+        // .getInstance().getCurrentRuntimeContext());
+        String title = "[" + ThisNiche.graph.getLocation() + "] "
+        /* + rcInstance.getName() + " " */+ name;
+        if (ThisNiche.guiController != null)
+            ThisNiche.guiController.setTitle(title);
+        // ThisNiche.guiController.showHTMLToolBar(false);
+        GUIHelper.getHTMLToolBar().setEnabled(false);
     }
 }

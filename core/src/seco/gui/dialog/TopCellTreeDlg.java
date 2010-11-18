@@ -36,12 +36,12 @@ import org.hypergraphdb.HGQuery.hg;
 import seco.ThisNiche;
 import seco.boot.NicheBootListener;
 import seco.events.EventPubSub;
-import seco.gui.GUIHelper;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.Scriptlet;
+import seco.util.GUIUtil;
 
 public class TopCellTreeDlg extends JDialog
 {
@@ -51,7 +51,7 @@ public class TopCellTreeDlg extends JDialog
 
     public TopCellTreeDlg(CellGroupMember cell)
     {
-        super(ThisNiche.guiController.getFrame(), false);
+        super(GUIUtil.getFrame(), false);
         this.top = cell;
         String name = CellUtils.getName(cell);
         if (name == null) name = "";
@@ -201,15 +201,10 @@ public class TopCellTreeDlg extends JDialog
                 {
                     try
                     {
-                        JDialog dialog = new JDialog(GUIHelper
-                                .getFrame(NotebookCellsTree.this), "Publisher");
-                        dialog.setSize(500, 800);
                         EventPubSubsPanel tree = new EventPubSubsPanel(
                                 ThisNiche.handleOf(cgm), true);
-                        JScrollPane pane = new JScrollPane(tree);
-                        dialog.add(pane);
-                        dialog.setVisible(true);
-                        GUIHelper.centerOnScreen(dialog);
+                        GUIUtil.createAndShowDlg(GUIUtil.getFrame(e),
+                                "Publisher", new JScrollPane(tree), new Dimension(500, 800));
                     }
                     catch (Exception ex)
                     {
@@ -222,15 +217,11 @@ public class TopCellTreeDlg extends JDialog
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-                    JDialog dialog = new JDialog(GUIHelper
-                            .getFrame(NotebookCellsTree.this), "Subscriber");
-                    dialog.setSize(500, 800);
                     EventPubSubsPanel tree = new EventPubSubsPanel(ThisNiche
                             .handleOf(cgm), false);
-                    JScrollPane pane = new JScrollPane(tree);
-                    dialog.add(pane);
-                    dialog.setVisible(true);
-                    GUIHelper.centerOnScreen(dialog);
+                    GUIUtil.createAndShowDlg(GUIUtil.getFrame(e),
+                            "Subscriber",
+                            new JScrollPane(tree), new Dimension(500, 800));
                 }
             });
             // menuItem.setEnabled(node instanceof Cell);
@@ -252,13 +243,8 @@ public class TopCellTreeDlg extends JDialog
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-                    JDialog dialog = new JDialog(GUIHelper
-                            .getFrame((Component) e.getSource()),
-                            "Delete Attributes");
-                    dialog.setSize(300, 200);
-                    dialog.add(new RemoveAttribsPanel(cgm));
-                    dialog.setVisible(true);
-                    GUIHelper.centerOnScreen(dialog);
+                    GUIUtil.createAndShowDlg(GUIUtil.getFrame(e),
+                            "Delete Attributes", new RemoveAttribsPanel(cgm), new Dimension(300, 200));
                 }
             });
             popup.add(menuItem);

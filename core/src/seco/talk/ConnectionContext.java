@@ -39,6 +39,7 @@ import seco.gui.visual.VisualAttribs;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import seco.util.GUIUtil;
 
 public class ConnectionContext
 {
@@ -193,7 +194,7 @@ public class ConnectionContext
                 else
                 {
                     if (t != null) t.printStackTrace(System.err);
-                    JOptionPane.showMessageDialog(ThisNiche.guiController.getFrame(),
+                    JOptionPane.showMessageDialog(GUIUtil.getFrame(),
                             HGUtils.getRootCause(t),
                             "Failed to connect to network, see error console.",
                             JOptionPane.ERROR_MESSAGE);
@@ -236,7 +237,7 @@ public class ConnectionContext
                     if (t != null) t.printStackTrace(System.err);
                     JOptionPane
                             .showMessageDialog(
-                                    ThisNiche.guiController.getFrame(),
+                                    GUIUtil.getFrame(),
                                     t,
                                     "Failed to disconnected from network, see error console.",
                                     JOptionPane.ERROR_MESSAGE);
@@ -525,7 +526,7 @@ public class ConnectionContext
     {
         if (isMe(x))
         {
-            JOptionPane.showMessageDialog(ThisNiche.guiController.getFrame(),
+            JOptionPane.showMessageDialog(GUIUtil.getFrame(),
                     "Can't talk to yourself");
             return;
         }
@@ -540,7 +541,7 @@ public class ConnectionContext
         String message = "User "
                 + x.getNick()
                 + " is not currently in your friend list, would you like to add them?";
-        int res = JOptionPane.showConfirmDialog(ThisNiche.guiController.getFrame(),
+        int res = JOptionPane.showConfirmDialog(GUIUtil.getFrame(),
                 message, "?", JOptionPane.OK_CANCEL_OPTION);
         if (res == JOptionPane.OK_OPTION) addRoster(x);
     }

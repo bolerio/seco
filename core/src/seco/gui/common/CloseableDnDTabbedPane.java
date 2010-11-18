@@ -39,7 +39,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import seco.gui.GUIHelper;
+import seco.util.GUIUtil;
 
 public class CloseableDnDTabbedPane extends org.wonderly.swing.tabs.CloseableTabbedPane//JTabbedPane
 {
@@ -330,7 +330,7 @@ public class CloseableDnDTabbedPane extends org.wonderly.swing.tabs.CloseableTab
 	
 	private void setGlassPane(Component c)
 	{
-		Frame frame = GUIHelper.getFrame(c);
+		Frame frame = GUIUtil.getFrame(c);
 		if(frame == null || !(frame instanceof JFrame)) {
 			System.out.println("Could not find frame: " + frame);
 			return;

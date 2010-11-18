@@ -11,6 +11,7 @@ import seco.ThisNiche;
 import seco.boot.StartMeUp;
 import seco.gui.StandaloneFrame;
 import seco.gui.TopFrame;
+import seco.util.GUIUtil;
 
 /**
  *
@@ -30,7 +31,7 @@ public class Main
     {
         ThisNiche.guiControllerClassName = StandaloneFrame.class.getName();
         StartMeUp.main(null);
-        //ThisNiche.guiController.getFrame().setVisible(true);
+        //GUIUtil.getFrame().setVisible(true);
     }
     
 }

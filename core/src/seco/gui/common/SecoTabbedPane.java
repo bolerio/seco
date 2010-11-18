@@ -18,7 +18,6 @@ import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EvalCellEvent;
-import seco.gui.GUIHelper;
 import seco.gui.SecoTransferable;
 import seco.gui.TabbedPaneU;
 import seco.gui.visual.CellContainerVisual;
@@ -169,7 +168,7 @@ public class SecoTabbedPane extends JTabbedPane
             if (tp.getTabCount() == 0 && ThisNiche.guiController != null) 
                 ThisNiche.guiController.setTitle("Seco");
             else
-                GUIHelper.updateFrameTitle(
+                TabbedPaneU.updateFrameTitle(
                         TabbedPaneU.getHandleAt(tp, tp.getSelectedIndex()));
         }
 

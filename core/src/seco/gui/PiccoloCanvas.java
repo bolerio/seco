@@ -428,7 +428,7 @@ public class PiccoloCanvas extends PSwingCanvas
             addNode(p);
             placeNode(p);
         }
-        GUIHelper.handleTitle(p);
+        GUIHelper.updateTitle(p);
         comp.revalidate();
         // force the appearance of scroll bars if necessary
         if (nested) revalidate();

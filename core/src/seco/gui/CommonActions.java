@@ -1,6 +1,5 @@
 package seco.gui;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -13,8 +12,6 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
@@ -51,6 +48,7 @@ import seco.things.CellUtils;
 import seco.things.CellVisual;
 import seco.things.IOUtils;
 import seco.util.FileUtil;
+import seco.util.GUIUtil;
 import seco.util.IconManager;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.PLayer;
@@ -70,7 +68,7 @@ public class CommonActions
     public static final String NEW = "New";
     public static final String COPY = "Copy";
     public static final String CUT = "Cut";
-    
+
     public static class OpenAction extends AbstractAction
     {
         public OpenAction()
@@ -79,15 +77,12 @@ public class CommonActions
             putValue(Action.SMALL_ICON, IconManager.resolveIcon("Open16.gif"));
             putValue(Action.SHORT_DESCRIPTION, "Import Notebook");
         }
-    
-        public void actionPerformed(ActionEvent evt)
+
+        public void actionPerformed(ActionEvent e)
         {
-            JDialog dialog = new JDialog(GUIHelper.getFrame((Component) evt
-                    .getSource()), "Open Or Delete CellGroup");
-            dialog.setSize(500, 500);
-            dialog.add(new OpenBookPanel());
-            dialog.setVisible(true);
-            GUIHelper.centerOnScreen(dialog);
+            GUIUtil.createAndShowDlg(GUIUtil.getFrame(e),
+                    "Open Or Delete CellGroup", new OpenBookPanel(),
+                    new Dimension(500, 500));
         }
     }
 
@@ -111,7 +106,7 @@ public class CommonActions
     {
         public void actionPerformed(ActionEvent evt)
         {
-            SwingUtilities.invokeLater(new Runnable(){
+            SwingUtilities.invokeLater(new Runnable() {
                 public void run()
                 {
                     CommonActions.showOutputConsole();
@@ -143,15 +138,11 @@ public class CommonActions
 
     public static class DescriptionManagerAction implements ActionListener
     {
-        public void actionPerformed(ActionEvent evt)
+        public void actionPerformed(ActionEvent e)
         {
-            SearchDescriptionPanel p = new SearchDescriptionPanel();
-            JDialog dialog = new JDialog(ThisNiche.guiController.getFrame(),
-                    "Manage Descriptions");
-            dialog.add(p);
-            dialog.setSize(new Dimension(700, 500));
-            dialog.setVisible(true);
-            GUIHelper.centerOnScreen(dialog);
+            GUIUtil.createAndShowDlg(GUIUtil.getFrame(e),
+                    "Manage Descriptions", new SearchDescriptionPanel(),
+                    new Dimension(700, 500));
         }
     }
 
@@ -163,7 +154,7 @@ public class CommonActions
             putValue(Action.SMALL_ICON, IconManager.resolveIcon("New16.gif"));
             putValue(Action.SHORT_DESCRIPTION, "Create New Notebook");
         }
-    
+
         public void actionPerformed(java.awt.event.ActionEvent evt)
         {
             newNotebook();
@@ -179,12 +170,12 @@ public class CommonActions
                     IconManager.resolveIcon("SaveAs16.gif"));
             this.putValue(Action.SHORT_DESCRIPTION, "Export Notebook As XML");
         }
-    
+
         public void actionPerformed(ActionEvent evt)
         {
             NotebookUI ui = NotebookUI.getFocusedNotebookUI();
             if (ui == null) return;
-            File f = FileUtil.getFile(GUIHelper.getFrame(ui),
+            File f = FileUtil.getFile(GUIUtil.getFrame(ui),
                     "Export Notebook As ...", FileUtil.SAVE, null);
             if (f != null)
             {
@@ -203,7 +194,7 @@ public class CommonActions
                     IconManager.resolveIcon("Open16.gif"));
             this.putValue(Action.SHORT_DESCRIPTION, "Import Notebook");
         }
-    
+
         public void actionPerformed(java.awt.event.ActionEvent evt)
         {
             openNotebook();
@@ -217,7 +208,7 @@ public class CommonActions
             this.putValue(Action.NAME, EXIT);
             this.putValue(Action.SHORT_DESCRIPTION, "Exit Seco");
         }
-    
+
         public void actionPerformed(java.awt.event.ActionEvent evt)
         {
             ThisNiche.guiController.exit();
@@ -227,7 +218,7 @@ public class CommonActions
     public static void showLayoutSettingsDlg(PSwingNode node)
     {
         LayoutSettingsPanel panel = new LayoutSettingsPanel(node);
-        JDialog dialog = new JDialog(ThisNiche.guiController.getFrame(), "Layout Settings");
+        JDialog dialog = new JDialog(GUIUtil.getFrame(), "Layout Settings");
         dialog.add(panel);
         dialog.setSize(new Dimension(270, 170));
         dialog.setVisible(true);
@@ -242,32 +233,30 @@ public class CommonActions
         bev.setMinimumSize(new Dimension(180, 180));
         bev.setSize(new Dimension(180, 180));
         bev.updateFromViewed();
-        JDialog dialog = new JDialog(ThisNiche.guiController.getFrame(), "BirdsEyeView");
-        dialog.add(bev);
-        dialog.setSize(new Dimension(220, 220));
-        dialog.setVisible(true);
-        GUIHelper.centerOnScreen(dialog);
+        GUIUtil.createAndShowDlg("BirdsEyeView", bev, new Dimension(220, 220));
         bev.revalidate();
     }
 
     private static String bck_dir = ".seco_bck";
+
     public static void backup()
     {
-        File dir = new File(new File(U.findUserHome()),//AppConfig.getJarDirectory(), 
-                bck_dir + File.separator + NicheManager.getNicheName(ThisNiche.graph));
+        File dir = new File(new File(U.findUserHome()),// AppConfig.getJarDirectory(),
+                bck_dir + File.separator
+                        + NicheManager.getNicheName(ThisNiche.graph));
         if (!dir.exists()) dir.mkdir();
         System.out.println("Backup in: " + dir.getAbsolutePath());
         int i = 1;
-        for (HGHandle h: getOpenedBooks())
+        for (HGHandle h : getOpenedBooks())
         {
             CellGroupMember c = ThisNiche.graph.get(h);
-            if(!(c instanceof CellGroup)) continue;
-           
+            if (!(c instanceof CellGroup)) continue;
+
             CellGroup g = (CellGroup) c;
             // escape some illegal chars which could be introduced during
             // previous book import
             String title = CellUtils.getName(g);
-            if(title == null) title = "Untitled" + i;
+            if (title == null) title = "Untitled" + i;
             String fn = title.replace('\\', '_').replace('/', '_')
                     .replace(':', '_');
             if (!fn.endsWith(".nb")) fn += ".nb";
@@ -277,20 +266,19 @@ public class CommonActions
             }
             catch (Exception ex)
             {
-                IOUtils.exportCellGroup(g, new File(dir, "BCK" + i)
-                        .getAbsolutePath()
-                        + ".nb");
+                IOUtils.exportCellGroup(g,
+                        new File(dir, "BCK" + i).getAbsolutePath() + ".nb");
             }
             i++;
         }
     }
-    
+
     public static void restoreDefaultGUI()
     {
         ThisNiche.getCanvas().removeAllNodes();
         CellGroup group = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         CellVisual v = ThisNiche.graph.get(group.getVisual());
-        
+
         complete_remove(GUIHelper.MENUBAR_HANDLE);
         complete_remove(GUIHelper.TOOLBAR_HANDLE);
         complete_remove(GUIHelper.HTML_TOOLBAR_HANDLE);
@@ -298,26 +286,26 @@ public class CommonActions
         complete_remove(GUIHelper.CANVAS_GLOBAL_ACTION_SET_HANDLE);
         complete_remove(GUIHelper.CANVAS_NODE_ACTION_SET_HANDLE);
         complete_remove(GUIHelper.CELL_MENU_ITEMS_HANDLE);
-        complete_remove(GUIHelper.CELL_GROUP_MENU_ITEMS_HANDLE); 
+        complete_remove(GUIHelper.CELL_GROUP_MENU_ITEMS_HANDLE);
         complete_remove(GUIHelper.NOTEBOOK_MENU_ITEMS_HANDLE);
         complete_remove(ActionManager.HANDLE);
         complete_remove(NotebookUI.POPUP_HANDLE);
-                
+
         GUIHelper.makeTopCellGroup();
         v.bind(group);
     }
-    
+
     private static void complete_remove(HGPersistentHandle h)
     {
- //       try
- //       {
-            ThisNiche.graph.remove(h, true);
-//        }catch(Throwable t)
-//        {
-//            ThisNiche.graph.define(h, null);
-//        }
+        // try
+        // {
+        ThisNiche.graph.remove(h, true);
+        // }catch(Throwable t)
+        // {
+        // ThisNiche.graph.define(h, null);
+        // }
     }
-    
+
     public static void resetZoom()
     {
         CellGroup group = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
@@ -326,24 +314,27 @@ public class CommonActions
         canvas.getCamera().setViewScale(1.0);
         canvas.getCamera().setViewOffset(0, 0);
     }
-    
-//    public static void testEmbededContainer()
-//    {
-//        CellGroup group = new CellGroup("EMBEDED CONTAINER");
-//        HGHandle groupH = ThisNiche.graph.add(group);
-//        HGHandle cellH1 = CellUtils.createOutputCellH(null, null, new JButton("Test"), false);
-//        HGHandle cellH2 = CellUtils.createOutputCellH(null, null, new JCheckBox("Test"), false);
-//        group.insert(0, cellH1);
-//        group.insert(0, cellH2);
-//        GUIHelper.addToTopCellGroup(groupH, CellContainerVisual.getHandle(), null, new Rectangle(200, 200, 500, 500)); 
-//    }
-    
+
+    // public static void testEmbededContainer()
+    // {
+    // CellGroup group = new CellGroup("EMBEDED CONTAINER");
+    // HGHandle groupH = ThisNiche.graph.add(group);
+    // HGHandle cellH1 = CellUtils.createOutputCellH(null, null, new
+    // JButton("Test"), false);
+    // HGHandle cellH2 = CellUtils.createOutputCellH(null, null, new
+    // JCheckBox("Test"), false);
+    // group.insert(0, cellH1);
+    // group.insert(0, cellH2);
+    // GUIHelper.addToTopCellGroup(groupH, CellContainerVisual.getHandle(),
+    // null, new Rectangle(200, 200, 500, 500));
+    // }
+
     public static boolean renameCellGroupMember(HGHandle h)
     {
         CellGroupMember cgm = ThisNiche.graph.get(h);
         String name = CellUtils.getName(cgm);
         NotifyDescriptor.InputLine nd = new NotifyDescriptor.InputLine(
-                ThisNiche.guiController.getFrame(), "Name: ", "Rename");
+                GUIUtil.getFrame(), "Name: ", "Rename");
         nd.setInputText(name);
         if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION)
         {
@@ -352,16 +343,16 @@ public class CommonActions
             return true;
         }
         return false;
-    } 
-    
+    }
+
     public static boolean editCGMDescription(HGHandle h)
     {
-       // CellGroupMember cgm = ThisNiche.graph.get(h);
+        // CellGroupMember cgm = ThisNiche.graph.get(h);
         String desc = CellUtils.getDescription(h);
         JTextArea area = new JTextArea();
         area.setPreferredSize(new Dimension(300, 200));
-        DialogDescriptor dd = new DialogDescriptor(ThisNiche.guiController.getFrame(),
-                area, "Cell/Group Description");
+        DialogDescriptor dd = new DialogDescriptor(area,
+                "Cell/Group Description");
         area.setText(desc);
         if (DialogDisplayer.getDefault().notify(dd) == NotifyDescriptor.OK_OPTION)
         {
@@ -369,8 +360,8 @@ public class CommonActions
             return true;
         }
         return false;
-    } 
-    
+    }
+
     public static void updateSelectedPSwingCellComponentValue()
     {
         PSwingNode ps = ThisNiche.getCanvas().getSelectedPSwingNode();
@@ -379,11 +370,13 @@ public class CommonActions
                 && ((Cell) cell).getValue() instanceof JComponent)
             ((Cell) cell).updateValue(ps.getComponent());
     }
-    
+
     /**
-     * Opens a given notebook(that is already stored in the niche) in the canvas.
-     * Do nothing if the notebook is already opened.
-     * @param bookH The notebook's handle 
+     * Opens a given notebook(that is already stored in the niche) in the
+     * canvas. Do nothing if the notebook is already opened.
+     * 
+     * @param bookH
+     *            The notebook's handle
      */
     public static void openNotebook(HGHandle bookH)
     {
@@ -415,8 +408,8 @@ public class CommonActions
 
     static void openNotebook()
     {
-        File file = FileUtil.getFile(ThisNiche.guiController.getFrame(),
-                "Load Notebook", FileUtil.LOAD, null);
+        File file = FileUtil.getFile(GUIUtil.getFrame(), "Load Notebook",
+                FileUtil.LOAD, null);
         if (file == null) return;
         importGroup(file);
     }
@@ -435,14 +428,14 @@ public class CommonActions
         {
             t.printStackTrace();
             NotifyDescriptor.Exception ex = new NotifyDescriptor.Exception(
-                    ThisNiche.guiController.getFrame(), t, "Could not open: "
+                    GUIUtil.getFrame(), t, "Could not open: "
                             + file.getAbsolutePath());
             DialogDisplayer.getDefault().notify(ex);
             // strange requirement to open new Notebook, if file doesn't exist
             newNotebook();
         }
     }
-    
+
     public static Set<HGHandle> getOpenedBooks()
     {
         Set<HGHandle> res = new HashSet<HGHandle>();
@@ -469,35 +462,25 @@ public class CommonActions
             }
         }
     }
-    
+
     static void openElementTree()
     {
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
         if (ui == null) return;
-        String title = "Elements Hierarchy";
-        JDialog dialog = new JDialog(GUIHelper.getFrame(ui), title);
-        dialog.setSize(500, 800);
         JTree tree = new JTree((TreeNode) ui.getDocument()
                 .getDefaultRootElement());
-        JScrollPane pane = new JScrollPane(tree);
-        dialog.add(pane);
-        dialog.setVisible(true);
-        GUIHelper.centerOnScreen(dialog);
+        GUIUtil.createAndShowDlg(GUIUtil.getFrame(ui), "Elements Hierarchy",
+                new JScrollPane(tree), new Dimension(500, 800));
     }
 
     static void openParseTree()
     {
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
         if (ui == null) return;
-        String title = "Parsing Hierarchy";
-        JDialog dialog = new JDialog(GUIHelper.getFrame(ui), title);
-        dialog.setSize(500, 800);
         JTree tree = ui.getParseTree(ui.getCaretPosition());
         if (tree == null) return;
-        JScrollPane pane = new JScrollPane(tree);
-        dialog.add(pane);
-        dialog.setVisible(true);
-        GUIHelper.centerOnScreen(dialog);
+        GUIUtil.createAndShowDlg("Parsing Hierarchy", new JScrollPane(tree),
+                new Dimension(500, 800));
     }
 
     static void openCellTree(CellGroupMember cell)
@@ -525,9 +508,8 @@ public class CommonActions
         HGHandle h = ThisNiche.graph.add(c);
         Map<Object, Object> attribs = new HashMap<Object, Object>();
         attribs.put(VisualAttribs.showTitle, true);
-        return GUIHelper.addToCellGroup(h,
-                (CellGroup) ThisNiche.graph
-                        .get(ThisNiche.TOP_CELL_GROUP_HANDLE), visualH, null,
+        return GUIHelper.addToCellGroup(h, (CellGroup) ThisNiche.graph
+                .get(ThisNiche.TOP_CELL_GROUP_HANDLE), visualH, null,
                 GUIHelper.CONTAINER_RECT, false, attribs, -1);
     }
 
@@ -535,12 +517,14 @@ public class CommonActions
     {
         GUIHelper.getOutputConsole();
         HGHandle existingH = GUIHelper.getCellHandleByValueHandle(
-                ThisNiche.TOP_CELL_GROUP_HANDLE, GUIHelper.OUTPUT_CONSOLE_HANDLE);
+                ThisNiche.TOP_CELL_GROUP_HANDLE,
+                GUIHelper.OUTPUT_CONSOLE_HANDLE);
         if (existingH == null)
         {
             CellGroupMember cgm = ThisNiche.graph.get(GUIHelper.addToCellGroup(
-                    GUIHelper.OUTPUT_CONSOLE_HANDLE, GUIHelper.getTopCellGroup(), null, null,
-                    new Rectangle(5, 500, 600, 100), true));
+                    GUIHelper.OUTPUT_CONSOLE_HANDLE, GUIHelper
+                            .getTopCellGroup(), null, null, new Rectangle(5,
+                            500, 600, 100), true));
             CellUtils.setName(cgm, "Output Console");
             cgm.setAttribute(VisualAttribs.showTitle, true);
         }

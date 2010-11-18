@@ -42,6 +42,7 @@ import seco.notebook.html.HTMLEditor;
 import seco.notebook.html.MyHTMLEditorKit;
 import seco.things.Cell;
 import seco.things.CellUtils;
+import seco.util.GUIUtil;
 
 
 public class HtmlView extends HidableComponentView
@@ -207,7 +208,7 @@ public class HtmlView extends HidableComponentView
                     {
                         getPopup().update();
                         int off = html.viewToModel(e.getPoint());
-                        Frame f = GUIHelper.getFrame(e.getComponent());
+                        Frame f = GUIUtil.getFrame(e.getComponent());
                         Point pt = null;
                         try
                         {
@@ -215,7 +216,7 @@ public class HtmlView extends HidableComponentView
                                   html.getElement().getStartOffset() + off);
                           pt = new Point(rect.x, rect.y);
                           pt = SwingUtilities.convertPoint(ui, rect.x, rect.y, f);
-                          pt = GUIHelper.adjustPointInPicollo(ui, pt);
+                          pt = GUIUtil.adjustPointInPicollo(ui, pt);
                         }catch(Exception ex)
                         {
                             pt = getPoint(e, f);
@@ -230,7 +231,7 @@ public class HtmlView extends HidableComponentView
                 Point pt = SwingUtilities.convertPoint(getNotebookUI(), e.getX(),
                         e.getY(), f);
                 if (e.getComponent() instanceof JComponent)
-                    return GUIHelper
+                    return GUIUtil
                             .adjustPointInPicollo(getNotebookUI(), pt);
                 return pt;
             }

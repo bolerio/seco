@@ -34,7 +34,7 @@ import seco.things.CellUtils;
 public class SettingsPreviewPane extends JSplitPane
 {
 	private static final long serialVersionUID = -5690086043456987656L;
-    private static final String TEMPLATE = "seco/gui/JavaTemplate.txt";
+    private static final String TEMPLATE = "seco/gui/panel/JavaTemplate.txt";
 	protected NotebookDocument doc;
 	protected NotebookUI previewPane = null;
 	protected CellGroup book;

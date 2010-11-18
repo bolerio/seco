@@ -99,6 +99,7 @@ import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
+import seco.util.GUIUtil;
 import sun.awt.AppContext;
 
 public class NotebookUI extends JTextPane implements DocumentListener,
@@ -581,7 +582,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     @Override
     public Point getToolTipLocation(MouseEvent e)
     {
-        return (TopFrame.PICCOLO) ? GUIHelper.adjustPointInPicollo(this,
+        return (TopFrame.PICCOLO) ? GUIUtil.adjustPointInPicollo(this,
                 e.getPoint()) : super.getToolTipLocation(e);
     }
 
@@ -595,9 +596,9 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     {
         getPopupListener().dont_change_pos = true;
         // getPopupListener().mouseClicked(e);
-        Frame f = GUIHelper.getFrame(e.getComponent());
+        Frame f = GUIUtil.getFrame(e.getComponent());
         Point pt = SwingUtilities.convertPoint(this, e.getX(), e.getY(), f);
-        pt = GUIHelper.adjustPointInPicollo(this, pt);
+        pt = GUIUtil.adjustPointInPicollo(this, pt);
         popupMenu.show(f, pt.x, pt.y);
         getPopupListener().dont_change_pos = false;
     }
@@ -646,14 +647,14 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                         if (off != -1) ui.setCaretPosition(off);
                     }
                     popupMenu.update();
-                    Frame f = GUIHelper.getFrame(e.getComponent());
+                    Frame f = GUIUtil.getFrame(e.getComponent());
                     Point pt = null;
                     try
                     {
                         Rectangle rect = ui.modelToView(off);
                         pt = new Point(rect.x, rect.y);
                         pt = SwingUtilities.convertPoint(ui, rect.x, rect.y, f);
-                        pt = GUIHelper.adjustPointInPicollo(ui, pt);
+                        pt = GUIUtil.adjustPointInPicollo(ui, pt);
                     }
                     catch (Exception ex)
                     {
@@ -670,7 +671,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                     e.getY(), f);
             if (e.getComponent() instanceof JComponent)
             {
-                GUIHelper.adjustPointInPicollo((JComponent) e.getComponent(),
+                GUIUtil.adjustPointInPicollo((JComponent) e.getComponent(),
                         pt);
             }
             return pt;

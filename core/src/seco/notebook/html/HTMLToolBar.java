@@ -63,8 +63,8 @@ import javax.swing.text.html.HTML;
 
 import edu.umd.cs.piccolox.pswing.PSwing;
 
-import seco.gui.GUIHelper;
 import seco.gui.common.ToolbarButton;
+import seco.util.GUIUtil;
 
 public class HTMLToolBar extends JToolBar
 {
@@ -549,7 +549,7 @@ public class HTMLToolBar extends JToolBar
            //System.out.println("PBasicComboPopup: " + comboBox.getParent());
            if (comboBox.getParent() != null && comboBox.getParent() instanceof JComponent)
            {
-               return GUIHelper.adjustPointInPicollo(
+               return GUIUtil.adjustPointInPicollo(
                        (JComponent) comboBox.getParent(), new Point(0,0));
            }
            return pt;

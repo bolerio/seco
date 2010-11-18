@@ -52,8 +52,8 @@ import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 import javax.swing.undo.UndoManager;
 
-import seco.gui.GUIHelper;
 import seco.gui.menu.UpdatablePopupMenu;
+import seco.util.GUIUtil;
 import sun.awt.AppContext;
 
 public class HTMLEditor extends JTextPane
@@ -1019,10 +1019,10 @@ public class HTMLEditor extends JTextPane
                 else
                 {
                     ed.getPopup().update();
-                    Frame f = GUIHelper.getFrame(e.getComponent());
+                    Frame f = GUIUtil.getFrame(e.getComponent());
                     Point pt = SwingUtilities.convertPoint(e.getComponent(), e
                             .getX(), e.getY(), f);
-                    pt = GUIHelper.adjustPointInPicollo(ed, pt);
+                    pt = GUIUtil.adjustPointInPicollo(ed, pt);
                     ed.getPopup().show(f, pt.x, pt.y);
                 }
             }

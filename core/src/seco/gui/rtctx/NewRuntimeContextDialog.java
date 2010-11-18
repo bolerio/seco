@@ -14,8 +14,8 @@ import javax.swing.JTextField;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
-import seco.gui.GUIHelper;
 import seco.rtenv.RuntimeContext;
+import seco.util.GUIUtil;
 
 /**
  * 
@@ -30,7 +30,7 @@ public class NewRuntimeContextDialog extends JDialog
     /** Creates new form NewRuntimeContextPanel */
     public NewRuntimeContextDialog()
     {
-        super(ThisNiche.guiController.getFrame(), "Add New Runtime Context");
+        super(GUIUtil.getFrame(), "Add New Runtime Context");
         getContentPane().add(new MyPanel());
         setSize(350, 350);
     };
@@ -40,7 +40,7 @@ public class NewRuntimeContextDialog extends JDialog
         String name = textRtCtx.getText();
         if (name == null || name.length() == 0)
         {
-            JOptionPane.showMessageDialog(ThisNiche.guiController.getFrame(),
+            JOptionPane.showMessageDialog(GUIUtil.getFrame(),
                     "Context name cannot be empty.");
             return;
         }
@@ -51,7 +51,7 @@ public class NewRuntimeContextDialog extends JDialog
                     .isEmpty())
             {
                 JOptionPane.showMessageDialog(
-                        ThisNiche.guiController.getFrame(),
+                        GUIUtil.getFrame(),
                         "Context with this name is already defined.");
                 return;
             }
@@ -78,7 +78,6 @@ public class NewRuntimeContextDialog extends JDialog
                 public void actionPerformed(ActionEvent e)
                 {
                     NewRuntimeContextDialog.this.setVisible(false);
-                    GUIHelper.centerOnScreen(NewRuntimeContextDialog.this);
                 }
             });
             JButton buttApply = new JButton("Apply");

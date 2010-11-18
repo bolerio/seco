@@ -23,8 +23,8 @@ import org.hypergraphdb.peer.HGPeerIdentity;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.Occupant;
 
-import seco.gui.GUIHelper;
 import seco.gui.menu.UpdatablePopupMenu;
+import seco.util.GUIUtil;
 
 public class PeerList extends JPanel
 {
@@ -54,7 +54,7 @@ public class PeerList extends JPanel
                     else
                     {
                         popupMenu.update();
-                        Frame f = GUIHelper.getFrame(e.getComponent());
+                        Frame f = GUIUtil.getFrame(e.getComponent());
                         Point pt = getPoint(e, f);
                         popupMenu.show(f, pt.x, pt.y);
                     }
@@ -85,7 +85,7 @@ public class PeerList extends JPanel
                 Point pt = SwingUtilities.convertPoint(e.getComponent(), e
                         .getX(), e.getY(), f);
                 if (e.getComponent() instanceof JComponent)
-                    return GUIHelper.adjustPointInPicollo(
+                    return GUIUtil.adjustPointInPicollo(
                             (JComponent) e.getComponent(), pt);
                 return pt;
             }
