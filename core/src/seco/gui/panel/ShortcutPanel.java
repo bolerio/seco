@@ -29,8 +29,8 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import seco.ActionManager;
 import seco.ThisNiche;
+import seco.actions.ActionManager;
 import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;

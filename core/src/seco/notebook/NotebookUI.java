@@ -7,9 +7,9 @@
  */
 package seco.notebook;
 
-import static seco.gui.CommonActions.COPY;
-import static seco.gui.CommonActions.CUT;
-import static seco.gui.CommonActions.PASTE;
+import static seco.actions.CommonActions.COPY;
+import static seco.actions.CommonActions.CUT;
+import static seco.actions.CommonActions.PASTE;
 import static seco.notebook.ElementType.cellGroupBox;
 import static seco.notebook.ElementType.commonCell;
 import static seco.notebook.ElementType.inputCellBox;
@@ -78,12 +78,12 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
-import seco.ActionManager;
 import seco.ThisNiche;
-import seco.gui.CommonActions;
-import seco.gui.CommonActions.CellTreeAction;
-import seco.gui.CommonActions.ElementTreeAction;
-import seco.gui.CommonActions.ParseTreeAction;
+import seco.actions.ActionManager;
+import seco.actions.CommonActions;
+import seco.actions.CommonActions.CellTreeAction;
+import seco.actions.CommonActions.ElementTreeAction;
+import seco.actions.CommonActions.ParseTreeAction;
 import seco.gui.GUIHelper;
 import seco.gui.menu.CellLangProvider;
 import seco.gui.menu.EnhancedMenu;

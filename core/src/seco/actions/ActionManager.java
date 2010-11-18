@@ -5,11 +5,11 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco;
+package seco.actions;
 
-import static seco.gui.CommonActions.COPY;
-import static seco.gui.CommonActions.CUT;
-import static seco.gui.CommonActions.PASTE;
+import static seco.actions.CommonActions.COPY;
+import static seco.actions.CommonActions.CUT;
+import static seco.actions.CommonActions.PASTE;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -26,7 +26,7 @@ import javax.swing.text.DefaultEditorKit;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
-import seco.gui.CommonActions;
+import seco.ThisNiche;
 import seco.notebook.NotebookEditorKit;
 import seco.util.IconManager;
 

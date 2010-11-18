@@ -1,4 +1,4 @@
-package seco.notebook;
+package seco.actions;
 
 import java.awt.event.ActionEvent;
 

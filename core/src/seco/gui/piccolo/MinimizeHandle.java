@@ -8,9 +8,9 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 
 import seco.ThisNiche;
+import seco.actions.ScriptletAction;
 import seco.gui.PSwingNode;
 import seco.gui.TopFrame;
-import seco.notebook.ScriptletAction;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.Scriptlet;

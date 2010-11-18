@@ -1,4 +1,4 @@
-package seco.gui;
+package seco.actions;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -23,11 +23,13 @@ import javax.swing.tree.TreeNode;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPersistentHandle;
 
-import seco.ActionManager;
 import seco.AppConfig;
 import seco.ThisNiche;
 import seco.U;
 import seco.boot.NicheManager;
+import seco.gui.GUIHelper;
+import seco.gui.PSwingNode;
+import seco.gui.PiccoloCanvas;
 import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;

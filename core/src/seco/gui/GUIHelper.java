@@ -1,12 +1,12 @@
 package seco.gui;
 
-import static seco.gui.CommonActions.COPY;
-import static seco.gui.CommonActions.CUT;
-import static seco.gui.CommonActions.EXPORT;
-import static seco.gui.CommonActions.IMPORT;
-import static seco.gui.CommonActions.NEW;
-import static seco.gui.CommonActions.OPEN;
-import static seco.gui.CommonActions.PASTE;
+import static seco.actions.CommonActions.COPY;
+import static seco.actions.CommonActions.CUT;
+import static seco.actions.CommonActions.EXPORT;
+import static seco.actions.CommonActions.IMPORT;
+import static seco.actions.CommonActions.NEW;
+import static seco.actions.CommonActions.OPEN;
+import static seco.actions.CommonActions.PASTE;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -38,8 +38,11 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
-import seco.ActionManager;
 import seco.ThisNiche;
+import seco.actions.ActionManager;
+import seco.actions.CGMActionsHelper;
+import seco.actions.CommonActions;
+import seco.actions.ScriptletAction;
 import seco.gui.common.ToolbarButton;
 import seco.gui.layout.DRect;
 import seco.gui.layout.DValue;
@@ -56,7 +59,6 @@ import seco.gui.visual.VisualAttribs;
 import seco.gui.visual.VisualsManager;
 import seco.notebook.NotebookEditorKit;
 import seco.notebook.NotebookUI;
-import seco.notebook.ScriptletAction;
 import seco.notebook.html.HTMLToolBar;
 import seco.things.Cell;
 import seco.things.CellGroup;

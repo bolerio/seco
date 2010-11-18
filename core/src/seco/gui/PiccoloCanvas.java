@@ -534,7 +534,7 @@ public class PiccoloCanvas extends PSwingCanvas
                 .getAllNodes(ps_filter, null);
     }
 
-    void removeAllNodes()
+    public void removeAllNodes()
     {
         getCamera().removeAllChildren();
         getNodeLayer().removeAllChildren();

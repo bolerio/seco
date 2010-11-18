@@ -10,7 +10,7 @@ import javax.swing.JPopupMenu;
 
 
 import seco.ThisNiche;
-import seco.notebook.ScriptletAction;
+import seco.actions.ScriptletAction;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;

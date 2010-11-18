@@ -25,6 +25,8 @@ import org.wonderly.swing.tabs.TabCloseEvent;
 import org.wonderly.swing.tabs.TabCloseListener;
 
 import seco.ThisNiche;
+import seco.actions.CGMActionsHelper;
+import seco.actions.CommonActions;
 import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EvalCellEvent;

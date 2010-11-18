@@ -1,4 +1,4 @@
-package seco.gui;
+package seco.actions;
 
 import static seco.U.hget;
 
@@ -23,6 +23,7 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
 import seco.gui.GUIHelper.PiccoloMenu;
 import seco.gui.menu.DynamicMenuProvider;
 import seco.notebook.NotebookDocument;
@@ -35,7 +36,7 @@ import seco.things.CellUtils;
 
 public class CGMActionsHelper
 {
-    static final String LABEL_RUNTIME_CONTEXT = "Set Runtime Context";
+    public static final String LABEL_RUNTIME_CONTEXT = "Set Runtime Context";
     public static enum Scope
     {
         cell, group, book

@@ -16,7 +16,7 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
-import seco.gui.CommonActions;
+import seco.actions.CommonActions;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookEditorKit;
 import seco.things.CellGroup;

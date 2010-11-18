@@ -15,14 +15,13 @@ import org.hypergraphdb.event.HGEvent;
 import org.hypergraphdb.event.HGListener;
 
 import seco.ThisNiche;
-import seco.gui.CommonActions;
+import seco.actions.CommonActions;
 import seco.gui.GUIHelper;
 import seco.rtenv.RuntimeContext;
 import seco.talk.ConnectionManager;
 import seco.things.CellGroup;
 import seco.things.CellUtils;
 import seco.things.CellVisual;
-import seco.util.GUIUtil;
 
 public class NicheBootListener implements HGListener
 {
@@ -31,7 +30,7 @@ public class NicheBootListener implements HGListener
     {
     	ThisNiche.bindNiche(hg);
     	ThisNiche.initGUIController();
-    	final JFrame f = GUIUtil.getFrame();
+    	final JFrame f = ThisNiche.guiController.getFrame();
         RuntimeContext topRuntime = ThisNiche.getTopContext().getRuntimeContext(); 
         topRuntime.getBindings().put("desktop", ThisNiche.guiController);
         topRuntime.getBindings().put("canvas", ThisNiche.getCanvas());

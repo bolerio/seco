@@ -30,12 +30,12 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import edu.umd.cs.piccolox.pswing.PSwing;
 
 import seco.ThisNiche;
+import seco.actions.ScriptletAction;
 import seco.gui.GUIHelper;
 import seco.gui.PSwingNode;
 import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.ToolbarButton;
-import seco.notebook.ScriptletAction;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.util.GUIUtil;

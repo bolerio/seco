@@ -24,7 +24,7 @@ import org.hypergraphdb.HGHandle;
 
 import seco.AppConfig;
 import seco.ThisNiche;
-import seco.gui.CommonActions;
+import seco.actions.CommonActions;
 import seco.gui.GUIHelper;
 import seco.gui.TopFrame;
 import seco.things.CellGroupMember;

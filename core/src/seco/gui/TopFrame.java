@@ -12,6 +12,7 @@ import javax.swing.event.CaretListener;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
+import seco.actions.CommonActions;
 import seco.talk.ConnectionManager;
 import seco.things.CellUtils;
 import seco.util.Log;
