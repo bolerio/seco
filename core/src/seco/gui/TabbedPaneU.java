@@ -28,6 +28,8 @@ import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EvalCellEvent;
+import seco.gui.common.CloseableDnDTabbedPane;
+import seco.gui.common.SecoTabbedPane;
 import seco.gui.menu.EnhancedMenu;
 import seco.gui.menu.ScriptEngineProvider;
 import seco.gui.visual.CellContainerVisual;

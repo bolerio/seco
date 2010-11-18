@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.gui;
+package seco.gui.common;
 
 import java.awt.AlphaComposite;
 import java.awt.Component;
@@ -38,6 +38,8 @@ import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import seco.gui.GUIHelper;
 
 public class CloseableDnDTabbedPane extends org.wonderly.swing.tabs.CloseableTabbedPane//JTabbedPane
 {

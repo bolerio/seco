@@ -1,4 +1,4 @@
-package seco.gui;
+package seco.gui.common;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -18,12 +18,16 @@ import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EvalCellEvent;
+import seco.gui.GUIHelper;
+import seco.gui.SecoTransferable;
+import seco.gui.TabbedPaneU;
 import seco.gui.visual.CellContainerVisual;
 import seco.things.CellGroup;
 import seco.things.CellUtils;
 
 public class SecoTabbedPane extends JTabbedPane
 {
+    private static final long serialVersionUID = -5743309422962556815L;
     private HGHandle dragTabHandle = null;
     protected HGHandle groupH;
 

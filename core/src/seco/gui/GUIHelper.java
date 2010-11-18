@@ -696,7 +696,7 @@ public class GUIHelper
         }
     }
     
-    static void updateFrameTitle(HGHandle h)
+    public static void updateFrameTitle(HGHandle h)
     {
         CellGroupMember book = ThisNiche.graph.get(h);
         String name = CellUtils.getName(book);

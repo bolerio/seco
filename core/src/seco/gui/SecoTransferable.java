@@ -7,6 +7,8 @@ import java.io.IOException;
 
 import org.hypergraphdb.HGHandle;
 
+import seco.gui.common.SecoTabbedPane;
+
 public class SecoTransferable implements Transferable
 {
     public static final String mimeType = DataFlavor.javaJVMLocalObjectMimeType
