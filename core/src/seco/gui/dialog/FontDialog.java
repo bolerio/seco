@@ -50,7 +50,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
-import seco.notebook.FontEx;
+import seco.notebook.style.FontEx;
 
 public class FontDialog extends JDialog
 {

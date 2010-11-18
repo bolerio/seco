@@ -5,7 +5,9 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.notebook;
+package seco.notebook.style;
+
+import seco.notebook.XMLConstants;
 
 public enum StyleType
 {

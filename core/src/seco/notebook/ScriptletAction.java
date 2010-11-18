@@ -11,9 +11,12 @@ import seco.things.CellUtils;
 import seco.things.Scriptlet;
 
 
-
 public class ScriptletAction extends AbstractAction
 {
+    /*
+     * Through this name the scriptlet action can directly access the ActionEvent
+     * that was passed during the call to actionPerformed(ActionEvent) method 
+     */
     public static final String ACTION_EVENT_VAR_NAME = "ACTION_EVENT_VAR_NAME";
     
     private Scriptlet scriptlet;
@@ -52,6 +55,9 @@ public class ScriptletAction extends AbstractAction
             //PrintWriter writer = new PrintWriter(w);
             //ex.printStackTrace(writer);
             ex.printStackTrace();
+        }finally
+        {
+            evalContext.getRuntimeContext().getBindings().remove(ACTION_EVENT_VAR_NAME);
         }
     }
 

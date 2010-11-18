@@ -5,16 +5,15 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.notebook;
+package seco.notebook.style;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.text.AttributedCharacterIterator.Attribute;
 import java.util.Map;
 import java.util.StringTokenizer;
+
 import javax.swing.text.AttributeSet;
 import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.html.CSS;
 

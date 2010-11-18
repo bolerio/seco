@@ -13,6 +13,7 @@ import javax.swing.JTextArea;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPersistentHandle;
 
+import seco.ActionManager;
 import seco.ThisNiche;
 import seco.U;
 import seco.boot.NicheManager;
@@ -23,7 +24,6 @@ import seco.gui.layout.LayoutSettingsPanel;
 import seco.gui.piccolo.BirdsEyeView;
 import seco.gui.visual.CellContainerVisual;
 import seco.gui.visual.VisualAttribs;
-import seco.notebook.ActionManager;
 import seco.notebook.NotebookUI;
 import seco.things.Cell;
 import seco.things.CellGroup;

@@ -29,11 +29,11 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import seco.ActionManager;
 import seco.ThisNiche;
 import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;
-import seco.notebook.ActionManager;
 import seco.notebook.NotebookUI;
 
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor;

@@ -16,7 +16,7 @@ import seco.gui.dialog.CellPropsDialog;
 import seco.gui.panel.SettingsPreviewPane;
 import seco.gui.panel.SyntaxHiliteOptionPane;
 import seco.notebook.NotebookUI;
-import seco.notebook.StyleType;
+import seco.notebook.style.StyleType;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.java.JavaFormatterOptionsPane;
 
@@ -111,6 +111,7 @@ public class VisPropsProvider implements DynamicMenuProvider
             if (ui == null) return;
             CellPropsDialog dlg = new CellPropsDialog(
                     GUIUtilities.getFrame(ui), ui.getDoc(), stype);
+            dlg.setSize(400, 350);
             dlg.setVisible(true);
             if (dlg.succeeded())
             {

@@ -1,4 +1,4 @@
-package seco.notebook;
+package seco.notebook.html;
 
 import javax.swing.text.Element;
 

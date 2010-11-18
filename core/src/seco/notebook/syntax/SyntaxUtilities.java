@@ -36,7 +36,7 @@ import javax.swing.text.Segment;
 import javax.swing.text.Style;
 
 import seco.AppConfig;
-import seco.notebook.StyleAttribs;
+import seco.notebook.style.StyleAttribs;
 
 /**
  * Contains utility functions used by the syntax highlighting code.

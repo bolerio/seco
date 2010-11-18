@@ -18,6 +18,8 @@ import seco.ThisNiche;
 import seco.events.EvalCellEvent;
 import seco.events.EventHandler;
 import seco.events.handlers.EvalCellHandler;
+import seco.notebook.style.NBStyle;
+import seco.notebook.style.StyleType;
 import seco.things.Cell;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;

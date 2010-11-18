@@ -42,6 +42,7 @@ import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
@@ -51,6 +52,7 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
+import seco.ActionManager;
 import seco.AppConfig;
 import seco.ThisNiche;
 import seco.gui.common.DialogDisplayer;
@@ -74,7 +76,6 @@ import seco.gui.visual.NBUIVisual;
 import seco.gui.visual.TabbedPaneVisual;
 import seco.gui.visual.VisualAttribs;
 import seco.gui.visual.VisualsManager;
-import seco.notebook.ActionManager;
 import seco.notebook.Actions;
 import seco.notebook.NotebookEditorKit;
 import seco.notebook.NotebookUI;
@@ -275,7 +276,7 @@ public class GUIHelper
         return pane.getViewport().getView();
     }
 
-    public static void showOutputConsole()
+    static void showOutputConsole()
     {
         getOutputConsole();
         HGHandle existingH = GUIHelper.getCellHandleByValueHandle(
@@ -550,24 +551,16 @@ public class GUIHelper
     {
         public void actionPerformed(ActionEvent evt)
         {
-            GUIHelper.showOutputConsole();
+            SwingUtilities.invokeLater(new Runnable(){
+                public void run()
+                {
+                    GUIHelper.showOutputConsole();
+                }
+            });
         }
     }
 
-    public static class CellNumItemListener implements ItemListener
-    {
-        public void itemStateChanged(ItemEvent e)
-        {
-            if (e.getSource() == null
-                    || !(e.getSource() instanceof JCheckBoxMenuItem)) return;
-            NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-            if (ui != null)
-                ui.setDrawCellNums(((JCheckBoxMenuItem) e.getSource())
-                        .isSelected());
-        }
-    }
-
-    /**
+     /**
      * Creates(if not already created) and returns the default application menu
      * bar. Use this method to add your own menus and menu items.
      * 

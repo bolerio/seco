@@ -5,7 +5,7 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.notebook;
+package seco;
 
 import static seco.notebook.Actions.COPY;
 import static seco.notebook.Actions.CUT;
@@ -26,11 +26,11 @@ import javax.swing.text.DefaultEditorKit;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
-import seco.ThisNiche;
 import seco.gui.GUIHelper.ExportAction;
 import seco.gui.GUIHelper.ImportAction;
 import seco.gui.GUIHelper.NewAction;
 import seco.gui.GUIHelper.OpenAction;
+import seco.notebook.NotebookEditorKit;
 import seco.util.IconManager;
 
 public class ActionManager

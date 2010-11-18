@@ -5,11 +5,13 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.notebook;
+package seco.notebook.style;
 
 import java.awt.Color;
 import java.util.EnumMap;
 import org.w3c.dom.Element;
+
+import seco.notebook.XMLConstants;
 
 public class NBStyle extends EnumMap<StyleAttribs, Object>
 {

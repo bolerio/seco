@@ -16,8 +16,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Reader;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,9 +28,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import seco.ThisNiche;
-import seco.notebook.NBStyle;
-import seco.notebook.StyleType;
 import seco.notebook.XMLConstants;
+import seco.notebook.style.NBStyle;
+import seco.notebook.style.StyleType;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 

@@ -11,26 +11,26 @@ package seco.notebook;
  *
  */
 //notebook
+//   insertionPoint
 //   cellGroupBox
 //      cellGroup
-//         wholeCell
 //           inputCellBox
 //              commonCell
 //                    paragraph
 //                       charContent
 //              cellHandle
+//           insertionPoint
 //           outputCellBox 
 //              commonCell
 //                     paragraph
 //                         charContent
-//                  
 //              cellHandle
+//            insertionPoint
 //      cellHandle
 public enum ElementType 
 {
     notebook,
     //those 4 are the most important ones
-    //wholeCell,
     cellGroupBox,
     inputCellBox,
     outputCellBox,

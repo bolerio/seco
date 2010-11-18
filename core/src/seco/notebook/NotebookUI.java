@@ -75,6 +75,7 @@ import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
+import seco.ActionManager;
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
 import seco.gui.GUIUtilities;

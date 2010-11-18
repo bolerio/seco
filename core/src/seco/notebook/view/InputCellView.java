@@ -24,11 +24,11 @@ import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
 
 import seco.notebook.ElementType;
-import seco.notebook.NBStyle;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
-import seco.notebook.StyleAttribs;
-import seco.notebook.StyleType;
+import seco.notebook.style.NBStyle;
+import seco.notebook.style.StyleAttribs;
+import seco.notebook.style.StyleType;
 import seco.things.Cell;
 
 

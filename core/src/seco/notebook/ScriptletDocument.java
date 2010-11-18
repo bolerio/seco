@@ -21,6 +21,8 @@ import seco.events.AttributeChangeEvent;
 import seco.events.CellTextChangeEvent;
 import seco.events.handlers.AttributeChangeHandler;
 import seco.events.handlers.CellTextChangeHandler;
+import seco.notebook.style.NBStyle;
+import seco.notebook.style.StyleType;
 import seco.things.Cell;
 import seco.things.CellUtils;
 

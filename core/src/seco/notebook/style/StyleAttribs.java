@@ -5,10 +5,11 @@
  *
  * Copyright (c) 2006-2007 Kobrix Software, Inc.
  */
-package seco.notebook;
+package seco.notebook.style;
 
 import java.awt.Color;
 import java.awt.Font;
+
 
 
 public enum StyleAttribs 

@@ -230,7 +230,7 @@ public class NicheManager
                 "html", 
                 null, 
                 new String[0], 
-                "seco.notebook.HTMLScriptSupportFactory"));
+                "seco.notebook.html.HTMLScriptSupportFactory"));
         // Try other know languages:
         try
         {

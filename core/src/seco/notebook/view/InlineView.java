@@ -22,7 +22,7 @@ import javax.swing.text.Position.Bias;
 
 import seco.notebook.ElementType;
 import seco.notebook.NotebookDocument;
-import seco.notebook.StyleType;
+import seco.notebook.style.StyleType;
 import seco.notebook.syntax.ScriptSupport;
 import seco.util.SegmentCache;
 
