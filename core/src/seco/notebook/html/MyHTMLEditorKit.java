@@ -49,7 +49,7 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
-import seco.gui.GUIUtilities;
+import seco.gui.GUIHelper;
 import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;
@@ -415,9 +415,10 @@ public class MyHTMLEditorKit extends HTMLEditorKit
         {
             AttributeSet attr = editor.getMaxAttributes(null);
             FontEx f = FontEx.fromCSSAttribs(attr);
-            FontDialog dlg = new FontDialog(GUIUtilities.getFrame(editor), f,
+            FontDialog dlg = new FontDialog(GUIHelper.getFrame(editor), f,
                     StyleConstants.getForeground(attr), MyHTMLWriter.fontSizes);
             dlg.setVisible(true);
+            GUIHelper.centerOnScreen(dlg);
             if (dlg.succeeded())
             {
                 MutableAttributeSet res = new SimpleAttributeSet();
@@ -444,6 +445,7 @@ public class MyHTMLEditorKit extends HTMLEditorKit
                 dlg = new UnicodeDialog(editor, "Insert Special Symbol", true,
                         UnicodeDialog.UNICODE_MATH);
             dlg.setVisible(true);
+            GUIHelper.centerOnScreen(dlg);
         }
     }
 
@@ -637,7 +639,7 @@ public class MyHTMLEditorKit extends HTMLEditorKit
         protected void actionEx(HTMLEditor editor, String sel)
         {
             NotifyDescriptor.InputLine dd = new NotifyDescriptor.InputLine(
-                    GUIUtilities.getFrame(editor), "Link Target:",
+                    GUIHelper.getFrame(editor), "Link Target:",
                     "Link Target");
             if (DialogDisplayer.getDefault().notify(dd) == NotifyDescriptor.OK_OPTION)
             {
@@ -656,7 +658,7 @@ public class MyHTMLEditorKit extends HTMLEditorKit
 
         protected void action(HTMLEditor editor) throws Exception
         {
-            Frame parent = GUIUtilities.getFrame(editor);
+            Frame parent = GUIHelper.getFrame(editor);
             File f = new File(".");
             try
             {
@@ -674,9 +676,10 @@ public class MyHTMLEditorKit extends HTMLEditorKit
                 dlg.setImageAttributes(img.getAttributes());
                 edit = true;
             }
-            System.out.println("Img: " + img + ":" + edit);
+           // System.out.println("Img: " + img + ":" + edit);
             dlg.setModal(true);
             dlg.setVisible(true);
+            GUIHelper.centerOnScreen(dlg);
             if (dlg.getResult() == DialogShell.RESULT_OK)
             {
                 try
@@ -708,7 +711,7 @@ public class MyHTMLEditorKit extends HTMLEditorKit
         protected void action(HTMLEditor editor) throws Exception
         {
             NotifyDescriptor.InputLine dd = new NotifyDescriptor.InputLine(
-                    GUIUtilities.getFrame(editor), "Number of Columns: ",
+                    GUIHelper.getFrame(editor), "Number of Columns: ",
                     "Insert Table");
             if (DialogDisplayer.getDefault().notify(dd) == NotifyDescriptor.OK_OPTION)
             {
@@ -733,12 +736,13 @@ public class MyHTMLEditorKit extends HTMLEditorKit
                     .getCaretPosition());
             if (table == null || cell == null)
                 return;
-            TableDialog td = new TableDialog(GUIUtilities.getFrame(editor),
+            TableDialog td = new TableDialog(GUIHelper.getFrame(editor),
                     "Format Table");
             td.setTableAttributes(table.getAttributes());
             td.setCellAttributes(cell.getAttributes());
             td.setModal(true);
             td.setVisible(true);
+            GUIHelper.centerOnScreen(td);
             if (td.getResult() == DialogShell.RESULT_OK)
             {
                 AttributeSet a = td.getTableAttributes();
@@ -886,15 +890,13 @@ public class MyHTMLEditorKit extends HTMLEditorKit
 
         protected void action(HTMLEditor editor) throws Exception
         {
-            JDialog dialog = new JDialog(GUIUtilities.getFrame(editor),
+            JDialog dialog = new JDialog(GUIHelper.getFrame(editor),
                     "Elements");
             dialog.setSize(500, 800);
-            // JTree tree = new JTree((TreeNode) editor.getDocument()
-            // .getDefaultRootElement());
-            // JScrollPane pane = new JScrollPane(tree);
             ElementTreePanel pane = new ElementTreePanel(editor);
             dialog.add(pane);
             dialog.setVisible(true);
+            GUIHelper.centerOnScreen(dialog);
         }
     }
 
@@ -1195,7 +1197,7 @@ public class MyHTMLEditorKit extends HTMLEditorKit
         protected void action(HTMLEditor editor) throws Exception
         {
             int pos = editor.getCaretPosition();
-            Frame f = GUIUtilities.getFrame(editor);
+            Frame f = GUIHelper.getFrame(editor);
             try
             {
                 Rectangle rect = editor.modelToView(pos);
@@ -1247,7 +1249,7 @@ public class MyHTMLEditorKit extends HTMLEditorKit
                 findDialog.setSelectedIndex(index);
             }
             findDialog.setVisible(true);
-            GUIUtilities.centerOnScreen(findDialog);
+            GUIHelper.centerOnScreen(findDialog);
         }
 
         public boolean isFindOrReplace()

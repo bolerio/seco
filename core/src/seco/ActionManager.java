@@ -125,6 +125,8 @@ public class ActionManager
 
     private void init()
     {
+        NotebookEditorKit kit = new NotebookEditorKit();
+        
         // Notebook
         putAction(new NewAction(), KeyStroke.getKeyStroke(KeyEvent.VK_N,
                 ActionEvent.CTRL_MASK), false);
@@ -140,7 +142,7 @@ public class ActionManager
         putAction(NotebookEditorKit.redo, KeyStroke.getKeyStroke(KeyEvent.VK_Y,
                 ActionEvent.CTRL_MASK), IconManager.resolveIcon("Redo16.gif"),
                 false);
-        NotebookEditorKit kit = new NotebookEditorKit();
+       
         Action act = kit.getActionByName(DefaultEditorKit.cutAction);
         if(act !=  null){
         act.putValue(Action.NAME, CUT);

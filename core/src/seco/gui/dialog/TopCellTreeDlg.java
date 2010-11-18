@@ -36,7 +36,7 @@ import org.hypergraphdb.HGQuery.hg;
 import seco.ThisNiche;
 import seco.boot.NicheBootListener;
 import seco.events.EventPubSub;
-import seco.gui.GUIUtilities;
+import seco.gui.GUIHelper;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -154,8 +154,8 @@ public class TopCellTreeDlg extends JDialog
                     if (SwingUtilities.isRightMouseButton(e))
                     {
                         TreePath currentSelection = getSelectionPath();
-                        TreePath selPath = getPathForLocation(e.getX(), e
-                                .getY());
+                        TreePath selPath = getPathForLocation(e.getX(),
+                                e.getY());
                         if (currentSelection != null
                                 && currentSelection == selPath)
                         {
@@ -171,13 +171,13 @@ public class TopCellTreeDlg extends JDialog
         private JPopupMenu makePopupMenu()
         {
             final CellGroupMember cgm = (CellGroupMember) getLastSelectedPathComponent();
-//            TreePath selPath = getSelectionModel().getSelectionPath();
-//            CellGroupMember par = null;
-//            if (selPath != null && selPath.getParentPath() != null) 
-//                par = (CellGroupMember) selPath
-//                    .getParentPath().getLastPathComponent();
-//            else
-//                par = null;
+            // TreePath selPath = getSelectionModel().getSelectionPath();
+            // CellGroupMember par = null;
+            // if (selPath != null && selPath.getParentPath() != null)
+            // par = (CellGroupMember) selPath
+            // .getParentPath().getLastPathComponent();
+            // else
+            // par = null;
             JPopupMenu popup = new JPopupMenu();
             if (cgm instanceof Cell)
             {
@@ -201,7 +201,7 @@ public class TopCellTreeDlg extends JDialog
                 {
                     try
                     {
-                        JDialog dialog = new JDialog(GUIUtilities
+                        JDialog dialog = new JDialog(GUIHelper
                                 .getFrame(NotebookCellsTree.this), "Publisher");
                         dialog.setSize(500, 800);
                         EventPubSubsPanel tree = new EventPubSubsPanel(
@@ -209,6 +209,7 @@ public class TopCellTreeDlg extends JDialog
                         JScrollPane pane = new JScrollPane(tree);
                         dialog.add(pane);
                         dialog.setVisible(true);
+                        GUIHelper.centerOnScreen(dialog);
                     }
                     catch (Exception ex)
                     {
@@ -221,22 +222,15 @@ public class TopCellTreeDlg extends JDialog
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-                    try
-                    {
-                        JDialog dialog = new JDialog(GUIUtilities
-                                .getFrame(NotebookCellsTree.this), "Subscriber");
-                        dialog.setSize(500, 800);
-                        EventPubSubsPanel tree = new EventPubSubsPanel(
-                                ThisNiche.handleOf(cgm), false);
-                        JScrollPane pane = new JScrollPane(tree);
-                        dialog.add(pane);
-                        dialog.setVisible(true);
-
-                    }
-                    catch (Exception ex)
-                    {
-                        ex.printStackTrace();
-                    }
+                    JDialog dialog = new JDialog(GUIHelper
+                            .getFrame(NotebookCellsTree.this), "Subscriber");
+                    dialog.setSize(500, 800);
+                    EventPubSubsPanel tree = new EventPubSubsPanel(ThisNiche
+                            .handleOf(cgm), false);
+                    JScrollPane pane = new JScrollPane(tree);
+                    dialog.add(pane);
+                    dialog.setVisible(true);
+                    GUIHelper.centerOnScreen(dialog);
                 }
             });
             // menuItem.setEnabled(node instanceof Cell);
@@ -258,12 +252,13 @@ public class TopCellTreeDlg extends JDialog
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
                 {
-                    JDialog dialog = new JDialog(GUIUtilities.getFrame(
-                            (Component)e.getSource()),
+                    JDialog dialog = new JDialog(GUIHelper
+                            .getFrame((Component) e.getSource()),
                             "Delete Attributes");
                     dialog.setSize(300, 200);
                     dialog.add(new RemoveAttribsPanel(cgm));
                     dialog.setVisible(true);
+                    GUIHelper.centerOnScreen(dialog);
                 }
             });
             popup.add(menuItem);
@@ -296,7 +291,7 @@ public class TopCellTreeDlg extends JDialog
                 }
             });
             popup.add(menuItem);
-            
+
             menuItem = new JMenuItem("Get Handle In Clipboard"); // NOI18N
             menuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e)
@@ -308,14 +303,16 @@ public class TopCellTreeDlg extends JDialog
 
             return popup;
         }
-        
+
         // This method writes a string to the system clipboard.
         // otherwise it returns null.
-        private void putInClipboard(HGHandle h) {
-            String str = "h  = org.hypergraphdb.HGHandleFactory.makeHandle(\"" +
-            ThisNiche.graph.getPersistentHandle(h) + "\");";
+        private void putInClipboard(HGHandle h)
+        {
+            String str = "h  = org.hypergraphdb.HGHandleFactory.makeHandle(\""
+                    + ThisNiche.graph.getPersistentHandle(h) + "\");";
             StringSelection ss = new StringSelection(str);
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
+            Toolkit.getDefaultToolkit().getSystemClipboard()
+                    .setContents(ss, null);
         }
     }
 
@@ -327,12 +324,13 @@ public class TopCellTreeDlg extends JDialog
 
         public EventPubSubsPanel(HGHandle h, boolean pub_or_sub)
         {
-            docs = (pub_or_sub) ? getEventPubSubList(ThisNiche.graph.getHandleFactory().anyHandle(),
-                    h, ThisNiche.graph.getHandleFactory().anyHandle(), 
-                    ThisNiche.graph.getHandleFactory().anyHandle())
-                    : getEventPubSubList(ThisNiche.graph.getHandleFactory().anyHandle(),
-                            ThisNiche.graph.getHandleFactory().anyHandle(), h,
-                            ThisNiche.graph.getHandleFactory().anyHandle());
+            docs = (pub_or_sub) ? getEventPubSubList(ThisNiche.graph
+                    .getHandleFactory().anyHandle(), h, ThisNiche.graph
+                    .getHandleFactory().anyHandle(), ThisNiche.graph
+                    .getHandleFactory().anyHandle()) : getEventPubSubList(
+                    ThisNiche.graph.getHandleFactory().anyHandle(),
+                    ThisNiche.graph.getHandleFactory().anyHandle(), h,
+                    ThisNiche.graph.getHandleFactory().anyHandle());
             initComponents();
             list.setListData(docs.toArray());
         }
@@ -340,11 +338,13 @@ public class TopCellTreeDlg extends JDialog
         List<EventPubSub> getEventPubSubList(HGHandle eventType,
                 HGHandle publisher, HGHandle subscriber, HGHandle listener)
         {
-            HGHandle pub_or_sub = ThisNiche.graph.getHandleFactory().anyHandle().equals(publisher) ? subscriber
-                    : publisher;
-            return hg.getAll(ThisNiche.graph, hg.and(hg.type(EventPubSub.class),
-                    hg.incident(pub_or_sub), hg.orderedLink(new HGHandle[] {
-                            eventType, publisher, subscriber, listener })));
+            HGHandle pub_or_sub = ThisNiche.graph.getHandleFactory()
+                    .anyHandle().equals(publisher) ? subscriber : publisher;
+            return hg.getAll(ThisNiche.graph, hg.and(
+                    hg.type(EventPubSub.class),
+                    hg.incident(pub_or_sub),
+                    hg.orderedLink(new HGHandle[] { eventType, publisher,
+                            subscriber, listener })));
         }
 
         private void initComponents()
@@ -379,10 +379,10 @@ public class TopCellTreeDlg extends JDialog
                     {
                         EventPubSub eps = (EventPubSub) removed[i];
                         String s = "" + eps + "\n" + "Pub: "
-                                + ThisNiche.graph.get(eps.getPublisher()) + "\n"
-                                + "Sub: "
-                                + ThisNiche.graph.get(eps.getSubscriber()) + "\n"
-                                + "Handler: "
+                                + ThisNiche.graph.get(eps.getPublisher())
+                                + "\n" + "Sub: "
+                                + ThisNiche.graph.get(eps.getSubscriber())
+                                + "\n" + "Handler: "
                                 + ThisNiche.graph.get(eps.getEventHandler());
                         TopCellTreeDlg.this.out(s);
                     }

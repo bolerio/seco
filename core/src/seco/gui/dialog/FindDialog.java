@@ -37,7 +37,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Position;
 
-import seco.gui.GUIUtilities;
+import seco.gui.GUIHelper;
 import seco.notebook.NotebookUI;
 import seco.notebook.html.HTMLEditor;
 import seco.notebook.view.HtmlView;
@@ -68,7 +68,7 @@ public class FindDialog extends JDialog
 
     public FindDialog(final JEditorPane owner, int index)
     {
-        super(GUIUtilities.getFrame(owner), "Find and Replace", false);
+        super(GUIHelper.getFrame(owner), "Find and Replace", false);
         this.owner = owner;
         tabbedPane = new JTabbedPane();
         // "Find" panel
@@ -198,7 +198,7 @@ public class FindDialog extends JDialog
                         break;
                     counter++;
                 }
-                JOptionPane.showMessageDialog(GUIUtilities.getFrame(owner),
+                JOptionPane.showMessageDialog(GUIHelper.getFrame(owner),
                         counter + " replacement(s) have been done", "Scriba",
                         JOptionPane.INFORMATION_MESSAGE);
             }
@@ -442,7 +442,7 @@ public class FindDialog extends JDialog
 
     protected void warning(String message)
     {
-        JOptionPane.showMessageDialog(GUIUtilities.getFrame(owner), message,
+        JOptionPane.showMessageDialog(GUIHelper.getFrame(owner), message,
                 "Seco", JOptionPane.INFORMATION_MESSAGE);
     }
 

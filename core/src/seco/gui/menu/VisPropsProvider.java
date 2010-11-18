@@ -8,7 +8,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import seco.gui.GUIUtilities;
+import seco.gui.GUIHelper;
 import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;
@@ -61,7 +61,7 @@ public class VisPropsProvider implements DynamicMenuProvider
             JavaFormatterOptionsPane pane = new JavaFormatterOptionsPane();
             SettingsPreviewPane outer = new SettingsPreviewPane(pane);
             DialogDescriptor dd = new DialogDescriptor(
-                    GUIUtilities.getFrame(ui), outer, "Formatter Properties");
+                    GUIHelper.getFrame(ui), outer, "Formatter Properties");
             if (DialogDisplayer.getDefault().notify(dd) == NotifyDescriptor.OK_OPTION)
                 outer.save();
         }
@@ -80,7 +80,7 @@ public class VisPropsProvider implements DynamicMenuProvider
             SettingsPreviewPane outer = new SettingsPreviewPane(ui.getDoc(),
                     pane, null);
             DialogDescriptor dd = new DialogDescriptor(
-                    GUIUtilities.getFrame(ui), outer, "Syntax Styles");
+                    GUIHelper.getFrame(ui), outer, "Syntax Styles");
             if (DialogDisplayer.getDefault().notify(dd) == NotifyDescriptor.OK_OPTION)
             {
                 outer.save();
@@ -110,9 +110,10 @@ public class VisPropsProvider implements DynamicMenuProvider
             NotebookUI ui = NotebookUI.getFocusedNotebookUI();
             if (ui == null) return;
             CellPropsDialog dlg = new CellPropsDialog(
-                    GUIUtilities.getFrame(ui), ui.getDoc(), stype);
+                    GUIHelper.getFrame(ui), ui.getDoc(), stype);
             dlg.setSize(400, 350);
             dlg.setVisible(true);
+            GUIHelper.centerOnScreen(dlg);
             if (dlg.succeeded())
             {
                 ui.revalidate();

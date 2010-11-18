@@ -11,12 +11,12 @@ import static seco.notebook.Actions.PASTE;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -88,6 +88,7 @@ import seco.things.CellUtils;
 import seco.things.IOUtils;
 import seco.util.FileUtil;
 import seco.util.IconManager;
+import seco.util.SecoUncaughtExceptionHandler;
 
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
@@ -429,11 +430,11 @@ public class GUIHelper
             this.putValue(Action.SHORT_DESCRIPTION, "Export Notebook As XML");
         }
 
-        public void actionPerformed(java.awt.event.ActionEvent evt)
+        public void actionPerformed(ActionEvent evt)
         {
             NotebookUI ui = NotebookUI.getFocusedNotebookUI();
             if (ui == null) return;
-            File f = FileUtil.getFile(GUIUtilities.getFrame(ui),
+            File f = FileUtil.getFile(GUIHelper.getFrame(ui),
                     "Export Notebook As ...", FileUtil.SAVE, null);
             if (f != null)
             {
@@ -488,6 +489,7 @@ public class GUIHelper
             dialog.add(p);
             dialog.setSize(new Dimension(700, 500));
             dialog.setVisible(true);
+            GUIHelper.centerOnScreen(dialog);
         }
     }
 
@@ -502,11 +504,12 @@ public class GUIHelper
 
         public void actionPerformed(ActionEvent evt)
         {
-            JDialog dialog = new JDialog(GUIUtilities.getFrame((Component) evt
+            JDialog dialog = new JDialog(GUIHelper.getFrame((Component) evt
                     .getSource()), "Open Or Delete CellGroup");
             dialog.setSize(500, 500);
             dialog.add(new OpenBookPanel());
             dialog.setVisible(true);
+            GUIHelper.centerOnScreen(dialog);
         }
     }
 
@@ -647,13 +650,14 @@ public class GUIHelper
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
         if (ui == null) return;
         String title = "Elements Hierarchy";
-        JDialog dialog = new JDialog(GUIUtilities.getFrame(ui), title);
+        JDialog dialog = new JDialog(GUIHelper.getFrame(ui), title);
         dialog.setSize(500, 800);
         JTree tree = new JTree((TreeNode) ui.getDocument()
                 .getDefaultRootElement());
         JScrollPane pane = new JScrollPane(tree);
         dialog.add(pane);
         dialog.setVisible(true);
+        GUIHelper.centerOnScreen(dialog);
     }
 
     static void openParseTree()
@@ -661,13 +665,14 @@ public class GUIHelper
         NotebookUI ui = NotebookUI.getFocusedNotebookUI();
         if (ui == null) return;
         String title = "Parsing Hierarchy";
-        JDialog dialog = new JDialog(GUIUtilities.getFrame(ui), title);
+        JDialog dialog = new JDialog(GUIHelper.getFrame(ui), title);
         dialog.setSize(500, 800);
         JTree tree = ui.getParseTree(ui.getCaretPosition());
         if (tree == null) return;
         JScrollPane pane = new JScrollPane(tree);
         dialog.add(pane);
         dialog.setVisible(true);
+        GUIHelper.centerOnScreen(dialog);
     }
 
     static void openCellTree(CellGroupMember cell)
@@ -1272,5 +1277,36 @@ public class GUIHelper
     public static JMenu makeCellMenu()
     {
       return new CGMActionsHelper.DynamicMenu(CELL_MENU_ITEMS_HANDLE, "Cell", CGMActionsHelper.Scope.cell);
+    }
+
+    public static void centerOnScreen(Component c)
+    {
+    	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
+    	int x = (screenSize.width - c.getWidth()) / 2;
+    	int y = (screenSize.height - c.getHeight()) / 2;
+    	c.setLocation(x, y);    	
+    }
+
+    /**
+     * Traverses the given component's parent tree looking for an
+     * instance of JDialog, and return it. If not found, return null.
+     * @param c The component
+     */
+    public static JDialog getParentDialog(Component c)
+    {
+        Component p = c.getParent();
+        while (p != null && !(p instanceof JDialog))
+            p = p.getParent();
+        
+        return (p instanceof JDialog) ? (JDialog) p : null;
+    }
+
+    public static Frame getFrame(Component c)
+    {
+        Component p = c.getParent();
+        while (p != null && !(p instanceof Frame))
+        	p = p.getParent();
+        
+        return (p instanceof Frame) ? (Frame) p : null;
     }
 }

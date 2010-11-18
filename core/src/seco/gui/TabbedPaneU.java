@@ -198,7 +198,7 @@ public class TabbedPaneU
                     getTabPopupMenu().putClientProperty(TAB_INDEX, i);
                     if (TopFrame.PICCOLO)
                     {
-                        Frame f = GUIUtilities.getFrame(e.getComponent());
+                        Frame f = GUIHelper.getFrame(e.getComponent());
                         pt = getPoint(e, f);
                     }
                     getTabPopupMenu().show(tabbedPane, pt.x, pt.y);

@@ -67,6 +67,7 @@ public class ManageRuntimeContextDialog extends JDialog
                     EditRuntimeContextDialog dlg = new EditRuntimeContextDialog(
                             ManageRtCtxPanel.this.map.get(name));
                     dlg.setVisible(true);
+                    GUIHelper.centerOnScreen(dlg);
                 }
             });
 

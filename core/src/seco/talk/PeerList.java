@@ -24,7 +24,6 @@ import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.Occupant;
 
 import seco.gui.GUIHelper;
-import seco.gui.GUIUtilities;
 import seco.gui.menu.UpdatablePopupMenu;
 
 public class PeerList extends JPanel
@@ -55,7 +54,7 @@ public class PeerList extends JPanel
                     else
                     {
                         popupMenu.update();
-                        Frame f = GUIUtilities.getFrame(e.getComponent());
+                        Frame f = GUIHelper.getFrame(e.getComponent());
                         Point pt = getPoint(e, f);
                         popupMenu.show(f, pt.x, pt.y);
                     }

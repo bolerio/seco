@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
 import seco.rtenv.RuntimeContext;
 
 /**
@@ -77,6 +78,7 @@ public class NewRuntimeContextDialog extends JDialog
                 public void actionPerformed(ActionEvent e)
                 {
                     NewRuntimeContextDialog.this.setVisible(false);
+                    GUIHelper.centerOnScreen(NewRuntimeContextDialog.this);
                 }
             });
             JButton buttApply = new JButton("Apply");

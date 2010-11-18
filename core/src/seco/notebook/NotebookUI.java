@@ -78,7 +78,6 @@ import org.hypergraphdb.handle.UUIDHandleFactory;
 import seco.ActionManager;
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
-import seco.gui.GUIUtilities;
 import seco.gui.GUIHelper.CellTreeAction;
 import seco.gui.GUIHelper.ElementTreeAction;
 import seco.gui.GUIHelper.ParseTreeAction;
@@ -588,7 +587,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     {
         getPopupListener().dont_change_pos = true;
         // getPopupListener().mouseClicked(e);
-        Frame f = GUIUtilities.getFrame(e.getComponent());
+        Frame f = GUIHelper.getFrame(e.getComponent());
         Point pt = SwingUtilities.convertPoint(this, e.getX(), e.getY(), f);
         pt = GUIHelper.adjustPointInPicollo(this, pt);
         popupMenu.show(f, pt.x, pt.y);
@@ -639,7 +638,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
                         if (off != -1) ui.setCaretPosition(off);
                     }
                     popupMenu.update();
-                    Frame f = GUIUtilities.getFrame(e.getComponent());
+                    Frame f = GUIHelper.getFrame(e.getComponent());
                     Point pt = null;
                     try
                     {

@@ -49,6 +49,7 @@ import javax.swing.text.html.StyleSheet;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
 import seco.notebook.ElementType;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
@@ -125,6 +126,7 @@ public class CellPropsDialog extends JDialog
                         (FontEx) style.getDefaultValue(StyleAttribs.FONT),
                         (Color) style.getDefaultValue(StyleAttribs.FG_COLOR));
                 dlg.setVisible(true);
+                GUIHelper.centerOnScreen(dlg);
                 if (dlg.succeeded)
                 {
                     style.put(StyleAttribs.FONT, dlg.getFont());

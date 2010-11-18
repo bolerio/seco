@@ -33,7 +33,6 @@ import javax.swing.text.Position.Bias;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
-import seco.gui.GUIUtilities;
 import seco.gui.TopFrame;
 import seco.gui.menu.UpdatablePopupMenu;
 import seco.notebook.NotebookDocument;
@@ -208,7 +207,7 @@ public class HtmlView extends HidableComponentView
                     {
                         getPopup().update();
                         int off = html.viewToModel(e.getPoint());
-                        Frame f = GUIUtilities.getFrame(e.getComponent());
+                        Frame f = GUIHelper.getFrame(e.getComponent());
                         Point pt = null;
                         try
                         {

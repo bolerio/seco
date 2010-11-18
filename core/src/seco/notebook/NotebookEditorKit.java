@@ -54,7 +54,6 @@ import org.hypergraphdb.handle.UUIDHandleFactory;
 import seco.ThisNiche;
 import seco.events.CellGroupChangeEvent;
 import seco.gui.GUIHelper;
-import seco.gui.GUIUtilities;
 import seco.gui.ObjectInspector;
 import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
@@ -65,6 +64,7 @@ import seco.gui.panel.AbbreviationPanel;
 import seco.gui.panel.JavaDocPanel;
 import seco.gui.panel.RuntimeContextPanel;
 import seco.gui.panel.ShortcutPanel;
+import seco.gui.rtctx.NewRuntimeContextDialog;
 import seco.notebook.html.HTMLUtils;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.Completion;
@@ -171,6 +171,7 @@ public class NotebookEditorKit extends StyledEditorKit
 
     private void createActionTable()
     {
+        if(actions != null) return;
         actions = new HashMap<String, Action>();
         Action[] actionsArray = getActions();
         for (int i = 0; i < actionsArray.length; i++)
@@ -337,7 +338,7 @@ public class NotebookEditorKit extends StyledEditorKit
                 JList list = new JList(names);
                 list.setPreferredSize(new Dimension(200, 100));
                 DialogDescriptor dd = new DialogDescriptor(
-                        GUIUtilities.getFrame(ui), list,
+                        GUIHelper.getFrame(ui), list,
                         "Select the class to import");
                 if (DialogDisplayer.getDefault().notify(dd) != NotifyDescriptor.OK_OPTION)
                     return;
@@ -869,7 +870,7 @@ public class NotebookEditorKit extends StyledEditorKit
                 editor.setCaretPosition(doc.insPointInsert(pos, ""));
                 return;
             }
-            Frame f = GUIUtilities.getFrame(editor);
+            Frame f = GUIHelper.getFrame(editor);
             try
             {
                 Rectangle rect = editor.modelToView(pos);
@@ -911,11 +912,12 @@ public class NotebookEditorKit extends StyledEditorKit
 
         public void actionPerformed(ActionEvent evt)
         {
-            JDialog dialog = new JDialog(GUIUtilities.getFrame((Component) evt
+            JDialog dialog = new JDialog(GUIHelper.getFrame((Component) evt
                     .getSource()), javaDocManagerAction);
             dialog.setSize(500, 500);
             dialog.add(new JavaDocPanel());
             dialog.setVisible(true);
+            GUIHelper.centerOnScreen(dialog);
         }
     }
 
@@ -928,11 +930,12 @@ public class NotebookEditorKit extends StyledEditorKit
 
         protected void action(NotebookUI ui) throws Exception
         {
-            JDialog dialog = new JDialog(GUIUtilities.getFrame(ui),
+            JDialog dialog = new JDialog(GUIHelper.getFrame(ui),
                     ctxInspectorAction);
             dialog.setSize(500, 500);
             dialog.add(new RuntimeContextPanel(ui));
             dialog.setVisible(true);
+            GUIHelper.centerOnScreen(dialog);
         }
     }
 
@@ -945,11 +948,12 @@ public class NotebookEditorKit extends StyledEditorKit
 
         public void actionPerformed(ActionEvent e)
         {
-            JDialog dialog = new JDialog(GUIUtilities.getFrame((Component) e
+            JDialog dialog = new JDialog(GUIHelper.getFrame((Component) e
                     .getSource()), shortcutInspectorAction);
             dialog.setSize(500, 500);
             dialog.add(new ShortcutPanel());
             dialog.setVisible(true);
+            GUIHelper.centerOnScreen(dialog);
         }
     }
 
@@ -964,7 +968,7 @@ public class NotebookEditorKit extends StyledEditorKit
         {
             AbbreviationPanel p = new AbbreviationPanel();
             DialogDescriptor dd = new DialogDescriptor(
-                    GUIUtilities.getFrame((Component) e.getSource()), p,
+                    GUIHelper.getFrame((Component) e.getSource()), p,
                     "Abbreviation Manager");
             DialogDisplayer.getDefault().notify(dd);
         }
@@ -996,7 +1000,7 @@ public class NotebookEditorKit extends StyledEditorKit
             else
                 findDialog.setSelectedIndex(index);
             findDialog.setVisible(true);
-            GUIUtilities.centerOnScreen(findDialog);
+            GUIHelper.centerOnScreen(findDialog);
         }
 
         public boolean isFindOrReplace()

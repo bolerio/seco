@@ -16,13 +16,13 @@ import org.hypergraphdb.event.HGEvent;
 import org.hypergraphdb.event.HGListener;
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
-import seco.gui.SecoUncaughtExceptionHandler;
 import seco.gui.TopFrame;
 import seco.rtenv.RuntimeContext;
 import seco.talk.ConnectionManager;
 import seco.things.CellGroup;
 import seco.things.CellUtils;
 import seco.things.CellVisual;
+import seco.util.SecoUncaughtExceptionHandler;
 
 public class NicheBootListener implements HGListener
 {

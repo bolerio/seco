@@ -12,6 +12,7 @@ import java.awt.Frame;
 import javax.swing.JFileChooser;
 
 import seco.AppConfig;
+import seco.gui.GUIHelper;
 import seco.gui.StandaloneFrame;
 
 import java.io.File;
@@ -114,6 +115,7 @@ public abstract class FileUtil
 				chooser.setFilenameFilter(new CustomFileFilter());
 			}
 			chooser.setVisible(true);
+			GUIHelper.centerOnScreen(chooser);
 			if (chooser.getFile() != null)
 			{
 				File result = new File(chooser.getDirectory() + "/"

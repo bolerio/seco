@@ -61,6 +61,7 @@ public class CommonActions
         dialog.add(bev);
         dialog.setSize(new Dimension(220, 220));
         dialog.setVisible(true);
+        GUIHelper.centerOnScreen(dialog);
         bev.revalidate();
     }
 
@@ -141,16 +142,16 @@ public class CommonActions
         canvas.getCamera().setViewOffset(0, 0);
     }
     
-    public static void testEmbededContainer()
-    {
-        CellGroup group = new CellGroup("EMBEDED CONTAINER");
-        HGHandle groupH = ThisNiche.graph.add(group);
-        HGHandle cellH1 = CellUtils.createOutputCellH(null, null, new JButton("Test"), false);
-        HGHandle cellH2 = CellUtils.createOutputCellH(null, null, new JCheckBox("Test"), false);
-        group.insert(0, cellH1);
-        group.insert(0, cellH2);
-        GUIHelper.addToTopCellGroup(groupH, CellContainerVisual.getHandle(), null, new Rectangle(200, 200, 500, 500)); 
-    }
+//    public static void testEmbededContainer()
+//    {
+//        CellGroup group = new CellGroup("EMBEDED CONTAINER");
+//        HGHandle groupH = ThisNiche.graph.add(group);
+//        HGHandle cellH1 = CellUtils.createOutputCellH(null, null, new JButton("Test"), false);
+//        HGHandle cellH2 = CellUtils.createOutputCellH(null, null, new JCheckBox("Test"), false);
+//        group.insert(0, cellH1);
+//        group.insert(0, cellH2);
+//        GUIHelper.addToTopCellGroup(groupH, CellContainerVisual.getHandle(), null, new Rectangle(200, 200, 500, 500)); 
+//    }
     
     public static boolean renameCellGroupMember(HGHandle h)
     {

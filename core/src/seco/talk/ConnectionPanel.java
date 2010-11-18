@@ -31,7 +31,6 @@ import edu.umd.cs.piccolox.pswing.PSwing;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
-import seco.gui.GUIUtilities;
 import seco.gui.PSwingNode;
 import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
@@ -439,6 +438,7 @@ public class ConnectionPanel extends BaseChatPanel implements
             dlg.setTitle("Add To Roster");
             dlg.setSize(new Dimension(420, 400));
             dlg.setVisible(true);
+            GUIHelper.centerOnScreen(dlg);
         }
     }
 
@@ -459,6 +459,7 @@ public class ConnectionPanel extends BaseChatPanel implements
             dlg.setTitle("Remove From Roster");
             dlg.setSize(new Dimension(420, 400));
             dlg.setVisible(true);
+            GUIHelper.centerOnScreen(dlg);
         }
 
     }
