@@ -4,7 +4,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JTextPane;
-import seco.api.Callback;
+
+import seco.util.task.Callback;
 
 public class TalkInputPane extends JTextPane
 {

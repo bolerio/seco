@@ -3,9 +3,7 @@ package seco.storage.swing.types;
 import java.awt.event.ActionListener;
 import java.awt.event.ContainerListener;
 import java.awt.event.FocusListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.beans.EventSetDescriptor;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Field;
@@ -17,19 +15,16 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.AbstractButton;
-import javax.swing.JButton;
 import javax.swing.ToolTipManager;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataListener;
-import javax.swing.plaf.BorderUIResource;
 import javax.swing.text.Caret;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
 
 import org.hypergraphdb.HGException;
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.IncidenceSetRef;
 import org.hypergraphdb.LazyRef;
@@ -45,7 +40,6 @@ import org.hypergraphdb.type.Record;
 import org.hypergraphdb.type.Slot;
 import org.hypergraphdb.type.TypeUtils;
 
-import seco.gui.GUIHelper;
 import seco.storage.swing.DefaultConverter;
 
 public class SwingBinding extends HGAtomTypeBase implements HGCompositeType

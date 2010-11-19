@@ -14,8 +14,8 @@ import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.query.*;
 
-import seco.api.CallableCallback;
-import seco.api.CompletionCallback;
+import seco.util.task.CallableCallback;
+import seco.util.task.CompletionCallback;
 
 import java.io.IOException;
 import java.io.InputStream;

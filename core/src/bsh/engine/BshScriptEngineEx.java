@@ -27,6 +27,7 @@ public class BshScriptEngineEx extends BshScriptEngine
             importPackage("org.hypergraphdb.type");
             
             importPackage("seco");
+            importPackage("seco.actions");
             importPackage("seco.gui");
             importPackage("seco.notebook");
             importPackage("seco.things");

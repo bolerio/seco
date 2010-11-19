@@ -30,7 +30,6 @@ import org.jivesoftware.smackx.muc.Occupant;
 
 import seco.ThisNiche;
 import seco.U;
-import seco.api.CallableCallback;
 import seco.gui.GUIHelper;
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
@@ -40,6 +39,7 @@ import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.util.GUIUtil;
+import seco.util.task.CallableCallback;
 
 public class ConnectionContext
 {

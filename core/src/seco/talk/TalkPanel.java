@@ -27,11 +27,11 @@ import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.PeerPresenceListener;
 
 import seco.ThisNiche;
-import seco.api.Callback;
 import seco.gui.SecoTransferable;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookTransferHandler;
 import seco.things.CellUtils;
+import seco.util.task.Callback;
 
 public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
 {

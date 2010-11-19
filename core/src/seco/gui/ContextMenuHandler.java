@@ -51,8 +51,6 @@ public class ContextMenuHandler extends PBasicInputEventHandler
 
     public void mousePressed(PInputEvent event)
     {
-       // System.out.println("ContextMenuHandler - showMenu: " +
-        //         event.getPickedNode() + ":" + event.getComponent());
         if (event == null) return;
         if ((event.getPickedNode().equals(ThisNiche.getCanvas().getCamera())))
         {
@@ -122,13 +120,13 @@ public class ContextMenuHandler extends PBasicInputEventHandler
     protected void init_global_actions()
     {
         global_actions.add(makeScriptletAction("Restore Default GUI",
-                "seco.gui.CommonActions.restoreDefaultGUI();"));
+                "CommonActions.restoreDefaultGUI();"));
         global_actions.add(makeScriptletAction("BirdsEyeView",
-                "seco.gui.CommonActions.birdsEyeView();"));
+                "CommonActions.birdsEyeView();"));
         global_actions.add(makeScriptletAction("Reset Zoom",
-                "seco.gui.CommonActions.resetZoom();"));
+                "CommonActions.resetZoom();"));
         global_actions.add(makeScriptletAction("Backup",
-                "seco.gui.CommonActions.backup();"));
+                "CommonActions.backup();"));
         // global_menu.add(makeMenuItem("Test Embedded Container",
         // "seco.gui.CommonActions.testEmbededContainer();"));
     }
@@ -150,20 +148,20 @@ public class ContextMenuHandler extends PBasicInputEventHandler
         node_actions
                 .add(makeScriptletAction(
                         "Rename",
-                        "seco.gui.CommonActions.renameCellGroupMember(canvas.getSelectedPSwingNode().getHandle())"));
+                        "CommonActions.renameCellGroupMember(canvas.getSelectedPSwingNode().getHandle())"));
         node_actions
                 .add(makeScriptletAction(
                         "Title On/Off",
-                        "seco.things.CellUtils.toggleShowTitle(canvas.getSelectedPSwingNode().getHandle())"));
+                        "CellUtils.toggleShowTitle(canvas.getSelectedPSwingNode().getHandle())"));
 
         node_actions
                 .add(makeScriptletAction(
                         "Pin/Unpin",
-                        "seco.gui.CommonActions.showLayoutSettingsDlg("
+                        "CommonActions.showLayoutSettingsDlg("
                                 + "canvas.getSelectedPSwingNode());"));
         node_actions
                 .add(makeScriptletAction("Store Changes",
-                        "seco.gui.CommonActions.updateSelectedPSwingCellComponentValue();"));
+                        "CommonActions.updateSelectedPSwingCellComponentValue();"));
     }
 
 }
