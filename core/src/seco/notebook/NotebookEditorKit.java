@@ -986,8 +986,8 @@ public class NotebookEditorKit extends StyledEditorKit
             if (findDialog == null) findDialog = new FindDialog(ui, index);
             else
                 findDialog.setSelectedIndex(index);
-            findDialog.setVisible(true);
             GUIUtil.centerOnScreen(findDialog);
+            findDialog.setVisible(true);
         }
 
         public boolean isFindOrReplace()

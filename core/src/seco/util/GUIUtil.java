@@ -87,8 +87,8 @@ public static void createAndShowDlg(Frame f, String title, Component c, Dimensio
     JDialog dialog = new JDialog(f, title);
     if(dim != null)  dialog.setSize(dim);
     dialog.add(c);
-    dialog.setVisible(true);
     centerOnScreen(dialog);
+    dialog.setVisible(true);
 }
 
 public static void createAndShowDlg(String title, Component c, Dimension dim)

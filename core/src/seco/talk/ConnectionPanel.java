@@ -438,8 +438,8 @@ public class ConnectionPanel extends BaseChatPanel implements
             RoasterDlg dlg = new RoasterDlg(panel.getConnectionContext(), true);
             dlg.setTitle("Add To Roster");
             dlg.setSize(new Dimension(420, 400));
-            dlg.setVisible(true);
             GUIUtil.centerOnScreen(dlg);
+            dlg.setVisible(true);
         }
     }
 
@@ -459,8 +459,8 @@ public class ConnectionPanel extends BaseChatPanel implements
             RoasterDlg dlg = new RoasterDlg(panel.getConnectionContext(), false);
             dlg.setTitle("Remove From Roster");
             dlg.setSize(new Dimension(420, 400));
-            dlg.setVisible(true);
             GUIUtil.centerOnScreen(dlg);
+            dlg.setVisible(true);
         }
 
     }

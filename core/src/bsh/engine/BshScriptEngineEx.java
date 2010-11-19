@@ -31,6 +31,7 @@ public class BshScriptEngineEx extends BshScriptEngine
             importPackage("seco.gui");
             importPackage("seco.notebook");
             importPackage("seco.things");
+            importPackage("seco.util");
         }catch(Exception e)
         {
             System.err.println("loadImports: " + e);

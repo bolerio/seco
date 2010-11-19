@@ -430,10 +430,10 @@ class StyleEditor extends EnhancedDialog implements ActionListener
 	                    true);
 	            }
 	            dialog.pack();
-	            dialog.setVisible(true);
 	            GUIUtil.centerOnScreen(dialog);
+	            dialog.setVisible(true);
 	        }
-	    } //}}}
+	    } 
 
 	    //{{{ ColorPickerDialog class
 	    /**

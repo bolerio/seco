@@ -125,8 +125,8 @@ public class CellPropsDialog extends JDialog
                 FontDialog dlg = new FontDialog(parent,
                         (FontEx) style.getDefaultValue(StyleAttribs.FONT),
                         (Color) style.getDefaultValue(StyleAttribs.FG_COLOR));
-                dlg.setVisible(true);
                 GUIUtil.centerOnScreen(dlg);
+                dlg.setVisible(true);
                 if (dlg.succeeded)
                 {
                     style.put(StyleAttribs.FONT, dlg.getFont());

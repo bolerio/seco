@@ -97,6 +97,7 @@ public class NotebookDocument extends DefaultStyledDocument
         contentAttrSet.addAttribute(StyleConstants.NameAttribute, charContent);
         charAttrSet.addAttribute(StyleConstants.NameAttribute, paragraph);
     }
+    public static Font DEFAULT_FONT = new Font("Default", Font.PLAIN, 12);
     protected final HGHandle bookH;
 
     protected boolean modified;
@@ -112,8 +113,8 @@ public class NotebookDocument extends DefaultStyledDocument
     boolean supressEvents = false;
     public ArrayList<SyntaxStyle> styles;
     private Map<String, SyntaxStyle[]> syntaxStyleMap = new HashMap<String, SyntaxStyle[]>();
-    private Font outputCellFont = new Font("Default", Font.PLAIN, 12);
-    private Font inputCellFont = new Font("Default", Font.PLAIN, 12);
+    private Font outputCellFont = DEFAULT_FONT;
+    private Font inputCellFont =  DEFAULT_FONT;
 
     protected Position TOP_INDEX_POS;
     protected Map<HGHandle, Position> indexes = new HashMap<HGHandle, Position>();

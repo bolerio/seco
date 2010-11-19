@@ -113,8 +113,8 @@ public abstract class FileUtil
 			{
 				chooser.setFilenameFilter(new CustomFileFilter());
 			}
-			chooser.setVisible(true);
 			GUIUtil.centerOnScreen(chooser);
+			chooser.setVisible(true);
 			if (chooser.getFile() != null)
 			{
 				File result = new File(chooser.getDirectory() + "/"

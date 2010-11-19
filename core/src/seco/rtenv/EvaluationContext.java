@@ -204,7 +204,8 @@ public class EvaluationContext
     {
         if (loader == null)
             if (runtimeContext.getClassPath() != null)
-                loader = runtimeContext.getClassPath().makeLoader();
+                loader = RtU.createClassLoader(runtimeContext);
+                   //runtimeContext.getClassPath().makeLoader();
             else
                 return getClass().getClassLoader();
         return loader;

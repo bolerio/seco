@@ -418,8 +418,8 @@ public class MyHTMLEditorKit extends HTMLEditorKit
             FontEx f = FontEx.fromCSSAttribs(attr);
             FontDialog dlg = new FontDialog(GUIUtil.getFrame(editor), f,
                     StyleConstants.getForeground(attr), MyHTMLWriter.fontSizes);
-            dlg.setVisible(true);
             GUIUtil.centerOnScreen(dlg);
+            dlg.setVisible(true);
             if (dlg.succeeded())
             {
                 MutableAttributeSet res = new SimpleAttributeSet();
@@ -445,8 +445,8 @@ public class MyHTMLEditorKit extends HTMLEditorKit
             if (dlg == null)
                 dlg = new UnicodeDialog(editor, "Insert Special Symbol", true,
                         UnicodeDialog.UNICODE_MATH);
-            dlg.setVisible(true);
             GUIUtil.centerOnScreen(dlg);
+            dlg.setVisible(true);
         }
     }
 
@@ -679,8 +679,8 @@ public class MyHTMLEditorKit extends HTMLEditorKit
             }
            // System.out.println("Img: " + img + ":" + edit);
             dlg.setModal(true);
-            dlg.setVisible(true);
             GUIUtil.centerOnScreen(dlg);
+            dlg.setVisible(true);
             if (dlg.getResult() == DialogShell.RESULT_OK)
             {
                 try
@@ -742,8 +742,8 @@ public class MyHTMLEditorKit extends HTMLEditorKit
             td.setTableAttributes(table.getAttributes());
             td.setCellAttributes(cell.getAttributes());
             td.setModal(true);
-            td.setVisible(true);
             GUIUtil.centerOnScreen(td);
+            td.setVisible(true);
             if (td.getResult() == DialogShell.RESULT_OK)
             {
                 AttributeSet a = td.getTableAttributes();
@@ -1244,8 +1244,8 @@ public class MyHTMLEditorKit extends HTMLEditorKit
                 findDialog.setEditorPane(editor);
                 findDialog.setSelectedIndex(index);
             }
-            findDialog.setVisible(true);
             GUIUtil.centerOnScreen(findDialog);
+            findDialog.setVisible(true);
         }
 
         public boolean isFindOrReplace()

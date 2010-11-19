@@ -1018,6 +1018,7 @@ public class HTMLEditor extends JTextPane
                 }
                 else
                 {
+                    if(!ed.isEditable() || !ed.isEnabled()) return;
                     ed.getPopup().update();
                     Frame f = GUIUtil.getFrame(e.getComponent());
                     Point pt = SwingUtilities.convertPoint(e.getComponent(), e

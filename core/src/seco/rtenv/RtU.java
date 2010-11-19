@@ -1,5 +1,7 @@
 package seco.rtenv;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -25,6 +27,27 @@ public class RtU
         for(NestedContextLink l : getChildContextLinks(par))
             res.add((RuntimeContext)ThisNiche.graph.get(l.getChild()));
         return res;
+    }
+    
+    public static ClassLoader createClassLoader(RuntimeContext ctx)
+    {
+        List<RuntimeContext> all = getChildContexts(ThisNiche.handleOf(ctx));
+        all.add(ctx);
+        Set<URL> path = new HashSet<URL>();
+        for(RuntimeContext rc : all)
+            for(ClassPathEntry e : rc.getClassPath())
+            {
+              try
+              {
+                  path.add(new URL(e.getUrl()));
+              }
+              catch (Throwable t)
+              {
+                  throw new RuntimeException(t);
+              }
+            }
+        return new URLClassLoader(path.toArray(new URL[path.size()]), 
+                Thread.currentThread().getContextClassLoader());
     }
     
     public static List<NestedContextLink> getParentContextLinks(HGHandle child)
