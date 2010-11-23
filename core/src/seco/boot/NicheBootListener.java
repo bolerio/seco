@@ -43,14 +43,6 @@ public class NicheBootListener implements HGListener
             GUIHelper.makeTopCellGroup();
         final CellGroup group = hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         final CellVisual v = hg.get(group.getVisual());
-//        try
-//        {
-//            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-//        }
-//        catch (Exception ex)
-//        {
-//            ex.printStackTrace();
-//        }
         SwingUtilities.invokeLater(new Runnable(){
             public void run()
             {

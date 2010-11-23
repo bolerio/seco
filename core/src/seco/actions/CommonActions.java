@@ -278,8 +278,9 @@ public class CommonActions
     public static void restoreDefaultGUI()
     {
         ThisNiche.getCanvas().removeAllNodes();
-        CellGroup group = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-        CellVisual v = ThisNiche.graph.get(group.getVisual());
+        final CellGroup group = ThisNiche.graph
+                .get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        final CellVisual v = ThisNiche.graph.get(group.getVisual());
 
         complete_remove(GUIHelper.MENUBAR_HANDLE);
         complete_remove(GUIHelper.TOOLBAR_HANDLE);
@@ -292,9 +293,13 @@ public class CommonActions
         complete_remove(GUIHelper.NOTEBOOK_MENU_ITEMS_HANDLE);
         complete_remove(ActionManager.HANDLE);
         complete_remove(NotebookUI.POPUP_HANDLE);
-
-        GUIHelper.makeTopCellGroup();
-        v.bind(group);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run()
+            {
+                GUIHelper.makeTopCellGroup();
+                v.bind(group);
+            }
+        });
     }
 
     private static void complete_remove(HGPersistentHandle h)
@@ -349,7 +354,6 @@ public class CommonActions
 
     public static boolean editCGMDescription(HGHandle h)
     {
-        // CellGroupMember cgm = ThisNiche.graph.get(h);
         String desc = CellUtils.getDescription(h);
         JTextArea area = new JTextArea();
         area.setPreferredSize(new Dimension(300, 200));

@@ -47,10 +47,9 @@ public class BshAst extends NBParser
         return astRoot;
     }
 
-    
-    public Object resolveVar(String s, int offset) // throws EvalError
+    public Object resolveVar(String s, int offset) 
     {
-        // TODO: maybe we could infere somehow non-iniatilized or null values
+        // TODO: maybe we could infer somehow non-initialized or null values
         // e.g. String s; or String s = null;
         evaled_or_guessed = true;
         if (s == null || s.length() == 0) return null;
@@ -58,8 +57,8 @@ public class BshAst extends NBParser
         {
             if (implicitExecutionOn || s.indexOf("(") < 0)
             {
-                Object o = support.getDocument().getEvaluationContext().eval(
-                        support.getFactory().getEngineName(), s);
+                Object o = support.getDocument().getEvaluationContext()
+                        .eval(support.getFactory().getEngineName(), s);
                 if (o != null) return o;
             }
 
@@ -87,19 +86,20 @@ public class BshAst extends NBParser
                     : null;
         }
     }
-    
+
     public Class<?> resolveVarAsClass(String s, int offset)
     {
         Object o = resolveVar(s, offset);
-        if(o == null) return null;
-        return (o.getClass().getName().equals(ClassIdentifier.class.getName()))?
-                BshAst.getClsFromClassIdentifier(o) : o.getClass();
+        if (o == null) return null;
+        return (o.getClass().getName().equals(ClassIdentifier.class.getName())) ? BshAst
+                .getClsFromClassIdentifier(o) : o.getClass();
     }
 
     public Method resolveMethod(String s, int offset)
     {
         SimpleNode n = getRootNode();
         int[] lineCol = support.offsetToLineCol(offset);
+        Element top_el = support.getElement();
         if (n == null || n.children.length <= lineCol[0])
         {
             // try to create AST only for the passed in String
@@ -109,6 +109,7 @@ public class BshAst extends NBParser
             {
                 p.Line();
                 n = p.popNode();
+                top_el = top_el.getElement(lineCol[0]);
             }
             catch (ParseException ex)
             {
@@ -119,8 +120,7 @@ public class BshAst extends NBParser
         if (n instanceof BSHMethodInvocation)
             return resolveMethod((BSHMethodInvocation) n, offset);
 
-        SimpleNode outer = ParserUtils.getASTNodeAtOffset(support.getElement(),
-                n, offset - 1);
+        SimpleNode outer = ParserUtils.getASTNodeAtOffset(top_el, n, offset - 1);
         if (outer == null) return null;
 
         BSHMethodInvocation m = (BSHMethodInvocation) ParserUtils
@@ -130,7 +130,7 @@ public class BshAst extends NBParser
         // search for BSHPrimarySuffix
         outer = ParserUtils.getParentOfType(outer, BSHPrimarySuffix.class);
         if (outer != null
-                && ((BSHPrimarySuffix) outer).operation == BSHPrimarySuffix.NAME)
+                && BSHPrimarySuffix.NAME == ((BSHPrimarySuffix) outer).operation)
         {
             int new_offset = support.lineToOffset(
                     outer.firstToken.beginLine - 1,
@@ -165,8 +165,7 @@ public class BshAst extends NBParser
             Class<?>[] types = resolveArgs(((BSHArguments) suff.getChild(0)),
                     offset);
             Class<?> c = null;
-            if(o instanceof Method)
-                c =  ((Method) o).getReturnType();
+            if (o instanceof Method) c = ((Method) o).getReturnType();
             c = (!(o instanceof Class)) ? o.getClass() : (Class<?>) o;
             Method meth = findMethod(c, suff.field, types, false); // isPrivateAccessAllowed());
             return (meth != null) ? meth : null;
@@ -184,14 +183,12 @@ public class BshAst extends NBParser
         if (var == null) return null;
         Class<?>[] types = resolveArgs(m.getArgsNode(), offset);
         Class<?> inst_cls = null;
-        if (var.getClass().getName().indexOf("bsh.ClassIdentifier") > -1) inst_cls = getClsFromClassIdentifier(var);
+        if (var.getClass().getName().indexOf("bsh.ClassIdentifier") > -1) 
+            inst_cls = getClsFromClassIdentifier(var);
         else
             inst_cls = var.getClass();
-        Method meth = findMethod(inst_cls, text.substring(dot + 1), types,
-                false);
-        if (meth == null) return null;
-
-        return findMethod(inst_cls, text.substring(dot + 1), types, false);
+        Method meth = findMethod(inst_cls, text.substring(dot + 1), types,  false);
+        return meth;
     }
 
     private Class<?>[] resolveArgs(BSHArguments b, int offset)
@@ -221,7 +218,9 @@ public class BshAst extends NBParser
     {
         try
         {
-            return ((Boolean) support.getDocument().getEvaluationContext()
+            return ((Boolean) support
+                    .getDocument()
+                    .getEvaluationContext()
                     .eval(support.getFactory().getEngineName(),
                             ACCESSIBILITY_CHECK)).booleanValue();
         }
@@ -279,9 +278,10 @@ public class BshAst extends NBParser
 
                     if (implicitExecutionOn)
                     {
-                        ScriptEngine eng = support.getDocument()
-                                .getEvaluationContext().getEngine(
-                                        support.getFactory().getEngineName());
+                        ScriptEngine eng = support
+                                .getDocument()
+                                .getEvaluationContext()
+                                .getEngine(support.getFactory().getEngineName());
                         ScriptContext scriptContext = eng.getContext();
                         r = makeReader(seg, offset, length);
                         // r.reset();
