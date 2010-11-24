@@ -47,6 +47,7 @@ import javax.swing.text.Position;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 import javax.swing.undo.CompoundEdit;
 import javax.swing.undo.UndoableEdit;
 
@@ -65,6 +66,7 @@ import seco.events.handlers.AttributeChangeHandler;
 import seco.events.handlers.CellGroupChangeHandler;
 import seco.notebook.html.HTMLEditor;
 import seco.notebook.style.NBStyle;
+import seco.notebook.style.StyleAttribs;
 import seco.notebook.style.StyleType;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.ScriptSupportFactory;
@@ -1212,9 +1214,16 @@ public class NotebookDocument extends DefaultStyledDocument
             inputCellFont = getFont(doc_style);
             updateStyles();
         }
+//        else if (style.getStyleType() == StyleType.global)
+//        {
+//            getStyle(StyleContext.DEFAULT_STYLE).addAttributes(doc_style);
+//            inputCellFont = getFont(DocUtil.getDocStyle(this, StyleType.inputCell));
+//            outputCellFont = getFont(DocUtil.getDocStyle(this, StyleType.outputCell));
+//            updateStyles();
+//        }
         updateElement(getRootElements()[0]);
     }
-
+    
     public Font getInputCellFont()
     {
         return inputCellFont;

@@ -213,13 +213,12 @@ public abstract class ScriptSupport
 			ex.printStackTrace();
 		}
 		int line = el.getElementIndex(e.getOffset());
-		// System.out.println("ScriptSupport.insertUpdate:" + line +":"+ offset
-		// + ":" + numLines + ":" + e.getLength());
 		lineMgr.contentInserted(line, offset, numLines, e.getLength());
 		if (numLines > 0) chunkCache.recalculateVisibleLines();
 		chunkCache.invalidateChunksFromPhys(line);
 		Completion.get().insertUpdate(e, this);
-		if (getParser() != null) getParser().insertUpdate(e);
+		DocumentEvent.ElementChange ch = e.getChange(el);
+		if (ch != null && getParser() != null) getParser().insertUpdate(e);
 		// update_in_progress = false;
 	}
 
@@ -232,14 +231,11 @@ public abstract class ScriptSupport
 		if (ch != null)
 			numLines = ch.getChildrenRemoved().length
 					- ch.getChildrenAdded().length;
-		// System.out.println("ScriptSupport.removeUpdate:" + line + ":"+ offset
-		// + ":" + numLines + ":" + e.getLength());
 		lineMgr.contentRemoved(line, offset, numLines, e.getLength());
-		if (numLines > 0) chunkCache.recalculateVisibleLines(); // el.getElementCount()
-		// - numLines);
+		if (numLines > 0) chunkCache.recalculateVisibleLines(); 
 		chunkCache.invalidateChunksFromPhys(line);
 		Completion.get().removeUpdate(e);
-		if (getParser() != null) getParser().removeUpdate(e);
+		if (ch != null && getParser() != null) getParser().removeUpdate(e);
 	}
 	protected boolean marked = false;
 	protected ErrorMark mark;
@@ -275,7 +271,6 @@ public abstract class ScriptSupport
 		if (!marked) return;
 		marked = false;
 		mark = null;
-		// System.err.println("unMarkErrors(): " + getElement());
 		doc.updateElement(el);
 	}
 	
@@ -308,9 +303,6 @@ public abstract class ScriptSupport
 
 	protected boolean _markError(ErrorMark mark)
 	{
-		// System.err.println("markError: " + mark.line +
-		// ", column " + mark.column + ":" + mark.msg + ":" +
-		// getChunkCache().lineMgr.getLineCount());
 		if (getChunkCache().lineMgr.getLineCount() <= mark.line) return false;
 		this.mark = mark;
 		ChunkCache.LineInfo lineInfo = getChunkCache().getLineInfo(mark.line);
@@ -319,7 +311,6 @@ public abstract class ScriptSupport
 			Chunk chunks = Chunk.getChunkAtOffset(lineInfo.chunks, mark.column);
 			if (chunks != null)
 			{
-				// System.err.println("Found - chunk: " + chunks.str);
 				chunks.err = true;
 				marked = true;
 				doc.updateElement(el);
@@ -475,7 +466,7 @@ public abstract class ScriptSupport
 
 	private void notifyParser()
 	{
-		// TODO: in startup while many parsers runs in parrallel
+		// TODO: in startup while many parsers runs in parallel
 		// strange errors get thrown, probably its a BSH engine bug...
 		if (getParser() != null) getParser().update();
 	}

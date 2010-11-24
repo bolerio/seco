@@ -218,8 +218,8 @@ public abstract class JavaResultItem implements CompletionItem
                 completion.hideCompletion();
                 completion.hideDocumentation();
             case '.':
-                if (defaultAction((JTextComponent) evt.getSource(), Character
-                        .toString(evt.getKeyChar())))
+                if (defaultAction((JTextComponent) evt.getSource(),
+                        Character.toString(evt.getKeyChar())))
                 {
                     evt.consume();
                     break;
@@ -241,8 +241,8 @@ public abstract class JavaResultItem implements CompletionItem
     public CompletionTask createDocumentationTask()
     {
         return new AsyncCompletionTask(
-                new BshCompletionProvider.DocQuery(this), NotebookUI
-                        .getFocusedNotebookUI());
+                new BshCompletionProvider.DocQuery(this),
+                NotebookUI.getFocusedNotebookUI());
 
     }
 
@@ -274,8 +274,7 @@ public abstract class JavaResultItem implements CompletionItem
         if (substOffset == -1) substOffset = component.getCaret().getDot();
         JavaResultItem.toAdd = addText;
         return substituteText(component, substOffset, component.getCaret()
-                .getDot()
-                - substOffset, false);
+                .getDot() - substOffset, false);
     }
 
     public static class VarResultItem extends JavaResultItem
@@ -475,14 +474,14 @@ public abstract class JavaResultItem implements CompletionItem
         public MethodItem(Method mtd)
         {
             super(mtd);
-            modifiers = mtd.getModifiers(); 
+            modifiers = mtd.getModifiers();
             cfName = mtd.getName();
             Object obj = mtd.getReturnType();
             typeName = JMIUtils.getTypeName(obj, false, false);
             typeColor = getTypeColor(cf);
             isDeprecated = mtd.getAnnotation(Deprecated.class) != null;
-            populateParamsAndExceptions(mtd.getParameterTypes(), mtd
-                    .getExceptionTypes());
+            populateParamsAndExceptions(mtd.getParameterTypes(),
+                    mtd.getExceptionTypes());
         }
 
         public MethodItem(String mtdName, Class<?> type, Class<?>[] params,
@@ -576,8 +575,8 @@ public abstract class JavaResultItem implements CompletionItem
             typeName = "void";
             typeColor = getTypeColor(cf);
             isDeprecated = con.getAnnotation(Deprecated.class) != null;
-            populateParamsAndExceptions(con.getParameterTypes(), con
-                    .getExceptionTypes());
+            populateParamsAndExceptions(con.getParameterTypes(),
+                    con.getExceptionTypes());
         }
 
         public String getName()
@@ -703,14 +702,15 @@ public abstract class JavaResultItem implements CompletionItem
         {
             if (prms != null)
                 for (int i = 0; i < prms.length; i++)
-                    if (params != null)
-                    {
-                        String arg_name = (prms.length == 1) ? "arg" : "arg"
-                                + (i + 1);
-                        params.add(new ParamStr(prms[i].getSimpleName(),
-                                JMIUtils.getTypeName(prms[i], false, false),
-                                arg_name, false, getTypeColor(prms[i])));
-                    }
+                {
+                    if(prms[i] == null) continue;
+                    String arg_name = (prms.length == 1) ? "arg" : "arg"
+                            + (i + 1);
+                    params.add(new ParamStr(prms[i].getSimpleName(), JMIUtils
+                            .getTypeName(prms[i], false, false), arg_name,
+                            false, getTypeColor(prms[i])));
+                }
+
             if (exceps != null)
                 for (int i = 0; i < exceps.length; i++)
                     excs.add(new ExceptionStr(exceps[i].getSimpleName(),
@@ -1071,15 +1071,15 @@ public abstract class JavaResultItem implements CompletionItem
             if (displayFQN)
             {
                 this.fqName = cls.getName();
-                int idx = this.fqName.indexOf('<'); 
+                int idx = this.fqName.indexOf('<');
                 if (idx >= 0) this.fqName = this.fqName.substring(0, idx);
-                idx = this.fqName.lastIndexOf('.'); 
+                idx = this.fqName.lastIndexOf('.');
                 this.fqName = idx >= 0 ? " (" + this.fqName.substring(0, idx)
-                        + ")" : ""; 
+                        + ")" : "";
             }
             else
             {
-                this.fqName = ""; 
+                this.fqName = "";
             }
             this.isInterface = cls.isInterface();
             this.isDeprecated = cls.getAnnotation(Deprecated.class) != null;
@@ -1110,9 +1110,8 @@ public abstract class JavaResultItem implements CompletionItem
         {
             int substOffset = substituteOffset;
             if (substOffset == -1) substOffset = component.getCaretPosition();
-            substituteTextSimple(component, substOffset, component
-                    .getCaretPosition()
-                    - substOffset, false);
+            substituteTextSimple(component, substOffset,
+                    component.getCaretPosition() - substOffset, false);
             Completion.get().hideCompletion();
         }
 

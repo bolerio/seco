@@ -968,7 +968,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     public static class CustomHighlighter extends DefaultHighlighter implements
             UIResource
     {
-        private static CustomHighlightPainter h = new CustomHighlightPainter(
+        public static CustomHighlightPainter h = new CustomHighlightPainter(
                 new Color(204, 204, 255));
 
         @Override
@@ -977,9 +977,10 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         {
             return super.addHighlight(p0, p1, h);
         }
+       
     }
 
-    private static class CustomHighlightPainter extends
+    public static class CustomHighlightPainter extends
             DefaultHighlighter.DefaultHighlightPainter
     {
         public CustomHighlightPainter(Color color)
