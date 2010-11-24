@@ -75,10 +75,10 @@ public class FindDialog extends JDialog
         JPanel p1 = new JPanel(new BorderLayout());
         JPanel pc1 = new JPanel(new BorderLayout());
         JPanel pf = new JPanel();
-        pf.setLayout(new DialogLayout2(20, 5));
         pf.setBorder(new EmptyBorder(8, 5, 8, 0));
         pf.add(new JLabel("Find what:"));
         txtFind1 = new JTextField();
+        txtFind1.setColumns(30);
         txtFind1.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent e)
             {
@@ -140,10 +140,10 @@ public class FindDialog extends JDialog
         JPanel p2 = new JPanel(new BorderLayout());
         JPanel pc2 = new JPanel(new BorderLayout());
         JPanel pc = new JPanel();
-        pc.setLayout(new DialogLayout2(20, 5));
         pc.setBorder(new EmptyBorder(8, 5, 8, 0));
         pc.add(new JLabel("Find what:"));
         txtFind2 = new JTextField();
+        txtFind2.setColumns(30);
         txtFind2.setDocument(docFind);
         pc.add(txtFind2);
         pc.add(new JLabel("Replace:"));
