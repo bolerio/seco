@@ -1,5 +1,6 @@
 (import "javax.swing.*")
 (import "seco.*")
+(import "seco.util.*")
 (import "seco.gui.*")
 (import "seco.gui.rtctx")
 (import "seco.rtenv.*")
@@ -256,6 +257,6 @@
 ))
       
 (define (center-component C)
-	(GUIUtilities.centerOnScreen C))
+	(GUIUtil.centerOnScreen C))
 
  

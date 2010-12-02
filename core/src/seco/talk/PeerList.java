@@ -21,7 +21,6 @@ import javax.swing.border.BevelBorder;
 import org.hypergraphdb.annotation.HGIgnore;
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.jivesoftware.smackx.muc.HostedRoom;
-import org.jivesoftware.smackx.muc.Occupant;
 
 import seco.gui.menu.UpdatablePopupMenu;
 import seco.util.GUIUtil;
@@ -47,7 +46,7 @@ public class PeerList extends JPanel
                     .getConnectionContext(getPeerID());
                     if (ctx == null) return;
                     //don't show popup on ME
-                    if(val instanceof Occupant && ctx.isMe((Occupant) val)) return;
+                    if(val instanceof OccupantEx && ctx.isMe((OccupantEx) val)) return;
                     
                     if (PeerList.this.getPopup().isVisible()) popupMenu
                             .setVisible(false);
@@ -75,8 +74,8 @@ public class PeerList extends JPanel
                             .openTalkPanel((HGPeerIdentity) x);
                     else if (x instanceof HostedRoom) ctx
                             .openChatRoom((HostedRoom) x);
-                    else if (x instanceof Occupant)
-                        ctx.openTalkPanel((Occupant) x);
+                    else if (x instanceof OccupantEx)
+                        ctx.openTalkPanel((OccupantEx) x);
                 }
             }
 
@@ -105,10 +104,10 @@ public class PeerList extends JPanel
             public boolean isEnabled()
             {
                 Object x = getList().getSelectedValue();
-                if (!(x instanceof Occupant)) return false;
+                if (!(x instanceof OccupantEx)) return false;
                 ConnectionContext ctx = ConnectionManager
                         .getConnectionContext(getPeerID());
-                return !ctx.isMe((Occupant) x) && !ctx.isInRoster((Occupant) x);// ctx.getPeerIdentity((Occupant)
+                return !ctx.isMe((OccupantEx) x) && !ctx.isInRoster((OccupantEx) x);// ctx.getPeerIdentity((Occupant)
                                                                                 // x)
                                                                                 // ==
                                                                                 // null;
@@ -119,7 +118,7 @@ public class PeerList extends JPanel
             {
                 ConnectionContext ctx = ConnectionManager
                         .getConnectionContext(getPeerID());
-                ctx.addRoster((Occupant) getList().getSelectedValue());
+                ctx.addRoster((OccupantEx) getList().getSelectedValue());
             }
 
         });
@@ -133,8 +132,8 @@ public class PeerList extends JPanel
                 Object x = getList().getSelectedValue();
                 ConnectionContext ctx = ConnectionManager
                         .getConnectionContext(getPeerID());
-                if (x instanceof Occupant) return !ctx.isMe((Occupant) x)
-                        && ctx.isInRoster((Occupant) x);// ctx.getPeerIdentity((Occupant)
+                if (x instanceof OccupantEx) return !ctx.isMe((OccupantEx) x)
+                        && ctx.isInRoster((OccupantEx) x);// ctx.getPeerIdentity((Occupant)
                                                         // x) != null;
                 else if (x instanceof HGPeerIdentity)
                     return !ctx.isMe((HGPeerIdentity) x)
@@ -148,7 +147,7 @@ public class PeerList extends JPanel
                 Object x = getList().getSelectedValue();
                 ConnectionContext ctx = ConnectionManager
                         .getConnectionContext(getPeerID());
-                if (x instanceof Occupant) ctx.removeRoster((Occupant) x);
+                if (x instanceof OccupantEx) ctx.removeRoster((OccupantEx) x);
                 else if (x instanceof HGPeerIdentity)
                     ctx.removeRoster((HGPeerIdentity) x);
             }

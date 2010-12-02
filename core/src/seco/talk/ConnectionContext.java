@@ -14,7 +14,6 @@ import java.util.concurrent.Future;
 import javax.swing.JOptionPane;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGQuery;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;
@@ -26,14 +25,13 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.HostedRoom;
-import org.jivesoftware.smackx.muc.Occupant;
+
 
 import seco.ThisNiche;
 import seco.U;
 import seco.gui.GUIHelper;
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
-import seco.gui.TopFrame;
 import seco.gui.visual.VisualAttribs;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -43,9 +41,9 @@ import seco.util.task.CallableCallback;
 
 public class ConnectionContext
 {
-    //TODO: shouldn't be hardcoded
     private String networkName = "Seco Network";
-    
+
+    // TODO: shouldn't be hardcoded
     static final String OPENFIRE_HOST = "kobrix.syspark.net";
 
     private ConnectionConfig config;
@@ -107,40 +105,38 @@ public class ConnectionContext
 
     public HyperGraphPeer getPeer()
     {
-        if (thisPeer != null) 
-            return thisPeer;
+        if (thisPeer != null) return thisPeer;
         return create_new_peer();
     }
 
-    //check if the current peer's config is the same
-    //before trying to connect it
+    // check if the current peer's config is the same
+    // before trying to connect it
     private HyperGraphPeer getUpdatedPeer()
     {
-        if(thisPeer == null)
-           return create_new_peer();
-        return (same_config(thisPeer.getConfiguration())) ? 
-                thisPeer :  create_new_peer();
+        if (thisPeer == null) return create_new_peer();
+        return (same_config(thisPeer.getConfiguration())) ? thisPeer
+                : create_new_peer();
     }
-    
+
     private boolean same_config(Map<String, Object> peerConfig)
     {
-        Object o = peerConfig.get("peerName"); 
-        if(o == null || !o.equals(config.getUsername())) return false;
+        Object o = peerConfig.get("peerName");
+        if (o == null || !o.equals(config.getUsername())) return false;
         o = peerConfig.get("anonymous");
-        if(o == null || !o.equals(config.isAnonymousLogin())) return false;
+        if (o == null || !o.equals(config.isAnonymousLogin())) return false;
         o = peerConfig.get("autoRegister");
-        if(o == null || !o.equals(config.isAutoRegister())) return false;
+        if (o == null || !o.equals(config.isAutoRegister())) return false;
         o = peerConfig.get("user");
-        if(o == null || !o.equals(config.getUsername())) return false;
+        if (o == null || !o.equals(config.getUsername())) return false;
         o = peerConfig.get("password");
-        if(o == null || !o.equals(config.getPassword())) return false;
+        if (o == null || !o.equals(config.getPassword())) return false;
         o = peerConfig.get("serverUrl");
-        if(o == null || !o.equals(config.getHostname())) return false;
+        if (o == null || !o.equals(config.getHostname())) return false;
         o = peerConfig.get("port");
-        if(o == null || !o.equals(config.getPort())) return false;
+        if (o == null || !o.equals(config.getPort())) return false;
         return true;
     }
-    
+
     private HyperGraphPeer create_new_peer()
     {
         JSONReader reader = new JSONReader();
@@ -156,7 +152,7 @@ public class ConnectionContext
         xmppConfig.put("serverUrl", config.getHostname());
         xmppConfig.put("port", config.getPort());
         thisPeer = new HyperGraphPeer(peerConfig, ThisNiche.graph);
-        return thisPeer; 
+        return thisPeer;
     }
 
     public boolean isConnected()
@@ -176,8 +172,8 @@ public class ConnectionContext
         U.run(new CallableCallback<Boolean>() {
             public Boolean call() throws Exception
             {
-                Future<Boolean> f = getUpdatedPeer().start(config.getUsername(),
-                        config.getPassword());
+                Future<Boolean> f = getUpdatedPeer().start(
+                        config.getUsername(), config.getPassword());
                 return f.get();
             }
 
@@ -188,8 +184,10 @@ public class ConnectionContext
                     // JOptionPane.showMessageDialog(ConnectionPanel.this,
                     // "Successfully connected to network.");
                     fireConnected();
-                    XMPPPeerInterface i = (XMPPPeerInterface) getPeer().getPeerInterface();
-                    i.getConnection().addConnectionListener(new MyConnectionListener());
+                    XMPPPeerInterface i = (XMPPPeerInterface) getPeer()
+                            .getPeerInterface();
+                    i.getConnection().addConnectionListener(
+                            new MyConnectionListener());
                 }
                 else
                 {
@@ -235,12 +233,11 @@ public class ConnectionContext
                 else
                 {
                     if (t != null) t.printStackTrace(System.err);
-                    JOptionPane
-                            .showMessageDialog(
-                                    GUIUtil.getFrame(),
-                                    t,
-                                    "Failed to disconnected from network, see error console.",
-                                    JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(
+                            GUIUtil.getFrame(),
+                            t,
+                            "Failed to disconnected from network, see error console.",
+                            JOptionPane.ERROR_MESSAGE);
                     // TODO: maybe we should fire new event
                     fireConnected();
                 }
@@ -250,9 +247,10 @@ public class ConnectionContext
 
     private ConnectionPanel getConnectionPanel()
     {
-        return hg.getOne(ThisNiche.graph, hg.and(
-                hg.type(ConnectionPanel.class), hg.eq("peerID", getPeer()
-                        .getIdentity())));
+        return hg.getOne(
+                ThisNiche.graph,
+                hg.and(hg.type(ConnectionPanel.class),
+                        hg.eq("peerID", getPeer().getIdentity())));
     }
 
     public ConnectionPanel openConnectionPanel()
@@ -277,8 +275,8 @@ public class ConnectionContext
                 ThisNiche.TOP_CELL_GROUP_HANDLE, panelHandle);
         if (existingH != null)
         {
-            PSwingNode n = ThisNiche.getCanvas()
-                    .getPSwingNodeForHandle(existingH);
+            PSwingNode n = ThisNiche.getCanvas().getPSwingNodeForHandle(
+                    existingH);
             n.blink();
             return panel;
         }
@@ -303,9 +301,10 @@ public class ConnectionContext
     {
         if (talks.containsKey(friend)) return talks.get(friend).getPanel();
         // hg.findOne(arg0, arg1)(cond)
-        HGHandle panelH = hg.findOne(ThisNiche.graph, hg.and(hg
-                .type(TalkPanel.class), hg.eq("friend", friend), hg.eq(
-                "peerID", getPeer().getIdentity())));
+        HGHandle panelH = hg.findOne(
+                ThisNiche.graph,
+                hg.and(hg.type(TalkPanel.class), hg.eq("friend", friend),
+                        hg.eq("peerID", getPeer().getIdentity())));
         if (panelH == null) return null;
         TalkPanel panel = ThisNiche.graph.get(panelH);
         if (panel != null) panel.initTalkActivity(this);
@@ -328,9 +327,9 @@ public class ConnectionContext
                 ThisNiche.TOP_CELL_GROUP_HANDLE, panelH);
         if (existingH != null)
         {
-            PSwingNode n = ThisNiche.getCanvas()
-                    .getPSwingNodeForHandle(existingH);
-            if(n != null) n.blink();
+            PSwingNode n = ThisNiche.getCanvas().getPSwingNodeForHandle(
+                    existingH);
+            if (n != null) n.blink();
             return;
         }
 
@@ -367,9 +366,9 @@ public class ConnectionContext
 
     public void openChatRoom(HostedRoom room)
     {
-        RoomPanel panel = hg.getOne(ThisNiche.graph, hg.and(hg
-                .type(RoomPanel.class), hg.eq("roomId", room.getJid()), hg.eq(
-                "peerID", thisPeer.getIdentity())));
+        RoomPanel panel = hg.getOne(ThisNiche.graph, hg.and(
+                hg.type(RoomPanel.class), hg.eq("roomId", room.getJid()),
+                hg.eq("peerID", thisPeer.getIdentity())));
         HGHandle panelH;
         if (panel == null)
         {
@@ -391,7 +390,8 @@ public class ConnectionContext
                 ThisNiche.TOP_CELL_GROUP_HANDLE, panelH);
         if (existingH != null)
         {
-            PSwingNode n = ThisNiche.getCanvas().getPSwingNodeForHandle(existingH);
+            PSwingNode n = ThisNiche.getCanvas().getPSwingNodeForHandle(
+                    existingH);
             n.blink();
             return;
         }
@@ -413,27 +413,29 @@ public class ConnectionContext
 
     HGPeerIdentity getPeerIdentity(String jid)
     {
+        if (jid == null) return null;
         String occ_name = stripJID(jid);
         for (HGPeerIdentity i : getPeer().getConnectedPeers())
             if (i.getName().equals(occ_name)) return i;
         return null;
     }
-    
-    HGPeerIdentity getPeerIdentity(Occupant x)
+
+    HGPeerIdentity getPeerIdentity(OccupantEx x)
     {
         return getPeerIdentity(x.getJid());
     }
-    
-    boolean isInRoster(Occupant x)
+
+    boolean isInRoster(OccupantEx x)
     {
         String occ_name = stripJID(x.getJid());
         XMPPPeerInterface i = (XMPPPeerInterface) getPeer().getPeerInterface();
         Roster roster = i.getConnection().getRoster();
-        return roster.getEntry(occ_name + "@" + OPENFIRE_HOST) != null;
+        return roster.getEntry(occ_name + "@" + OPENFIRE_HOST/*i.getServerName()*/) != null;
     }
 
-    boolean isMe(Occupant x)
+    boolean isMe(OccupantEx x)
     {
+        if (x.getJid() == null) return false;
         String occ_name = stripJID(x.getJid());
         String me = stripJID(getPeer().getIdentity().getName());
         return occ_name.equals(me);
@@ -443,7 +445,7 @@ public class ConnectionContext
     {
         XMPPPeerInterface i = (XMPPPeerInterface) getPeer().getPeerInterface();
         Roster roster = i.getConnection().getRoster();
-        return roster.getEntry(x.getName() + "@" + OPENFIRE_HOST) != null;
+        return roster.getEntry(x.getName() + "@" + OPENFIRE_HOST/*i.getServerName()*/) != null;
     }
 
     boolean isMe(HGPeerIdentity x)
@@ -456,8 +458,8 @@ public class ConnectionContext
         XMPPPeerInterface i = (XMPPPeerInterface) getPeer().getPeerInterface();
         try
         {
-            i.getConnection().getRoster().createEntry(
-                    short_name + "@" + OPENFIRE_HOST, nick, null);
+            i.getConnection().getRoster()
+                    .createEntry(short_name + "@" + OPENFIRE_HOST/*i.getServerName()*/, nick, null);
         }
         catch (XMPPException ex)
         {
@@ -465,9 +467,10 @@ public class ConnectionContext
         }
     }
 
-    void addRoster(Occupant x)
+    void addRoster(OccupantEx x)
     {
         String occ_name = stripJID(x.getJid());
+        if (occ_name == null) occ_name = x.getNick();
         addRoster(occ_name, x.getNick());
     }
 
@@ -481,8 +484,8 @@ public class ConnectionContext
         XMPPPeerInterface i = (XMPPPeerInterface) getPeer().getPeerInterface();
         try
         {
-            RosterEntry entry = i.getConnection().getRoster().getEntry(
-                    short_name + "@" + OPENFIRE_HOST);
+            RosterEntry entry = i.getConnection().getRoster()
+                    .getEntry(short_name + "@" + i.getServerName());//OPENFIRE_HOST);
             if (entry != null)
                 i.getConnection().getRoster().removeEntry(entry);
         }
@@ -492,7 +495,7 @@ public class ConnectionContext
         }
     }
 
-    void removeRoster(Occupant x)
+    void removeRoster(OccupantEx x)
     {
         HGPeerIdentity id = getPeerIdentity(x);
         if (id != null) removeTalkPanel(id);
@@ -522,7 +525,7 @@ public class ConnectionContext
         }
     }
 
-    void openTalkPanel(Occupant x)
+    void openTalkPanel(OccupantEx x)
     {
         if (isMe(x))
         {
@@ -538,16 +541,23 @@ public class ConnectionContext
             return;
         }
 
-        String message = "User "
-                + x.getNick()
-                + " is not currently in your friend list, would you like to add them?";
-        int res = JOptionPane.showConfirmDialog(GUIUtil.getFrame(),
-                message, "?", JOptionPane.OK_CANCEL_OPTION);
-        if (res == JOptionPane.OK_OPTION) addRoster(x);
+        if(i == null)
+        {
+            JOptionPane.showMessageDialog(GUIUtil.getFrame(), "Not a seco peer");
+        }else //if (!inRoster)
+        {
+            String message = "User "
+                    + x.getNick()
+                    + " is not currently in your friend list, would you like to add them?";
+            int res = JOptionPane.showConfirmDialog(GUIUtil.getFrame(),
+                    message, "?", JOptionPane.OK_CANCEL_OPTION);
+            if (res == JOptionPane.OK_OPTION) addRoster(x);
+        }
     }
 
     static String stripJID(String name)
     {
+        if (name == null) return null;
         int ind = name.indexOf("@");
         if (ind > -1) name = name.substring(0, ind);
         return name;
@@ -567,12 +577,12 @@ public class ConnectionContext
     {
         this.config = config;
     }
-    
+
     public String getNetworkName()
     {
         return networkName;
     }
-    
+
     private class MyConnectionListener implements ConnectionListener
     {
 
@@ -588,7 +598,7 @@ public class ConnectionContext
 
         public void reconnectingIn(int arg0)
         {
-            //fireJobStarted(true);
+            // fireJobStarted(true);
         }
 
         public void reconnectionFailed(Exception ex)
@@ -599,7 +609,7 @@ public class ConnectionContext
         public void reconnectionSuccessful()
         {
             fireConnected();
-        }       
+        }
     }
 
     public static interface ConnectionContextListener

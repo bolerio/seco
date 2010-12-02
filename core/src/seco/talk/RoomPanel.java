@@ -39,7 +39,9 @@ public class RoomPanel extends BaseChatPanel
     private JSplitPane peerListSplit;
     private JSplitPane inputSplit;
 
-    //private boolean roomJoined;
+    // private boolean roomJoined;
+    private PacketListener packetListener = new MyPacketListener();
+    private MyParticipantStatusListener participantStatusListener = new MyParticipantStatusListener();
 
     public RoomPanel(HGPeerIdentity peerID)
     {
@@ -57,12 +59,14 @@ public class RoomPanel extends BaseChatPanel
             if (getConnectionContext() == null) return null;
             XMPPPeerInterface peerInterface = (XMPPPeerInterface) getConnectionContext()
                     .getPeer().getPeerInterface();
-            if(peerInterface != null)
-            thechat = new MultiUserChat(peerInterface.getConnection(), roomId);
+            if (peerInterface != null)
+                thechat = new MultiUserChat(peerInterface.getConnection(),
+                        roomId);
         }
         return thechat;
     }
 
+    //private MyParticipantListener participantListener = new MyParticipantListener();
     void joinRoom()
     {
         initSplitterLocations();
@@ -70,126 +74,18 @@ public class RoomPanel extends BaseChatPanel
 
         if (getTheChat().isJoined())
         {
-            if(getPeerList().getListModel().size() == 0)
-               populatePeerList();
+            if (getPeerList().getListModel().size() == 0) populatePeerList();
             return;
-        } 
+        }
 
-        getTheChat().addMessageListener(new PacketListener() {
-            public void processPacket(Packet packet)
-            {
-                Message msg = (Message) packet;
-                HGPeerIdentity id = new HGPeerIdentity();
-                String otherId = (String) msg.getProperty("secoPeer");
-                if (otherId == null)
-                {
-                    System.err
-                            .println("Received a room message by a non-seco peer." +
-                                    msg.getBody());
-                    return;
-                }
-                else if (otherId.equals(getConnectionContext().getPeer()
-                        .getIdentity().getId().toString())) return;
-                String from = packet.getFrom();
-                int hostPart = from.lastIndexOf("/");
-                if (hostPart > -1) from = from.substring(hostPart + 1);
-                id.setName(from);
-                id.setId(ThisNiche.graph.getHandleFactory().makeHandle());
-                getChatPane().chatFrom(id, msg.getBody());
-            }
-        });
-        
-        getTheChat().addParticipantListener(new PacketListener() {
-            public void processPacket(Packet packet)
-            {
-                Presence presence = (Presence) packet;
-                final String from = presence.getFrom();
-                String myRoomJID = getTheChat().getRoom() + "/" + getTheChat().getNickname();
-                boolean isMe = from.equals(myRoomJID);
-                System.out.println("PoomPanel - presence: " + presence.getFrom() + ":" + 
-                        presence.getType() );
-                if(isMe)
-                {
-                    Occupant o = getTheChat().getOccupant(from);
-                    if(o != null)
-                        getPeerList().getListModel().addElement(o);
-                    else 
-                        //ugly hack, to add Me in the list
-                        RequestProcessor.getDefault().post(new Runnable(){
-                            public void run()
-                            {
-                                //populatePeerList();
-                                Occupant o = getTheChat().getOccupant(from);
-                                if(o != null)
-                                    getPeerList().getListModel().addElement(o);
-                            }
-                        }, 3000);
-                }//else
-                    
-                    
-            }
-        });
+        getTheChat().removeMessageListener(packetListener);
+        getTheChat().addMessageListener(packetListener);
 
-        getTheChat().addParticipantStatusListener(
-            new DefaultParticipantStatusListener() {
+        //getTheChat().removeParticipantListener(participantListener);
+        //getTheChat().addParticipantListener(participantListener);
 
-                @Override
-                public void joined(String participant)
-                {
-                    Occupant o = getTheChat().getOccupant(participant);
-                    System.out.println("Occupant joined: " + participant + ":" + o);
-                    if (o != null)
-                        getPeerList().getListModel().addElement(o);
-                    
-                }
-
-                @Override
-                public void kicked(String participant, String actor,
-                        String reason)
-                {
-                    Occupant o = getTheChat().getOccupant(participant);
-                    System.out.println("Occupant kicked: " + participant + ":" + o);
-                    if (o != null)
-                    {
-                        if(getConnectionContext().isMe(o))
-                        {
-                            disconnected(getConnectionContext());
-                            return;
-                        }
-                        getPeerList().getListModel().removeElement(o);
-                    }
-                }
-
-                @Override
-                public void left(String participant)
-                {
-                    PeerListModel model = getPeerList().getListModel();
-                    Occupant oc = getTheChat().getOccupant(participant);
-                    System.out.println("Occupant left: " + participant + ":" + oc);
-                    if(oc != null)
-                    {
-                        if(getConnectionContext().isMe(oc))
-                        {
-                            disconnected(getConnectionContext());
-                            return;
-                        }
-                        
-                        model.removeElement(oc);
-                        return;
-                    }
-                        
-                    String p_name = stripNick(participant);
-                    for(int i = 0; i < model.getSize(); i++)
-                    { 
-                        Occupant o =  (Occupant) model.getElementAt(i);
-                        if(p_name.equals(o.getNick()))
-                        {
-                            model.removeElement(o);
-                            return;
-                        }
-                    }
-                }
-            });
+        getTheChat().removeParticipantStatusListener(participantStatusListener);
+        getTheChat().addParticipantStatusListener(participantStatusListener);
 
         try
         {
@@ -201,31 +97,31 @@ public class RoomPanel extends BaseChatPanel
             // e.printStackTrace();
             throw new RuntimeException(e);
         }
-        
+
         populatePeerList();
     }
-    
+
     static String stripNick(String label)
     {
         int hostPart = label.lastIndexOf("/");
-        if (hostPart > -1)
-            label = label.substring(hostPart + 1);
+        if (hostPart > -1) label = label.substring(hostPart + 1);
         return label;
-    } 
+    }
 
     private void populatePeerList()
     {
-       // getPeerList().getListModel().removeAllElements();
+        // getPeerList().getListModel().removeAllElements();
         for (Iterator<String> i = getTheChat().getOccupants(); i.hasNext();)
         {
             String occ_name = i.next();
-            Occupant o = getTheChat().getOccupant(occ_name);
-            if(getConnectionContext().isMe(o))
+            OccupantEx o = new OccupantEx(getTheChat().getOccupant(occ_name));
+            if (getConnectionContext().isMe(o))
             {
                 getPeerList().getListModel().addElement(o);
                 continue;
             }
-            if (getTheChat().getOccupantPresence(occ_name).isAvailable())
+            if (// getConnectionContext().getPeerIdentity(o) != null &&
+            getTheChat().getOccupantPresence(occ_name).isAvailable())
                 getPeerList().getListModel().addElement(o);
         }
     }
@@ -243,7 +139,7 @@ public class RoomPanel extends BaseChatPanel
         chatPane.initComponents();
         peerListSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                 new JScrollPane(chatPane), new JScrollPane(inputPane));
-        //peerListSplit.setResizeWeight(1.0);
+        // peerListSplit.setResizeWeight(1.0);
         peerListSplit.setName("peerListSplit");
         peerList = new PeerList(getPeerID());
         peerList.initComponents();
@@ -252,7 +148,7 @@ public class RoomPanel extends BaseChatPanel
                 peerList);
         inputSplit.setName("inputSplit");
         inputSplit.setOneTouchExpandable(true);
-        //inputSplit.setResizeWeight(1.0);
+        // inputSplit.setResizeWeight(1.0);
         add(inputSplit, BorderLayout.CENTER);
         setDoubleBuffered(false);
         joinRoom();
@@ -261,11 +157,10 @@ public class RoomPanel extends BaseChatPanel
     private void initSplitterLocations()
     {
         int h = Math.max(300, getHeight());
-        int w = Math.max(300, getWidth());   
+        int w = Math.max(300, getWidth());
         get_split(get_split(this, "inputSplit"), "peerListSplit")
                 .setDividerLocation((int) (0.8 * h));
-        get_split(this, "inputSplit").setDividerLocation(
-                (int) (0.7 * w));
+        get_split(this, "inputSplit").setDividerLocation((int) (0.7 * w));
     }
 
     private JSplitPane get_split(Container cont, String name)
@@ -380,20 +275,145 @@ public class RoomPanel extends BaseChatPanel
     @Override
     public void workStarted(ConnectionContext ctx, boolean connect_or_disconnect)
     {
-         if(!connect_or_disconnect)
-         {
-             try{
-              getTheChat().leave();
-             }catch(Exception ex)
-             {
-                 ex.printStackTrace();
-             }
-         }
+        if (!connect_or_disconnect)
+        {
+            try
+            {
+                getTheChat().leave();
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+        }
     }
 
     @Override
     public boolean isConnected()
     {
         return getTheChat() != null && getTheChat().isJoined();
+    }
+
+    class MyPacketListener implements PacketListener
+    {
+        public void processPacket(Packet packet)
+        {
+            Message msg = (Message) packet;
+            HGPeerIdentity id = new HGPeerIdentity();
+            String otherId = (String) msg.getProperty("secoPeer");
+            if (otherId == null)
+            {
+                System.err
+                        .println("Received a room message by a non-seco peer."
+                                + msg.getBody());
+                return;
+            }
+            else if (otherId.equals(getConnectionContext().getPeer()
+                    .getIdentity().getId().toString())) return;
+            String from = packet.getFrom();
+            int hostPart = from.lastIndexOf("/");
+            if (hostPart > -1) from = from.substring(hostPart + 1);
+            id.setName(from);
+            id.setId(ThisNiche.graph.getHandleFactory().makeHandle());
+            getChatPane().chatFrom(id, msg.getBody());
+        }
+    }
+
+//    class MyParticipantListener implements PacketListener
+//    {
+//        public void processPacket(Packet packet)
+//        {
+//            Presence presence = (Presence) packet;
+//            final String from = presence.getFrom();
+//            String myRoomJID = getTheChat().getRoom() + "/"
+//                    + getTheChat().getNickname();
+//            boolean isMe = from.equals(myRoomJID);
+//            System.out.println("PoomPanel - presence: " + presence.getFrom()
+//                    + ":" + presence.getType());
+//            if (isMe)
+//            {
+//                Occupant o = getTheChat().getOccupant(from);
+//                if (o != null) getPeerList().getListModel().addElement(
+//                        new OccupantEx(o));
+//                else
+//                    // ugly hack, to add Me in the list
+//                    RequestProcessor.getDefault().post(new Runnable() {
+//                        public void run()
+//                        {
+//                            // populatePeerList();
+//                            Occupant o = getTheChat().getOccupant(from);
+//                            if (o != null)
+//                                getPeerList().getListModel().addElement(
+//                                        new OccupantEx(o));
+//                        }
+//                    }, 3000);
+//            }// else
+//        }
+//    }
+
+    class MyParticipantStatusListener extends DefaultParticipantStatusListener
+    {
+
+        @Override
+        public void joined(String participant)
+        {
+            Occupant o = getTheChat().getOccupant(participant);
+            if (o != null)
+            {
+                System.out.println("Occupant joined: " + participant + ":"
+                        + o.getNick());
+                getPeerList().getListModel().addElement(new OccupantEx(o));
+            }
+        }
+
+        @Override
+        public void kicked(String participant, String actor, String reason)
+        {
+            Occupant o = getTheChat().getOccupant(participant);
+            if (o != null)
+            {
+                System.out.println("Occupant kicked: " + participant + ":"
+                        + o.getNick());
+                OccupantEx ex = new OccupantEx(o);
+                if (getConnectionContext().isMe(ex))
+                {
+                    disconnected(getConnectionContext());
+                    return;
+                }
+                getPeerList().getListModel().removeElement(ex);
+            }
+        }
+
+        @Override
+        public void left(String participant)
+        {
+            PeerListModel model = getPeerList().getListModel();
+            Occupant oc = getTheChat().getOccupant(participant);
+            if (oc != null)
+            {
+                System.out.println("Occupant left: " + participant + ":"
+                        + oc.getNick());
+                OccupantEx ex = new OccupantEx(oc);
+                if (getConnectionContext().isMe(ex))
+                {
+                    disconnected(getConnectionContext());
+                    return;
+                }
+
+                model.removeElement(ex);
+                return;
+            }
+
+            // String p_name = stripNick(participant);
+            // for(int i = 0; i < model.getSize(); i++)
+            // {
+            // Occupant o = (Occupant) model.getElementAt(i);
+            // if(p_name.equals(o.getNick()))
+            // {
+            // model.removeElement(o);
+            // return;
+            // }
+            // }
+        }
     }
 }
