@@ -485,7 +485,7 @@ public class ConnectionContext
         try
         {
             RosterEntry entry = i.getConnection().getRoster()
-                    .getEntry(short_name + "@" + i.getServerName());//OPENFIRE_HOST);
+                    .getEntry(short_name + "@" + OPENFIRE_HOST);//i.getServerName()OPENFIRE_HOST);
             if (entry != null)
                 i.getConnection().getRoster().removeEntry(entry);
         }

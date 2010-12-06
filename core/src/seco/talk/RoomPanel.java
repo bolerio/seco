@@ -11,6 +11,7 @@ import javax.swing.JSplitPane;
 
 import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.peer.HGPeerIdentity;
+import org.hypergraphdb.peer.PeerPresenceListener;
 import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
@@ -28,7 +29,7 @@ import seco.talk.PeerList.PeerListModel;
 import seco.util.RequestProcessor;
 import seco.util.task.Callback;
 
-public class RoomPanel extends BaseChatPanel
+public class RoomPanel extends BaseChatPanel implements PeerPresenceListener
 {
     private static final long serialVersionUID = -6292689880168959513L;
     private String roomId;
@@ -66,7 +67,7 @@ public class RoomPanel extends BaseChatPanel
         return thechat;
     }
 
-    //private MyParticipantListener participantListener = new MyParticipantListener();
+   private MyParticipantListener participantListener = new MyParticipantListener();
     void joinRoom()
     {
         initSplitterLocations();
@@ -81,8 +82,8 @@ public class RoomPanel extends BaseChatPanel
         getTheChat().removeMessageListener(packetListener);
         getTheChat().addMessageListener(packetListener);
 
-        //getTheChat().removeParticipantListener(participantListener);
-        //getTheChat().addParticipantListener(participantListener);
+        getTheChat().removeParticipantListener(participantListener);
+        getTheChat().addParticipantListener(participantListener);
 
         getTheChat().removeParticipantStatusListener(participantStatusListener);
         getTheChat().addParticipantStatusListener(participantStatusListener);
@@ -263,6 +264,7 @@ public class RoomPanel extends BaseChatPanel
     public void connected(ConnectionContext ctx)
     {
         joinRoom();
+        ctx.getPeer().addPeerPresenceListener(this);
     }
 
     @Override
@@ -270,6 +272,28 @@ public class RoomPanel extends BaseChatPanel
     {
         getPeerList().getListModel().removeAllElements();
         thechat = null;
+        ctx.getPeer().removePeerPresenceListener(this);
+    }
+    
+    public void peerJoined(HGPeerIdentity target)
+    {
+       //do nothing
+    }
+
+    //needed because when a peer is disconnected, no "room left" event is triggered 
+    public void peerLeft(HGPeerIdentity target)
+    {
+        PeerListModel model = getPeerList().getListModel();
+       // System.out.println("Peer(Occupant) left: " + target.getName());
+        for (int i = 0; i < model.size(); i++)
+        {
+            OccupantEx ex = (OccupantEx) model.getElementAt(i);
+            if(target.getName().equals(ex.getNick()))
+            { 
+             model.removeElement(ex);
+             return;
+             }
+        }
     }
 
     @Override
@@ -319,37 +343,37 @@ public class RoomPanel extends BaseChatPanel
         }
     }
 
-//    class MyParticipantListener implements PacketListener
-//    {
-//        public void processPacket(Packet packet)
-//        {
-//            Presence presence = (Presence) packet;
-//            final String from = presence.getFrom();
-//            String myRoomJID = getTheChat().getRoom() + "/"
-//                    + getTheChat().getNickname();
-//            boolean isMe = from.equals(myRoomJID);
-//            System.out.println("PoomPanel - presence: " + presence.getFrom()
-//                    + ":" + presence.getType());
-//            if (isMe)
-//            {
-//                Occupant o = getTheChat().getOccupant(from);
-//                if (o != null) getPeerList().getListModel().addElement(
-//                        new OccupantEx(o));
-//                else
-//                    // ugly hack, to add Me in the list
-//                    RequestProcessor.getDefault().post(new Runnable() {
-//                        public void run()
-//                        {
-//                            // populatePeerList();
-//                            Occupant o = getTheChat().getOccupant(from);
-//                            if (o != null)
-//                                getPeerList().getListModel().addElement(
-//                                        new OccupantEx(o));
-//                        }
-//                    }, 3000);
-//            }// else
-//        }
-//    }
+    class MyParticipantListener implements PacketListener
+    {
+        public void processPacket(Packet packet)
+        {
+            Presence presence = (Presence) packet;
+            final String from = presence.getFrom();
+            String myRoomJID = getTheChat().getRoom() + "/"
+                    + getTheChat().getNickname();
+            boolean isMe = from.equals(myRoomJID);
+            //System.out.println("PoomPanel - presence: " + presence.getFrom()
+            //        + ":" + presence.getType());
+            if (isMe)
+            {
+                Occupant o = getTheChat().getOccupant(from);
+                if (o != null) getPeerList().getListModel().addElement(
+                        new OccupantEx(o));
+                else
+                    // ugly hack, to add Me in the list
+                    RequestProcessor.getDefault().post(new Runnable() {
+                        public void run()
+                        {
+                            // populatePeerList();
+                            Occupant o = getTheChat().getOccupant(from);
+                            if (o != null)
+                                getPeerList().getListModel().addElement(
+                                        new OccupantEx(o));
+                        }
+                    }, 3000);
+            }// else
+        }
+    }
 
     class MyParticipantStatusListener extends DefaultParticipantStatusListener
     {
@@ -403,17 +427,6 @@ public class RoomPanel extends BaseChatPanel
                 model.removeElement(ex);
                 return;
             }
-
-            // String p_name = stripNick(participant);
-            // for(int i = 0; i < model.getSize(); i++)
-            // {
-            // Occupant o = (Occupant) model.getElementAt(i);
-            // if(p_name.equals(o.getNick()))
-            // {
-            // model.removeElement(o);
-            // return;
-            // }
-            // }
         }
     }
 }

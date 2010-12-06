@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -20,21 +19,15 @@ import javax.swing.border.BevelBorder;
 
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;
-import org.hypergraphdb.peer.NetworkPeerPresenceListener;
 import org.hypergraphdb.peer.PeerPresenceListener;
 import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
-import edu.umd.cs.piccolox.pswing.PSwing;
-
 import seco.ThisNiche;
-import seco.actions.ScriptletAction;
 import seco.gui.GUIHelper;
 import seco.gui.PSwingNode;
-import seco.gui.common.DialogDescriptor;
-import seco.gui.common.DialogDisplayer;
 import seco.gui.common.ToolbarButton;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;

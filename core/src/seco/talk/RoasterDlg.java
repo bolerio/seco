@@ -32,6 +32,8 @@ import org.jivesoftware.smackx.ReportedData;
 import org.jivesoftware.smackx.ReportedData.Row;
 import org.jivesoftware.smackx.search.UserSearchManager;
 
+import seco.util.GUIUtil;
+
 public class RoasterDlg extends JDialog
 {
 
@@ -52,6 +54,7 @@ public class RoasterDlg extends JDialog
 
     public RoasterDlg()
     {
+        super(GUIUtil.getFrame());
         initComponents();
     }
 
