@@ -41,7 +41,7 @@ import seco.boot.NicheBootListener;
 import seco.boot.NicheEditDialog;
 import seco.boot.NicheManager;
 import seco.gui.GUIHelper;
-import seco.notebook.util.RequestProcessor;
+import seco.util.RequestProcessor;
 
 /**
  * 

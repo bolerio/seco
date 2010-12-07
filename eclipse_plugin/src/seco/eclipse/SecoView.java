@@ -283,6 +283,11 @@ public class SecoView extends ViewPart
                     PluginU.searchAndOpen(s);
             }
         }
+        
+        public boolean equals(Object o)
+        {
+        	return o instanceof GoToDeclarationAction;
+        }
     };
 
     public static int getWordStart(NotebookDocument doc, int offset)

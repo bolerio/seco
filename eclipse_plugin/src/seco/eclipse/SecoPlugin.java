@@ -15,12 +15,14 @@ import org.osgi.framework.BundleContext;
 import seco.ThisNiche;
 import seco.eclipse.SecoView.GoToDeclarationAction;
 import seco.gui.GUIHelper;
-import seco.notebook.ActionManager;
-import seco.notebook.AppConfig;
+import seco.actions.ActionManager;
+import seco.AppConfig;
 import seco.notebook.NotebookUI;
-import seco.notebook.storage.ClassRepository;
+import seco.storage.ClassRepository;
 import seco.rtenv.ClassPathEntry;
-import edu.emory.mathcs.backport.java.util.Arrays;
+import seco.rtenv.RuntimeContext;
+
+import java.util.Arrays;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -158,15 +160,16 @@ public class SecoPlugin extends AbstractUIPlugin {
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
+				RuntimeContext rt = ThisNiche.getTopContext().getRuntimeContext(); 
+				//eclipse plugins dir
 				File f = AppConfig.getJarDirectory(Platform.class);
-				ThisNiche.getTopContext().getRuntimeContext().getClassPath()
-						.add(new ClassPathEntry(f));
-				ThisNiche.getTopContext().getRuntimeContext().getBindings()
-						.put("plugin", plugin);
-				ThisNiche.getTopContext().getRuntimeContext().getBindings()
-						.put("workspace", ResourcesPlugin.getWorkspace());
-				ThisNiche.getTopContext().getRuntimeContext().getBindings()
-						.put("frame", null);
+				rt.getClassPath().add(new ClassPathEntry(f));
+				//seco plugin lib dir
+				f = AppConfig.getJarDirectory(NotebookUI.class);
+				rt.getClassPath().add(new ClassPathEntry(f));
+				rt.getBindings().put("plugin", plugin);
+				rt.getBindings().put("workspace", ResourcesPlugin.getWorkspace());
+				rt.getBindings().put("frame", null);
 				if (!Arrays.asList(NotebookUI.getPopupMenu().getComponents())
 						.contains(goToDeclarationAction)) {
 					NotebookUI.getPopupMenu().add(goToDeclarationAction);

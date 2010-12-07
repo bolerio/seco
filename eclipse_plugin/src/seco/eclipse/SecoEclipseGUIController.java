@@ -7,7 +7,7 @@ import javax.swing.event.CaretListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import seco.gui.CommonActions;
+import seco.actions.CommonActions;
 import seco.gui.GUIController;
 import seco.gui.GUIHelper;
 import seco.gui.PiccoloCanvas;
@@ -15,7 +15,7 @@ import seco.gui.TopFrame;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.syntax.ScriptSupport;
-import seco.notebook.util.Log;
+import seco.util.Log;
 import seco.talk.ConnectionManager;
 import seco.things.CellUtils;
 
