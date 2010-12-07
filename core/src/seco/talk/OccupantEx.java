@@ -16,8 +16,9 @@ public class OccupantEx
     private String nick;
     public OccupantEx(Occupant item) 
     {
-        
         this.jid = item.getJid();
+        if(jid == null)
+            System.err.println("WARNING: null jid");
         this.affiliation = item.getAffiliation();
         this.role = item.getRole();
         this.nick = item.getNick();
