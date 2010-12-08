@@ -19,6 +19,7 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
 import seco.rtenv.RtU;
 import seco.rtenv.RuntimeContext;
 import seco.util.GUIUtil;
@@ -28,6 +29,7 @@ public class ManageRuntimeContextDialog extends JDialog
     public ManageRuntimeContextDialog()
     {
         super(GUIUtil.getFrame(), "Manage Runtime Context");
+        if(GUIUtil.getFrame() == null) setIconImage(GUIHelper.LOGO_IMAGE);
         getContentPane().add(new ManageRtCtxPanel());
         setSize(250, 160);
     };

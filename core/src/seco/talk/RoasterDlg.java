@@ -32,12 +32,11 @@ import org.jivesoftware.smackx.ReportedData;
 import org.jivesoftware.smackx.ReportedData.Row;
 import org.jivesoftware.smackx.search.UserSearchManager;
 
+import seco.gui.GUIHelper;
 import seco.util.GUIUtil;
 
 public class RoasterDlg extends JDialog
 {
-
-    private static final long serialVersionUID = 1L;
     private JLabel lblSearch;
     private JCheckBox chkUsername;
     private JCheckBox chkEmail;
@@ -55,6 +54,7 @@ public class RoasterDlg extends JDialog
     public RoasterDlg()
     {
         super(GUIUtil.getFrame());
+        if(GUIUtil.getFrame() == null) setIconImage(GUIHelper.LOGO_IMAGE);
         initComponents();
     }
 

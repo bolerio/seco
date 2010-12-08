@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
 import seco.rtenv.RuntimeContext;
 import seco.util.GUIUtil;
 
@@ -31,6 +32,7 @@ public class NewRuntimeContextDialog extends JDialog
     public NewRuntimeContextDialog()
     {
         super(GUIUtil.getFrame(), "Add New Runtime Context");
+        if(GUIUtil.getFrame() == null) setIconImage(GUIHelper.LOGO_IMAGE);
         getContentPane().add(new MyPanel());
         setSize(350, 350);
     };

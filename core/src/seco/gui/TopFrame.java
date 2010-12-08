@@ -1,7 +1,6 @@
 package seco.gui;
 
 import java.awt.HeadlessException;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
@@ -17,39 +16,32 @@ import seco.talk.ConnectionManager;
 import seco.things.CellUtils;
 import seco.util.Log;
 
-public abstract class TopFrame extends JFrame implements GUIController 
+public abstract class TopFrame extends JFrame implements GUIController
 {
-    private static final long serialVersionUID = -4693003403767961820L; 
-    
+    private static final long serialVersionUID = -4693003403767961820L;
+
     public static boolean PICCOLO = true;
     public static boolean AUTO_BACKUP = true;
- 
-    protected Image LOGO_IMAGE = Toolkit.getDefaultToolkit().getImage(
-            TopFrame.class.getResource(GUIHelper.LOGO_IMAGE_RESOURCE));
-    private static Image NO_LOGO =  Toolkit.getDefaultToolkit().getImage(
-            TopFrame.class.getResource("/seco/notebook/images/nologo.jpg"));;
 
     private String original_title;
-    
+
     public TopFrame() throws HeadlessException
     {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         initFrame();
         Log.start();
-        addWindowFocusListener(
-               new WindowFocusListener(){
+        addWindowFocusListener(new WindowFocusListener() {
 
-                @Override
-                public void windowGainedFocus(WindowEvent e)
-                {
-                    set_original_title_and_icon();
-                    //System.out.println("TopFrame - windowGainedFocus: " + original_title);
-                }
+            @Override
+            public void windowGainedFocus(WindowEvent e)
+            {
+                set_original_title_and_icon();
+            }
 
-                @Override
-                public void windowLostFocus(WindowEvent e)
-                {
-                }
+            @Override
+            public void windowLostFocus(WindowEvent e)
+            {
+            }
 
         });
     }
@@ -59,15 +51,14 @@ public abstract class TopFrame extends JFrame implements GUIController
         original_title = "[" + ThisNiche.graph.getLocation() + "] ";
         set_original_title_and_icon();
     }
-    
-  
+
     public void blink(String message)
     {
-        if(isFocused()) return;
+        if (isFocused()) return;
         Toolkit.getDefaultToolkit().beep();
         flash(message, 1000, 500, 5);
     }
-    
+
     private void do_flash(String message, boolean on)
     {
         if (!on)
@@ -76,9 +67,9 @@ public abstract class TopFrame extends JFrame implements GUIController
             return;
         }
 
-        if (getIconImage() == LOGO_IMAGE)
+        if (getIconImage() == GUIHelper.LOGO_IMAGE)
         {
-            setIconImage(NO_LOGO);
+            setIconImage(GUIHelper.NO_LOGO);
             setTitle(message);
         }
         else
@@ -86,21 +77,24 @@ public abstract class TopFrame extends JFrame implements GUIController
             set_original_title_and_icon();
         }
     }
-    
+
     private void set_original_title_and_icon()
     {
-        setIconImage(LOGO_IMAGE);
+        setIconImage(GUIHelper.LOGO_IMAGE);
         setTitle(original_title);
-    } 
-    
+    }
+
     public void setTitle(String title)
     {
         super.setTitle(title);
     }
-    
-    public void setStatusBarMessage(String message){}
 
-    private void flash(final String message, final int intratime, final int intertime, final int count)
+    public void setStatusBarMessage(String message)
+    {
+    }
+
+    private void flash(final String message, final int intratime,
+            final int intertime, final int count)
     {
         Thread flashThread = new Thread(new Runnable() {
             public void run()
@@ -124,9 +118,9 @@ public abstract class TopFrame extends JFrame implements GUIController
                 }
             }
         });
-       flashThread.start();
+        flashThread.start();
     }
-    
+
     // TODO: legacy - called in .scm scripts
     public HGHandle getCurrentRuntimeContext()
     {
@@ -149,12 +143,12 @@ public abstract class TopFrame extends JFrame implements GUIController
         return null;
     }
 
-    public  JFrame getFrame()
+    public JFrame getFrame()
     {
         return this;
     }
 
-     public CaretListener getNotebookUICaretListener()
+    public CaretListener getNotebookUICaretListener()
     {
         return null;
     }
@@ -167,6 +161,5 @@ public abstract class TopFrame extends JFrame implements GUIController
         CellUtils.removeBackupedStuff();
         System.exit(0);
     }
-
 
 }

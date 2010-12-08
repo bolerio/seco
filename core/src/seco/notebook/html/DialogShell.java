@@ -38,6 +38,9 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Container;
 import javax.swing.text.AttributeSet;
+
+import seco.gui.GUIHelper;
+
 import java.awt.Dialog;
 
 /**
@@ -88,6 +91,7 @@ public class DialogShell extends JDialog implements ActionListener {
    */
   public DialogShell(Dialog parent, String title) {
     super(parent, title);
+    if(parent == null) setIconImage(GUIHelper.LOGO_IMAGE);
     buildDialog();
   }
 

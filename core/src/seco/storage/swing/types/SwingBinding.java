@@ -90,28 +90,21 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
                 TypeUtils.setValueFor(graph, handle, bean);
             }
 
-            // if(bean instanceof JButton && "Connect".equals(
-            // ((JButton) bean).getText()))
-            // {
-            // System.out.println("SwingBinding: " + handle + ":" + bean);
-            // }
-
             if (bean == null)
             {
-                System.err.println("Unable to create bean fo type: "
+                System.err.println("Unable to create bean of type: "
                         + hgType.getJavaClass());
                 return null;
             }
 
             makeBean(bean, record);
             // System.out.println("Make - res: " + bean);
-            AddOnLink addons = (AddOnLink) graph.get(hgType.getAddOnsHandle());
+            AddOnLink addons = graph.get(hgType.getAddOnsHandle());
             if (addons != null) for (int i = 0; i < addons.getArity(); i++)
             {
-                HGRelType l = (HGRelType) graph.get(addons.getTargetAt(i));
+                HGRelType l = graph.get(addons.getTargetAt(i));
                 AddOnFactory.processLink(graph, l, record, bean);
             }
-
         }
         catch (Throwable t)
         {
@@ -139,7 +132,7 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
 
     private Object instantiate(HGHandle h, Record record)
     {
-        ConstructorLink link = (ConstructorLink) graph.get(h);
+        ConstructorLink link = graph.get(h);
         // System.out.println("SB - instantiate" +
         // hgType.getJavaClass() + ":" + link);
         if (link != null && link instanceof FactoryConstructorLink)

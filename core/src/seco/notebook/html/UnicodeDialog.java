@@ -55,6 +55,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
+import seco.gui.GUIHelper;
 import seco.util.GUIUtil;
 
 public class UnicodeDialog extends JDialog implements ActionListener
@@ -374,6 +375,7 @@ public class UnicodeDialog extends JDialog implements ActionListener
 	public UnicodeDialog(HTMLEditor parent, String title, boolean bModal, int index)
 	{
 		super(GUIUtil.getFrame(parent), title, bModal);
+		if(GUIUtil.getFrame(parent) == null) setIconImage(GUIHelper.LOGO_IMAGE);
 		editor = parent;
 		init(index);
 	}

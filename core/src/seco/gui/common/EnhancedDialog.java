@@ -8,6 +8,9 @@
 package seco.gui.common;
 
 import javax.swing.*;
+
+import seco.gui.GUIHelper;
+
 import java.awt.event.*;
 import java.awt.*;
 
@@ -25,6 +28,7 @@ public abstract class EnhancedDialog extends JDialog
 	{
 		super(parent,title,modal);
 		_init();
+		if(parent == null) setIconImage(GUIHelper.LOGO_IMAGE);
 	}
 	
 	public EnhancedDialog(Dialog parent, String title, boolean modal)

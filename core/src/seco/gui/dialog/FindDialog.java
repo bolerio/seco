@@ -37,6 +37,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Position;
 
+import seco.gui.GUIHelper;
 import seco.notebook.NotebookUI;
 import seco.notebook.html.HTMLEditor;
 import seco.notebook.view.HtmlView;
@@ -69,6 +70,7 @@ public class FindDialog extends JDialog
     public FindDialog(final JEditorPane owner, int index)
     {
         super(GUIUtil.getFrame(owner), "Find and Replace", false);
+        if(GUIUtil.getFrame(owner) == null) setIconImage(GUIHelper.LOGO_IMAGE);
         this.owner = owner;
         tabbedPane = new JTabbedPane();
         // "Find" panel

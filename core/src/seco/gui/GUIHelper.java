@@ -10,8 +10,10 @@ import static seco.actions.CommonActions.PASTE;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -314,10 +316,11 @@ public class GUIHelper
     {
         JMenu menu = new PiccoloMenu("Network");
         menu.setMnemonic('n');
-        String lang = "jscheme";
-        String code = "(load \"jscheme/scribaui.scm\")\n(netdialog-action '())\n";
-        ScriptletAction a = new ScriptletAction(lang, code);
-        JMenuItem mi = new JMenuItem(a);
+       // String lang = "jscheme";
+       // String code = "(load \"jscheme/scribaui.scm\")\n(netdialog-action '())\n";
+       // ScriptletAction a = new ScriptletAction(lang, code);
+        String code = "new seco.gui.dialog.NetworkConnectionDlg().setVisible(true);";
+        JMenuItem mi = new JMenuItem(new ScriptletAction(code));
         mi.setText("Connection");
         menu.add(mi);
         return menu;
@@ -889,5 +892,10 @@ public class GUIHelper
         {
         }
     }
+
+    public static final Image LOGO_IMAGE = Toolkit.getDefaultToolkit().getImage(
+    TopFrame.class.getResource(LOGO_IMAGE_RESOURCE));
+    public static final Image NO_LOGO =  Toolkit.getDefaultToolkit().getImage(
+    TopFrame.class.getResource("/seco/notebook/images/nologo.jpg"));
 
 }

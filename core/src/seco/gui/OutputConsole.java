@@ -1,6 +1,5 @@
 package seco.gui;
 
-
 import java.awt.Color;
 import java.awt.Font;
 import java.io.PrintStream;
@@ -23,7 +22,7 @@ import seco.ThisNiche;
  * Change the appearance of the err and out streams through the static err_attrs and out_attrs
  * variables
  */
-public class OutputConsole extends JTextPane implements  DocumentListener
+public class OutputConsole extends JTextPane implements DocumentListener
 {
     private static final long serialVersionUID = -7922836398672418895L;
 
@@ -73,15 +72,27 @@ public class OutputConsole extends JTextPane implements  DocumentListener
             oldOut = System.out;
             System.setErr(getErr());
             System.setOut(getOut());
-          //get all abstract engines and set the writer of their SimpleScriptContext
-            for(Iterator<String> it = ThisNiche.getTopContext().getLanguages(); it.hasNext();)
+            // get all abstract engines and set the writer of their
+            // SimpleScriptContext
+            for (Iterator<String> it = ThisNiche.getTopContext().getLanguages(); it
+                    .hasNext();)
             {
                 String name = it.next();
-                ScriptEngine e = ThisNiche.getTopContext().getEngine(name);
-                if(e instanceof AbstractScriptEngine)
+                try
                 {
-                    ((AbstractScriptEngine) e).getContext().setWriter(new PrintWriter(getOut(), true));
-                    ((AbstractScriptEngine) e).getContext().setErrorWriter(new PrintWriter(getErr(), true));
+                    ScriptEngine e = ThisNiche.getTopContext().getEngine(name);
+                    if (e instanceof AbstractScriptEngine)
+                    {
+                        ((AbstractScriptEngine) e).getContext().setWriter(
+                                new PrintWriter(getOut(), true));
+                        ((AbstractScriptEngine) e).getContext().setErrorWriter(
+                                new PrintWriter(getErr(), true));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // stay silent, maybe some dependent classes on a not used
+                    // engine are found...
                 }
             }
         }
@@ -91,15 +102,19 @@ public class OutputConsole extends JTextPane implements  DocumentListener
     {
         System.setErr(oldErr);
         System.setOut(oldOut);
-        //get all abstract engines and set the writers of their SimpleScriptContext
-        for(Iterator<String> it = ThisNiche.getTopContext().getLanguages(); it.hasNext();)
+        // get all abstract engines and set the writers of their
+        // SimpleScriptContext
+        for (Iterator<String> it = ThisNiche.getTopContext().getLanguages(); it
+                .hasNext();)
         {
             String name = it.next();
             ScriptEngine e = ThisNiche.getTopContext().getEngine(name);
-            if(e instanceof AbstractScriptEngine)
+            if (e instanceof AbstractScriptEngine)
             {
-                ((AbstractScriptEngine) e).getContext().setWriter(new PrintWriter(oldOut, true));
-                ((AbstractScriptEngine) e).getContext().setErrorWriter(new PrintWriter(oldErr, true));
+                ((AbstractScriptEngine) e).getContext().setWriter(
+                        new PrintWriter(oldOut, true));
+                ((AbstractScriptEngine) e).getContext().setErrorWriter(
+                        new PrintWriter(oldErr, true));
             }
         }
     }

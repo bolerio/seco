@@ -222,9 +222,14 @@ public class MetaData
         
         registerConstructor("javax.swing.plaf.basic.BasicBorders$ButtonBorder",
                 new String[] {"shadow", "darkShadow", "highlight", "lightHighlight"});
+        registerConstructor("javax.swing.plaf.basic.BasicBorders$FieldBorder",
+                new String[] {"shadow", "darkShadow", "highlight", "lightHighlight"});
         registerConstructor("javax.swing.plaf.basic.BasicBorders$SplitPaneBorder",
                 new String[] {"highlight", "shadow"});
-        
+        registerConstructor("javax.swing.plaf.basic.BasicBorders$MenuBarBorder",
+                new String[] {"highlight", "shadow"});
+        registerConstructor("com.sun.java.swing.plaf.windows.WindowsBorders$ToolBarBorder",
+                new String[] {"highlight", "shadow"});
           
         registerConstructor("java.awt.MenuShortcut", new String[] { "key",
                 "usesShift" });

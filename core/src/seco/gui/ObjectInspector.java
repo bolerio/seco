@@ -55,6 +55,7 @@ public class ObjectInspector extends Outline
         setRenderDataProvider(new RenderData());
         setDefaultRenderer(Object.class, new MyDefaultOutlineCellRenderer());
         setModelObject(obj);
+        getColumnModel().getColumn(0).setMinWidth(150);
     }
     
     
@@ -412,7 +413,6 @@ public class ObjectInspector extends Outline
     
     private static class MyDefaultOutlineCellRenderer extends DefaultOutlineCellRenderer
     {
-
         @Override
         public void setIcon(Icon icon)
         {

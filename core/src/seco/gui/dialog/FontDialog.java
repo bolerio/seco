@@ -50,7 +50,9 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
+import seco.gui.GUIHelper;
 import seco.notebook.style.FontEx;
+import seco.util.GUIUtil;
 
 public class FontDialog extends JDialog
 {
@@ -85,6 +87,7 @@ public class FontDialog extends JDialog
 	public FontDialog(Frame parent, FontEx font, Color fgColor, int[] sizes)
 	{
 		super(parent, "Font", true);
+		if(parent == null) setIconImage(GUIHelper.LOGO_IMAGE);
 		this.font = font;
 		this.fgColor = fgColor;
 		JPanel pp = new JPanel();

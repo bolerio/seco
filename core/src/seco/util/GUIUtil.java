@@ -87,6 +87,7 @@ public static void createAndShowDlg(Frame f, String title, Component c, Dimensio
     JDialog dialog = new JDialog(f, title);
     if(dim != null)  dialog.setSize(dim);
     dialog.add(c);
+    if(f == null) dialog.setIconImage(GUIHelper.LOGO_IMAGE);
     centerOnScreen(dialog);
     dialog.setVisible(true);
 }

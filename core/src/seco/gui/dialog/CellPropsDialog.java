@@ -31,6 +31,7 @@ import javax.swing.border.TitledBorder;
 import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 import seco.notebook.XMLConstants;
@@ -56,6 +57,7 @@ public class CellPropsDialog extends JDialog
             StyleType style_type)
     {
         super(parent, "Properties for: " + style_type.getDescription(), true);
+        if(parent == null) setIconImage(GUIHelper.LOGO_IMAGE);
         this.doc = doc;
         this.style_type = style_type;
         style = doc.getStyle(style_type);

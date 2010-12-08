@@ -34,6 +34,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import seco.ThisNiche;
+import seco.gui.GUIHelper;
 import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;
@@ -50,6 +51,7 @@ public class EditRuntimeContextDialog extends JDialog
     public EditRuntimeContextDialog(RuntimeContext ctx)
     {
         super(GUIUtil.getFrame(), "Manage Runtime Context");
+        if(GUIUtil.getFrame() == null) setIconImage(GUIHelper.LOGO_IMAGE);
         top = ctx;
         getContentPane().add(new RtConfigPanel());
         setSize(480, 350);

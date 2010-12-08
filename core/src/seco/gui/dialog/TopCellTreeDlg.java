@@ -36,6 +36,7 @@ import org.hypergraphdb.HGQuery.hg;
 import seco.ThisNiche;
 import seco.boot.NicheBootListener;
 import seco.events.EventPubSub;
+import seco.gui.GUIHelper;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -52,6 +53,7 @@ public class TopCellTreeDlg extends JDialog
     public TopCellTreeDlg(CellGroupMember cell)
     {
         super(GUIUtil.getFrame(), false);
+        if(GUIUtil.getFrame() == null) setIconImage(GUIHelper.LOGO_IMAGE);
         this.top = cell;
         String name = CellUtils.getName(cell);
         if (name == null) name = "";
