@@ -70,6 +70,18 @@ public class PluginU {
 				.findView(SecoView.ID) : null;
 		return part instanceof SecoView ? view = (SecoView) part : null;
 	}
+	
+	static void force_viewpart_refresh()
+	{
+		IWorkbench win = PlatformUI.getWorkbench();
+		if (win.getActiveWorkbenchWindow() != null)
+		{
+		    IWorkbenchPage activePage = win.getActiveWorkbenchWindow()
+				.getActivePage();
+		    activePage.activate(view);
+		}
+	}
+	
 
 	public static void showMessage(String message) {
 		if (getSecoView() != null)

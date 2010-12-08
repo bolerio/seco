@@ -1,5 +1,6 @@
 package seco.eclipse;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Method;
@@ -41,7 +42,6 @@ import seco.notebook.NotebookUI;
 import seco.notebook.Utilities;
 import seco.notebook.syntax.ScriptSupport;
 import bsh.BshAst;
-import bsh.ClassIdentifier;
 import edu.umd.cs.piccolox.swing.PScrollPane;
 
 /**
@@ -70,6 +70,8 @@ public class SecoView extends ViewPart
     public void createPartControl(final Composite par)
     {
         this.parent = par;
+        parent.setBackground(new org.eclipse.swt.graphics.Color(
+        		parent.getDisplay(), 255, 255, 255));
         update();
     }
 
@@ -90,12 +92,14 @@ public class SecoView extends ViewPart
     void update()
     {
         SecoPlugin plugin = SecoPlugin.getDefault();
-        if (plugin.getNicheLocation() == null)
+        if (plugin.getNicheLocation() == null && memento != null)
             plugin.setNicheLocation(restoreState());
         clean();
         if (plugin.getNicheLocation() == null)
         {
             noNicheGUI = new NoNicheGUI(parent, SWT.None);
+            parent.pack(true);
+            parent.layout(true, true);
         }
         else
         {
@@ -103,13 +107,14 @@ public class SecoView extends ViewPart
             if (!success)
             {
                 plugin.closeNiche();
-                noNicheGUI = new NoNicheGUI(parent, SWT.None);
+                noNicheGUI = new NoNicheGUI(parent, SWT.NONE);
+                parent.pack(true);
+                parent.layout(true, true);
             }
             else
                 swingControl = new SwingControl(parent, SWT.NONE) {
                     protected JComponent createSwingComponent()
                     {
-
                         PiccoloCanvas canvas = ThisNiche.guiController
                                 .getCanvas();
                         PScrollPane scroll = new PScrollPane(canvas);
@@ -123,8 +128,8 @@ public class SecoView extends ViewPart
                 };
         }
        
-        parent.pack(true);
-        parent.layout();
+        //parent.pack(true);
+       // parent.layout();
     }
 
     

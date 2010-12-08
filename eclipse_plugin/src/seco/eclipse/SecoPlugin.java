@@ -153,7 +153,8 @@ public class SecoPlugin extends AbstractUIPlugin {
 		 	  HGEnvironment.get(plugin.getNicheLocation());
 		  }catch (Throwable t)
 	      {
-			nicheLocation = null;	
+			nicheLocation = null;
+			t.printStackTrace();
 			PluginU.showError(t.toString());
 			return false;
 	      }    	
