@@ -1,14 +1,13 @@
-<notebook title="/home/borislav/seco/core/examples/scribawelcome.nb">
+<notebook title="F:\kosta\ticl\seco\core\examples\scribawelcome.nb">
     <output-cell-style borderColor="255,255,255" fgColor="0,128,0"/>
     <cell-group name="CG0">
         <cell html-preview="true">
-            <data><![CDATA[
-<h1>Welcome To Seco!
-</h1>]]>            </data>
+            <data><![CDATA[<h1>Welcome To Seco!
+</h1>
+]]>            </data>
         </cell>
         <cell html-preview="true">
-            <data><![CDATA[
-<p>Seco is a programming environment for Java based scripting languages. It provides extensive support for editing and managing scripts of all sizes and in any dynamic language compliant with the JSR 223 Java standard specification. While the most obvious use of this environment is for prototyping, experimentation and testing, it aims to grow into a complete platform for software construction. In a nutshell Seco currently offers the following facilities:
+            <data><![CDATA[<p>Seco is a programming environment for Java based scripting languages. It provides extensive support for editing and managing scripts of all sizes and in any dynamic language compliant with the JSR 223 Java standard specification. While the most obvious use of this environment is for prototyping, experimentation and testing, it aims to grow into a complete platform for software construction. In a nutshell Seco currently offers the following facilities:
 </p>
 <ul>
   <li>A versatile interface for script expression evaluation.  
@@ -27,11 +26,11 @@
   </li>
   <li>An infinite 2D zoomable canvas with nested visual containers to organize your environment.  
   </li>
-</ul>]]>            </data>
+</ul>
+]]>            </data>
         </cell>
-        <cell html-preview="true">
-            <data><![CDATA[
-<h2>Language Support
+        <cell html-preview="true" engine="html">
+            <data><![CDATA[<h2>Language Support
 </h2>
 <p>Currently the following scripting languages are supported in Seco:
 </p>
@@ -47,15 +46,17 @@
   </li>
   <li><span style="font-weight:bold;">JavaScript</span> - &#160;The Rhino Java-based implementation of the popular web language, more at the <a href="http://www.mozilla.org/rhino/">Rhino Home Page</a>.  
   </li>
-  <li><span style="font-weight:bold;">JavaFX</span> - The new UI development Java language from Sun (err..Oracle), see the <a href="http://javafx.com/">JavaFX Home Page</a>. &#160;  
+<li><span style="font-weight:bold;">Jython</span> - Jython  is an implementation of the Python programming language which is designed to run on the JVM, see the <a href="http://www.jython.org/">Jython  Home Page</a>. &#160;  
+  </li>
+  <li><span style="font-weight:bold;">tuProlog</span> - tuProlog is a Java-based light-weight Prolog, see the <a href="http://alice.unibo.it/xwiki/bin/view/Tuprolog/">tuProlog Home Page</a>. &#160;  
   </li>
 </ul>
 <p> Other languages can be easily added for evaluation purposes. However, for syntax support and code completion more extensive work is required. If you'd like to incorporate your favorite dynamic language running on the Java platform, please let us know!
-</p>]]>            </data>
+</p>
+]]>            </data>
         </cell>
         <cell html-preview="true">
-            <data><![CDATA[
-<h2>Notebooks
+            <data><![CDATA[<h2>Notebooks
 </h2>
 <p>The user interface is inspired very much by the Mathematica notebook concept from Wolfram Research. Notebooks are the files that you can save and open from the 
   <span style="font-style:italic;">File</span> menu. A notebook is composed of cells that can be arbitrarly nested into cell groups. Each cell contains something of a specific type - a script, the result of an evaluation of a script, the exception that ocurred during script evaluation or some HTML documentation.
@@ -65,31 +66,32 @@
 <p>Input cells are assumed to contain text in the default language of the current notebook. You can change the language for a particular cell from the context menu (also avaible by hitting <span style="font-weight:bold;">Ctrl+Space</span>). You can also change the default language for the whole notebook. The default for new notebooks is BeanShell.
 </p>
 <p style="text-align:left;">A special kind of cell is the <span style="font-style:italic;">initialization c</span>ell. An initialization cell is evaluated automatically when a notebook is loaded.This is useful for common code that needs to be executed to prepare your evaluation environment, such as import declarations, certain resources initialization, module loading and the like. Cell groups can also be marked as <span style="font-style:italic;">initialization groups</span>. All the cells within those groups will be treated as initialization cells. A common practice is, for example, to create several initialization cells, put them in a group and then hide that group from the visual display by shrinking it. Then opening a notebook gives a ready environment for work.
-</p>]]>            </data>
+</p>
+]]>            </data>
         </cell>
         <cell html-preview="true">
-            <data><![CDATA[
-<h2>Runtime Contexts
+            <data><![CDATA[<h2>Runtime Contexts
 </h2>
 <p>Perhaps the first question you'd ask when trying to do something useful with Seco would be &quot; 
   <span style="font-style:italic;">ok, so how do I add a Java library to my classpath?</span>&quot;. Top-level namespaces in Seco, including classpaths, are managed by <span style="font-style:italic;">runtime contexts</span>. A runtime context is sort of like a project in conventional IDE, and also sort of like a workspace. It is a named entity that holds a classpath and a set of global bindings. You can have many runtime contexts. Currently only the classpath portion of a runtime context is persisted between Seco sessions, the set of active bindings is not. Each notebook is associated to one and only one runtime context. To associate a notebook to a runtime context, right-click on the notebook's tab title and use the<span style="font-style:italic;"> </span><span style="font-weight:bold; font-style:italic;">Set Runtime Context</span><span style="font-weight:normal; font-style:italic;"> </span><span style="font-weight:normal;">submenu. </span>
 </p>
 <p>There is a default runtime context, called <span style="font-style:italic;">top</span> to which all newly created notebooks are associated. You may chose to just work within that context and create different niches for your projects. Alternatively, you can have a single niche on your machine and have multiple runtime contexts active in your workspace.
-</p>]]>            </data>
+</p>
+]]>            </data>
         </cell>
         <cell html-preview="true">
-            <data><![CDATA[
-<h2>What Is a Niche Anyway?
+            <data><![CDATA[<h2>What Is a Niche Anyway?
 </h2>
 <p>A niche is essentially a backing store for your working environment. It is based on HyperGraphDB (please visit the <a href="http://www.kobrix.com/hgdb.jsp">HyperGraphDB home page</a> for more information). Seco will record information in this backing store pertaining to configuration, runtime contexts, current live objects etc. You can also use the store for your own purposes, as an embedded object-oriented, transactional database management system.
-</p>]]>            </data>
+</p>
+]]>            </data>
         </cell>
         <cell html-preview="true">
-            <data><![CDATA[
-<h2>IntelliSense Assistance
+            <data><![CDATA[<h2>IntelliSense Assistance
 </h2>
 <p style="text-align:left;">Modern programming environments offer a great deal of support to programmers based on static information available in mainstream languages such as Java and C#. With Seco, we aim to provide a similar type of support to dynamic languages. A first step towards that goal is providing code completion (a.k.a. intellisense) for most common scripting languages. Code completation is currently primitive since it doesn't attempt to do any type inference. It only relies on previously evaluated values. You will notice that this is already very useful. In the future, we hope to augment this facility with some type inference heuristics for BeanShell and other languages that allow this approach.
-</p>]]>            </data>
+</p>
+]]>            </data>
         </cell>
 
     </cell-group>
@@ -100,7 +102,7 @@
         </cell>
 
     </cell-group>
-    <cell-group name="CG2">
+    <cell-group name="CG2" collapsed="true">
         <cell-group name="CG3">
             <cell html-preview="true">
                 <data><![CDATA[<h2>Some Examples
@@ -129,7 +131,8 @@
         </cell>
         <cell-group name="CG5">
             <cell html-preview="true">
-                <data><![CDATA[Both beanshell and jscheme share the same namespace context, so global variable declared in one are automatically visible in the other. For example:]]>                </data>
+                <data><![CDATA[Both beanshell and jscheme share the same namespace context, so global variable declared in one are automatically visible in the other. For example:
+]]>                </data>
             </cell>
 
         </cell-group>
@@ -142,7 +145,8 @@
 ]]>            </data>
         </cell>
         <cell html-preview="true">
-            <data><![CDATA[It is possible for results to contain embedded Java UI components:]]>            </data>
+            <data><![CDATA[It is possible for results to contain embedded Java UI components:
+]]>            </data>
         </cell>
         <cell>
             <data><![CDATA[btn = new  JButton("Show Selected");
@@ -162,10 +166,10 @@ panel
     </cell-group>
     <cell-group name="CG7">
         <cell html-preview="true">
-            <data><![CDATA[
-<h3>
+            <data><![CDATA[<h3>
   <span style="font-style:italic;">Have Fun!</span>
-</h3>]]>            </data>
+</h3>
+]]>            </data>
         </cell>
 
     </cell-group>
