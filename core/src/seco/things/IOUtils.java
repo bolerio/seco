@@ -164,21 +164,21 @@ public class IOUtils
         boolean collapsed = false;
         String engine = null;
         String text = null;
-         String str_ind = el.getAttribute(XMLConstants.ATTR_INIT_CELL);
-        if (str_ind != null && str_ind.length() > 0)
-            initCell = Boolean.parseBoolean(str_ind);
-        str_ind = el.getAttribute(XMLConstants.ATTR_HTML);
-        if (str_ind != null && str_ind.length() > 0)
-            isHTML = Boolean.parseBoolean(str_ind);
-        str_ind = el.getAttribute(XMLConstants.ATTR_READONLY);
-        if (str_ind != null && str_ind.length() > 0)
-            readonly = Boolean.parseBoolean(str_ind);
-        str_ind = el.getAttribute(XMLConstants.ATTR_COLLAPSED);
-        if (str_ind != null && str_ind.length() > 0)
-            collapsed = Boolean.parseBoolean(str_ind);
-        str_ind = el.getAttribute(XMLConstants.ATTR_ENGINE);
-        if (str_ind != null && str_ind.length() > 0)
-            engine = str_ind;
+        String attr = el.getAttribute(XMLConstants.ATTR_INIT_CELL);
+        if (attr != null && attr.length() > 0)
+            initCell = Boolean.parseBoolean(attr);
+        attr = el.getAttribute(XMLConstants.ATTR_HTML);
+        if (attr != null && attr.length() > 0)
+            isHTML = Boolean.parseBoolean(attr);
+        attr = el.getAttribute(XMLConstants.ATTR_READONLY);
+        if (attr != null && attr.length() > 0)
+            readonly = Boolean.parseBoolean(attr);
+        attr = el.getAttribute(XMLConstants.ATTR_COLLAPSED);
+        if (attr != null && attr.length() > 0)
+            collapsed = Boolean.parseBoolean(attr);
+        attr = el.getAttribute(XMLConstants.ATTR_ENGINE);
+        if (attr != null && attr.length() > 0)
+            engine = attr;
        
     
         for (int i = 0; i < children.getLength(); i++)
@@ -206,15 +206,17 @@ public class IOUtils
             CellUtils.setReadonly(cell, readonly);
         if (collapsed)
             CellUtils.setCollapsed(cell, collapsed);
+        if(engine != null)
+            CellUtils.setEngine(cell, engine);
         //if (outputCellEl != null)
         //    loadOutputCell(outputCellEl, cellH);
        
-        str_ind = el.getAttribute(XMLConstants.ATTR_DESCRIPTION);
-        if (str_ind != null && str_ind.length() > 0)
-            CellUtils.setDescription(cellH, str_ind); 
-        str_ind = el.getAttribute(XMLConstants.ATTR_NAME);
-        if (str_ind != null && str_ind.length() > 0)
-            CellUtils.setName(cell, str_ind); 
+        attr = el.getAttribute(XMLConstants.ATTR_DESCRIPTION);
+        if (attr != null && attr.length() > 0)
+            CellUtils.setDescription(cellH, attr); 
+        attr = el.getAttribute(XMLConstants.ATTR_NAME);
+        if (attr != null && attr.length() > 0)
+            CellUtils.setName(cell, attr); 
         return cellH;
     }
 

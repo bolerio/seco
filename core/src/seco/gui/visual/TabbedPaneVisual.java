@@ -66,6 +66,10 @@ public class TabbedPaneVisual implements CellVisual, GroupVisual, EventHandler
     private void addChild(JTabbedPane tp, HGHandle childH)
     {
         CellGroupMember cell = ThisNiche.graph.get(childH);
+        //remove minimized attribute
+        //forcing the creation of the real component UI 
+        if(CellUtils.isMinimized(cell))
+            cell.getAttributes().put(VisualAttribs.minimized, false);
         CellVisual visual = CellUtils.getVisual(cell);
         JComponent comp = visual.bind(cell);
         if(comp == null) return;

@@ -7,7 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -108,9 +110,7 @@ public class PeerList extends JPanel
                 ConnectionContext ctx = ConnectionManager
                         .getConnectionContext(getPeerID());
                 return !ctx.isMe((OccupantEx) x) && !ctx.isInRoster((OccupantEx) x);// ctx.getPeerIdentity((Occupant)
-                                                                                // x)
-                                                                                // ==
-                                                                                // null;
+                                                        // null;
             }
 
             @Override
@@ -199,7 +199,8 @@ public class PeerList extends JPanel
 
     public static class PeerListModel extends AbstractListModel
     {
-        private Vector<Object> data = new Vector<Object>();
+        private List<Object> data = 
+            Collections.synchronizedList(new ArrayList<Object>());
 
         public int getSize()
         {
@@ -208,7 +209,7 @@ public class PeerList extends JPanel
 
         public Object getElementAt(int index)
         {
-            return data.elementAt(index);
+            return data.get(index);
         }
 
         public int size()
@@ -233,7 +234,7 @@ public class PeerList extends JPanel
 
         public Object elementAt(int index)
         {
-            return data.elementAt(index);
+            return data.get(index);
         }
 
         public void addElement(Object obj)
@@ -246,14 +247,14 @@ public class PeerList extends JPanel
                             && ((HostedRoom) o).getJid().equals(
                                     ((HostedRoom) obj).getJid())) return;
             int index = data.size();
-            data.addElement(obj);
+            data.add(obj);
             fireIntervalAdded(this, index, index);
         }
 
         public boolean removeElement(Object obj)
         {
             int index = indexOf(obj);
-            boolean rv = data.removeElement(obj);
+            boolean rv = data.remove(obj);
             if (index >= 0)
             {
                 fireIntervalRemoved(this, index, index);
@@ -264,7 +265,7 @@ public class PeerList extends JPanel
         public void removeAllElements()
         {
             int index1 = data.size() - 1;
-            data.removeAllElements();
+            data.clear();
             if (index1 >= 0)
             {
                 fireIntervalRemoved(this, 0, index1);

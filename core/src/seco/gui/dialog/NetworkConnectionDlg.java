@@ -30,9 +30,6 @@ import seco.util.GUIUtil;
 public class NetworkConnectionDlg extends JDialog
 {
     private static final long serialVersionUID = 1L;
-    private JButton butConnect;
-    private JButton butSave;
-    private JButton butClose;
     private NetworkConnectionPanel networkPanel;
 
     /** Creates new form NetworkConnectionDlg */
@@ -64,26 +61,22 @@ public class NetworkConnectionDlg extends JDialog
  
     private void initComponents()
     {
-
-        butConnect = new JButton("Connect");
+        JButton butConnect = new JButton("Connect");
         butConnect.addActionListener(new ActionListener(){
-            @Override
             public void actionPerformed(ActionEvent e)
             {
                 connect();
             }
         });
-        butSave = new JButton("Save");
+        JButton butSave = new JButton("Save");
         butSave.addActionListener(new ActionListener(){
-            @Override
             public void actionPerformed(ActionEvent e)
             {
                 save();
             }
         });
-        butClose = new JButton("Close");
+        JButton butClose = new JButton("Close");
         butClose.addActionListener(new ActionListener(){
-            @Override
             public void actionPerformed(ActionEvent e)
             {
                 NetworkConnectionDlg.this.setVisible(false);
@@ -95,38 +88,6 @@ public class NetworkConnectionDlg extends JDialog
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         GroupLayout layout = new GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-//        layout.setHorizontalGroup(layout
-//                .createParallelGroup(GroupLayout.Alignment.LEADING)
-//                .addGroup(
-//                        layout.createSequentialGroup()
-//                                .addComponent(butConnect)
-//                                .addPreferredGap(
-//                                        LayoutStyle.ComponentPlacement.RELATED)
-//                                .addComponent(butSave)
-//                                .addPreferredGap(
-//                                        LayoutStyle.ComponentPlacement.RELATED)
-//                                .addComponent(butClose).addContainerGap())
-//                .addComponent(networkPanel, GroupLayout.Alignment.TRAILING,
-//                        GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
-//                        Short.MAX_VALUE));
-//        layout.setVerticalGroup(layout.createParallelGroup(
-//                GroupLayout.Alignment.LEADING)
-//                .addGroup(
-//                        GroupLayout.Alignment.TRAILING,
-//                        layout.createSequentialGroup()
-//                                .addComponent(networkPanel,
-//                                        GroupLayout.DEFAULT_SIZE,
-//                                        GroupLayout.DEFAULT_SIZE,
-//                                        Short.MAX_VALUE)
-//                                .addPreferredGap(
-//                                        LayoutStyle.ComponentPlacement.RELATED)
-//                                .addGroup(
-//                                        layout.createParallelGroup(
-//                                                GroupLayout.Alignment.BASELINE)
-//                                                .addComponent(butConnect)
-//                                                .addComponent(butSave)
-//                                                .addComponent(butClose))));
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
