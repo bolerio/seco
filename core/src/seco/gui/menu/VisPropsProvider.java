@@ -39,6 +39,8 @@ public class VisPropsProvider implements DynamicMenuProvider
         menu.removeAll();
         for (final StyleType s : StyleType.values())
         {
+            //TODO: bigger refactoring in NotebookUI is needed
+            if(s == StyleType.global) continue;
             JMenuItem item = new JMenuItem(s.getDescription());
             item.addActionListener(new MIActionListener(s));
             menu.add(item);
@@ -131,5 +133,4 @@ public class VisPropsProvider implements DynamicMenuProvider
             this.stype = stype;
         }
     }
-
 }
