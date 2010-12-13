@@ -16,7 +16,6 @@ import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
@@ -26,6 +25,8 @@ import seco.util.GUIUtil;
 
 public class ManageRuntimeContextDialog extends JDialog
 {
+    private static final long serialVersionUID = 3567373905090160540L;
+
     public ManageRuntimeContextDialog()
     {
         super(GUIUtil.getFrame(), "Manage Runtime Context");
@@ -36,6 +37,7 @@ public class ManageRuntimeContextDialog extends JDialog
 
     public static class ManageRtCtxPanel extends JPanel
     {
+        private static final long serialVersionUID = 4968516173383266484L;
         private JList listCtx;
         private Map<String, RuntimeContext> map;
 

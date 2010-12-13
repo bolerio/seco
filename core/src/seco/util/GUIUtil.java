@@ -97,6 +97,14 @@ public static void createAndShowDlg(String title, Component c, Dimension dim)
     createAndShowDlg(getFrame(), title, c, dim);
 }
 
+public static void showDlg(JDialog dialog)
+{
+    if(dialog.getIconImages() == null || dialog.getIconImages().isEmpty()) 
+        dialog.setIconImage(GUIHelper.LOGO_IMAGE);
+    centerOnScreen(dialog);
+    dialog.setVisible(true);
+}
+
 /**
  * Traverses the given component's parent tree looking for an
  * instance of JDialog, and return it. If not found, return null.

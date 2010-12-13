@@ -265,12 +265,6 @@ class StyleTableModel extends AbstractTableModel
 				setForeground(style.getForegroundColor());
 				if (style.getBackgroundColor() != null)
 					setBackground(style.getBackgroundColor());
-				else
-				{
-					// this part sucks
-					// ???setBackground(jEdit.getColorProperty(
-					// "view.bgColor"));
-				}
 				Font f = pane.getScriptingSupport().getDocument()
 						.getInputCellFont();
 				setFont(f.deriveFont(style.getFontStyle()));

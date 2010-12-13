@@ -207,33 +207,13 @@ public class HtmlView extends HidableComponentView
                     } else
                     {
                         getPopup().update();
-                        int off = html.viewToModel(e.getPoint());
                         Frame f = GUIUtil.getFrame(e.getComponent());
-                        Point pt = null;
-                        try
-                        {
-                          Rectangle rect = ui.modelToView(
-                                  html.getElement().getStartOffset() + off);
-                          pt = new Point(rect.x, rect.y);
-                          pt = SwingUtilities.convertPoint(ui, rect.x, rect.y, f);
-                          pt = GUIUtil.adjustPointInPicollo(ui, pt);
-                        }catch(Exception ex)
-                        {
-                            pt = getPoint(e, f);
-                        }
+                        Point pt = e.getPoint();
+                        pt = SwingUtilities.convertPoint(html, pt.x, pt.y, f);
+                        pt = GUIUtil.adjustPointInPicollo(ui, pt);
                         getPopup().show(f, pt.x, pt.y);
                     }
                 }
-            }
-            
-            private Point getPoint(MouseEvent e, Frame f)
-            {
-                Point pt = SwingUtilities.convertPoint(getNotebookUI(), e.getX(),
-                        e.getY(), f);
-                if (e.getComponent() instanceof JComponent)
-                    return GUIUtil
-                            .adjustPointInPicollo(getNotebookUI(), pt);
-                return pt;
             }
         }
 

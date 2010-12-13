@@ -40,7 +40,6 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
-import javax.swing.text.Document;
 import javax.swing.text.EditorKit;
 import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
@@ -58,6 +57,8 @@ import sun.awt.AppContext;
 
 public class HTMLEditor extends JTextPane
 {
+    private static final long serialVersionUID = 2391592653254830363L;
+    
     public static final String TOOLBAR_NAME = "htmlEditorToolBar";
     public static final String PROP_ELEM = "prop_elem";
     //protected static HTMLEditor editor;
@@ -301,7 +302,6 @@ public class HTMLEditor extends JTextPane
     void insertListItem(Element element, String s) throws BadLocationException,
             IOException
     {
-        // System.out.println("insertListItem: " + element + ":" + s);
         if (s == null) s = "&nbsp;";
         int caretPos = this.getCaretPosition();
         HTML.Tag tag = HTMLUtils.getName(element.getParentElement());

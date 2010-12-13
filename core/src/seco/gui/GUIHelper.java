@@ -100,6 +100,10 @@ public class GUIHelper
             .makeHandle("12231b80-7b7e-11de-8a39-0800200c9a66");
 
     public static final String LOGO_IMAGE_RESOURCE = "/seco/resources/logoicon.gif";
+    public static final Image LOGO_IMAGE = Toolkit.getDefaultToolkit().getImage(
+            GUIHelper.class.getResource(LOGO_IMAGE_RESOURCE));
+    public static final Image NO_LOGO =  Toolkit.getDefaultToolkit().getImage(
+            GUIHelper.class.getResource("/seco/notebook/images/nologo.jpg"));
     // default rectangle used for adding containers
     public static Rectangle CONTAINER_RECT = new Rectangle(20, 70, 300, 300);
     // default size of the minimized components
@@ -276,17 +280,17 @@ public class GUIHelper
     {
         JMenu menu = new PiccoloMenu("Runtime");
         menu.setMnemonic('r');
-        String code = "new seco.gui.rtctx.NewRuntimeContextDialog().setVisible(true);";
+        String code = "GUIUtil.showDlg(new seco.gui.rtctx.NewRuntimeContextDialog());";
         JMenuItem mi = new JMenuItem(new ScriptletAction(code));
         mi.setText("New Context");
         menu.add(mi);
 
-        code = "new seco.gui.rtctx.EditRuntimeContextDialog( ThisNiche.graph.get(ThisNiche.TOP_CONTEXT_HANDLE)).setVisible(true)";
+        code = "GUIUtil.showDlg(new seco.gui.rtctx.EditRuntimeContextDialog( ThisNiche.graph.get(ThisNiche.TOP_CONTEXT_HANDLE)))";
         mi = new JMenuItem(new ScriptletAction(code));
         mi.setText("Configure Current");
         menu.add(mi);
 
-        code = "new seco.gui.rtctx.ManageRuntimeContextDialog().setVisible(true)";
+        code = "GUIUtil.showDlg(new seco.gui.rtctx.ManageRuntimeContextDialog())";
         mi = new JMenuItem(new ScriptletAction(code));
         mi.setText("Manage Contexts");
         menu.add(mi);
@@ -319,7 +323,7 @@ public class GUIHelper
        // String lang = "jscheme";
        // String code = "(load \"jscheme/scribaui.scm\")\n(netdialog-action '())\n";
        // ScriptletAction a = new ScriptletAction(lang, code);
-        String code = "new seco.gui.dialog.NetworkConnectionDlg().setVisible(true);";
+        String code = "GUIUtil.showDlg(new seco.gui.dialog.NetworkConnectionDlg());";
         JMenuItem mi = new JMenuItem(new ScriptletAction(code));
         mi.setText("Connection");
         menu.add(mi);
@@ -893,9 +897,5 @@ public class GUIHelper
         }
     }
 
-    public static final Image LOGO_IMAGE = Toolkit.getDefaultToolkit().getImage(
-    TopFrame.class.getResource(LOGO_IMAGE_RESOURCE));
-    public static final Image NO_LOGO =  Toolkit.getDefaultToolkit().getImage(
-    TopFrame.class.getResource("/seco/notebook/images/nologo.jpg"));
 
 }
