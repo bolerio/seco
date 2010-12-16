@@ -1324,10 +1324,6 @@ public class NotebookEditorKit extends StyledEditorKit
             Object value = binds.get(var);
             if (value == null) return;
             ObjectInspector propsPanel = new ObjectInspector(value);
-//            DialogDescriptor dd = new DialogDescriptor(GUIUtil.getFrame(ui),
-//                    new JScrollPane(propsPanel), "ObjectInspector: " + var
-//                            + " -> " + value.getClass().getName());
-//            DialogDisplayer.getDefault().notify(dd);
             GUIUtil.createAndShowDlg("ObjectInspector: " + var
                     + " -> " + value.getClass().getName(), new JScrollPane(propsPanel), new Dimension(400, 400));
         }
