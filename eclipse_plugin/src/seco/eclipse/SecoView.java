@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -79,13 +80,15 @@ public class SecoView extends ViewPart
     {
         if (swingControl != null)
         {
-            swingControl.dispose();
+        	swingControl.dispose();
             swingControl = null;
+        	//swingControl.setVisible(false);
         }
         if (noNicheGUI != null)
         {
-            noNicheGUI.dispose();
+        	noNicheGUI.dispose();
             noNicheGUI = null;
+        	//noNicheGUI.setVisible(false);
         }
     }
 
@@ -98,8 +101,7 @@ public class SecoView extends ViewPart
         if (plugin.getNicheLocation() == null)
         {
             noNicheGUI = new NoNicheGUI(parent, SWT.None);
-            parent.pack(true);
-            parent.layout(true, true);
+            force_redraw();
         }
         else
         {
@@ -108,8 +110,7 @@ public class SecoView extends ViewPart
             {
                 plugin.closeNiche();
                 noNicheGUI = new NoNicheGUI(parent, SWT.NONE);
-                parent.pack(true);
-                parent.layout(true, true);
+                force_redraw();
             }
             else
                 swingControl = new SwingControl(parent, SWT.NONE) {
@@ -132,8 +133,14 @@ public class SecoView extends ViewPart
        // parent.layout();
     }
 
-    
-
+    //hacky method to force Eclipse to recalculate layout and display
+    //NoGUI spanned in the whole view window
+    private void force_redraw()
+    {
+    	 Point pt = parent.getSize();
+         pt.y++;
+         parent.setSize(pt);
+    }
    
     @Override
     public void saveState(IMemento memento)

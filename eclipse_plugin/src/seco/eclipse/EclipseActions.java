@@ -1,10 +1,14 @@
 package seco.eclipse;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.PlatformUI;
+import org.hypergraphdb.HGHandle;
+
+import seco.rtenv.RuntimeContext;
 
 public class EclipseActions
 {
@@ -70,5 +74,7 @@ public class EclipseActions
     {
         return actions.get(name);
     }
+    
+   
 
 }

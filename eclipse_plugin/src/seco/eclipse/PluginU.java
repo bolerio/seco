@@ -47,12 +47,20 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
 import seco.boot.NicheManager;
 import seco.boot.NicheSelectDialog;
+import seco.gui.common.DialogDisplayer;
+import seco.gui.common.NotifyDescriptor;
 import seco.rtenv.ClassPath;
 import seco.rtenv.ClassPathEntry;
+import seco.rtenv.NestedContextLink;
+import seco.rtenv.RtU;
+import seco.rtenv.RuntimeContext;
+import seco.things.CellUtils;
+import seco.util.GUIUtil;
 
 public class PluginU {
 	private static SecoView view;
@@ -347,6 +355,17 @@ public class PluginU {
 		return cl.getMethod(m.getName(), params);
 	}
 
+	public static void addEclipseProjectAction()
+	{
+		 NotifyDescriptor.InputLine nd = new NotifyDescriptor.InputLine(
+	                null, "Project Name: ", "Enter the Eclipse project name");
+	        if (DialogDisplayer.getDefault().notify(nd) == NotifyDescriptor.OK_OPTION)
+	        {
+	            String projectName = nd.getInputText();
+	            addEclipseProjectToSecoRuntimeContext(projectName);
+	        }
+	}
+	
 	@SuppressWarnings("restriction")
 	public static boolean addEclipseProjectToSecoRuntimeContext(String projectName) {
 		IJavaProject jp = JavaModelManager.getJavaModelManager().getJavaModel()
@@ -356,15 +375,32 @@ public class PluginU {
 		try {
 			IResource pr = jp.getCorrespondingResource();
 			IClasspathEntry[] cp = jp.getRawClasspath();
-			ClassPath seco_cp = ThisNiche.getTopContext().getRuntimeContext()
-					.getClassPath();
+			RuntimeContext top = ThisNiche.getTopContext().getRuntimeContext();
+			RuntimeContext new_rt = null;
+			ClassPath new_cp = new ClassPath();
+			List<RuntimeContext> list = RtU.getChildContexts(ThisNiche.handleOf(top));
+			for(RuntimeContext rt: list)
+			{
+				if(projectName.equals(rt.getName()))
+				{
+					boolean b = GUIUtil.showConfirmDlg("RuntimeContext with the same name already exists. " +
+							"Do you wish to merge it with the new one?");
+					if(b)
+					{
+						new_rt = rt;
+						new_cp = rt.getClassPath();
+						break;
+					}	
+				}
+			}
+			
 			IFileStore store = ((Workspace) ResourcesPlugin.getWorkspace())
 					.getFileSystemManager().getStore(pr);
 			for (int i = 0; i < cp.length; i++) {
 				if (cp[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY
 						&& cp[i].getContentKind() == IPackageFragmentRoot.K_BINARY) {
 					File f = new File("" + store.getFileStore(cp[i].getPath()));
-					seco_cp.add(new ClassPathEntry(f));
+					new_cp.add(new ClassPathEntry(f));
 				} else if (cp[i].getEntryKind() == IClasspathEntry.CPE_SOURCE
 						&& cp[i].getContentKind() == IPackageFragmentRoot.K_SOURCE) {
 					// when cp's outputLocation is null, the project's one is
@@ -374,9 +410,18 @@ public class PluginU {
 							: new File(
 									"" + store.getFileStore(jp
 													.getOutputLocation()));
-					seco_cp.add(new ClassPathEntry(f));
+					new_cp.add(new ClassPathEntry(f));
 				}
 			}
+			HGHandle h = null;
+			if(new_rt == null){
+			   new_rt = new RuntimeContext(projectName);
+			   h = ThisNiche.handleOf(new_rt);
+			}
+			new_rt.setClassPath(new_cp);
+			if(h == null)
+				 h = ThisNiche.graph.add(new_rt);
+			ThisNiche.graph.add(new NestedContextLink(ThisNiche.handleOf(top), h));
 		} catch (Throwable t) {
 			t.printStackTrace();
 			return false;
@@ -384,7 +429,7 @@ public class PluginU {
 		return true;
 	}
 
-	public static class ResourceChangeLIstener implements
+	public static class ResourceChangeListener implements
 			IResourceChangeListener {
 		public void resourceChanged(IResourceChangeEvent event) {
 			//if (IResourceDelta.NO_CHANGE != event.getDelta().getKind())
