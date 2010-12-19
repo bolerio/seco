@@ -100,6 +100,22 @@
 		<copy file="${basedir}/distribution/seco.eclipse.plugin.update_site/site.xml" todir="${dist}" />
 	</target>
 
+	<target name="dist-zip" depends="headless_plugin_export">
+		<zip zipfile="${basedir}/seco.eclipse.plugin_${majorversion}.zip">
+			<fileset dir="${dist}">
+				<include name="**/**" />
+			</fileset>
+		</zip>
+	</target>
+
+	<target name="dist-tar.gz" depends="headless_plugin_export" description="Build Linux distribution">
+		<tar destfile="${basedir}/seco.eclipse.plugin_${majorversion}.tar.gz" compression="gzip">
+			<fileset dir="${dist}">
+				<include name="**/**" />
+			</fileset>
+		</tar>
+	</target>
+
 	<!--
 	<target name="plugin_export" depends="compile">
 		<pde.exportPlugins destination="${dist}" exportSource="false" exportType="directory" plugins="seco.eclipse.plugin" useJARFormat="true" />
