@@ -2,7 +2,7 @@
 <project basedir="." name="Seco">
 	<description>Seco Build File</description>
 
-	<property name="version" value="0.3" />
+	<property name="version" value="0.4" />
 	<property name="jar-name" value="seco.jar"/>
 	
 	<!-- The directory containing library jar files -->
