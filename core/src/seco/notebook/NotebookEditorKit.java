@@ -1161,6 +1161,14 @@ public class NotebookEditorKit extends StyledEditorKit
                             }
                         }
                         newIndex = constrainOffset(target, newIndex);
+                        //needed because when caret is on the last line of visible rectangle
+                        //the new index remains equal to selectedIndex
+                        if (newIndex == selectedIndex)
+                        {
+                            newIndex += scrollAmount;
+                            newIndex = Math.min(newIndex, target.getDocument().getLength()-1);
+                        }
+                        
                         if (newIndex != selectedIndex)
                         {
                             // Make sure the new visible location contains

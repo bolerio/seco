@@ -184,7 +184,7 @@ public class AddOnFactory
             else if (Collection.class.isAssignableFrom(value.getClass()))
             {
 
-                Collection<Object> c = (Collection) value;
+                Collection<Object> c = (Collection<Object>) value;
                 Object[] array = c.toArray(new Object[c.size()]);
                 for (int i = 0; i < array.length; i++)
                     if (array[i] != null) m.invoke(instance, array[i]);

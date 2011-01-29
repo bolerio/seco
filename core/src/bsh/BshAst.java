@@ -364,9 +364,6 @@ public class BshAst extends NBParser
 
     public void removeUpdate(DocumentEvent e)
     {
-        // int line = support.offsetToLine(e.getOffset());
-        // if(last_valid_line > line)
-        // last_valid_line = line -1;
         update();
     }
 

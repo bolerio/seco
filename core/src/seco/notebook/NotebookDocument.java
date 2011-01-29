@@ -1195,7 +1195,7 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public NBStyle getStyle(StyleType type)
     {
-        CellGroupMember book = (CellGroupMember) ThisNiche.graph.get(bookH);
+        CellGroupMember book = ThisNiche.graph.get(bookH);
         return CellUtils.getStyle(book, type);
     }
 

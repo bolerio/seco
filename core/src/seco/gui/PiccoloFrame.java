@@ -38,12 +38,6 @@ public class PiccoloFrame extends TopFrame
         validate(); 
     }
  
-//    public void showHTMLToolBar(boolean show_or_hide)
-//    {
-//       GUIHelper.getHTMLToolBar().setEnabled(show_or_hide);
-//    }
-//    
-    
     public void exit()
     {
         if(ThisNiche.graph == null) System.exit(0);
