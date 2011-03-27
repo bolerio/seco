@@ -61,10 +61,6 @@ public class IOUtils
         if (!top.getTagName().equals(XMLConstants.NOTEBOOK))
             throw new RuntimeException("The document '" + CellUtils.getName(top_group)
                     + "' is not a notebook.");
-        // title = top.getAttribute(XMLConstants.ATTR_TITLE);
-        String engine = top.getAttribute(XMLConstants.ATTR_ENGINE);
-        if (engine != null && engine.length() > 0)
-            CellUtils.defaultEngineName = engine;
         NodeList children = top.getChildNodes();
         int style_num = 0;
         for (int i = 0; i < children.getLength(); i++)

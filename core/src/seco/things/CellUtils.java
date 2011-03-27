@@ -18,23 +18,22 @@ import java.util.Set;
 import javax.swing.JComponent;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
+import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HGTypeSystem;
 import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.atom.HGAtomRef;
 import org.hypergraphdb.query.HGQueryCondition;
 
 import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
 import seco.events.BackupLink;
+import seco.events.BackupLink.EventPubSubInfo;
 import seco.events.CellGroupChangeEvent;
 import seco.events.CellTextChangeEvent;
 import seco.events.EvalCellEvent;
 import seco.events.EvalResult;
 import seco.events.EventDispatcher;
 import seco.events.EventPubSub;
-import seco.events.BackupLink.EventPubSubInfo;
 import seco.events.handlers.CopyAttributeChangeHandler;
 import seco.events.handlers.CopyCellGroupChangeHandler;
 import seco.events.handlers.CopyCellTextChangeHandler;
@@ -62,7 +61,7 @@ import edu.umd.cs.piccolo.util.PAffineTransform;
 
 public class CellUtils
 {
-    public static String defaultEngineName = "beanshell";
+    public static final String defaultEngineName = "beanshell";
     static Map<StyleType, NBStyle> styles = new EnumMap<StyleType, NBStyle>(
             StyleType.class);
 
