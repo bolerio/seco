@@ -59,7 +59,7 @@ import seco.things.HGClassType;
  */
 public class NicheManager
 {
-    public static final String NICHELIST = ".scribaNiches";
+    public static final String NICHELIST = ".secoNiches";
     static File nichesFile = new File(new File(U.findUserHome()), NICHELIST);
     
     public static boolean firstTime = false;

@@ -17,6 +17,7 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;
+import org.hypergraphdb.peer.PeerConfig;
 import org.hypergraphdb.peer.serializer.JSONReader;
 import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
 import org.hypergraphdb.util.HGUtils;
@@ -118,10 +119,12 @@ public class ConnectionContext
                 : create_new_peer();
     }
 
-    private boolean same_config(Map<String, Object> peerConfig)
+    @SuppressWarnings("unchecked")
+	private boolean same_config(Map<String, Object> peerConfig)
     {
         Object o = peerConfig.get("peerName");
         if (o == null || !o.equals(config.getUsername())) return false;
+        peerConfig = (Map<String, Object>) peerConfig.get(PeerConfig.INTERFACE_CONFIG);
         o = peerConfig.get("anonymous");
         if (o == null || !o.equals(config.isAnonymousLogin())) return false;
         o = peerConfig.get("autoRegister");
@@ -137,14 +140,15 @@ public class ConnectionContext
         return true;
     }
 
-    private HyperGraphPeer create_new_peer()
+    @SuppressWarnings("unchecked")
+	private HyperGraphPeer create_new_peer()
     {
         JSONReader reader = new JSONReader();
         Map<String, Object> peerConfig = getPart(reader
                 .read(ConnectionManager.JSON_CONFIG));
         peerConfig.put("localDB", ThisNiche.graph.getLocation());
         peerConfig.put("peerName", config.getUsername());
-        Map<String, Object> xmppConfig = getPart(peerConfig, "interfaceConfig");
+        Map<String, Object> xmppConfig = (Map<String, Object>) peerConfig.get(PeerConfig.INTERFACE_CONFIG);
         xmppConfig.put("anonymous", config.isAnonymousLogin());
         xmppConfig.put("autoRegister", config.isAutoRegister());
         xmppConfig.put("user", config.getUsername());
@@ -172,8 +176,7 @@ public class ConnectionContext
         U.run(new CallableCallback<Boolean>() {
             public Boolean call() throws Exception
             {
-                Future<Boolean> f = getUpdatedPeer().start(
-                        config.getUsername(), config.getPassword());
+                Future<Boolean> f = getUpdatedPeer().start();
                 return f.get();
             }
 
