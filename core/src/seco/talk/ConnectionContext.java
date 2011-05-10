@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
@@ -114,8 +115,10 @@ public class ConnectionContext
     // before trying to connect it
     private HyperGraphPeer getUpdatedPeer()
     {
-        if (thisPeer == null) return create_new_peer();
-        return (same_config(thisPeer.getConfiguration())) ? thisPeer
+        if (thisPeer == null) 
+            return create_new_peer();
+        return (same_config(thisPeer.getConfiguration())) 
+                ? thisPeer
                 : create_new_peer();
     }
 
@@ -173,38 +176,43 @@ public class ConnectionContext
         inProgress = true;
         ThisNiche.graph.update(this);
 
-        U.run(new CallableCallback<Boolean>() {
-            public Boolean call() throws Exception
-            {
-                Future<Boolean> f = getUpdatedPeer().start();
-                return f.get();
-            }
-
-            public void onCompletion(Boolean result, Throwable t)
-            {
-                if (t == null && result)
+        try
+        {
+            U.run(new CallableCallback<Boolean>() {
+                public Boolean call() throws Exception
                 {
-                    // JOptionPane.showMessageDialog(ConnectionPanel.this,
-                    // "Successfully connected to network.");
-                    fireConnected();
-                    XMPPPeerInterface i = (XMPPPeerInterface) getPeer()
-                            .getPeerInterface();
-                    i.getConnection().addConnectionListener(
-                            new MyConnectionListener());
-                }
-                else
-                {
-                    if (t != null) t.printStackTrace(System.err);
-                    JOptionPane.showMessageDialog(GUIUtil.getFrame(),
-                            HGUtils.getRootCause(t),
-                            "Failed to connect to network, see error console.",
-                            JOptionPane.ERROR_MESSAGE);
-                    fireDisconnected();
-                    thisPeer = null;
+                    Future<Boolean> f = getUpdatedPeer().start();
+                    return f.get();
                 }
 
-            }
-        });
+                public void onCompletion(Boolean result, Throwable t)
+                {
+                    if (t == null && result)
+                    {
+                        // JOptionPane.showMessageDialog(ConnectionPanel.this,
+                        // "Successfully connected to network.");
+                        fireConnected();
+                        XMPPPeerInterface i = (XMPPPeerInterface) getPeer()
+                                .getPeerInterface();
+                        i.getConnection().addConnectionListener(new MyConnectionListener());
+                    }
+                    else
+                    {
+                        if (t != null) t.printStackTrace(System.err);
+                        JOptionPane.showMessageDialog(GUIUtil.getFrame(),
+                                HGUtils.getRootCause(t),
+                                "Failed to connect to network, see error console.",
+                                JOptionPane.ERROR_MESSAGE);
+                        fireDisconnected();
+                        thisPeer = null;
+                    }
+                }
+            });//.get();
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     // when persistently = true the connection is marked inactive in HG and
@@ -230,7 +238,7 @@ public class ConnectionContext
                 {
                     // JOptionPane.showMessageDialog(ConnectionPanel.this,
                     // "Successfully disconnect from network.");
-                    fireDisconnected();
+                    // should be called by MyConnectionListener fireDisconnected();
                     ConnectionContext.this.talks.clear();
                 }
                 else
@@ -248,12 +256,12 @@ public class ConnectionContext
         });
     }
 
-    private ConnectionPanel getConnectionPanel()
+    public ConnectionPanel getConnectionPanel()
     {
         return hg.getOne(
                 ThisNiche.graph,
                 hg.and(hg.type(ConnectionPanel.class),
-                        hg.eq("peerID", getPeer().getIdentity())));
+                        hg.eq("connectionContext", this)));
     }
 
     public ConnectionPanel openConnectionPanel()
@@ -262,7 +270,8 @@ public class ConnectionContext
         HGHandle panelHandle = null;
         if (panel == null)
         {
-            panel = new ConnectionPanel(getPeer().getIdentity());
+            panel = new ConnectionPanel(/*getPeer().getIdentity()*/);
+            panel.setConnectionContext(this);
             panel.initComponents();
             panelHandle = ThisNiche.graph.add(panel);
         }
@@ -307,7 +316,7 @@ public class ConnectionContext
         HGHandle panelH = hg.findOne(
                 ThisNiche.graph,
                 hg.and(hg.type(TalkPanel.class), hg.eq("friend", friend),
-                        hg.eq("peerID", getPeer().getIdentity())));
+                        hg.eq("connectionContext", this)));
         if (panelH == null) return null;
         TalkPanel panel = ThisNiche.graph.get(panelH);
         if (panel != null) panel.initTalkActivity(this);
@@ -355,7 +364,9 @@ public class ConnectionContext
         TalkPanel panel = getTalkPanel(friend);
         if (panel == null)
         {
-            panel = new TalkPanel(friend, getPeer().getIdentity());
+            panel = new TalkPanel(/*friend, getPeer().getIdentity()*/);
+            panel.setFriend(friend);
+            panel.setConnectionContext(this);
             ThisNiche.graph.add(panel);
             panel.initComponents();
             panel.initTalkActivity(this);
@@ -371,12 +382,13 @@ public class ConnectionContext
     {
         RoomPanel panel = hg.getOne(ThisNiche.graph, hg.and(
                 hg.type(RoomPanel.class), hg.eq("roomId", room.getJid()),
-                hg.eq("peerID", thisPeer.getIdentity())));
+                hg.eq("connectionContext", this)));
         HGHandle panelH;
         if (panel == null)
         {
-            panel = new RoomPanel(thisPeer.getIdentity());
+            panel = new RoomPanel(/*thisPeer.getIdentity()*/);
             panel.setRoomId(room.getJid());
+            panel.setConnectionContext(this);
             panel.initComponents();
             panelH = ThisNiche.graph.add(panel);
             addConnectionListener(panel);
@@ -622,5 +634,13 @@ public class ConnectionContext
         void disconnected(ConnectionContext ctx);
 
         void workStarted(ConnectionContext ctx, boolean connect_or_disconnect);
+    }
+    
+    public String toString()
+    {
+        if (this.config == null)
+            return "null";
+        else
+            return config.getUsername() + "@" + config.getHostname() + ":" + config.getPort(); 
     }
 }

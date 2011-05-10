@@ -32,6 +32,7 @@ import seco.storage.swing.DefaultConverter;
 import seco.storage.swing.MetaData;
 import seco.storage.swing.RefUtils;
 import seco.storage.swing.DefaultConverter.AddOnType;
+import seco.talk.ConnectionPanel;
 
 public class SwingType extends RecordType
 {

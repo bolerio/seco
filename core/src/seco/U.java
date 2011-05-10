@@ -228,7 +228,7 @@ public class U
     
     public static void run(Runnable r) { ThisNiche.executorService.execute(r); }
     public static <V> Future<V> run(Callable<V> c) { return ThisNiche.executorService.submit(c); }
-    public static <V> void run(Runnable r, final CompletionCallback<V> callback)
+    public static <V> Future<V> run(Runnable r, final CompletionCallback<V> callback)
     {
         FutureTask<V> ft = new FutureTask<V>(r, null) 
         {
@@ -249,8 +249,9 @@ public class U
             }
         };
         ThisNiche.executorService.submit(ft);
+        return ft;
     }
-    public static <V> void run(final Callable<V> c, final CompletionCallback<V> callback)
+    public static <V> Future<V> run(final Callable<V> c, final CompletionCallback<V> callback)
     {
         FutureTask<V> ft = new FutureTask<V>(c) 
         {
@@ -270,10 +271,11 @@ public class U
                 }
             }
         };
-        ThisNiche.executorService.submit(ft);        
+        ThisNiche.executorService.submit(ft);    
+        return ft;
     }    
     
-    public static <V> void run(final CallableCallback<V> cc)
+    public static <V> Future<V> run(final CallableCallback<V> cc)
     {
         FutureTask<V> ft = new FutureTask<V>(cc) 
         {
@@ -293,6 +295,7 @@ public class U
                 }
             }
         };
-        ThisNiche.executorService.submit(ft);         
+        ThisNiche.executorService.submit(ft);      
+        return ft;
     }
 }

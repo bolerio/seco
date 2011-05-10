@@ -8,7 +8,7 @@
 package seco.things;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.atom.HGAtomRef; 
+import org.hypergraphdb.atom.HGAtomRef;
 
 import seco.ThisNiche;
 import seco.events.EvalCellEvent;
@@ -30,9 +30,12 @@ public class Cell extends BaseCellGroupMember implements EventHandler
 
     public Object getValue()
     {
-        try{
-          return ThisNiche.graph.get(ref.getReferent());
-        }catch(Throwable t){
+        try
+        {
+            return ThisNiche.graph.get(ref.getReferent());
+        }
+        catch (Throwable t)
+        {
             t.printStackTrace();
             return null;
         }
@@ -42,8 +45,9 @@ public class Cell extends BaseCellGroupMember implements EventHandler
     {
         return ref.getReferent();
     }
-    
-    public void handle(HGHandle eventType, Object event, HGHandle publisher, HGHandle subscriber)
+
+    public void handle(HGHandle eventType, Object event, HGHandle publisher,
+                       HGHandle subscriber)
     {
         if (eventType.equals(EvalCellEvent.HANDLE)
                 && subscriber.equals(ThisNiche.handleOf(this)))
@@ -51,21 +55,23 @@ public class Cell extends BaseCellGroupMember implements EventHandler
             updateValue((EvalCellEvent) event);
         }
     }
-    
+
     void updateValue(EvalCellEvent e)
     {
-        //System.out.println("Cell - updateValue: " + e);
-        Object val = (e.getValue().getComponent() != null) ?
-                e.getValue().getComponent() : e.getValue().getText();
-        attributes.put(XMLConstants.ATTR_ERROR, e.getValue().isError());        
+        // System.out.println("Cell - updateValue: " + e);
+        Object val = (e.getValue().getComponent() != null) ? e.getValue()
+                .getComponent() : e.getValue().getText();
+        attributes.put(XMLConstants.ATTR_ERROR, e.getValue().isError());
         updateValue(val);
-        EventDispatcher.dispatch(EvalCellEvent.HANDLE, ThisNiche.handleOf(this), e);
+        EventDispatcher.dispatch(EvalCellEvent.HANDLE,
+                                 ThisNiche.handleOf(this),
+                                 e);
     }
-    
+
     public void updateValue(Object val)
     {
-       // HGHandle h = ThisNiche.handleOf(val);
-       // if (h == null)
+        // HGHandle h = ThisNiche.handleOf(val);
+        // if (h == null)
         HGHandle h = CellUtils.addSerializable(val);
         ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         ThisNiche.graph.update(this);
@@ -74,8 +80,8 @@ public class Cell extends BaseCellGroupMember implements EventHandler
     @Override
     public boolean equals(Object obj)
     {
-        if(obj instanceof Cell)
-            return ref.getReferent().equals(((Cell)obj).ref.getReferent());
+        if (obj instanceof Cell)
+            return ref.getReferent().equals(((Cell) obj).ref.getReferent());
         return false;
     }
 
@@ -88,18 +94,14 @@ public class Cell extends BaseCellGroupMember implements EventHandler
     @Override
     public String toString()
     {
-        String s =  "Cell: "; 
-        s += (CellUtils.getName(this) != null) ?
-           CellUtils.getName(this) + ":" : " :";
-        if(getValue() != null)
+        String s = "Cell: ";
+        s += (CellUtils.getName(this) != null) ? CellUtils.getName(this) + ":"
+                : " :";
+        if (getValue() != null)
             s += getValue().getClass().getName();
         return s;
-        //"Cell: " + CellUtils.getName(this); 
-        //ThisNiche.handleOf(this) + ":" + 
-        //        this.getValue();
+        // "Cell: " + CellUtils.getName(this);
+        // ThisNiche.handleOf(this) + ":" +
+        // this.getValue();
     }
-
-   
-   
-   
 }

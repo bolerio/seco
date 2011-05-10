@@ -21,7 +21,7 @@ public class PToolTip extends PPath
         //setPaint(java.awt.Color.yellow);
         setStroke(new BasicStroke(1.2f));
         setStrokePaint(java.awt.Color.black);
-        setText("");
+//        setText("");
     }
 
     public void setText(String new_text)

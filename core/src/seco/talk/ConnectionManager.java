@@ -34,19 +34,19 @@ public class ConnectionManager
 
     public static void startConnections()
     {
-        List<ConnectionContext> list = hg.getAll(ThisNiche.graph, hg
-                .type(ConnectionContext.class));
+        List<ConnectionContext> list = hg.getAll(ThisNiche.graph, hg.type(ConnectionContext.class));
         for (ConnectionContext ctx : list)
         {
-            if(ctx.isActive())
+//            ConnectionPanel panel = ctx.getConnectionPanel();
+//            ctx.addConnectionListener(panel);
+            if (ctx.isActive())
                 ctx.connect();
         }
     }
     
     public static void stopConnections(boolean persistently)
     {
-        List<ConnectionContext> list = hg.getAll(ThisNiche.graph, hg
-                .type(ConnectionContext.class));
+        List<ConnectionContext> list = hg.getAll(ThisNiche.graph, hg.type(ConnectionContext.class));
         for (ConnectionContext ctx : list)
         {
             if(ctx.isActive())
@@ -64,25 +64,18 @@ public class ConnectionManager
         return null;
     }
     
-    public static ConnectionContext getConnectionContext(ConnectionConfig config)
-    {
-       return hg.getOne(ThisNiche.graph, hg.and(
-                hg.type(ConnectionContext.class), 
-                hg.eq("config", config)));
-    }
+//    public static ConnectionContext getConnectionContext(ConnectionConfig config)
+//    {
+//       return hg.getOne(ThisNiche.graph, hg.and(
+//                hg.type(ConnectionContext.class), 
+//                hg.eq("config", config)));
+//    }
 
     //called from Network menu with JScheme script
-    public static ConnectionPanel openConnectionPanel(ConnectionConfig config)
+    public static ConnectionPanel openConnectionPanel(ConnectionContext ctx)
     {
-        ConnectionContext ctx = getConnectionContext(config);
-        if(ctx == null)
-        {
-            ctx = new ConnectionContext(config);
-            ThisNiche.graph.add(ctx);
-        }
         ConnectionPanel panel = ctx.openConnectionPanel();
-        panel.connect();
+        //panel.connect();
         return panel;
     }
-
 }

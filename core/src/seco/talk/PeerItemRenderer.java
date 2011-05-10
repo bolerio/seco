@@ -15,24 +15,32 @@ import org.jivesoftware.smackx.muc.HostedRoom;
 
 import seco.util.IconManager;
 
-class PeerItemRenderer extends JLabel implements ListCellRenderer 
+class PeerItemRenderer extends JLabel implements ListCellRenderer
 {
     private static final long serialVersionUID = 9045908623545576595L;
-    static ImageIcon personIcon = new ImageIcon(IconManager.getIcon("seco/talk/peer-icon.jpg"));
-    static ImageIcon roomIcon = new ImageIcon(IconManager.getIcon("seco/talk/chatroom-icon.jpg"));
-    
-    public Component getListCellRendererComponent(
-      JList list,              // the list
-      Object value,            // value to display
-      int index,               // cell index
-      boolean isSelected,      // is the cell selected
-      boolean cellHasFocus)    // does the cell have focus
+    static ImageIcon personIcon = new ImageIcon(
+            IconManager.getIcon("seco/talk/peer-icon.jpg"));
+    static ImageIcon roomIcon = new ImageIcon(
+            IconManager.getIcon("seco/talk/chatroom-icon.jpg"));
+
+    public Component getListCellRendererComponent(JList list, // the list
+                                                  Object value, // value to
+                                                                // display
+                                                  int index, // cell index
+                                                  boolean isSelected, // is the
+                                                                      // cell
+                                                                      // selected
+                                                  boolean cellHasFocus) // does
+                                                                        // the
+                                                                        // cell
+                                                                        // have
+                                                                        // focus
     {
         String label = null;
         ImageIcon image = null;
         if (value instanceof HGPeerIdentity)
         {
-            label = ((HGPeerIdentity)value).getName();
+            label = ((HGPeerIdentity) value).getName();
             int hostPart = label.lastIndexOf("/");
             if (hostPart > -1)
                 label = label.substring(hostPart + 1);
@@ -40,23 +48,23 @@ class PeerItemRenderer extends JLabel implements ListCellRenderer
         }
         else if (value instanceof HostedRoom)
         {
-            label = ((HostedRoom)value).getName();
+            label = ((HostedRoom) value).getName();
             image = roomIcon;
-        }   
+        }
         else if (value instanceof OccupantEx)
         {
-            label = ((OccupantEx)value).getNick();
+            label = ((OccupantEx) value).getNick();
             image = personIcon;
-        }   
-         
+        }
+
         setText(label);
         setIcon(image);
-        if (isSelected) 
+        if (isSelected)
         {
             setBackground(list.getSelectionBackground());
             setForeground(list.getSelectionForeground());
-        } 
-        else 
+        }
+        else
         {
             setBackground(list.getBackground());
             setForeground(list.getForeground());

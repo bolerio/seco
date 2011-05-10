@@ -1,11 +1,11 @@
 package seco.storage.swing;
 
 import java.beans.BeanInfo;
+
 import java.beans.Introspector;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-
 
 public class RefUtils
 {

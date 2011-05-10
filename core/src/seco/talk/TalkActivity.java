@@ -1,7 +1,6 @@
 package seco.talk;
 
 import static org.hypergraphdb.peer.Messages.CONTENT;
-import static org.hypergraphdb.peer.Messages.createMessage;
 import static org.hypergraphdb.peer.Messages.getReply;
 import static org.hypergraphdb.peer.Messages.getSender;
 import static org.hypergraphdb.peer.Messages.makeReply;
@@ -10,7 +9,6 @@ import static org.hypergraphdb.peer.Structs.getPart;
 import static org.hypergraphdb.peer.Structs.struct;
 
 import java.awt.Rectangle;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +19,6 @@ import java.util.concurrent.Callable;
 import javax.swing.JOptionPane;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.peer.HGPeerIdentity;
@@ -39,8 +36,6 @@ import seco.ThisNiche;
 import seco.events.EvalCellEvent;
 import seco.events.EventPubSub;
 import seco.gui.GUIHelper;
-import seco.gui.TopFrame;
-import seco.gui.visual.VisualAttribs;
 import seco.things.Cell;
 import seco.things.CellGroup;
 

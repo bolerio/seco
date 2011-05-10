@@ -416,8 +416,7 @@ public class PiccoloCanvas extends PSwingCanvas
         }
         p.setTooltip((String) comp.getClientProperty("tooltip"));
 
-        LayoutHandler vh = (LayoutHandler) cell
-                .getAttribute(VisualAttribs.layoutHandler);
+        LayoutHandler vh = (LayoutHandler) cell.getAttribute(VisualAttribs.layoutHandler);
         if (vh != null)
         {
             addFixedNode(p);

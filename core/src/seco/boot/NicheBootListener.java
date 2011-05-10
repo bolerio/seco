@@ -50,12 +50,14 @@ public class NicheBootListener implements HGListener
                 {
                     new CommonActions.TopCellTreeAction().actionPerformed(null);
                     DEBUG_NICHE = false; 
-                }else{
+                }
+                else
+                {
                    CellUtils.evaluateVisibleInitCells();
                    v.bind(group);
                    if(f != null)
                       f.setVisible(true);
-                   ConnectionManager.startConnections();
+                    ConnectionManager.startConnections();
                 }
             	Thread.currentThread().setUncaughtExceptionHandler(GUIHelper.getUncaughtExceptionHandler());                
             }

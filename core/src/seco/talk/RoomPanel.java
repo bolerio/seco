@@ -44,11 +44,6 @@ public class RoomPanel extends BaseChatPanel implements PeerPresenceListener
     private PacketListener packetListener = new MyPacketListener();
     private MyParticipantStatusListener participantStatusListener = new MyParticipantStatusListener();
 
-    public RoomPanel(HGPeerIdentity peerID)
-    {
-        super(peerID);
-    }
-
     public RoomPanel()
     {
     }
@@ -256,8 +251,9 @@ public class RoomPanel extends BaseChatPanel implements PeerPresenceListener
 
     public void setPeerID(HGPeerIdentity peerID)
     {
-        if (peerList != null) peerList.setPeerID(peerID);
-        super.setPeerID(peerID);
+        if (peerList != null) 
+            peerList.setPeerID(peerID);
+//        super.setPeerID(peerID);
     }
 
     @Override

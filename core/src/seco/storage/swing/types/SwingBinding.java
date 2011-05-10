@@ -150,8 +150,9 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
             String label = slot.getLabel();
             Object value = record.get(slot);
             if (hgType.getReferenceMode(slotHandle) != null)
+            {
                 value = graph.get(((HGAtomRef) value).getReferent());
-            // System.out.println("Slot: " + slot.getLabel() + ":" + value);
+            }
             if (value == null) continue;
             SwingTypeIntrospector insp = this.getInspector();
             if (insp.getPubFieldsMap().containsKey(label)) try
@@ -294,8 +295,14 @@ public class SwingBinding extends HGAtomTypeBase implements HGCompositeType
         HGHandle slotHandle = hgType.slotHandles.get(name);
         Slot slot = (Slot) graph.get(slotHandle);
         Object value = record.get(slot);
-        if (value != null && hgType.getReferenceMode(slotHandle) != null)
-            value = graph.get(((HGAtomRef) value).getReferent());
+        if (value != null)
+        {
+            if (hgType.getReferenceMode(slotHandle) != null)
+            {
+                value = graph.get(((HGAtomRef) value).getReferent());
+            }
+
+        }
         return value;
     }
 

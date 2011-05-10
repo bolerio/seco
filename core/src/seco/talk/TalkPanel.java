@@ -82,13 +82,13 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
         setTransferHandler(new TPTransferHandler(this));
     }
 
-    public TalkPanel(HGPeerIdentity friend, HGPeerIdentity peerID)
-    {
-        super(peerID);
-        this.friend = friend;
-        setTransferHandler(new TPTransferHandler(this));
-        // initComponents();
-    }
+//    public TalkPanel(HGPeerIdentity friend, HGPeerIdentity peerID)
+//    {
+//        super(peerID);
+//        this.friend = friend;
+//        setTransferHandler(new TPTransferHandler(this));
+//        // initComponents();
+//    }
 
     public HGPeerIdentity getFriend()
     {

@@ -42,8 +42,8 @@ import seco.util.IconManager;
  * @author Borislav Iordanov
  * 
  */
-public class ConnectionPanel extends BaseChatPanel implements
-        PeerPresenceListener
+public class ConnectionPanel extends BaseChatPanel 
+                             implements PeerPresenceListener
 {
     private static final long serialVersionUID = 9019036598512173062L;
     private static final String LABEL_CONNECT = "Connect";
@@ -58,61 +58,54 @@ public class ConnectionPanel extends BaseChatPanel implements
     {
     }
 
-    public ConnectionPanel(HGPeerIdentity peerID)
-    {
-        super(peerID);
-    }
-
     public void connect()
     {
-        ConnectionContext ctx = ConnectionManager
-                .getConnectionContext(getPeerID());
-        if (ctx == null)
+//        ConnectionContext ctx = ConnectionManager.getConnectionContext(getPeerID());
+        if (connectionContext == null)
         {
             // TODO:???
         }
         else
         {
-            ctx.addConnectionListener(this);
-            if (!ctx.isConnected())
+            connectionContext.addConnectionListener(this);
+            if (!connectionContext.isConnected())
             {
-                ctx.connect();
+                connectionContext.connect();
             }
             else
             {
                 // ctx already connected, but panel is not
-                if (!isConnected()) connected(ctx);
+                if (!isConnected()) connected(connectionContext);
             }
         }
     }
 
     public void disconnect()
     {
-        ConnectionContext ctx = ConnectionManager
-                .getConnectionContext(getPeerID());
-        if (ctx == null)
+//        ConnectionContext ctx = ConnectionManager.getConnectionContext(getPeerID());
+        if (connectionContext == null)
         {
             // TODO:???
         }
         else
         {
-            ctx.addConnectionListener(this);
-            if (ctx.isConnected())
+            connectionContext.addConnectionListener(this);
+            if (connectionContext.isConnected())
             {
-                ctx.disconnect(true);
+                connectionContext.disconnect(true);
             }
             else
             {
                 // ctx already disconnected, but panel is not
-                if (isConnected()) disconnected(ctx);
+                if (isConnected()) disconnected(connectionContext);
             }
-
         }
     }
 
     void updateState()
     {
-        if (getConnectionContext().isConnected()) connected(getConnectionContext());
+        if (getConnectionContext().isConnected()) 
+            connected(getConnectionContext());
         else
             disconnected(getConnectionContext());
     }
@@ -188,11 +181,11 @@ public class ConnectionPanel extends BaseChatPanel implements
     {
         getPeerList().getListModel().removeAllElements();
         fetchRooms();
-        for (HGPeerIdentity i : ctx.getPeer().getConnectedPeers())
+        for (HGPeerIdentity i : connectionContext.getPeer().getConnectedPeers())
             if (getConnectionContext().isInRoster(i))
                 getPeerList().getListModel().addElement(i);
         getPeerList().setPeerID(getPeerID());
-        ctx.getPeer().addPeerPresenceListener(this);
+        connectionContext.getPeer().addPeerPresenceListener(this);
 //        ctx.getPeer().getPeerInterface().addPeerPresenceListener(
 //                new NetworkPeerPresenceListener() {
 //
@@ -240,7 +233,9 @@ public class ConnectionPanel extends BaseChatPanel implements
     public void peerJoined(HGPeerIdentity target)
     {
         if (getConnectionContext().isInRoster(target))
+        {
             getPeerList().getListModel().addElement(target);
+        }
     }
 
     @Override
