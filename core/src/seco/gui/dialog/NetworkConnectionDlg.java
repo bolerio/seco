@@ -35,6 +35,7 @@ import seco.talk.ConnectionContext;
 import seco.talk.ConnectionManager;
 import seco.talk.ConnectionPanel;
 import seco.things.CellGroup;
+import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.util.GUIUtil;
 
@@ -139,10 +140,12 @@ public class NetworkConnectionDlg extends JDialog
                         // Delete the panel from its canvas. The canvas is the visual 
                         // element of the containing CellGroup
                         CellGroup group = CellUtils.getParentGroup(cellHandle);
-                        PiccoloCanvas canvas = (PiccoloCanvas)group.getVisualInstance();
-                        PSwingNode node = canvas.getPSwingNodeForHandle(panelHandle);
-                        canvas.removeNode(node);
-                        ThisNiche.graph.remove(panelHandle);
+                        group.remove((CellGroupMember)ThisNiche.graph.get(cellHandle));
+                       // PiccoloCanvas canvas = (PiccoloCanvas)group.getVisualInstance();
+                       // PSwingNode node = canvas.getPSwingNodeForHandle(panelHandle);
+                       // canvas.removeNode(node);
+                       // ThisNiche.graph.remove(panelHandle);
+                        
                     }
                     ThisNiche.graph.remove(h);
                     ctx = null;

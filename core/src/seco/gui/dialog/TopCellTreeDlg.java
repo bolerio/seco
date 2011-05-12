@@ -295,7 +295,7 @@ public class TopCellTreeDlg extends JDialog
         // otherwise it returns null.
         private void putInClipboard(HGHandle h)
         {
-            String str = "h  = org.hypergraphdb.HGHandleFactory.makeHandle(\""
+            String str = "h  = org.hypergraphdb.handle.UUIDHandleFactory.I.makeHandle(\""
                     + ThisNiche.graph.getPersistentHandle(h) + "\");";
             StringSelection ss = new StringSelection(str);
             Toolkit.getDefaultToolkit().getSystemClipboard()
