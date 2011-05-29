@@ -22,7 +22,7 @@ fi
 SECO_BIN_DIR=`dirname $0`
 cd $SECO_BIN_DIR
 export SECO_HOME="`pwd`"
-echo "Using Scriba home directory '$SECO_HOME'"
+echo "Using Seco home directory '$SECO_HOME'"
 
 JAVA_EXEC=java
 

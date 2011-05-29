@@ -222,8 +222,10 @@ public class PSwingNode extends PSwing implements Serializable
                     }, Color.LIGHT_GRAY);
             scheduler.addActivity(repeatPulseActivity);
         }
+        SwingUtilities.invokeLater(new Runnable() { public void run() { 
         moveToFront();
-        getCanvas().getSelectionHandler().select(this);
+        getCanvas().getSelectionHandler().select(PSwingNode.this);
+        }});
     }
 
     void do_blink(final int intratime, final int intertime, final int count)

@@ -118,7 +118,7 @@ public class ConnectionPanel extends BaseChatPanel
         setConnectButton(new JButton(LABEL_CONNECT));
         connectButton.addActionListener(new ButtonListener(this));
         add(connectButton, BorderLayout.NORTH);
-        peerList = new PeerList(getPeerID());
+        peerList = new PeerList(connectionContext);
         peerList.initComponents();
         add(peerList, BorderLayout.CENTER);
 
@@ -182,9 +182,12 @@ public class ConnectionPanel extends BaseChatPanel
         getPeerList().getListModel().removeAllElements();
         fetchRooms();
         for (HGPeerIdentity i : connectionContext.getPeer().getConnectedPeers())
-            if (getConnectionContext().isInRoster(i))
-                getPeerList().getListModel().addElement(i);
-        getPeerList().setPeerID(getPeerID());
+        {
+            String netid = (String)connectionContext.getPeer().getNetworkTarget(i);
+            if (getConnectionContext().isInRoster(netid))
+                getPeerList().getListModel().addElement(netid);
+        }
+        getPeerList().setConnectionContext(connectionContext);
         connectionContext.getPeer().addPeerPresenceListener(this);
 //        ctx.getPeer().getPeerInterface().addPeerPresenceListener(
 //                new NetworkPeerPresenceListener() {
@@ -232,16 +235,18 @@ public class ConnectionPanel extends BaseChatPanel
     @Override
     public void peerJoined(HGPeerIdentity target)
     {
-        if (getConnectionContext().isInRoster(target))
+        String netid = (String)connectionContext.getPeer().getNetworkTarget(target);
+        if (getConnectionContext().isInRoster(netid))
         {
-            getPeerList().getListModel().addElement(target);
+            getPeerList().getListModel().addElement(netid);
         }
     }
 
     @Override
     public void peerLeft(HGPeerIdentity target)
     {
-        getPeerList().getListModel().removeElement(target);
+        String netid = (String)connectionContext.getPeer().getNetworkTarget(target);        
+        getPeerList().getListModel().removeElement(netid);
     }
 
     private void fetchRooms()

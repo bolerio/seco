@@ -3,7 +3,6 @@ package seco.talk;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.swing.Action;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
@@ -25,10 +23,8 @@ import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.hypergraphdb.annotation.HGIgnore;
-import org.hypergraphdb.peer.HGPeerIdentity;
 
 import seco.ThisNiche;
-import seco.gui.TopFrame;
 
 public class ChatPane extends JTextPane
 {
@@ -36,7 +32,7 @@ public class ChatPane extends JTextPane
     private static SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss a");
     private static final HTMLEditorKit htmlEditorKit = new HTMLEditorKit();
 
-    private HGPeerIdentity me;
+    private ConnectionContext connectionContext;
     // tracking user actions
     @HGIgnore
     AtomicInteger actionGroupId = new AtomicInteger(0);
@@ -52,28 +48,34 @@ public class ChatPane extends JTextPane
     }
 
     public ChatPane()
+    {        
+    }
+    
+    public ChatPane(ConnectionContext context)
     {
+        this.connectionContext = context;
+    }
+    
+    public ConnectionContext getConnectionContext()
+    {
+        return connectionContext;
     }
 
-    public HGPeerIdentity getMe()
+    public void setConnectionContext(ConnectionContext connectionContext)
     {
-        return me;
+        this.connectionContext = connectionContext;
     }
 
-    public void setMe(HGPeerIdentity me)
-    {
-        this.me = me;
-    }
-
-    public void chatFrom(final HGPeerIdentity from, String text)
+    public void chatFrom(String user, String text)
     {
         String s = "(" + sdf.format(new Date()) + ") ";
-        s += (from.equals(me) ? "me" : from.getName()) + ":" + text;
+        s += (user.equals(connectionContext.getMe()) ? "me" : 
+                connectionContext.getDisplayName(user)) + ":" + text;
         // outText.setText(outText.getText() + s);
         try
         {
             getDocument().insertString(getDocument().getLength(), s, null);
-            scroll_and_beep(from); 
+            scroll_and_beep(user); 
         }
         catch (BadLocationException e)
         {
@@ -82,7 +84,7 @@ public class ChatPane extends JTextPane
     }
 
     
-    private void scroll_and_beep(final HGPeerIdentity from)
+    private void scroll_and_beep(final String from)
     {
         SwingUtilities.invokeLater(new Runnable() {
             public void run()
@@ -92,7 +94,7 @@ public class ChatPane extends JTextPane
                 // get
                 // where we want...
                 scrollRectToVisible(new Rectangle(0, getBounds(null).height + 100, 1, 1));
-                if (!from.equals(me)) 
+                if (!from.equals(connectionContext.getMe())) 
                 {
                     Toolkit.getDefaultToolkit().beep();
                     ThisNiche.guiController.blink("New message received");
@@ -112,13 +114,15 @@ public class ChatPane extends JTextPane
      * all of them become disabled.
      * </p>
      */
-    public void actionableChatFrom(HGPeerIdentity from, String text,
-            Object... actions)
+    public void actionableChatFrom(String from, 
+                                   String text,
+                                   Object... actions)
     {
         try
         {
             String s = "(" + sdf.format(new Date()) + ") ";
-            s += (from.equals(me) ? "me" : from.getName()) + ":";
+            s += (from.equals(connectionContext.getMe()) ? "me" : 
+                    connectionContext.getDisplayName(from)) + ":";
             String indent = s.replaceAll(".", " ");
             s += text + "\n" + indent;
             getDocument().insertString(getDocument().getLength(), s, null);

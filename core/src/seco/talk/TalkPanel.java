@@ -41,7 +41,7 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
 
     private static final ActionListener transferButtonListener = new TransferButtonListener();
 
-    private HGPeerIdentity friend;
+    private String friendId;
     private ChatPane chatPane;
     private TalkInputPane inputPane;
     private JButton transferButton;
@@ -55,9 +55,8 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
         inputPane = new TalkInputPane();
         inputPane.initComponents();
         inputPane.inputCallback = new ChatCallback(this);
-        chatPane = new ChatPane();
+        chatPane = new ChatPane(getConnectionContext());
         chatPane.initComponents();
-        chatPane.setMe(getConnectionContext().getPeer().getIdentity());
         JPanel outPanel = new JPanel();
         outPanel.setLayout(new BorderLayout());
         outPanel.add(new JScrollPane(chatPane), BorderLayout.CENTER);
@@ -90,19 +89,20 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
 //        // initComponents();
 //    }
 
-    public HGPeerIdentity getFriend()
-    {
-        return friend;
-    }
-
-    public void setFriend(HGPeerIdentity friend)
-    {
-        this.friend = friend;
-    }
 
     public ChatPane getChatPane()
     {
         return chatPane;
+    }
+
+    public String getFriendId()
+    {
+        return friendId;
+    }
+
+    public void setFriendId(String friendId)
+    {
+        this.friendId = friendId;
     }
 
     public void setChatPane(ChatPane chatPane)
@@ -137,10 +137,14 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
         // ThisNiche.hg.getPersistentHandle(h).toString() + ":" + atom + ":" +
         // type;
         String msg = "Offered " + label;
-        chatPane.actionableChatFrom(getConnectionContext().getPeer()
-                .getIdentity(), msg, "Cancel", new Runnable() {
+        chatPane.actionableChatFrom(getConnectionContext().getMe(), 
+                                    msg, 
+                                    "Cancel", 
+                                    new Runnable() 
+        {
             public void run()
             {
+                // TODO...
                 System.out.println("Action Cancelled.");
             }
         });
@@ -331,8 +335,7 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
             if (panel.talkActivity != null)
             {
                 panel.talkActivity.chat(msg);
-                panel.chatPane.chatFrom(panel.getConnectionContext().getPeer()
-                        .getIdentity(), msg);
+                panel.chatPane.chatFrom(panel.getConnectionContext().getMe(), msg);
             }
         }
 
@@ -350,9 +353,10 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
     @Override
     public void connected(ConnectionContext ctx)
     {
+        connectionContext = ctx;        
         setEnabled0(true);
         ctx.getPeer().addPeerPresenceListener(this);
-        initTalkActivity(ctx);
+        initTalkActivity();
     }
 
     @Override
@@ -369,25 +373,30 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
         setEnabled0(false);
     }
 
-    public void initTalkActivity(ConnectionContext ctx)
+    public boolean isFriendPresent()
+    {
+        return connectionContext.getPeer().getIdentity(friendId) != null;        
+    }
+    
+    public void initTalkActivity(/*ConnectionContext ctx*/)
     {
         if (talkActivity != null) return;
-        if (ctx.talks.containsKey(friend))
+        if (connectionContext.talks.containsKey(friendId))
         {
-            talkActivity = ctx.talks.get(friend);
+            talkActivity = connectionContext.talks.get(friendId);
             setEnabled0(true);
             return;
         }
-        if (ctx.getPeer().getNetworkTarget(friend) == null)
+        if (!isFriendPresent())
         {
             setEnabled0(false);
             return;
         }
 
-        talkActivity = new TalkActivity(ctx.getPeer(), friend, this);
-        ctx.talks.put(friend, talkActivity);
+        talkActivity = new TalkActivity(connectionContext.getPeer(), friendId, this);
+        connectionContext.talks.put(friendId, talkActivity);
         System.out.println("initTalkActivity: " + talkActivity);
-        ctx.getPeer().getActivityManager().initiateActivity(talkActivity);
+        connectionContext.getPeer().getActivityManager().initiateActivity(talkActivity);
         setEnabled0(true);
     }
 
@@ -397,16 +406,16 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
         if (isConnected()) return;
         // System.out.println("TalkPanel - peerJoined: " + target + ":" +
         // friend);
-        if (target.equals(friend))
+        if (isFriendPresent())
         {
-            initTalkActivity(getConnectionContext());
-            chatPane.setMe(getConnectionContext().getPeer().getIdentity());
+            initTalkActivity();
         }
     }
 
     public void peerLeft(HGPeerIdentity target)
     {
-        if (target.equals(friend)) setEnabled0(false);
+        if (!isFriendPresent()) 
+            setEnabled0(false);
     }
 
     @Override
@@ -421,5 +430,4 @@ public class TalkPanel extends BaseChatPanel implements PeerPresenceListener
         if (inputPane != null) inputPane.setEnabled(enabled);
         if (chatPane != null) chatPane.setEnabled(enabled);
     }
-
 }

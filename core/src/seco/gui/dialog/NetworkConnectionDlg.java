@@ -56,12 +56,17 @@ public class NetworkConnectionDlg extends JDialog
         {
             ConnectionConfig cfg = new ConnectionConfig();
             ConnectionContext ctx = new ConnectionContext(cfg);
-            ctx.setActive(true);
+            ctx.setActive(false);
             ThisNiche.graph.add(ctx);                
             NetworkConnectionDlg.this.contextList.addItem(ctx);
             NetworkConnectionDlg.this.contextList.setSelectedItem(ctx);
         }
-        networkPanel.setConnectionContext((ConnectionContext)this.contextList.getSelectedItem());        
+        networkPanel.setConfig(getCurrentContext().getConfig());        
+    }
+    
+    private ConnectionContext getCurrentContext()
+    {
+        return (ConnectionContext)this.contextList.getSelectedItem();
     }
     
     /** Creates new form NetworkConnectionDlg */
@@ -77,13 +82,14 @@ public class NetworkConnectionDlg extends JDialog
 
     public void open()
     {
-        ConnectionManager.openConnectionPanel(networkPanel.getConnectionContext());
+        ConnectionManager.openConnectionPanel(getCurrentContext());
 //        setVisible(false);
     }
 
     public void save()
     {
-        ThisNiche.graph.update(networkPanel.getConnectionContext());
+        networkPanel.getConfig(getCurrentContext().getConfig());
+        ThisNiche.graph.update(getCurrentContext());
     }
 
     private void initComponents()
@@ -140,17 +146,17 @@ public class NetworkConnectionDlg extends JDialog
                         // Delete the panel from its canvas. The canvas is the visual 
                         // element of the containing CellGroup
                         CellGroup group = CellUtils.getParentGroup(cellHandle);
-                        group.remove((CellGroupMember)ThisNiche.graph.get(cellHandle));
-                       // PiccoloCanvas canvas = (PiccoloCanvas)group.getVisualInstance();
-                       // PSwingNode node = canvas.getPSwingNodeForHandle(panelHandle);
-                       // canvas.removeNode(node);
-                       // ThisNiche.graph.remove(panelHandle);
-                        
+                        PiccoloCanvas canvas = (PiccoloCanvas)group.getVisualInstance();
+                        PSwingNode node = canvas.getPSwingNodeForHandle(cellHandle);
+                        canvas.removeNode(node);
+                        ThisNiche.graph.remove(cellHandle, true);
+                        ThisNiche.graph.remove(panelHandle);
                     }
                     ThisNiche.graph.remove(h);
+                    NetworkConnectionDlg.this.contextList.removeItem(ctx);                    
                     ctx = null;
-                }
-                NetworkConnectionDlg.this.contextList.removeItem(ctx);                
+                }             
+                NetworkConnectionDlg.this.resetConnectionPanel();
             }
         });
         JButton butNew = new JButton("New");
@@ -159,10 +165,11 @@ public class NetworkConnectionDlg extends JDialog
             {
                 ConnectionConfig cfg = new ConnectionConfig();
                 ConnectionContext ctx = new ConnectionContext(cfg);
-                ctx.setActive(true);
+                ctx.setActive(false);
                 ThisNiche.graph.add(ctx);                
                 NetworkConnectionDlg.this.contextList.addItem(ctx);
                 NetworkConnectionDlg.this.contextList.setSelectedItem(ctx);
+                networkPanel.setConfig(cfg);
             }
         });
          
@@ -234,7 +241,7 @@ public class NetworkConnectionDlg extends JDialog
         private JTextField txtUsername;
         private JCheckBox chkEnabled;
         
-        protected ConnectionContext ctx;
+//        protected ConnectionContext ctx;
 
         /** Creates new form NetworkConnectionPanel */
         public NetworkConnectionPanel()
@@ -255,10 +262,8 @@ public class NetworkConnectionDlg extends JDialog
             txtProxyUsername.setEnabled(enabled);
         }
 
-        public void setConnectionContext(ConnectionContext ctx)
+        public void setConfig(ConnectionConfig cfg)
         {
-            this.ctx = ctx;
-            ConnectionConfig cfg = ctx.getConfig();
             chLogAnon.setSelected(cfg.isAnonymousLogin());
             chProxy.setSelected(cfg.isUseProxy());
             chRegAuto.setSelected(cfg.isAutoRegister());
@@ -272,9 +277,8 @@ public class NetworkConnectionDlg extends JDialog
             txtProxyUsername.setText(cfg.getProxyUser());
         }
 
-        public ConnectionContext getConnectionContext()
+        public void getConfig(ConnectionConfig cfg)
         {
-            ConnectionConfig cfg = ctx.getConfig();
             cfg.setAnonymousLogin(chLogAnon.isSelected());
             cfg.setAutoRegister(chRegAuto.isSelected());
             cfg.setHostname(txtHost.getText());
@@ -289,7 +293,6 @@ public class NetworkConnectionDlg extends JDialog
                 cfg.setProxyPort(new Integer(txtProxyPort.getText()));
                 cfg.setProxyUser(txtProxyUsername.getText());
             }
-            return ctx;
         }
 
         private void initComponents()

@@ -5,11 +5,9 @@ import java.awt.Component;
 import java.awt.Container;
 import java.util.Iterator;
 
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.PeerPresenceListener;
 import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
@@ -19,10 +17,8 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.DefaultParticipantStatusListener;
-import org.jivesoftware.smackx.muc.DefaultUserStatusListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.Occupant;
-import org.jivesoftware.smackx.muc.ParticipantStatusListener;
 
 import seco.ThisNiche;
 import seco.talk.PeerList.PeerListModel;
@@ -86,7 +82,7 @@ public class RoomPanel extends BaseChatPanel implements PeerPresenceListener
         try
         {
             getTheChat().join(
-                    getConnectionContext().getPeer().getIdentity().getName());
+                    getConnectionContext().getConfig().getUsername());
         }
         catch (XMPPException e)
         {
@@ -131,13 +127,13 @@ public class RoomPanel extends BaseChatPanel implements PeerPresenceListener
         inputPane.initComponents();
         inputPane.inputCallback = new ChatCallBack(this);
 
-        chatPane = new ChatPane();
+        chatPane = new ChatPane(getConnectionContext());
         chatPane.initComponents();
         peerListSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                 new JScrollPane(chatPane), new JScrollPane(inputPane));
         // peerListSplit.setResizeWeight(1.0);
         peerListSplit.setName("peerListSplit");
-        peerList = new PeerList(getPeerID());
+        peerList = new PeerList(this.connectionContext);
         peerList.initComponents();
 
         inputSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, peerListSplit,
@@ -199,8 +195,7 @@ public class RoomPanel extends BaseChatPanel implements PeerPresenceListener
                 xmpp.setProperty("secoPeer", room.getConnectionContext()
                         .getPeer().getIdentity().getId().toString());
                 room.getTheChat().sendMessage(xmpp);
-                room.chatPane.chatFrom(room.getConnectionContext().getPeer()
-                        .getIdentity(), msg);
+                room.chatPane.chatFrom(room.getConnectionContext().getMe(), msg);
             }
             catch (XMPPException e)
             {
@@ -249,12 +244,12 @@ public class RoomPanel extends BaseChatPanel implements PeerPresenceListener
         this.inputPane = inputPane;
     }
 
-    public void setPeerID(HGPeerIdentity peerID)
-    {
-        if (peerList != null) 
-            peerList.setPeerID(peerID);
-//        super.setPeerID(peerID);
-    }
+//    public void setPeerID(HGPeerIdentity peerID)
+//    {
+//        if (peerList != null) 
+//            peerList.setPeerID(peerID);
+////        super.setPeerID(peerID);
+//    }
 
     @Override
     public void connected(ConnectionContext ctx)
@@ -284,7 +279,7 @@ public class RoomPanel extends BaseChatPanel implements PeerPresenceListener
         for (int i = 0; i < model.size(); i++)
         {
             OccupantEx ex = (OccupantEx) model.getElementAt(i);
-            if(target.getName().equals(ex.getNick()))
+            if(getConnectionContext().getPeerName(target).equals(ex.getNick()))
             { 
              model.removeElement(ex);
              return;
@@ -320,6 +315,11 @@ public class RoomPanel extends BaseChatPanel implements PeerPresenceListener
         {
             Message msg = (Message) packet;
             HGPeerIdentity id = new HGPeerIdentity();
+            String from = packet.getFrom();
+            int hostPart = from.lastIndexOf("/");
+            if (hostPart > -1) 
+                from = from.substring(hostPart + 1);
+//            id.setName(from);            
             String otherId = (String) msg.getProperty("secoPeer");
             if (otherId == null)
             {
@@ -329,14 +329,12 @@ public class RoomPanel extends BaseChatPanel implements PeerPresenceListener
                 return;
             }
             else if (otherId.equals(getConnectionContext().getPeer()
-                    .getIdentity().getId().toString())) return;
-            String from = packet.getFrom();
-            int hostPart = from.lastIndexOf("/");
-            if (hostPart > -1) from = from.substring(hostPart + 1);
-            id.setName(from);
+                       .getIdentity().getId().toString()) && 
+                       from.equals(getConnectionContext().getConfig().getUsername())) 
+                return;
             id.setId(ThisNiche.graph.getHandleFactory().makeHandle());
-            getChatPane().chatFrom(id, msg.getBody());
-        }
+            getChatPane().chatFrom(from, msg.getBody());
+        }        
     }
 
     class MyParticipantListener implements PacketListener
@@ -380,8 +378,8 @@ public class RoomPanel extends BaseChatPanel implements PeerPresenceListener
             Occupant o = getTheChat().getOccupant(participant);
             if (o != null)
             {
-                System.out.println("Occupant joined: " + participant + ":"
-                        + o.getNick());
+//                System.out.println("Occupant joined: " + participant + ":"
+//                        + o.getNick());
                 getPeerList().getListModel().addElement(new OccupantEx(o));
             }
         }
@@ -392,8 +390,8 @@ public class RoomPanel extends BaseChatPanel implements PeerPresenceListener
             Occupant o = getTheChat().getOccupant(participant);
             if (o != null)
             {
-                System.out.println("Occupant kicked: " + participant + ":"
-                        + o.getNick());
+//                System.out.println("Occupant kicked: " + participant + ":"
+//                        + o.getNick());
                 OccupantEx ex = new OccupantEx(o);
                 if (getConnectionContext().isMe(ex))
                 {
@@ -411,8 +409,8 @@ public class RoomPanel extends BaseChatPanel implements PeerPresenceListener
             Occupant oc = getTheChat().getOccupant(participant);
             if (oc != null)
             {
-                System.out.println("Occupant left: " + participant + ":"
-                        + oc.getNick());
+//                System.out.println("Occupant left: " + participant + ":"
+//                        + oc.getNick());
                 OccupantEx ex = new OccupantEx(oc);
                 if (getConnectionContext().isMe(ex))
                 {

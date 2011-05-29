@@ -1,6 +1,7 @@
 package seco.talk;
 
 import java.awt.BorderLayout;
+
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -10,7 +11,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.JComponent;
@@ -19,9 +19,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
-
+import org.hypergraphdb.annotation.AtomReference;
 import org.hypergraphdb.annotation.HGIgnore;
-import org.hypergraphdb.peer.HGPeerIdentity;
 import org.jivesoftware.smackx.muc.HostedRoom;
 
 import seco.gui.menu.UpdatablePopupMenu;
@@ -33,7 +32,9 @@ public class PeerList extends JPanel
     private transient MouseListener mouseListener;
     @HGIgnore
     private JList list;
-    private HGPeerIdentity peerID;
+    @AtomReference("symbolic")
+    protected ConnectionContext connectionContext;
+
 
     public PeerList()
     {
@@ -45,11 +46,10 @@ public class PeerList extends JPanel
                     Object val = getList().getSelectedValue();
                     if (val == null || val instanceof HostedRoom)
                         return;
-                    ConnectionContext ctx = ConnectionManager.getConnectionContext(getPeerID());
-                    if (ctx == null)
+                    if (connectionContext == null)
                         return;
                     // don't show popup on ME
-                    if (val instanceof OccupantEx && ctx.isMe((OccupantEx) val))
+                    if (val instanceof OccupantEx && connectionContext.isMe((OccupantEx) val))
                         return;
 
                     if (PeerList.this.getPopup().isVisible())
@@ -71,15 +71,14 @@ public class PeerList extends JPanel
                     if (index < 0 || index >= getList().getModel().getSize())
                         return;
                     Object x = getList().getModel().getElementAt(index);
-                    ConnectionContext ctx = ConnectionManager.getConnectionContext(getPeerID());
-                    if (ctx == null)
+                    if (connectionContext == null)
                         return;
-                    if (x instanceof HGPeerIdentity)
-                        ctx.openTalkPanel((HGPeerIdentity) x);
+                    if (x instanceof String)
+                        connectionContext.openTalkPanel((String) x);
                     else if (x instanceof HostedRoom)
-                        ctx.openChatRoom((HostedRoom) x);
+                        connectionContext.openChatRoom((HostedRoom) x);
                     else if (x instanceof OccupantEx)
-                        ctx.openTalkPanel((OccupantEx) x);
+                        connectionContext.openTalkPanel((OccupantEx) x);
                 }
             }
 
@@ -107,23 +106,23 @@ public class PeerList extends JPanel
 
         popupMenu = new UpdatablePopupMenu();
         JMenuItem mi = new JMenuItem(new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public boolean isEnabled()
             {
                 Object x = getList().getSelectedValue();
                 if (!(x instanceof OccupantEx))
                     return false;
-                ConnectionContext ctx = ConnectionManager.getConnectionContext(getPeerID());
-                return !ctx.isMe((OccupantEx) x)
-                        && !ctx.isInRoster((OccupantEx) x);// ctx.getPeerIdentity((Occupant)
+                return !connectionContext.isMe((OccupantEx) x)
+                        && !connectionContext.isInRoster((OccupantEx) x);// ctx.getPeerIdentity((Occupant)
                 // null;
             }
 
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ConnectionContext ctx = ConnectionManager.getConnectionContext(getPeerID());
-                ctx.addRoster((OccupantEx) getList().getSelectedValue());
+                connectionContext.addRoster((OccupantEx) getList().getSelectedValue());
             }
 
         });
@@ -131,18 +130,19 @@ public class PeerList extends JPanel
         popupMenu.add(mi);
 
         mi = new JMenuItem(new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public boolean isEnabled()
             {
                 Object x = getList().getSelectedValue();
-                ConnectionContext ctx = ConnectionManager.getConnectionContext(getPeerID());
                 if (x instanceof OccupantEx)
-                    return !ctx.isMe((OccupantEx) x)
-                            && ctx.isInRoster((OccupantEx) x);// ctx.getPeerIdentity((Occupant)
+                    return !connectionContext.isMe((OccupantEx) x)
+                            && connectionContext.isInRoster((OccupantEx) x);// ctx.getPeerIdentity((Occupant)
                                                               // x) != null;
-                else if (x instanceof HGPeerIdentity)
-                    return !ctx.isMe((HGPeerIdentity) x)
-                            && ctx.isInRoster((HGPeerIdentity) x);
+                else if (x instanceof String)
+                    return !connectionContext.isMe((String) x)
+                            && connectionContext.isInRoster((String) x);
                 return false;
             }
 
@@ -150,11 +150,10 @@ public class PeerList extends JPanel
             public void actionPerformed(ActionEvent e)
             {
                 Object x = getList().getSelectedValue();
-                ConnectionContext ctx = ConnectionManager.getConnectionContext(getPeerID());
                 if (x instanceof OccupantEx)
-                    ctx.removeRoster((OccupantEx) x);
-                else if (x instanceof HGPeerIdentity)
-                    ctx.removeRoster((HGPeerIdentity) x);
+                    connectionContext.removeRoster((OccupantEx) x);
+                else if (x instanceof String)
+                    connectionContext.removeRoster((String) x);
             }
         });
         mi.setText("Remove From Roaster");
@@ -163,10 +162,10 @@ public class PeerList extends JPanel
         return popupMenu;
     }
 
-    public PeerList(HGPeerIdentity peerID)
+    public PeerList(ConnectionContext connectionContext)
     {
         this();
-        this.peerID = peerID;
+        this.connectionContext = connectionContext;
     }
 
     public void initComponents()
@@ -174,7 +173,7 @@ public class PeerList extends JPanel
         setLayout(new BorderLayout());
         setBorder(new BevelBorder(BevelBorder.RAISED));
         setList(new JList(new PeerListModel()));
-        list.setCellRenderer(new PeerItemRenderer());
+        list.setCellRenderer(new PeerItemRenderer(this.connectionContext));
         add(list, BorderLayout.CENTER);
     }
 
@@ -183,7 +182,7 @@ public class PeerList extends JPanel
         if (list == null)
         {
             list = (JList) getComponent(0);
-            list.setCellRenderer(new PeerItemRenderer());
+            list.setCellRenderer(new PeerItemRenderer(this.connectionContext));
             list.addMouseListener(mouseListener);
         }
         return list;
@@ -197,13 +196,14 @@ public class PeerList extends JPanel
     public void setList(JList l)
     {
         this.list = l;
-        list.setCellRenderer(new PeerItemRenderer());
+        list.setCellRenderer(new PeerItemRenderer(this.connectionContext));
         list.addMouseListener(mouseListener);
 
     }
 
     public static class PeerListModel extends AbstractListModel
     {
+        private static final long serialVersionUID = 1L;
         private List<Object> data = Collections.synchronizedList(new ArrayList<Object>());
  
         public int getSize()
@@ -284,13 +284,13 @@ public class PeerList extends JPanel
         }
     }
 
-    public HGPeerIdentity getPeerID()
+    public ConnectionContext getConnectionContext()
     {
-        return peerID;
+        return connectionContext;
     }
 
-    public void setPeerID(HGPeerIdentity peerID)
+    public void setConnectionContext(ConnectionContext connectionContext)
     {
-        this.peerID = peerID;
+        this.connectionContext = connectionContext;
     }
 }

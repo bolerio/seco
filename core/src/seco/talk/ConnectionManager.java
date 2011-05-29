@@ -54,15 +54,15 @@ public class ConnectionManager
         }
     }
     
-    public static ConnectionContext getConnectionContext(HGPeerIdentity peerID)
-    {
-        if(peerID == null) return null;
-        List<ConnectionContext> l = hg.getAll(ThisNiche.graph, hg.type(ConnectionContext.class));
-        for(ConnectionContext cc: l)
-            if(peerID.equals(cc.getPeer().getIdentity()))
-                return cc;
-        return null;
-    }
+//    public static ConnectionContext getConnectionContext(HGPeerIdentity peerID)
+//    {
+//        if(peerID == null) return null;
+//        List<ConnectionContext> l = hg.getAll(ThisNiche.graph, hg.type(ConnectionContext.class));
+//        for(ConnectionContext cc: l)
+//            if(peerID.equals(cc.getPeer().getIdentity()))
+//                return cc;
+//        return null;
+//    }
     
 //    public static ConnectionContext getConnectionContext(ConnectionConfig config)
 //    {

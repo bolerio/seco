@@ -23,6 +23,13 @@ class PeerItemRenderer extends JLabel implements ListCellRenderer
     static ImageIcon roomIcon = new ImageIcon(
             IconManager.getIcon("seco/talk/chatroom-icon.jpg"));
 
+    private ConnectionContext context;
+    
+    public PeerItemRenderer(ConnectionContext context)
+    {
+        this.context = context;
+    }
+    
     public Component getListCellRendererComponent(JList list, // the list
                                                   Object value, // value to
                                                                 // display
@@ -38,12 +45,12 @@ class PeerItemRenderer extends JLabel implements ListCellRenderer
     {
         String label = null;
         ImageIcon image = null;
-        if (value instanceof HGPeerIdentity)
+        if (value instanceof String)
         {
-            label = ((HGPeerIdentity) value).getName();
-            int hostPart = label.lastIndexOf("/");
+            label = (String)value; // context.getPeerName(((HGPeerIdentity) value));
+            int hostPart = label.lastIndexOf("@");
             if (hostPart > -1)
-                label = label.substring(hostPart + 1);
+                label = label.substring(0, hostPart);
             image = personIcon;
         }
         else if (value instanceof HostedRoom)

@@ -161,11 +161,11 @@ public class ConnectionConfig
             if (other.name != null) return false;
         }
         else if (!name.equals(other.name)) return false;
-        if (password == null)
-        {
-            if (other.password != null) return false;
-        }
-        else if (!password.equals(other.password)) return false;
+//        if (password == null)
+//        {
+//            if (other.password != null) return false;
+//        }
+//        else if (!password.equals(other.password)) return false;
         if (port != other.port) return false;
         if (proxyHost == null)
         {

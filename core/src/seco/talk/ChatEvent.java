@@ -4,6 +4,7 @@ import org.hypergraphdb.peer.HGPeerIdentity;
 
 public class ChatEvent
 {
+/*    
     private String text;
     private HGPeerIdentity from;
     
@@ -31,5 +32,7 @@ public class ChatEvent
     public void setFrom(HGPeerIdentity from)
     {
         this.from = from;
-    }    
+    }
+    
+        */
 }

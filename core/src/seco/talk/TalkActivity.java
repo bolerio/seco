@@ -31,6 +31,7 @@ import org.hypergraphdb.peer.workflow.FSMActivity;
 import org.hypergraphdb.peer.workflow.FromState;
 import org.hypergraphdb.peer.workflow.OnMessage;
 import org.hypergraphdb.peer.workflow.WorkflowState;
+import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
 
 import seco.ThisNiche;
 import seco.events.EvalCellEvent;
@@ -51,13 +52,16 @@ public class TalkActivity extends FSMActivity
 {
     public static final String TYPENAME = "seco-talk";
 
-    private HGPeerIdentity friend;
+    private String friendId;
     private TalkPanel talkPanel;
 
-    private void transferAtom(Message msg, HGHandle atom, Set<HGHandle> done,
-            boolean mainAtom)
+    private void transferAtom(Message msg, 
+                              HGHandle atom, 
+                              Set<HGHandle> done,
+                              boolean mainAtom)
     {
-        if (done.contains(atom)) return;
+        if (done.contains(atom))
+            return;
         System.out.println("");
         done.add(atom);
         Object x = ThisNiche.graph.get(atom);
@@ -82,12 +86,17 @@ public class TalkActivity extends FSMActivity
             // //transferAtom(msg, pubsub.getEventHandler(), done, false);
             // }
             // }
-            List<EventPubSub> subscriptions = hg.getAll(ThisNiche.graph, hg.and(hg
-                    .type(EventPubSub.class),
-                    hg.incident(EvalCellEvent.HANDLE), hg.incident(atom), hg
-                            .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
-                                    atom, ThisNiche.graph.getHandleFactory().anyHandle(),
-                                    ThisNiche.graph.getHandleFactory().anyHandle() })));
+            List<EventPubSub> subscriptions = hg.getAll(ThisNiche.graph,
+                                                        hg.and(hg.type(EventPubSub.class),
+                                                               hg.incident(EvalCellEvent.HANDLE),
+                                                               hg.incident(atom),
+                                                               hg.orderedLink(new HGHandle[] {
+                                                                       EvalCellEvent.HANDLE,
+                                                                       atom,
+                                                                       ThisNiche.graph.getHandleFactory()
+                                                                               .anyHandle(),
+                                                                       ThisNiche.graph.getHandleFactory()
+                                                                               .anyHandle() })));
             for (EventPubSub s : subscriptions)
             {
                 Object handler = ThisNiche.graph.get(s.getEventHandler());
@@ -109,11 +118,13 @@ public class TalkActivity extends FSMActivity
         }
         Message reply = getReply(msg, Performative.InformRef);
         combine(reply,
-                struct(CONTENT, struct("type", mainAtom ? "atom"
-                        : "auxiliary-atom", "atom", SubgraphManager
-                        .getTransferAtomRepresentation(
-                                getThisPeer().getGraph(), atom))));
-        
+                struct(CONTENT,
+                       struct("type",
+                              mainAtom ? "atom" : "auxiliary-atom",
+                              "atom",
+                              SubgraphManager.getTransferAtomRepresentation(getThisPeer().getGraph(),
+                                                                            atom))));
+
         // should block on posting to retain the order and send the main
         // atom last
         try
@@ -128,32 +139,32 @@ public class TalkActivity extends FSMActivity
 
     void openPanel()
     {
-        if (!getConnectionContext().talks.containsKey(friend))
-            getConnectionContext().talks.put(friend, this);
-        if(talkPanel != null)
+        if (!getConnectionContext().talks.containsKey(friendId))
+            getConnectionContext().talks.put(friendId, this);
+        if (talkPanel != null)
             ctx.openTalkPanel(talkPanel);
         else
-           talkPanel = getConnectionContext().openTalkPanel(friend);
+            talkPanel = getConnectionContext().openTalkPanel(friendId);
     }
 
     private void initFriend(Message msg)
     {
         HGPeerIdentity id = getThisPeer().getIdentity(getSender(msg));
-        if (friend == null)
+        if (friendId == null)
         {
             if (id != null)
             {
-                friend = id;
+                friendId = (String)getThisPeer().getNetworkTarget(id);
                 openPanel();
             }
             else
                 throw new RuntimeException("Unknown peer " + getSender(msg)
                         + " attempting to talk.");
         }
-        else if (!friend.equals(id))
+        else if (!friendId.equals((String)getThisPeer().getNetworkTarget(id)))
             throw new RuntimeException(
                     "Wrong activity for Talk msg, received from " + id
-                            + ", but expecting " + friend);
+                            + ", but expecting " + friendId);
     }
 
     public TalkActivity(HyperGraphPeer thisPeer)
@@ -161,13 +172,15 @@ public class TalkActivity extends FSMActivity
         super(thisPeer);
     }
 
-    public TalkActivity(HyperGraphPeer thisPeer, HGPeerIdentity friend, TalkPanel panel)
+    public TalkActivity(HyperGraphPeer thisPeer, 
+                        String friendId,
+                        TalkPanel panel)
     {
         this(thisPeer);
-        this.friend = friend;
+        this.friendId = friendId;
         this.talkPanel = panel;
         openPanel();
-        
+
     }
 
     public TalkActivity(HyperGraphPeer thisPeer, UUID id)
@@ -175,51 +188,52 @@ public class TalkActivity extends FSMActivity
         super(thisPeer, id);
     }
 
-    public TalkActivity(HyperGraphPeer thisPeer, UUID id, HGPeerIdentity friend)
+    public TalkActivity(HyperGraphPeer thisPeer, UUID id, String friendId)
     {
         super(thisPeer, id);
-        this.friend = friend;
+        this.friendId = friendId;
         openPanel();
     }
 
     public TalkPanel getPanel()
     {
-       return talkPanel;
+        return talkPanel;
     }
-    
-//    void setPanel(TalkPanel panel)
-//    {
-//        this.talkPanel = panel;
-//    }
+
+    // void setPanel(TalkPanel panel)
+    // {
+    // this.talkPanel = panel;
+    // }
 
     public void chat(String text)
     {
-        assert friend == null : new RuntimeException(
+        assert friendId == null : new RuntimeException(
                 "No destination for TalkActivity.");
         final Message msg = makeReply(this, Performative.Inform, null);
-        combine(msg, struct(Messages.CONTENT, struct("type", "chat", "text",
-                text)));
-        post(friend, msg);
+        combine(msg,
+                struct(Messages.CONTENT, struct("type", "chat", "text", text)));
+        post(getThisPeer().getIdentity(friendId), msg);
     }
 
     public void sendAtom(HGHandle atom)
     {
-        assert friend == null : new RuntimeException(
+        assert friendId == null : new RuntimeException(
                 "No destination for TalkActivity.");
         Message msg = makeReply(this, Performative.InformRef, null);
-        combine(msg, struct(Messages.CONTENT, struct("type", "atom", "atom",
-                atom)));
-        post(friend, msg);
+        combine(msg,
+                struct(Messages.CONTENT, struct("type", "atom", "atom", atom)));
+        post(getThisPeer().getIdentity(friendId), msg);
     }
 
     public void offerAtom(HGHandle atom, String label)
     {
-        assert friend == null : new RuntimeException(
+        assert friendId == null : new RuntimeException(
                 "No destination for TalkActivity.");
         Message msg = createMessage(Performative.Propose, TalkActivity.this);
-        combine(msg, struct(Messages.CONTENT, struct("type", "atom", "label",
-                label, "atom", atom)));
-        post(friend, msg);
+        combine(msg,
+                struct(Messages.CONTENT,
+                       struct("type", "atom", "label", label, "atom", atom)));
+        post(getThisPeer().getIdentity(friendId), msg);
     }
 
     public void close()
@@ -244,35 +258,45 @@ public class TalkActivity extends FSMActivity
         if ("start-chat".equals(type))
         {
             Message reply = getReply(msg, Performative.AcceptProposal);
-            send(friend, reply);
+            send(getThisPeer().getIdentity(friendId), reply);
         }
         else if ("atom".equals(type))
         {
             final HGPersistentHandle atomHandle = getPart(content, "atom");
             if (msg.getPerformative() == Performative.Propose)
             {
-                getPanel().getChatPane().actionableChatFrom(friend,
-                        (String) getPart(content, "label"), "Accept",
-                        new Runnable() {
-                            public void run()
-                            {
-                                System.out.println("Accepting atom "
-                                        + atomHandle);
-                                Message msg = makeReply(TalkActivity.this,
-                                        Performative.QueryRef, null);
-                                combine(msg, struct(CONTENT, struct("type",
-                                        "atom", "atom", atomHandle)));
-                                post(friend, msg);
-                            }
-                        }, "Reject", new Runnable() {
-                            public void run()
-                            {
-                                System.out.println("Rejecting atom "
-                                        + atomHandle);
-                                reply(msg, Performative.RejectProposal,
-                                        atomHandle);
-                            }
-                        });
+                getPanel().getChatPane()
+                        .actionableChatFrom(getSender(msg).toString(),
+                                            (String) getPart(content, "label"),
+                                            "Accept",
+                                            new Runnable() {
+                                                public void run()
+                                                {
+                                                    System.out.println("Accepting atom "
+                                                            + atomHandle);
+                                                    Message msg = makeReply(TalkActivity.this,
+                                                                            Performative.QueryRef,
+                                                                            null);
+                                                    combine(msg,
+                                                            struct(CONTENT,
+                                                                   struct("type",
+                                                                          "atom",
+                                                                          "atom",
+                                                                          atomHandle)));
+                                                    post(getThisPeer().getIdentity(friendId), msg);
+                                                }
+                                            },
+                                            "Reject",
+                                            new Runnable() {
+                                                public void run()
+                                                {
+                                                    System.out.println("Rejecting atom "
+                                                            + atomHandle);
+                                                    reply(msg,
+                                                          Performative.RejectProposal,
+                                                          atomHandle);
+                                                }
+                                            });
             }
         }
         return null;
@@ -289,8 +313,9 @@ public class TalkActivity extends FSMActivity
     @OnMessage(performative = "RejectProposal")
     public WorkflowState onRejectProposal(final Message msg)
     {
-        getPanel().getChatPane().chatFrom(friend,
-                "Content " + getPart(msg, CONTENT) + " rejected.");
+        getPanel().getChatPane().chatFrom(getSender(msg).toString(),
+                                          "Content " + getPart(msg, CONTENT)
+                                                  + " rejected.");
         return null;
     }
 
@@ -311,7 +336,7 @@ public class TalkActivity extends FSMActivity
             // EventDispatcher.dispatch(U.hgType(ChatEvent.class),
             // friend.getId(),
             // new ChatEvent(friend, text));
-            getPanel().getChatPane().chatFrom(friend, text);
+            getPanel().getChatPane().chatFrom(getSender(msg).toString(), text);
             ThisNiche.guiController.blink("New message received");
         }
         return null;
@@ -361,24 +386,27 @@ public class TalkActivity extends FSMActivity
                     return null;
                 }
                 else
-                    return getThisPeer().getGraph().getTransactionManager()
+                    return getThisPeer().getGraph()
+                            .getTransactionManager()
                             .transact(new Callable<WorkflowState>() {
                                 public WorkflowState call() throws Exception
                                 {
                                     // Store the atom itself locally,
                                     // overwriting any previous version
-                                    HGHandle atomHandle = SubgraphManager
-                                            .writeTransferedGraph(atom,
-                                                    getThisPeer().getGraph())
-                                            .iterator().next();
+                                    HGHandle atomHandle = SubgraphManager.writeTransferedGraph(atom,
+                                                                                               getThisPeer().getGraph())
+                                            .iterator()
+                                            .next();
                                     if ("atom".equals(type))
-                                        GUIHelper
-                                                .addIfNotThere(
-                                                        ThisNiche.TOP_CELL_GROUP_HANDLE,
-                                                        atomHandle, null, // NBUIVisual.getHandle(),
-                                                        null, new Rectangle(
-                                                                300, 200, 200,
-                                                                150));
+                                        GUIHelper.addIfNotThere(ThisNiche.TOP_CELL_GROUP_HANDLE,
+                                                                atomHandle,
+                                                                null, // NBUIVisual.getHandle(),
+                                                                null,
+                                                                new Rectangle(
+                                                                        300,
+                                                                        200,
+                                                                        200,
+                                                                        150));
                                     return null;
                                 }
                             });
@@ -394,11 +422,11 @@ public class TalkActivity extends FSMActivity
     @Override
     public void initiate()
     {
-        assert friend == null : new RuntimeException(
+        assert friendId == null : new RuntimeException(
                 "No destination for TalkActivity.");
         Message msg = createMessage(Performative.Propose, TalkActivity.this);
         combine(msg, struct(Messages.CONTENT, struct("type", "start-chat")));
-        post(friend, msg);
+        post(getThisPeer().getIdentity(friendId), msg);
     }
 
     @Override
@@ -406,23 +434,28 @@ public class TalkActivity extends FSMActivity
     {
         return TYPENAME;
     }
-    
+
     public String toString()
     {
-        return "activity[" + getId() + "]:" + getType() + ":" + friend + ":" +
-        getThisPeer();
+        return "activity[" + getId() + "]:" + getType() + ":" + friendId + ":"
+                + getThisPeer();
     }
-    
+
     ConnectionContext ctx;
+
     public ConnectionContext getConnectionContext()
     {
-        if(ctx == null)
+        if (ctx == null)
         {
-          ctx = ConnectionManager.getConnectionContext(getThisPeer().getIdentity());
-          //if(ctx != null)
-          //  ctx.addConnectionListener(this);
+            XMPPPeerInterface xmpp = (XMPPPeerInterface)getThisPeer().getPeerInterface();            
+            ConnectionConfig config = new ConnectionConfig();
+            config.setHostname(xmpp.getServerName());
+            config.setPort(xmpp.getPort().intValue());
+            config.setUsername(xmpp.getUser());            
+            ctx = hg.getOne(getThisPeer().getGraph(), hg.and(hg.type(ConnectionContext.class), 
+                                                             hg.eq("config", config)));
         }
         return ctx;
-        
+
     }
 }

@@ -1144,7 +1144,9 @@ public class CellUtils
 
     public static HGHandle addSerializable(Object o)
     {
-        HGHandle h = null;
+        HGHandle h = ThisNiche.handleOf(o);
+        if (h != null)
+            return h;
         HGTypeSystem ts = ThisNiche.graph.getTypeSystem();
         ClassLoader save = Thread.currentThread().getContextClassLoader();
         try
