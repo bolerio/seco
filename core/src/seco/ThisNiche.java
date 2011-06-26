@@ -108,7 +108,7 @@ public final class ThisNiche
         // for global threads like the Swing dispatcher thread (well perhaps
         // this is the only global thread with this problem, but it's causing
         // enough headaches already).
-        graph.getTypeSystem().setClassLoader(topContext.getClassLoader());  
+       // graph.getTypeSystem().setClassLoader(topContext.getClassLoader());  
     }
 
     public static HGHandle getContextHandleFor(HGHandle entityHandle)

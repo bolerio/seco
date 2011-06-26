@@ -250,15 +250,15 @@ public class NicheManager
                                         "seco.langs.ruby.RubyScriptSupportFactory"));
         }
         catch (/*ClassNotFoundException*/Throwable t) { }
-        try
-        {
-            Class.forName("seco.langs.javafx.jsr.JavaFXScriptEngineFactory");
-            graph.add(new SEDescriptor("javafx",   
-                                       "seco.langs.javafx.jsr.JavaFXScriptEngineFactory",   
-                                        new String[] {},      
-                                        "seco.langs.javafx.JavaFxScriptSupportFactory"));            
-        }
-        catch (/*ClassNotFoundException*/Throwable t) { }        
+//        try
+//        {
+//            Class.forName("seco.langs.javafx.jsr.JavaFXScriptEngineFactory");
+//            graph.add(new SEDescriptor("javafx",   
+//                                       "seco.langs.javafx.jsr.JavaFXScriptEngineFactory",   
+//                                        new String[] {},      
+//                                        "seco.langs.javafx.JavaFxScriptSupportFactory"));            
+//        }
+//        catch (/*ClassNotFoundException*/Throwable t) { }        
         try
         {
             Class.forName("alice.tuprologx.TuScriptEngineFactory");

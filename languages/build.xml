@@ -3,9 +3,10 @@
 	<!-- First build Seco -->
 	<ant antfile="../core/build.xml" target="jars" inheritall="false" /> 
 	<ant antfile="groovy/build.xml" target="dist" inheritall="false" /> 
-	<!-- <ant antfile="javafx/build.xml" target="dist" inheritall="false" /> -->
+	<ant antfile="javafx/build.xml" target="dist" inheritall="false" />
 	<ant antfile="javascript/build.xml" target="dist" inheritall="false"/> 
 	<ant antfile="prolog/build.xml" target="dist" inheritall="false" /> 
     <ant antfile="ruby/build.xml" target="dist" inheritall="false" /> 
+	<ant antfile="python/build.xml" target="dist" inheritall="false" /> 
 </target>
 </project>

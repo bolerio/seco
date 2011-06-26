@@ -213,9 +213,8 @@ public class SecoPlugin extends AbstractUIPlugin {
 	AbstractAction eclipseProjectAction() {
 		String code = "seco.eclipse.PluginU.addEclipseProjectAction();";
 		ScriptletAction a = new ScriptletAction("beanshell", code);
-		a.putValue(AbstractAction.NAME, "Synchronize Eclipse Action");
+		a.putValue(AbstractAction.NAME, "Synchronize Eclipse Project");
 		return a;
-
 	}
 
 }

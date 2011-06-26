@@ -20,8 +20,8 @@ public class SwingTypeConstructor extends HGAtomTypeBase {
 		Class<?> cls = null;
 		try{
 		//	System.out.println("Class.forName: " + graph.get(layout[0]));
-		  cls = graph.getTypeSystem().getClassLoader().loadClass(((String)graph.get(layout[0])));
-		}catch(ClassNotFoundException ex)
+		  cls = graph.getTypeSystem().loadClass(((String)graph.get(layout[0])));
+		}catch(HGException ex)
 		{
 		    //Trying with the context class loader then give up
 		    ClassLoader loader = Thread.currentThread().getContextClassLoader();
