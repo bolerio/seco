@@ -61,7 +61,7 @@ import edu.umd.cs.piccolo.util.PAffineTransform;
 
 public class CellUtils
 {
-    public static final String defaultEngineName = "beanshell";
+    public static /*final*/ String defaultEngineName = "beanshell";
     static Map<StyleType, NBStyle> styles = new EnumMap<StyleType, NBStyle>(
             StyleType.class);
 
