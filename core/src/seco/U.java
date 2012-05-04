@@ -7,12 +7,14 @@
  */
 package seco;
 
+import org.hypergraphdb.HGConfiguration;
 import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.query.*;
+import org.hypergraphdb.storage.bje.BJEStorageImplementation;
 
 import seco.util.task.CallableCallback;
 import seco.util.task.CompletionCallback;
@@ -39,7 +41,14 @@ public class U
 	private static final String ESCAPE_ESCAPE = "\\\\";
 	private static final String	QUOTE = "\"";
 	private static final String	QUOTE_ESCAPE = "\\\"";
-
+	
+	public static HGConfiguration dbConfig()
+	{
+		HGConfiguration config = new HGConfiguration();
+		config.setStoreImplementation(new BJEStorageImplementation());
+		return config;
+	}
+	
     public static String quote(String s)
     {
     	if (s == null)

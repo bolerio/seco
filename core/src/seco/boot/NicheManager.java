@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JComponent;
+
+import org.hypergraphdb.HGEnvironment;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGTypeSystem;
@@ -343,7 +345,7 @@ public class NicheManager
         HyperGraph hg = null;
         try
         {
-            hg = new HyperGraph(path.getAbsolutePath()); // HGEnvironment.get(path.getAbsolutePath());
+            hg = HGEnvironment.get(path.getAbsolutePath(), U.dbConfig());
             // Scriptlet s = new Scriptlet("jscheme", "(load \"jscheme/scribaui.scm\")(install-runtime-menu)");            
           //  hg.add(new HGValueLink("on-load", new HGHandle[] {ThisNiche.TOP_CONTEXT_HANDLE, hg.add(s)}));
             HyperGraph saveHG = ThisNiche.graph; // likely, this is null, but just in case

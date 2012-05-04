@@ -665,7 +665,7 @@ public class ClassRepository
                 repositoryPath = new File(new File(U.findUserHome()),
                     REPOSITORY_NAME).getAbsolutePath();
             System.out.println("ClassRepository Path : " + repositoryPath);
-            instance = new ClassRepository(HGEnvironment.get(repositoryPath));
+            instance = new ClassRepository(HGEnvironment.get(repositoryPath, U.dbConfig()));
         }
         return instance;
     }

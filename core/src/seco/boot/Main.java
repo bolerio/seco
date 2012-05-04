@@ -9,6 +9,8 @@ package seco.boot;
 
 import org.hypergraphdb.HGEnvironment;
 
+import seco.U;
+
 /**
  * Main class loaded reflectively with a custom class loader.
 s */
@@ -23,6 +25,6 @@ class Main
 	 */
 	public static void go(String nicheLocation)
 	{
-        HGEnvironment.get(nicheLocation); // boots from HG LOAD listeners            
+        HGEnvironment.get(nicheLocation, U.dbConfig()); // boots from HG LOAD listeners            
 	}
 }
