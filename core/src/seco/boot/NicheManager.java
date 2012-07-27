@@ -43,8 +43,10 @@ import seco.storage.swing.SwingTypeMapper;
 import seco.storage.swing.types.SwingType;
 import seco.storage.swing.types.SwingTypeConstructor;
 import seco.things.AvailableVisual;
+import seco.things.ByAttributeIndexer;
 import seco.things.Cell;
 import seco.things.CellGroup;
+import seco.things.CellGroupMember;
 import seco.things.CellGroupType;
 import seco.things.CellType;
 import seco.things.DefaultVisual;
@@ -303,12 +305,15 @@ public class NicheManager
         HGTypeSystem ts = hg.getTypeSystem();
         if (ts.getType(CellGroupType.HGHANDLE) == null)
         {
+        	HGHandle baseType = ts.getTypeHandle(CellGroupMember.class);
             HGAtomType type = new CellGroupType();
             type.setHyperGraph(hg);
             ts.addPredefinedType(CellGroupType.HGHANDLE, type, CellGroup.class);
+            ts.assertSubtype(baseType, CellGroupType.HGHANDLE);
             type = new CellType();
             type.setHyperGraph(hg);
             ts.addPredefinedType(CellType.HGHANDLE, type, Cell.class);
+            ts.assertSubtype(baseType, CellType.HGHANDLE);
             type = new NotebookDocumentType();
             type.setHyperGraph(hg);
             ts.addPredefinedType(NotebookDocumentType.HGHANDLE, type,
@@ -342,20 +347,25 @@ public class NicheManager
         int levelsToDeleteOnFail = 0;
         for (File existing = path; !existing.exists(); existing = existing.getParentFile())
             levelsToDeleteOnFail++;
-        HyperGraph hg = null;
+        HyperGraph graph = null;
         try
         {
-            hg = HGEnvironment.get(path.getAbsolutePath(), U.dbConfig());
+            graph = HGEnvironment.get(path.getAbsolutePath(), U.dbConfig());
             // Scriptlet s = new Scriptlet("jscheme", "(load \"jscheme/scribaui.scm\")(install-runtime-menu)");            
           //  hg.add(new HGValueLink("on-load", new HGHandle[] {ThisNiche.TOP_CONTEXT_HANDLE, hg.add(s)}));
             HyperGraph saveHG = ThisNiche.graph; // likely, this is null, but just in case
             try
-            {                            	   	
-                hg.add(new HGListenerAtom(HGOpenedEvent.class.getName(), 
+            {
+            	graph.getIndexManager().register(
+        				new ByAttributeIndexer<String, HGHandle>(
+        						graph.getTypeSystem().getTypeHandle(CellGroupMember.class), 
+        						"name", 
+        						graph.getTypeSystem().getTypeHandle(String.class)));            	
+                graph.add(new HGListenerAtom(HGOpenedEvent.class.getName(), 
         				  seco.boot.NicheBootListener.class.getName()));
-                hg.define(ThisNiche.NICHE_NAME_HANDLE, name);
-                hg.define(ThisNiche.TOP_CONTEXT_HANDLE, new RuntimeContext("top"));
-                ThisNiche.bindNiche(hg);
+                graph.define(ThisNiche.NICHE_NAME_HANDLE, name);
+                graph.define(ThisNiche.TOP_CONTEXT_HANDLE, new RuntimeContext("top"));
+                ThisNiche.bindNiche(graph);
                 populateThisNiche();            	
             }
             finally
@@ -363,11 +373,11 @@ public class NicheManager
             	if (saveHG != null)
             		ThisNiche.bindNiche(saveHG);
             }
-            hg.close();
+            graph.close();
         }
         catch (Throwable t)
         {
-            if (hg != null) try { hg.close(); } catch (Throwable ex) { }
+            if (graph != null) try { graph.close(); } catch (Throwable ex) { }
             for (int i = 0; i < levelsToDeleteOnFail; i++)
             {
                 path.delete();

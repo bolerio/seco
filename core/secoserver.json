@@ -1,0 +1,17 @@
+{
+"interfaceType"	: "org.hypergraphdb.peer.xmpp.XMPPPeerInterface",
+"localDB": "/tmp/secoserverdb",
+"peerName"	: "SecoServer",
+"bootstrap" : [ {"class" : "org.hypergraphdb.peer.bootstrap.AffirmIdentityBootstrap", "config" : {}},
+                {"class" : "org.hypergraphdb.peer.bootstrap.CACTBootstrap", "config" : {}},
+                {"class" : "seco.talk.SecoTalkBootstrap", "config" : {}}
+              ],
+"interfaceConfig"		:
+  {
+    "user" : "SecoServer",
+    "password" : "password",
+    "serverUrl"	: "lilliput",
+    "room" : "hg@conference.lilliput",
+    "autoRegister" : false
+  }
+}

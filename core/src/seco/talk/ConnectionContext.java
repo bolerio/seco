@@ -226,6 +226,7 @@ public class ConnectionContext
                                 HGUtils.getRootCause(t),
                                 "Failed to connect to network, see error console.",
                                 JOptionPane.ERROR_MESSAGE);
+                        t.printStackTrace(System.err);
                         fireDisconnected();
                         thisPeer = null;
                     }
@@ -511,7 +512,7 @@ public class ConnectionContext
         try
         {
             i.getConnection().getRoster()
-                    .createEntry(short_name + "@" + OPENFIRE_HOST/*i.getServerName()*/, nick, null);
+                    .createEntry(short_name + "@" + i.getServerName(), nick, null);
         }
         catch (XMPPException ex)
         {

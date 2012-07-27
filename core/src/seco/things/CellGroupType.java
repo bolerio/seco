@@ -55,7 +55,5 @@ public class CellGroupType extends HGAtomTypeBase
 		//System.out.println("store: " + group.getName() + ":" + layout.length);
         
 		return graph.getStore().store(layout);
-	}
-	
-	
+	}	
 }

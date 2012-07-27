@@ -19,6 +19,7 @@ import org.hypergraphdb.storage.bje.BJEStorageImplementation;
 import seco.util.task.CallableCallback;
 import seco.util.task.CompletionCallback;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -77,6 +78,30 @@ public class U
         if(home != null && home.startsWith(QUOTE))
            home = unquote(home);
         return home;
+    }
+
+    public static String getFileContentAsString(String filename)
+    {        
+        FileInputStream in = null;
+        try
+        {
+        	in = new FileInputStream(filename);
+            InputStreamReader reader = new InputStreamReader(in);
+            StringBuffer result = new StringBuffer();
+            char [] buf = new char[1024];
+            for (int c = reader.read(buf); c > -1; c = reader.read(buf))
+                result.append(buf);
+            return result.toString();
+        }
+        catch (IOException ex)
+        {
+            throw new RuntimeException(ex);
+        }
+        finally
+        {
+        	if (in != null)
+        		try { in.close(); } catch (Throwable t) { }
+        }
     }
     
     public static String getResourceContentAsString(String name)

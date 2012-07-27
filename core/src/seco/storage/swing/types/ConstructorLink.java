@@ -6,6 +6,8 @@ import org.hypergraphdb.HGPlainLink;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.type.Slot;
 
+import seco.ThisNiche;
+
 public class ConstructorLink extends HGPlainLink
 {
 
