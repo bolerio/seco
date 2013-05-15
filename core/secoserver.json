@@ -10,8 +10,8 @@
   {
     "user" : "SecoServer",
     "password" : "password",
-    "serverUrl"	: "lilliput",
-    "room" : "hg@conference.lilliput",
+    "serverUrl"	: "localhost",
+    "room" : "hgbd@conference.lilliput",
     "autoRegister" : false
   }
 }

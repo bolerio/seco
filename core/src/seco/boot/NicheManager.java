@@ -300,12 +300,12 @@ public class NicheManager
         graph.add(new AvailableVisual(typeHandle, visualHandle));
     }
     
-    static void populateDefaultSecoUI(HyperGraph hg)
+    public static void populateSecoTypes(HyperGraph hg)
     {
         HGTypeSystem ts = hg.getTypeSystem();
         if (ts.getType(CellGroupType.HGHANDLE) == null)
         {
-        	HGHandle baseType = ts.getTypeHandle(CellGroupMember.class);
+            HGHandle baseType = ts.getTypeHandle(CellGroupMember.class);
             HGAtomType type = new CellGroupType();
             type.setHyperGraph(hg);
             ts.addPredefinedType(CellGroupType.HGHANDLE, type, CellGroup.class);
@@ -331,6 +331,12 @@ public class NicheManager
             ts.addPredefinedType(ScriptletDocumentType.HGHANDLE, type,
                     ScriptletDocument.class);
         }
+        
+    }
+    
+    public static void populateDefaultSecoUI(HyperGraph hg)
+    {
+        populateSecoTypes(hg);
         if(hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE) == null)
            GUIHelper.makeTopCellGroup();
     }   

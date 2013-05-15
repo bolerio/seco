@@ -1,9 +1,7 @@
 package seco.talk;
 
-import static org.hypergraphdb.peer.Structs.getPart;
-
-
 import java.awt.Rectangle;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,12 +12,13 @@ import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
 
+import mjson.Json;
+
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;
 import org.hypergraphdb.peer.PeerConfig;
-import org.hypergraphdb.peer.serializer.JSONReader;
 import org.hypergraphdb.peer.xmpp.XMPPPeerInterface;
 import org.hypergraphdb.util.HGUtils;
 import org.jivesoftware.smack.ConnectionListener;
@@ -41,6 +40,15 @@ import seco.things.CellUtils;
 import seco.util.GUIUtil;
 import seco.util.task.CallableCallback;
 
+/**
+ * <p>
+ * Represents one connection to a HGDB P2P network. Holds the 
+ * {@link HyperGraphPeer} instance, current chats, configuration etc.
+ * </p>
+ * 
+ * @author borislav
+ *
+ */
 public class ConnectionContext
 {
     private String networkName = "Seco Network";
@@ -141,42 +149,31 @@ public class ConnectionContext
                 : create_new_peer();
     }
 
-    @SuppressWarnings("unchecked")
-	private boolean same_config(Map<String, Object> peerConfig)
+	private boolean same_config(Json peerConfig)
     {
-        Object o = peerConfig.get("peerName");
-        if (o == null || !o.equals(config.getUsername())) return false;
-        peerConfig = (Map<String, Object>) peerConfig.get(PeerConfig.INTERFACE_CONFIG);
-        o = peerConfig.get("anonymous");
-        if (o == null || !o.equals(config.isAnonymousLogin())) return false;
-        o = peerConfig.get("autoRegister");
-        if (o == null || !o.equals(config.isAutoRegister())) return false;
-        o = peerConfig.get("user");
-        if (o == null || !o.equals(config.getUsername())) return false;
-        o = peerConfig.get("password");
-        if (o == null || !o.equals(config.getPassword())) return false;
-        o = peerConfig.get("serverUrl");
-        if (o == null || !o.equals(config.getHostname())) return false;
-        o = peerConfig.get("port");
-        if (o == null || !o.equals(config.getPort())) return false;
-        return true;
+    	if (!peerConfig.is("peerName", config.getUsername()))
+    		return false;
+        peerConfig = peerConfig.at(PeerConfig.INTERFACE_CONFIG);
+        return peerConfig.is("anonymous", config.isAnonymousLogin()) &&
+        	   peerConfig.is("autoRegister", config.isAutoRegister()) &&
+               peerConfig.is("user", config.getUsername()) &&
+               peerConfig.is("password", config.getPassword()) &&
+               peerConfig.is("serverUrl", config.getHostname()) &
+               peerConfig.is("port", config.getPort());
     }
 
-    @SuppressWarnings("unchecked")
 	private HyperGraphPeer create_new_peer()
     {
-        JSONReader reader = new JSONReader();
-        Map<String, Object> peerConfig = getPart(reader
-                .read(ConnectionManager.JSON_CONFIG));
-        peerConfig.put("localDB", ThisNiche.graph.getLocation());
-        peerConfig.put("peerName", config.getUsername());
-        Map<String, Object> xmppConfig = (Map<String, Object>) peerConfig.get(PeerConfig.INTERFACE_CONFIG);
-        xmppConfig.put("anonymous", config.isAnonymousLogin());
-        xmppConfig.put("autoRegister", config.isAutoRegister());
-        xmppConfig.put("user", config.getUsername());
-        xmppConfig.put("password", config.getPassword());
-        xmppConfig.put("serverUrl", config.getHostname());
-        xmppConfig.put("port", config.getPort());
+        Json peerConfig = Json.read(ConnectionManager.JSON_CONFIG);
+        peerConfig.set("localDB", ThisNiche.graph.getLocation());
+        peerConfig.set("peerName", config.getUsername());
+        Json xmppConfig = peerConfig.at(PeerConfig.INTERFACE_CONFIG);
+        xmppConfig.set("anonymous", config.isAnonymousLogin());
+        xmppConfig.set("autoRegister", config.isAutoRegister());
+        xmppConfig.set("user", config.getUsername());
+        xmppConfig.set("password", config.getPassword());
+        xmppConfig.set("serverUrl", config.getHostname());
+        xmppConfig.set("port", config.getPort());
         thisPeer = new HyperGraphPeer(peerConfig, ThisNiche.graph);
         return thisPeer;
     }

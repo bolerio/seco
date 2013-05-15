@@ -259,7 +259,7 @@ public class ConnectionPanel extends BaseChatPanel
         try
         {
             for (HostedRoom room : MultiUserChat.getHostedRooms(peerInterface
-                    .getConnection(), "conference." + server))
+                    .getConnection(), "conference.chat." + server))
             {
                 peerList.getListModel().addElement(room);
             }

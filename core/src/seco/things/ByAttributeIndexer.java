@@ -9,7 +9,7 @@ import org.hypergraphdb.storage.ByteArrayConverter;
 import org.hypergraphdb.type.HGAtomType;
 import org.hypergraphdb.type.HGPrimitiveType;
 
-public class ByAttributeIndexer<KeyType, ValueType> extends HGKeyIndexer<KeyType, ValueType>
+public class ByAttributeIndexer<KeyType, ValueType> extends HGKeyIndexer<KeyType>
 {
 	private String attributeName;
 	private HGHandle attributeType;

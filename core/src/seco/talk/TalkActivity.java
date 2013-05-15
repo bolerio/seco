@@ -1,29 +1,27 @@
 package seco.talk;
 
 import static org.hypergraphdb.peer.Messages.CONTENT;
+
 import static org.hypergraphdb.peer.Messages.getReply;
 import static org.hypergraphdb.peer.Messages.getSender;
 import static org.hypergraphdb.peer.Messages.makeReply;
-import static org.hypergraphdb.peer.Structs.combine;
-import static org.hypergraphdb.peer.Structs.getPart;
-import static org.hypergraphdb.peer.Structs.struct;
 
 import java.awt.Rectangle;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import javax.swing.JOptionPane;
 
+import mjson.Json;
+
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;
-import org.hypergraphdb.peer.Message;
 import org.hypergraphdb.peer.Messages;
 import org.hypergraphdb.peer.Performative;
 import org.hypergraphdb.peer.SubgraphManager;
@@ -55,7 +53,7 @@ public class TalkActivity extends FSMActivity
     private String friendId;
     private TalkPanel talkPanel;
 
-    private void transferAtom(Message msg, 
+    private void transferAtom(Json msg, 
                               HGHandle atom, 
                               Set<HGHandle> done,
                               boolean mainAtom)
@@ -116,14 +114,13 @@ public class TalkActivity extends FSMActivity
                 transferAtom(msg, group.getTargetAt(i), done, false);
 
         }
-        Message reply = getReply(msg, Performative.InformRef);
-        combine(reply,
-                struct(CONTENT,
-                       struct("type",
-                              mainAtom ? "atom" : "auxiliary-atom",
-                              "atom",
-                              SubgraphManager.getTransferAtomRepresentation(getThisPeer().getGraph(),
-                                                                            atom))));
+        Json reply = getReply(msg, Performative.InformRef);
+        reply.set(CONTENT,
+           Json.object("type",
+                       mainAtom ? "atom" : "auxiliary-atom",
+                       "atom",
+                       SubgraphManager.getTransferAtomRepresentation(getThisPeer().getGraph(),
+                                                                    atom)));
 
         // should block on posting to retain the order and send the main
         // atom last
@@ -147,7 +144,7 @@ public class TalkActivity extends FSMActivity
             talkPanel = getConnectionContext().openTalkPanel(friendId);
     }
 
-    private void initFriend(Message msg)
+    private void initFriend(Json msg)
     {
         HGPeerIdentity id = getThisPeer().getIdentity(getSender(msg));
         if (friendId == null)
@@ -209,9 +206,8 @@ public class TalkActivity extends FSMActivity
     {
         assert friendId == null : new RuntimeException(
                 "No destination for TalkActivity.");
-        final Message msg = makeReply(this, Performative.Inform, null);
-        combine(msg,
-                struct(Messages.CONTENT, struct("type", "chat", "text", text)));
+        final Json msg = makeReply(this, Performative.Inform, null);
+        msg.set(Messages.CONTENT, Json.object("type", "chat", "text", text));
         post(getThisPeer().getIdentity(friendId), msg);
     }
 
@@ -219,9 +215,8 @@ public class TalkActivity extends FSMActivity
     {
         assert friendId == null : new RuntimeException(
                 "No destination for TalkActivity.");
-        Message msg = makeReply(this, Performative.InformRef, null);
-        combine(msg,
-                struct(Messages.CONTENT, struct("type", "atom", "atom", atom)));
+        Json msg = makeReply(this, Performative.InformRef, null);
+        msg.set(Messages.CONTENT, Json.object("type", "atom", "atom", atom));
         post(getThisPeer().getIdentity(friendId), msg);
     }
 
@@ -229,10 +224,10 @@ public class TalkActivity extends FSMActivity
     {
         assert friendId == null : new RuntimeException(
                 "No destination for TalkActivity.");
-        Message msg = createMessage(Performative.Propose, TalkActivity.this);
-        combine(msg,
-                struct(Messages.CONTENT,
-                       struct("type", "atom", "label", label, "atom", atom)));
+        Json msg = createMessage(Performative.Propose, TalkActivity.this);
+        msg.set(Messages.CONTENT, Json.object("type", "atom", 
+        									  "label", label, 
+        									  "atom", atom));
         post(getThisPeer().getIdentity(friendId), msg);
     }
 
@@ -241,48 +236,44 @@ public class TalkActivity extends FSMActivity
         getState().assign(WorkflowState.Completed);
     }
 
-    protected void onPeerFailure(Message msg)
+    protected void onPeerFailure(Json msg)
     {
-        JOptionPane.showMessageDialog(getPanel(), getPart(msg, CONTENT));
+        JOptionPane.showMessageDialog(getPanel(), msg.at(CONTENT));
     }
 
     @FromState("Started")
     @OnMessage(performative = "Propose")
-    public WorkflowState onPropose(final Message msg)
+    public WorkflowState onPropose(final Json msg)
     {
         initFriend(msg);
-        Map<String, Object> content = getPart(msg, CONTENT);
-        String type = (String) content.get("type");
+        Json content = msg.at(CONTENT);
+        String type = content.at("type").asString();
         assert type != null : new RuntimeException(
                 "No type in TalkActivity content.");
         if ("start-chat".equals(type))
         {
-            Message reply = getReply(msg, Performative.AcceptProposal);
+            Json reply = getReply(msg, Performative.AcceptProposal);
             send(getThisPeer().getIdentity(friendId), reply);
         }
         else if ("atom".equals(type))
         {
-            final HGPersistentHandle atomHandle = getPart(content, "atom");
-            if (msg.getPerformative() == Performative.Propose)
+            final HGPersistentHandle atomHandle = Messages.fromJson(content.at("atom"));
+            if (msg.is("performative", Performative.Propose.toString()))
             {
                 getPanel().getChatPane()
                         .actionableChatFrom(getSender(msg).toString(),
-                                            (String) getPart(content, "label"),
+                                            content.at("label").asString(),
                                             "Accept",
                                             new Runnable() {
                                                 public void run()
                                                 {
                                                     System.out.println("Accepting atom "
                                                             + atomHandle);
-                                                    Message msg = makeReply(TalkActivity.this,
+                                                    Json msg = makeReply(TalkActivity.this,
                                                                             Performative.QueryRef,
                                                                             null);
-                                                    combine(msg,
-                                                            struct(CONTENT,
-                                                                   struct("type",
-                                                                          "atom",
-                                                                          "atom",
-                                                                          atomHandle)));
+                                                    msg.set(CONTENT, Json.object("type", "atom",
+                                                                          		 "atom", atomHandle));
                                                     post(getThisPeer().getIdentity(friendId), msg);
                                                 }
                                             },
@@ -304,33 +295,33 @@ public class TalkActivity extends FSMActivity
 
     @FromState("Started")
     @OnMessage(performative = "AcceptProposal")
-    public WorkflowState onAcceptProposal(final Message msg)
+    public WorkflowState onAcceptProposal(final Json msg)
     {
         return null;
     }
 
     @FromState("Started")
     @OnMessage(performative = "RejectProposal")
-    public WorkflowState onRejectProposal(final Message msg)
+    public WorkflowState onRejectProposal(final Json msg)
     {
         getPanel().getChatPane().chatFrom(getSender(msg).toString(),
-                                          "Content " + getPart(msg, CONTENT)
+                                          "Content " + msg.at(CONTENT).asString()
                                                   + " rejected.");
         return null;
     }
 
     @FromState("Started")
     @OnMessage(performative = "Inform")
-    public WorkflowState onInform(final Message msg)
+    public WorkflowState onInform(final Json msg)
     {
         initFriend(msg);
-        Map<String, Object> content = getPart(msg, CONTENT);
-        String type = (String) content.get("type");
+        Json content = msg.at(CONTENT);
+        String type = content.at("type").asString();
         assert type != null : new RuntimeException(
                 "No type in TalkActivity content.");
         if ("chat".equals(type))
         {
-            String text = getPart(content, "text");
+            String text = content.at("text").asString();
             assert text != null : new RuntimeException(
                     "No text in TalkActivity chat.");
             // EventDispatcher.dispatch(U.hgType(ChatEvent.class),
@@ -344,18 +335,18 @@ public class TalkActivity extends FSMActivity
 
     @FromState("Started")
     @OnMessage(performative = "QueryRef")
-    public WorkflowState onQueryRef(final Message msg)
+    public WorkflowState onQueryRef(final Json msg)
     {
         try
         {
             initFriend(msg);
-            Map<String, Object> content = getPart(msg, CONTENT);
-            String type = (String) content.get("type");
+            Json content = msg.at(CONTENT);
+            String type = content.at("type").asString();
             assert type != null : new RuntimeException(
                     "No type in TalkActivity content.");
             if ("atom".equals(type))
             {
-                HGPersistentHandle atomHandle = getPart(content, "atom");
+                HGPersistentHandle atomHandle = Messages.fromJson(content.at("atom"));
                 transferAtom(msg, atomHandle, new HashSet<HGHandle>(), true);
             }
         }
@@ -368,18 +359,18 @@ public class TalkActivity extends FSMActivity
 
     @FromState("Started")
     @OnMessage(performative = "InformRef")
-    public WorkflowState onInformRef(final Message msg)
+    public WorkflowState onInformRef(final Json msg)
     {
         try
         {
             initFriend(msg);
-            Map<String, Object> content = getPart(msg, CONTENT);
-            final String type = (String) content.get("type");
+            Json content = msg.at(CONTENT);
+            final String type = content.at("type").asString();
             assert type != null : new RuntimeException(
                     "No type in TalkActivity content.");
             if ("atom".equals(type) || "auxiliary-atom".equals(type))
             {
-                final Object atom = getPart(msg, CONTENT, "atom");
+                final Json atom = msg.at(CONTENT).at("atom");
                 if (atom == null)
                 {
                     reply(msg, Performative.Failure, "missing atom data");
@@ -424,8 +415,8 @@ public class TalkActivity extends FSMActivity
     {
         assert friendId == null : new RuntimeException(
                 "No destination for TalkActivity.");
-        Message msg = createMessage(Performative.Propose, TalkActivity.this);
-        combine(msg, struct(Messages.CONTENT, struct("type", "start-chat")));
+        Json msg = createMessage(Performative.Propose, TalkActivity.this);
+        msg.set(Messages.CONTENT, Json.object("type", "start-chat"));
         post(getThisPeer().getIdentity(friendId), msg);
     }
 
