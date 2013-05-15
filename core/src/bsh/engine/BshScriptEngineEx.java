@@ -2,6 +2,10 @@ package bsh.engine;
 
 import javax.script.ScriptException;
 
+import org.hypergraphdb.util.HGUtils;
+
+import seco.ThisNiche;
+
 import bsh.Interpreter;
 
 public class BshScriptEngineEx extends BshScriptEngine
@@ -15,7 +19,7 @@ public class BshScriptEngineEx extends BshScriptEngine
             this.interpreter = new bsh.Interpreter();
             interpreter.setNameSpace(null); // should always be set by context
             loadImports();
-        }
+        }        
         return interpreter;
     }
     

@@ -307,7 +307,7 @@ public class MasterTest
 		IntType t = new IntType();
 		Integer i = new Integer(number);
 		byte[] b = t.toByteArray(i);
-		int out = (Integer) t.fromByteArray(b);
+		int out = (Integer) t.fromByteArray(b, 0, b.length);
 		if (number != out)
 			System.out.println("In: " + number + " Out: " + out);
 	}
