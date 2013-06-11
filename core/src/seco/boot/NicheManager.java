@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import javax.swing.JComponent;
 
@@ -343,9 +344,13 @@ public class NicheManager
         
     static void populateThisNiche()
     {
-    	populateDefaultScriptingLanguages(ThisNiche.graph);
-    	populateDefaultVisuals(ThisNiche.graph);
-    	populateDefaultSecoUI(ThisNiche.graph);        
+    	ThisNiche.graph.getTransactionManager().ensureTransaction(new Callable<Object>() {
+    	public Object call() {
+        	populateDefaultScriptingLanguages(ThisNiche.graph);
+        	populateDefaultVisuals(ThisNiche.graph);
+        	populateDefaultSecoUI(ThisNiche.graph);
+        	return null;
+    	}});
     }
     
     public static void createNiche(String name, File path)

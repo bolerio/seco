@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.SpringLayout;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
 import seco.U;
@@ -55,6 +56,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
         for (String s : (Set<String>) niches.keySet())
             newModel.addElement(s);
         lstNiches.setModel(newModel);
+        lstNiches.setVisibleRowCount(2);
         handleListSelection(null);
     }
 
@@ -104,7 +106,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
         helpLabel.setFont(new Font("Dialog", Font.PLAIN, 12));
         helpLabel.setBackground(Color.white);
         helpLabel.setPreferredSize(new Dimension(180, 200));
-        lstNiches.setPreferredSize(new Dimension(180, 200));
+        scroll.setPreferredSize(new Dimension(180, 180));
         logoLabel.setIcon(new ImageIcon(this.getClass().getResource(
                 "/seco/resources/logo.gif")));
         copyrightLabel.setFont(new Font("Dialog", Font.ITALIC, 10));
@@ -172,14 +174,13 @@ public class NicheSelectDialog extends javax.swing.JDialog
             }
         });
 
-        lstNiches
-                .addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-                    public void valueChanged(
-                            javax.swing.event.ListSelectionEvent evt)
-                    {
-                        handleListSelection(evt);
-                    }
-                });
+        lstNiches.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+        public void valueChanged(
+                javax.swing.event.ListSelectionEvent evt)
+        	{
+            	handleListSelection(evt);
+        	}
+        });
 
         lstNiches.addMouseListener(new MouseListener() {
 
@@ -204,7 +205,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
             {
             }
         });
-        scroll.setViewportView(lstNiches);
+        //scroll.setViewportView(lstNiches);
 
         btnNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -316,6 +317,13 @@ public class NicheSelectDialog extends javax.swing.JDialog
         btnOpen.setEnabled(enabled);
         btnEdit.setEnabled(enabled);
         btnRemove.setEnabled(enabled);
+        Runnable doRun = new Runnable() {
+            @Override
+            public void run() {
+            	lstNiches.ensureIndexIsVisible(lstNiches.getSelectedIndex());
+            }
+        };
+        SwingUtilities.invokeLater(doRun);
     }// GEN-LAST:event_handleListSelection
 
     private void cmdCancel(java.awt.event.ActionEvent evt)
@@ -410,11 +418,18 @@ public class NicheSelectDialog extends javax.swing.JDialog
                 new Runnable() {
             public void run()
             {
-                NicheManager.createNiche(nicheName, location);
-                niches.put(nicheName, location);
-                NicheManager.saveNiches(niches);
-                updateNichesModel();
-                hide_progress_bar();
+            	try
+            	{
+	                NicheManager.createNiche(nicheName, location);
+	                niches.put(nicheName, location);
+	                NicheManager.saveNiches(niches);
+	                updateNichesModel();
+	                hide_progress_bar();
+            	}
+            	catch (Throwable t)
+            	{
+            		t.printStackTrace(System.err);
+            	}            	
             }
         }, 0, Thread.MAX_PRIORITY);
     }
@@ -463,6 +478,6 @@ public class NicheSelectDialog extends javax.swing.JDialog
     JButton btnCancel = new JButton("Exit");
     JButton btnNew = new JButton("New Niche");
     JList lstNiches = new JList();
-    JScrollPane scroll = new JScrollPane();
+    JScrollPane scroll = new JScrollPane(lstNiches);
 
 }

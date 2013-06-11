@@ -28,7 +28,11 @@ import javax.swing.border.TitledBorder;
  * @author  boris
  */
 public class NicheEditDialog extends JDialog {
-    private boolean succeeded;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2168996875672753957L;
+	private boolean succeeded;
     
     public NicheEditDialog(Dialog parent, boolean modal) {
         super(parent, modal);
