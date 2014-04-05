@@ -4,6 +4,8 @@ import java.util.concurrent.Future;
 
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.peer.HyperGraphPeer;
+import org.hypergraphdb.type.JavaBeanBinding;
+import org.hypergraphdb.type.RecordType;
 
 import seco.U;
 import seco.storage.swing.types.SwingType;
@@ -14,10 +16,10 @@ public class SecoServer
 {
 	public static void main(String[] args)
 	{
+	    System.out.println(System.getProperty("java.version"));
 		if (args.length != 1)
 		{
-			System.out
-					.println("Usage seco.server.SecoServer <json-config-file>");
+			System.out.println("Usage seco.server.SecoServer <json-config-file>");
 			System.exit(-1);
 		}
 		try
@@ -31,6 +33,8 @@ public class SecoServer
 			{
 	            
 	            HGPersistentHandle pHandle = peer.getGraph().getHandleFactory().makeHandle("ae9e93e7-07c9-11da-831d-8d375c1471ff");
+                JavaBeanBinding rtype = (JavaBeanBinding)peer.getGraph().getTypeSystem().getAtomType(java.awt.Rectangle.class);
+                System.out.println("rectangle slots = " + ((RecordType)rtype.getHGType()).getSlots());
 	            SwingTypeConstructor type = new SwingTypeConstructor();
 	                type.setHyperGraph(peer.getGraph());
 	                peer.getGraph().getTypeSystem().addPredefinedType(pHandle, type, SwingType.class);

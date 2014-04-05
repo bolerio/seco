@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.awt.geom.Rectangle2D;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -180,6 +181,8 @@ public class CellUtils
     public static EvalResult eval_result(final Cell cell, String engine_name, EvaluationContext ctx)
     {
         EvalResult res = new EvalResult();
+//        res.setText("AWT Component - seco.notebook.NotebookUI[,0,0,498x398,layout=javax.swing.plaf.basic.BasicTextUI$UpdateHandler,alignmentX=0.0,alignmentY=0.0,border=javax.swing.plaf.basic.BasicBorders$MarginBorder@40f53ad6,flags=296,maximumSize=,minimumSize=,preferredSize=,caretColor=javax.swing.plaf.ColorUIResource[r=0,g=0,b=0],disabledTextColor=javax.swing.plaf.ColorUIResource[r=148,g=144,b=140],editable=true,margin=javax.swing.plaf.InsetsUIResource[top=3,left=3,bottom=3,right=3],selectedTextColor=javax.swing.plaf.ColorUIResource[r=255,g=255,b=255],selectionColor=javax.swing.plaf.ColorUIResource[r=10,g=36,b=106],kit=seco.notebook.NotebookEditorKit@45dbf0cd,typeHandlers=] -- belongs to parent component javax.swing.JViewport[,1,1,498x398,layout=javax.swing.ViewportLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=25165832,maximumSize=,minimumSize=,preferredSize=,isViewSizeSet=true,lastPaintPosition=java.awt.Point[x=0,y=0],scrollUnderway=false]");
+//        if (1==1) return res;
         try
         {
             String name = CellUtils.getEngine(cell);
@@ -204,9 +207,11 @@ public class CellUtils
                         res.setComponent(c);
                     }
                     else
+                    {
                         res.setText("AWT Component - " + c.toString()
                                 + " -- belongs to parent component "
                                 + c.getParent().toString());
+                    }
                 }
                 else
                     res.setComponent(c);
@@ -548,7 +553,13 @@ public class CellUtils
 
     public static Rectangle getBounds(CellGroupMember c)
     {
-        return (Rectangle) c.getAttribute(VisualAttribs.rect);
+        Rectangle2D r = (Rectangle2D) c.getAttribute(VisualAttribs.rect);
+        if (r instanceof Rectangle)
+            return (Rectangle)r;
+        else if (r != null)
+            return new Rectangle((int)r.getX(), (int)r.getY(), (int)r.getWidth(), (int)r.getHeight());
+        else
+            return null;
     }
 
     public static void setMinBounds(CellGroupMember c, Rectangle r)

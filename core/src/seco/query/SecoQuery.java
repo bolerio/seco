@@ -9,8 +9,16 @@ import seco.things.ByAttributeIndexer;
 import seco.things.CellGroupMember;
 import seco.things.WithAttributes;
 
+/**
+ * Factory methods for creating useful queries of Seco objects.
+ * @author borislav
+ *
+ */
 public class SecoQuery
 {
+    /**
+     * <p>Query for {@link CellGroupMember} by their attribute.</p> 
+     */
 	public static IndexCondition<String, HGHandle> attr(String name, Object value)
 	{
 		HyperGraph graph = ThisNiche.graph;

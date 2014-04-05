@@ -10,8 +10,8 @@
   {
     "user" : "SecoServer",
     "password" : "password",
-    "serverUrl"	: "localhost",
-    "room" : "hgbd@conference.lilliput",
+    "serverUrl"	: "evalhalla.com",
+    "room" : "seco@conference.chat.evalhalla.com",
     "autoRegister" : false
   }
 }
