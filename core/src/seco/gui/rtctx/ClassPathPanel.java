@@ -30,7 +30,8 @@ public class ClassPathPanel extends JPanel
     private JList cpList;
     private RuntimeContext runtimeContext;
     boolean autoUpdateCtx = true;
-
+    static File lastSelectedDirectory = null;
+    
     /** Creates new form ClassPathPanel */
     public ClassPathPanel()
     {
@@ -118,8 +119,11 @@ public class ClassPathPanel extends JPanel
         chooser.setDialogTitle("Select JAR or Directory");
         chooser.setMultiSelectionEnabled(true);
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        if (lastSelectedDirectory != null)
+        	chooser.setCurrentDirectory(lastSelectedDirectory);
         if (chooser.showDialog(GUIUtil.getFrame(evt), "Select") == JFileChooser.APPROVE_OPTION)
         {
+        	lastSelectedDirectory = chooser.getCurrentDirectory();
             CPListModel model = (CPListModel) cpList.getModel();
             for (File f : chooser.getSelectedFiles())
                 model.addEntry(new ClassPathEntry(f));

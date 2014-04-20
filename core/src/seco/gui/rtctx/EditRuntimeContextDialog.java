@@ -7,13 +7,16 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -22,8 +25,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -50,11 +55,11 @@ public class EditRuntimeContextDialog extends JDialog
 
     public EditRuntimeContextDialog(RuntimeContext ctx)
     {
-        super(GUIUtil.getFrame(), "Manage Runtime Context");
+        super(GUIUtil.getFrame(), "Edit Runtime Context");
         if(GUIUtil.getFrame() == null) setIconImage(GUIHelper.LOGO_IMAGE);
         top = ctx;
         getContentPane().add(new RtConfigPanel());
-        setSize(480, 350);
+        setSize(800, 600);
     };
 
     public class RtConfigPanel extends JPanel
@@ -71,11 +76,26 @@ public class EditRuntimeContextDialog extends JDialog
         }
 
         private void initComponents()
-        {
+        {        	
+            setLayout(new GridBagLayout());
+            
             JLabel jLabel1 = new JLabel("Context Name:");
+        	GridBagConstraints gbc = new GridBagConstraints();
+            gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            add(jLabel1, gbc);
+            
+            gbc = new GridBagConstraints();
+            gbc.gridx = 1;
+            gbc.gridy = 0;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.anchor = GridBagConstraints.NORTHWEST;
             textRtCtx = new JTextField();
-            textRtCtx.setEditable(false);
-            JLabel jLabel2 = new JLabel("Context Tree");
+            textRtCtx.setEditable(false);            
+            add(textRtCtx, gbc);
+        	           
+            cpPanel = new ClassPathPanel();
             tree = new RtTree();
             tree.setCellRenderer(new RtCellRenderer());
             tree.getSelectionModel().setSelectionMode(
@@ -90,43 +110,15 @@ public class EditRuntimeContextDialog extends JDialog
                     cpPanel.setRuntimeContext(rc);
                 }
             });
-            cpPanel = new ClassPathPanel();
+
             JScrollPane jScrollPane1 = new JScrollPane(tree);
-            setLayout(new GridBagLayout());
-            JPanel jPanel1 = new JPanel();
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.anchor = GridBagConstraints.NORTHWEST;
-            add(jLabel1, gbc);
-            gbc = new GridBagConstraints();
-            gbc.gridx = 1;
-            gbc.gridy = 0;
-            gbc.gridwidth = 5;
-            gbc.gridheight = 2;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.ipadx = 354;
-            gbc.anchor = GridBagConstraints.NORTHWEST;
-            add(textRtCtx, gbc);
-
-            gbc = new GridBagConstraints();
-            gbc.gridx = 5;
-            gbc.gridy = 1;
-            gbc.gridheight = 2;
-            gbc.fill = GridBagConstraints.BOTH;
-            gbc.anchor = GridBagConstraints.NORTH;
-            gbc.insets = new Insets(15, 0, 0, 0);
-            add(cpPanel, gbc);
-
-            jPanel1.setLayout(new GridBagLayout());
-
-            jLabel2.setText("Context Tree");
+            JPanel jPanel1 = new JPanel(new GridBagLayout());
             gbc = new GridBagConstraints();
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.anchor = GridBagConstraints.NORTHWEST;
-            jPanel1.add(jLabel2, gbc);
+            jPanel1.add(new JLabel("Context Tree"), gbc);
 
             gbc = new GridBagConstraints();
             gbc.gridx = 0;
@@ -140,17 +132,30 @@ public class EditRuntimeContextDialog extends JDialog
             gbc.weighty = 1.0;
             jPanel1.add(jScrollPane1, gbc);
 
+            tree.setSelectionPath(new TreePath(tree.getModel().getRoot()));
+        	//Create a split pane with the two scroll panes in it.
+        	JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
+        								jPanel1, cpPanel);
+        	//splitPane.setOneTouchExpandable(true);
+        	
             gbc = new GridBagConstraints();
             gbc.gridx = 0;
             gbc.gridy = 1;
-            gbc.gridwidth = 5;
-            gbc.gridheight = 2;
+            gbc.gridwidth = 2;
             gbc.fill = GridBagConstraints.BOTH;
             gbc.anchor = GridBagConstraints.NORTH;
+            gbc.weighty = 1.0;
             gbc.weightx = 1.0;
-            gbc.insets = new Insets(15, 0, 0, 4);
-            add(jPanel1, gbc);
-            tree.setSelectionPath(new TreePath(tree.getModel().getRoot()));
+            gbc.insets = new Insets(15, 0, 0, 4);        	
+            add(splitPane, gbc);
+            getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                    KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE , 0), "close");
+            getActionMap().put("close", new AbstractAction() {
+				private static final long serialVersionUID = 1L;
+				public void actionPerformed(ActionEvent e) {
+                    dispose();
+                }
+            });            
         }
     }
 

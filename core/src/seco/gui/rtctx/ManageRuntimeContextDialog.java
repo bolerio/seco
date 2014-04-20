@@ -2,17 +2,21 @@ package seco.gui.rtctx;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle;
 
 import org.hypergraphdb.HGHandle;
@@ -33,6 +37,14 @@ public class ManageRuntimeContextDialog extends JDialog
         if(GUIUtil.getFrame() == null) setIconImage(GUIHelper.LOGO_IMAGE);
         getContentPane().add(new ManageRtCtxPanel());
         setSize(250, 160);
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE , 0), "close");
+        getRootPane().getActionMap().put("close", new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+			public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });        
     };
 
     public static class ManageRtCtxPanel extends JPanel
@@ -145,7 +157,7 @@ public class ManageRuntimeContextDialog extends JDialog
                                     .addComponent(butDelet))
                     .addComponent(scroll, GroupLayout.PREFERRED_SIZE,
                             GroupLayout.DEFAULT_SIZE,
-                            GroupLayout.PREFERRED_SIZE));
+                            GroupLayout.PREFERRED_SIZE));            
         }
     }
 }
