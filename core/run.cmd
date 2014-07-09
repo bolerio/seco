@@ -1,15 +1,12 @@
 @echo off
-set JAVA_HOME=C:\jdk1.6.0_05
+set JAVA_HOME=C:\java7
 set SECO_HOME=%CD%
 
 ::Uncomment this and change the path if you have profile name  with accent or if you wish to specify a different location for Seco repository
 ::set SECO_CLASS_REPOSITORY_HOME = C:/temp/.secoRepository
 
 set SECO_CLASSPATH="%SECO_HOME%/seco.jar"
-set SECO_NATIVE=%SECO_HOME%/lib/native/windows
 set JAVA_EXEC="%JAVA_HOME%/bin/java"
-
-set PATH=%SECO_NATIVE%;%PATH%
 
 set LIB_JARS=
 echo set LIB_JARS=%%~1;%%LIB_JARS%%>append.bat
@@ -19,4 +16,4 @@ del append.bat
 del tmpList.txt
 set SECO_CLASSPATH=%LIB_JARS%;%SECO_CLASSPATH%
 
-%JAVA_EXEC% -cp %SECO_CLASSPATH% -Djava.library.path=%SECO_NATIVE% seco.boot.StartMeUp
+%JAVA_EXEC% -cp %SECO_CLASSPATH% seco.boot.StartMeUp
