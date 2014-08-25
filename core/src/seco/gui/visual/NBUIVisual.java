@@ -41,13 +41,14 @@ public class NBUIVisual implements CellVisual
         HGHandle h = null;
         if(element instanceof Cell) 
         {
-           Cell cell = (Cell) element;
-           if(cell.getValue() instanceof CellGroupMember)
-               h = cell.getAtomHandle();
-           else
-               h = ThisNiche.handleOf(element);
-        }else
-           h = ThisNiche.handleOf(element); 
+            Cell cell = (Cell) element;
+            if(cell.getValue() instanceof CellGroupMember)
+                h = cell.getAtomHandle();
+            else
+                h = ThisNiche.handleOf(element);
+        }
+        else
+            h = ThisNiche.handleOf(element); 
         final NotebookUI ui = new NotebookUI(h);
         final NotebookDocument doc = ui.getDoc();
         if (ThisNiche.guiController.getNotebookUICaretListener() != null)

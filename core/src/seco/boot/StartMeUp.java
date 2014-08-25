@@ -9,9 +9,6 @@ package seco.boot;
 
 import java.io.*;
 import java.util.*;
-
-import javax.swing.UIManager;
-
 import seco.U;
 import seco.classloader.AdaptiveClassLoader;
 import seco.storage.ClassRepository;

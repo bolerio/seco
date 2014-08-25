@@ -4,9 +4,6 @@ import java.util.concurrent.Future;
 
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.peer.HyperGraphPeer;
-import org.hypergraphdb.type.JavaBeanBinding;
-import org.hypergraphdb.type.RecordType;
-
 import seco.U;
 import seco.storage.swing.types.SwingType;
 import seco.storage.swing.types.SwingTypeConstructor;
@@ -27,30 +24,29 @@ public class SecoServer
 			Json config = Json.read(U.getFileContentAsString(args[0]));
 			// HyperGraph graph = HGEnvironment.get(config.at("db").asString());
 			HyperGraphPeer peer = new HyperGraphPeer(config);
+            Future<Boolean> startupResult = peer.start();
+            if (startupResult.get())
+            {
 
-			Future<Boolean> startupResult = peer.start();
-			if (startupResult.get())
-			{
-	            
-	            HGPersistentHandle pHandle = peer.getGraph().getHandleFactory().makeHandle("ae9e93e7-07c9-11da-831d-8d375c1471ff");
-                JavaBeanBinding rtype = (JavaBeanBinding)peer.getGraph().getTypeSystem().getAtomType(java.awt.Rectangle.class);
-                System.out.println("rectangle slots = " + ((RecordType)rtype.getHGType()).getSlots());
-	            SwingTypeConstructor type = new SwingTypeConstructor();
-	                type.setHyperGraph(peer.getGraph());
-	                peer.getGraph().getTypeSystem().addPredefinedType(pHandle, type, SwingType.class);
-	                seco.boot.NicheManager.populateSecoTypes(peer.getGraph());
-				System.out.println("Peer started successfully. Hit Ctrl-C to stop...");
-				while (true);
-			}
-			else
-			{
-				System.out.println("Peer failed to start.");
-				peer.getStartupFailedException().printStackTrace(System.err);
-			}
-		}
-		catch (Throwable t)
-		{
-			t.printStackTrace(System.err);
-		}
-	}
+                HGPersistentHandle pHandle = peer.getGraph().getHandleFactory()
+                        .makeHandle("ae9e93e7-07c9-11da-831d-8d375c1471ff");
+                SwingTypeConstructor type = new SwingTypeConstructor();
+                type.setHyperGraph(peer.getGraph());
+                peer.getGraph().getTypeSystem().addPredefinedType(pHandle, type, SwingType.class);
+                seco.boot.NicheManager.populateSecoTypes(peer.getGraph());
+                System.out.println("Peer started successfully. Hit Ctrl-C to stop...");
+                while (true)
+                    ;
+            }
+            else
+            {
+                System.out.println("Peer failed to start.");
+                peer.getStartupFailedException().printStackTrace(System.err);
+            }
+        }
+        catch (Throwable t)
+        {
+            t.printStackTrace(System.err);
+        }
+    }
 }

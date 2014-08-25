@@ -3,6 +3,7 @@ package seco.gui.visual;
 import java.awt.Color;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
@@ -16,6 +17,7 @@ import seco.things.Cell;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.CellVisual;
+import seco.things.NotSerializableValue;
 
 public class JComponentVisual implements CellVisual
 {
@@ -39,6 +41,25 @@ public class JComponentVisual implements CellVisual
         JComponent comp = null;
         if(o instanceof JComponent) 
             comp = (JComponent) o;
+        else if (o instanceof NotSerializableValue)
+        {
+        	NotSerializableValue nsv = (NotSerializableValue)o;
+        	if (nsv.initialized())
+        	{
+        		if (nsv.value() instanceof JComponent)
+        			comp = (JComponent)nsv.value();
+        		else
+        		{
+    	           JTextArea area = new JTextArea("" + nsv.value());
+    	           area.setEditable(false);
+    	           //area.setWsetWrapStyleWord(true);
+    	           area.setBackground(Color.white);
+    	           comp = area;        			
+        		}
+        	}
+        	else
+        		comp = new JLabel("Not available, please evaluate source cell.");        
+        }
         else
         {
            JTextArea area = new JTextArea("" + o);

@@ -1,23 +1,16 @@
 package seco.gui.visual;
 
 import java.awt.Color;
-import java.awt.Rectangle;
 
-import javax.swing.BorderFactory;
+import java.awt.Rectangle;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.border.MatteBorder;
-import javax.swing.border.TitledBorder;
-
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
-
 import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolox.swing.PScrollPane;
-
 import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
@@ -27,7 +20,6 @@ import seco.gui.GUIHelper;
 import seco.gui.OutputConsole;
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
-import seco.gui.piccolo.AffineTransformEx;
 import seco.things.BaseCellGroupMember;
 import seco.things.Cell;
 import seco.things.CellGroup;
@@ -159,10 +151,14 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
             }
            // if(title != null) GUIHelper.handleTitle(x,  comp);
         }
-        CellUtils.addEventPubSub(EvalCellEvent.HANDLE, childH, getHandle(),
-                getHandle());
-        CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, childH,
-                getHandle(), getHandle());
+        CellUtils.addEventPubSub(EvalCellEvent.HANDLE, 
+        						 childH, 
+        						 getHandle(),
+        						 getHandle());
+        CellUtils.addEventPubSub(AttributeChangeEvent.HANDLE, 
+        						 childH,
+        						 getHandle(), 
+        						 getHandle());
     }
 
     private void rebind(EvalCellEvent event, HGHandle publisher)

@@ -277,7 +277,7 @@ public class CellUtils
         return outH;
     }
 
-    // TODO: fix this uglyness
+    // TODO: fix this ugliness
     public static CellVisual getVisual(CellGroupMember c)
     {
         HGHandle visH = (c.getVisual() != null) ? c.getVisual()
@@ -286,7 +286,8 @@ public class CellUtils
         CellVisual visual = null;
         if (visH == null || visH.equals(ThisNiche.graph.getHandleFactory().nullHandle()))
         {
-            if (c instanceof CellGroup || CellUtils.isInputCell(c)) visual = new NBUIVisual();
+            if (c instanceof CellGroup || CellUtils.isInputCell(c)) 
+                visual = new NBUIVisual();
             else
             {
                 visual = new JComponentVisual();
@@ -477,9 +478,8 @@ public class CellUtils
 
     public static boolean isInputCell(CellGroupMember m)
     {
-        if (m instanceof CellGroup) return false;
-        Cell c = (Cell) m;
-        return c.getValue() instanceof Scriptlet;
+        return  m instanceof Cell && 
+                ((Cell)m).getValue() instanceof Scriptlet;
     }
 
     public static void setCellText(Cell c, String text)
@@ -851,10 +851,13 @@ public class CellUtils
 
     public static HGHandle getOutCellInput(HGHandle h)
     {
-        List<EventPubSub> subs = hg.getAll(ThisNiche.graph, hg.and(hg
-                .type(EventPubSub.class), hg.incident(h), hg
-                .orderedLink(new HGHandle[] { EvalCellEvent.HANDLE,
-                        ThisNiche.graph.getHandleFactory().anyHandle(), h, h })));
+        List<EventPubSub> subs = hg.getAll(ThisNiche.graph, 
+                hg.and(hg.type(EventPubSub.class), 
+                       hg.incident(h), 
+                       hg.orderedLink(EvalCellEvent.HANDLE,
+                                      ThisNiche.graph.getHandleFactory().anyHandle(), 
+                                      h, 
+                                      h)));
         for (EventPubSub eps : subs)
         {
             Object pub = ThisNiche.graph.get(eps.getPublisher());
@@ -1181,12 +1184,14 @@ public class CellUtils
                 {
                     ex.printStackTrace();
                     HGHandle t = ts.getTypeHandle(Serializable.class);
-                    try{
-                    h = ThisNiche.graph.add(o, t);
-                    }catch(Throwable tt)
+                    try
                     {
-                        h = ThisNiche.graph.add(ex.toString() + 
-                                ":" + tt.toString());
+                    	h = ThisNiche.graph.add(o, t);
+                    }
+                    catch(Throwable tt)
+                    {
+                        //h = ThisNiche.graph.add(ex.toString() + ":" + tt.toString());
+                    	h = ThisNiche.graph.add(new NotSerializableValue().value(o));
                     }
                 }
                 finally

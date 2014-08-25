@@ -448,8 +448,16 @@ public class NotebookDocument extends DefaultStyledDocument
 
     public void evalGroup(CellGroup group)
     {
-        CellUtils.evalGroup(group, getDefaultEngineName(),
-                getEvaluationContext());
+        ClassLoader save = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(this.evalContext.getClassLoader());
+        try
+        {
+            CellUtils.evalGroup(group, getDefaultEngineName(), getEvaluationContext());
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader(save);    
+        }
     }
 
     public void evalCellInAuxThread(Element el) throws BadLocationException

@@ -7,6 +7,8 @@
  */
 package seco.things;
 
+import javax.swing.JComponent;
+
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.atom.HGAtomRef;
 
@@ -72,6 +74,22 @@ public class Cell extends BaseCellGroupMember implements EventHandler
     {
         // HGHandle h = ThisNiche.handleOf(val);
         // if (h == null)
+    	
+    	// So we avoid serializing Swing components for now. There 
+    	// are frequent problems with the approach. And it usually makes
+    	// more sense to find a way to re-evaluate cells to recreate 
+    	// the components, though clearly it would be nice not to need to
+    	// and I still hope that that is achievable, maybe with some other UI
+    	// framework. 
+    	// The wrapping of JComponent into a NotSerializableValue and actually
+    	// the reason that NotSerializableValue wrapper was created was one
+    	// situation when a JTable model was implemented by an anonymous BeanShell
+    	// class - the model could not be serialized because the BeanShell script
+    	// context is not serializable. Not only that, but the mere attempt to serialize
+    	// that table nullified it in the BasicTableUI instance which create constant
+    	// NPEs on every redisplay and there was no way to get rid of that. 
+    	if (val instanceof JComponent)
+    		val = new NotSerializableValue(val);
         HGHandle h = CellUtils.addSerializable(val);
         ref = new HGAtomRef(h, HGAtomRef.Mode.symbolic);
         ThisNiche.graph.update(this);
