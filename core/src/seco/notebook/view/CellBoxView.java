@@ -96,7 +96,10 @@ public class CellBoxView extends HidableBoxView implements CollapsibleView
 		if(collapsed && axis != X_AXIS)
 			return collapsedWidth;
 		if (axis == X_AXIS)
-			return getContainer().getWidth() - 20;
+		{
+			int containerWidth = getContainer().getWidth();
+			return Math.max(0, containerWidth - 20);
+		}
 		else
 			return super.getPreferredSpan(axis);
 	}

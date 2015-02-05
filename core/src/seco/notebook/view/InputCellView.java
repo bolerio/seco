@@ -100,14 +100,17 @@ public class InputCellView extends HidableBoxView
 		//		":" + isVisible());
 		if(!isVisible()) return;
 			
-		Rectangle r = allocation.getBounds();
-		if (((NotebookUI) getContainer()).isDrawCellNums())
-		{
-			drawNumbering(g, getCaption(), r.x, r.y, r.height);
-			r.x += NUM_BOX_GAP;
-			r.width -= NUM_BOX_GAP;
-		}
-		paintBox(g, r.x, r.y, r.width, r.height, this);
+		// commented out temporarily to see if it will effect on the nasty paint bug where the whole notebook
+		// goes gray
+		
+//		Rectangle r = allocation.getBounds();
+//		if (((NotebookUI) getContainer()).isDrawCellNums())
+//		{
+//			drawNumbering(g, getCaption(), r.x, r.y, r.height);
+//			r.x += NUM_BOX_GAP;
+//			r.width -= NUM_BOX_GAP;
+//		}
+//		paintBox(g, r.x, r.y, r.width, r.height, this);
 		super.paint(g, allocation);
 	}
 	

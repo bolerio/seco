@@ -107,7 +107,10 @@ public class WholeCellView extends HidableBoxView implements CollapsibleView
 	{
 		if (!isVisible()) return 0;
 		if (axis == X_AXIS)
-			return getContainer().getWidth() - 20;
+		{
+			int containerWidth = getContainer().getWidth(); 
+			return Math.max(0, containerWidth - 20);
+		}
 		else
 			return super.getPreferredSpan(axis);
 	}
