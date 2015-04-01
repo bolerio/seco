@@ -97,12 +97,12 @@ public class NicheEditDialog extends JDialog {
         );
 
         jPanel2.setBorder( BorderFactory.createTitledBorder( BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Location Of Niche",  TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 16)));
-        fileChooser.setAcceptAllFileFilterUsed(false);
-        fileChooser.setControlButtonsAreShown(false);
-        fileChooser.setDialogType( JFileChooser.CUSTOM_DIALOG);
-        fileChooser.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY);
-        if(fileChooser.getComponentCount() > 3)
-           fileChooser.getComponents()[3].setVisible(false);
+//        fileChooser.setAcceptAllFileFilterUsed(false);
+//        fileChooser.setControlButtonsAreShown(false);
+//        fileChooser.setDialogType( JFileChooser.CUSTOM_DIALOG);
+//        fileChooser.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY);
+//        if(fileChooser.getComponentCount() > 3)
+//           fileChooser.getComponents()[3].setVisible(false);
         fileChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 directorySelected(evt);

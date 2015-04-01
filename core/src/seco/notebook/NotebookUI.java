@@ -794,9 +794,9 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         if (getParent() instanceof JViewport)
         {
             View root = getUI().getRootView(this);
-            int width = (int) root.getPreferredSpan(View.X_AXIS);
+            //int width = (int) root.getPreferredSpan(View.X_AXIS);
             int height = (int) root.getPreferredSpan(View.Y_AXIS);
-            return new Dimension(width, height);
+            return new Dimension((int)super.getPreferredSize().getWidth(), height);
         }
         return isPreferredSizeSet() ? super.getPreferredSize() : dim;
     }
@@ -811,10 +811,10 @@ public class NotebookUI extends JTextPane implements DocumentListener,
     {
         if (getParent() instanceof JViewport)
         {
-            JViewport port = (JViewport) getParent();
+            View root = getUI().getRootView(this);
+            JViewport port = (JViewport)getParent();
             int h = port.getHeight();
-            Dimension min = getPreferredSize();
-            return (h >= min.height);
+            return (h >= (int) root.getPreferredSpan(View.Y_AXIS) );
         }
         return false;
     }
