@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - Matisse</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:50px; z-index:7">
+  <h3>NetBeans Matisse</h3>
+  <p class="semiparagraph">Matisse is the name of the 'free form' editor in the
+    NetBeans IDE.</p>
+  <p class="semiparagraph">Matisse allows to quickly create complex layouts which
+    automatically take the preferred spacings of the current look and feel into
+    account. </p>
+  <p class="semiparagraph">Behind the scenes, Matisse uses <a href="http://java.sun.com/javase/6/docs/api/javax/swing/LayoutStyle.html" target="_blank">javax.swing.GroupLayout</a> and <a href="http://java.sun.com/javase/6/docs/api/javax/swing/LayoutStyle.html" target="_blank">javax.swing.LayoutStyle</a>.    </p>
+  <h4 class="doubleparagraph">How to create layouts for the Quaqua Look and Feel using Matisse</h4>
+  <ol>
+    <li class="doubleparagraph">After you have laid out all components on the form,
+    take a look at the generated code in method initComponents. If the code contains
+      absolute gap values in Pixels, change the layout until all values are based
+      on logical values. If your layout contains indentations, create a copy
+      of
+      method
+      initComponents,
+      and code the indentations manually (see <a href="layout_grouplayout.html">GroupLayout</a> on how to do this).
+      Put the original initComponents method into <code>/* */ </code>comments.</li>
+    <li class="semiparagraph">After you have laid out all components on the form,
+      take a look at the generated code in method initComponents. If the GroupLayout
+      groups do not match the logical structure of the components, create a copy
+      of
+      method
+      initComponents,
+      and rearrange the groups manually. Put the original initComponents method
+      into <code>/* */ </code>comments.</li>
+  </ol>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

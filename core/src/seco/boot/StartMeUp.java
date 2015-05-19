@@ -9,16 +9,41 @@ package seco.boot;
 
 import java.io.*;
 import java.util.*;
+
+import javax.swing.UIManager;
+
 import seco.U;
 import seco.classloader.AdaptiveClassLoader;
 import seco.storage.ClassRepository;
 
 public class StartMeUp
 {
+	private static void lookandfeel()
+	{
+//		System.setProperty("Quaqua.tabLayoutPolicy","wrap");
+//         try 
+//         { 
+//        	 UIManager.setLookAndFeel(ch.randelshofer.quaqua.QuaquaManager.getLookAndFeel());
+//         } 
+//         catch (Exception e) 
+//         {
+//        	 e.printStackTrace();
+//         }		
+//		
+//		 try
+//		 {
+//		 UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+//		 }
+//		 catch (Exception ex)
+//		 {
+//		 ex.printStackTrace();
+//		 }
+		
+	}
+	
 	public static void main(String[] argv)
 	{
-		System.out.println("java.library.path: "
-				+ System.getProperty("java.library.path"));
+		System.out.println("java.library.path: " + System.getProperty("java.library.path"));
 		System.out.println("java.home: " + System.getProperty("java.home"));
 		System.out.println("user.home: " + U.findUserHome());
 		// System.loadLibrary("libdb_java50.dll");
@@ -28,14 +53,7 @@ public class StartMeUp
 		NicheSelectDialog dlg = new NicheSelectDialog();
 		dlg.setNiches(niches);
 		dlg.setVisible(true);
-		// try
-		// {
-		// UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-		// }
-		// catch (Exception ex)
-		// {
-		// ex.printStackTrace();
-		// }
+		lookandfeel();
 		if (dlg.getSucceeded())
 		{
 			String nicheLocation = niches.get(dlg.getSelectedNiche())

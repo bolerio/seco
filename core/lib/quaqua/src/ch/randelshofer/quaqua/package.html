@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+
+  @(#)package.html	1.0 2003-01-12
+
+  Copyright (c) 2003-2010 Werner Randelshofer, Switzerland
+  All rights reserved.
+ 
+  This software is the confidential and proprietary information of 
+  Werner Randelshofer. ("Confidential Information").  You shall not
+  disclose such Confidential Information and shall use it only in
+  accordance with the terms of the license agreement you entered into
+  with Werner Randelshofer.
+
+  CopyrightVersion 1.0
+
+-->
+</head>
+<body>
+
+Provides fixes and enhancements for Apple's implementation of the Aqua Look and Feel.
+See comments of the <code>LookAndFeel</code> classes for detailed descriptions.
+<p>
+To activate the <code>QuaquaLookAndFeel</code> for a Java Application it is
+recommended to use the following code snippet:</p>
+<pre>
+javax.swing.UIManager.setLookAndFeel(
+  ch.randelshofer.quaqua.QuaquaManager.getLookAndFeelClassName()
+);
+</pre>
+<p>
+For a Java applet, use the following code snippet please:</p>
+<pre>
+javax.swing.UIManager.put("ClassLoader", getClass().getClassLoader());
+javax.swing.UIManager.setLookAndFeel(
+  ch.randelshofer.quaqua.QuaquaManager.getLookAndFeel()
+);
+</pre>
+
+<p>The Quaqua Look and Feel can
+    be
+    customized
+    using
+    system
+    properties
+    and
+    client
+    properties. For details see the description of class QuaquaManager.
+  <!-- Put @see and @since tags down here. -->
+  @see ch.randelshofer.quaqua.QuaquaManager </p>
+
+<h2>Native libraries</h2>
+
+<p>Quaqua uses <b>JNI</b> to do function calls to Mac OS X Carbon and Cocoa.
+  Make sure that the files <code>libquaqua.jnilib</code> and <code>libquaqua64.jnilib</code> are
+  in the library path of your application. If this file is missing, or could not be loaded due
+  to security restrictions, Quaqua will  work with a reduced set of functionality.</p>
+
+</body>
+</html>

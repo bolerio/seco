@@ -18,6 +18,7 @@ import seco.ThisNiche;
 import seco.gui.GUIHelper;
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
+import seco.gui.TopFrame;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;
 import seco.gui.common.NotifyDescriptor.Confirmation;
@@ -64,9 +65,9 @@ public static Frame getFrame(ActionEvent e)
     return  getFrame();   
 }
 
-public static Frame getFrame()
+public static TopFrame getFrame()
 {
-    return ThisNiche.guiController.getFrame();
+    return (TopFrame)ThisNiche.guiController.getFrame();
 }
 
 public static boolean showConfirmDlg(String message)

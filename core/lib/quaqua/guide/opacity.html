@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:450px; z-index:7">
+  <h3>Non-Opacity</h3>
+  <p class="semiparagraph">Almost all Quaqua UI delegates set the opaqueness
+    of their component to false.</p>
+  <p class="semiparagraph">This is because many Aqua user interface elements
+    do not entirely fill out the clip bounds of a JComponent. For example, a
+    button under Aqua has rounded edges. </p>
+  <p class="semiparagraph">Under Aqua, a focus ring is drawn as a translucent
+  blue ring around a user interface element. If we want to implement this with
+    a Swing JComponent, we need to include the area covered by the focus ring
+    in the clip bounds of the JComponent.</p>
+  <p class="semiparagraph">Another reason why we want to have larger clip bounds
+    than the visual features of a user interface elements are that some features
+    are not visually perceived as bounds of the components. Such as cast shadows
+    and the outermost part of a rounded button. The Quaqua Look and Feel uses
+    a visual margin of 3 pixel around the visually perceived bounds of a component
+    to ensure that components align visually to each other.</p>
+  <p class="semiparagraph">The following pictures shows two Aqua user interface
+    elements, drawn with and without a focus ring. The pictures on the right
+    shows the clip bounds needed to accomodate all visual features of a Swing JComponent.</p>
+  <p class="semiparagraph"><img src="images/opacity.png" width="460" height="79" /></p>
+  <p class="semiparagraph">&nbsp;</p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:450px; z-index:7">
+  <h3>JToolBar</h3>
+  <h5 class="semiparagraph">Client properties:</h5>
+  <table  width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th><p>Property</p></th>
+      <th>Type</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.ToolBar<br />
+        .style</code> </td>
+      <td><code>java.lang.String</code></td>
+      <td>Values: <code>&quot;plain&quot;, &quot;title&quot;,  &quot;bottom&quot;, &quot;gradient&quot;</code>
+          <p>The <code>&quot;title&quot;</code> style requires that the client property <code>apple.awt.brushMetalLook</code> is set on the JRootPane.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.ToolBar<br />
+        .isDividerDrawn</code></td>
+      <td><code>java.lang.Boolean</code></td>
+      <td>If set to <code>Boolean.FALSE</code>, turns the  divider line between the
+      toolbar and the center area of its panel off.</td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <h4>General</h4>
+  <p>The style of a toolbar provides a visual cue about its purpose.</p>
+  <ul>
+    <li>&quot;plain&quot; style: This style was in use from Mac OS X 10.0 through 10.4. Use this style only, if none of the other styles fit your purpose.</li>
+    <li>&quot;title&quot; style: Use this style for the toolbar at the top of a window.<br />
+      Tool bars with this style should give users immediate access to the most frequently used features in an application.<a href="#FusedToolbarBehavior">*</a><br />
+    </li>
+    <li>&quot;bottom&quot; style. Use this style for the toolbar at the bottom of a window. Tool bars with this style should give users access to controls that directly affect the contents or organization of the window body.<a href="#FusedToolbarBehavior">*</a><br />
+    </li>
+    <li>&quot;gradient&quot; style. Use this style for the toolbar at the bottom of a JList, JTree or a JTable.<br />
+      Tool bars with this style should affect the contents of a list, tree or table.<br />
+    The &quot;gradient&quot; style works best for  JTree's which have the client property &quot;Quaqua.Tree.style&quot; set to &quot;sourceList&quot;.</li>
+  </ul>
+  <p><a name="FusedToolbarBehavior" id="FusedToolbarBehavior"></a>* On Mac OS X 10.5 or newer, JToolBar's with the &quot;title&quot;-style fuse with the frame borders of the window, if the client property &quot;apple.awt.brushMetalLook&quot; is set on the JRootPane. JToolBar's with the &quot;bottom&quot;-style always fuse with the frame borders of the window. <br />
+  Note that the window can be moved by dragging a fused toolbar.</p>
+  <h4 class="doubleparagraph">Components on a JToolBar</h4>
+  <p>Components added to a JToolBar inherit the style of the JToolBar. This may not always work, if components are first added to a JPanel, and then the JPanel is added to the JToolBar. In this case, it is necessary to set client properties on the components. </p>
+  <p class="semiparagraph">JToggleButton's on JToolBar's support the style <code>toolBarTab</code>.
+    This style is useful, when an application  provides multiple views.</p>
+  <h4 class="doubleparagraph">Example 1</h4>
+  <p>A floatable <code>JToolBar</code> on the left, containing three
+    <code>JButton</code>s, a <code>JSeparator</code> and three <code>JToggleButton</code>s. All buttons have an icon,
+    but no text. The <code>JSeparator</code> was created using method <code>addSeparator</code> of the
+    <code>JToolBar</code>.</p>
+  <p class="semiparagraph"><strong>Design Notice:</strong>  Mac OS X applications
+    usually do not use floatable tool bars, but use <a href="jrootpane.html">floating
+    palette windows</a> instead.</p>
+  <p class="doubleparagraph"><img src="images/jtoolbar.png" alt="Quaqua Look and Feel - JToolBar" width="460" height="414" border="0" /><br />
+&nbsp;  </p>
+  <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p>JToolBar toolBar = new JToolBar();</p>
+        <p>toolBar.setFloatable(true);</p>
+        <p></p>
+        <p>...</p>
+        <p>toolBar.addSeparator();</p>
+        <p>&nbsp;</p>
+        <p>JToggleButton videoButton = new JToggleButton();</p>
+        <p>videoButton.setIcon(anIcon);</p>
+        <p>videoButton.setText(null);</p>
+        <p>toolBar.add(videoButton);</p>
+      </td>
+    </tr>
+  </table>
+  <h4 class="doubleparagraph">Example 2</h4>
+  <p class="semiparagraph">A non-floatable <code>JToolBar</code> placed on the
+    top, containing three <code>JButton</code>s, a <code>JSeparator</code> and
+    three <code>JToggleButton</code>s. All buttons have text only. </p>
+  <p class="doubleparagraph"><img src="images/jtoolbar-text.png" alt="Quaqua Look and Feel - JToolBar" width="460" height="79" border="0" /><br />
+&nbsp; </p>
+  <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p>JToolBar toolBar = new JToolBar();</p>
+          <p>...</p>
+          <p>toolBar.addSeparator();</p>
+          <p>&nbsp;</p>
+          <p>JToggleButton videoButton = new JToggleButton();</p>
+          <p>videoButton.setIcon(null);</p>
+          <p>videoButton.setText(&quot;Video&quot;);</p>
+          <p>toolBar.add(videoButton);</p>
+          <p>&nbsp;</p>
+      </td>
+    </tr>
+  </table>
+  <h4 class="doubleparagraph">Example 3</h4>
+  <p class="semiparagraph">A non-floatable <code>JToolBar</code> placed on the
+    top, containing three <code>JButton</code>s, a <code>JSeparator</code> and
+    three <code>JToggleButton</code>s.
+    All buttons have an icon and  text placed below the icon. The <code>JToggleButton</code>s
+    use the client property <code><a href="jtogglebutton.html">Quaqua.Button.style</a></code> set to <code>toolBarTab</code>.</p>
+  <p class="doubleparagraph"><img src="images/jtoolbar-toolBarTab.png" alt="Quaqua Look and Feel - JToolBar" width="460" height="92" border="0" /><br />
+&nbsp; </p>
+  <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p>JToolBar toolBar = new JToolBar();</p>
+        <p>toolBar.setFloatable(false);</p>
+        <p>...</p>
+          <p>toolBar.addSeparator();</p>
+          <p>&nbsp;</p>
+          <p>JToggleButton videoButton = new JToggleButton();</p>
+          <p>videoButton.setIcon(anIcon);</p>
+          <p>videoButton.setText(&quot;Video&quot;);</p>
+          <p><strong>videoButton.setVerticalTextPosition(SwingConstants.BOTTOM);</strong></p>
+          <p><strong>videoButton.setHorizontalTextPosition(SwingConstants.CENTER);</strong></p>
+          <p><strong>videoButton.putClientProperty(</strong></p>
+          <p><strong>&nbsp;&nbsp;&nbsp;&quot;Quaqua.Button.style&quot;, &quot;toolBarTab&quot;</strong></p>
+          <p><strong>);</strong></p>        
+        <p>toolBar.add(videoButton);</p>
+          <p>&nbsp;</p>
+      </td>
+    </tr>
+  </table>
+  <h4 class="doubleparagraph">Example 4</h4>
+  <p class="semiparagraph">A non-floatable <code>JToolBar</code> placed on the
+    top, containing three <code>JButton</code>s, a <code>JSeparator</code> and
+    three <code>JToggleButton</code>s. All buttons have  text only, the font
+    is set to Lucida Grande 11 (the <a href="http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuidelines/XHIGText/chapter_13_section_2.html#//apple_ref/doc/uid/TP30000365-TPXREF113" target="_blank">AHIG
+    &quot;Small system font&quot;</a>). The <code>JToggleButton</code>s
+    use the client property <code><a href="jtogglebutton.html">Quaqua.Button.style</a></code> to
+    create a &quot;segmented control&quot; look<code></code>.</p>
+  <p class="doubleparagraph"><img src="images/jtoolbar-segmented.png" alt="Quaqua Look and Feel - JToolBar" width="460" height="79" border="0" /><br />
+&nbsp; </p>
+  <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p>JToolBar toolBar = new JToolBar();</p>
+          <p>toolBar.setFloatable(false);</p>
+          <p>...</p>
+          <p>toolBar.addSeparator();</p>
+          <p>&nbsp;</p>
+          <p>Font smallSystemFont = new Font(&quot;Lucide Grande&quot;, Font.PLAIN, 11);</p>
+          <p>&nbsp;</p>
+          <p>JToggleButton videoButton = new JToggleButton();</p>
+          <p>videoButton.setText(&quot;Video&quot;);</p>
+          <p>videoButton.setFont(smallSystemFont);</p>
+          <p><strong>videoButton.putClientProperty(</strong></p>
+          <p><strong>&nbsp;&nbsp;&nbsp;&quot;Quaqua.Button.style&quot;, &quot;toggleWest&quot;</strong></p>
+          <p><strong>);</strong></p>
+          <p>toolBar.add(videoButton);</p>
+          <p>&nbsp;</p>
+          <p>JToggleButton structButton = new JToggleButton();</p>
+          <p>structButton.setText(&quot;Struct&quot;);</p>
+          <p>structButton.setFont(smallSystemFont);</p>
+          <p><strong>structButton.putClientProperty(</strong></p>
+          <p><strong>&nbsp;&nbsp;&nbsp;&quot;Quaqua.Button.style&quot;, &quot;toggleCenter&quot;</strong></p>
+          <p><strong>);</strong></p>
+          <p>toolBar.add(structButton);</p>
+          <p>&nbsp;</p>
+          <p>JToggleButton binaryButton = new JToggleButton();</p>
+          <p>binaryButton.setText(&quot;Binary&quot;);</p>
+          <p>binaryButton.setFont(smallSystemFont);</p>
+          <p><strong>binaryButton.putClientProperty(</strong></p>
+          <p><strong>&nbsp;&nbsp;&nbsp;&quot;Quaqua.Button.style&quot;, &quot;toggleEast&quot;</strong></p>
+          <p><strong>);</strong></p>
+          <p>toolBar.add(binaryButton);</p>
+          <p>&nbsp;</p></td>
+    </tr>
+  </table>
+  <h4 class="doubleparagraph">&nbsp;</h4>
+  <p>&nbsp;</p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

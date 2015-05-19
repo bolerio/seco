@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:1510px; z-index:7">
+  <h3>System Properties</h3>
+  <p class="semiparagraph">The Quaqua Look and Feel supports the  system
+    properties listed below. You may notice, that the list also contains some
+    properties defined in Apple's <a href="http://developer.apple.com/documentation/Java" target="_blank">Release
+    Notes for their Java Virtual Machines</a>.
+    These properties are listed here, because they directly affect the appearance
+    and behaviour of the Quaqua Look and Feel.</p>
+  <p class="semiparagraph"><strong>Note 1:</strong> In addition to the system
+    properties shown here, you can also preset all of Quaqua's <em>General</em> and <em>Debug</em> <a href="uimanager_properties.html">UIManager
+    Properties</a> using
+    System Properties.</p>
+  <p class="semiparagraph"><strong>Note 2:</strong> In restricted environments
+    (e.g. Applet's) you can set System Properties using the <code>QuaquaManager.setProperty()</code>    method.
+    This will only work with properties which have a <code>Quaqua.</code> prefix
+    though.</p>
+  <h5 class="doubleparagraph">Common Properties</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th><p>Property</p>      </th>
+      <th>Default Value</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua<br />
+      .design</code></td>
+      <td><code>auto</code></td>
+      <td><p>Chooses a design for the look and feel. Set this to <code>panther</code>, <code>jaguar</code> or
+          <code>tiger</code> to enforce a specific design.</p>
+        <p class="semiparagraph">You should use this property
+          for testing purposes
+          only. For production use, it is not recommended,
+          to set a different design than the one used by the
+          operating
+        system. </p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua<br />
+    .opaque</code></td>
+      <td><code>false</code></td>
+      <td><p>Most of Quaqua's components are translucent in order to render focus
+          rings and JTabbedPane's properly.</p>
+        <p class="semiparagraph">Set this to <code>true</code>, if your application
+          doesn't render properly with non-opaque components, and you don't want
+          to invest the time to make your application support translucent components.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua<br />
+    .requestFocusEnabled</code></td>
+      <td><code>false</code></td>
+      <td><p>On Mac OS X, only text components request focus when the user
+          clicks on them.</p>
+          <p class="semiparagraph">Set this to <code>true</code>, if your application
+            code expects that most components request focus, when the user clicks
+            on them.</p>      </td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua<br />
+    .selectionStyle</code></td>
+      <td><code>auto</code></td>
+      <td><p>Starting from Mac OS X 10.3 Panther, selected items in JList's,
+          JTable's and JTree's are rendered with  a dark background
+          color.</p>
+        <p class="semiparagraph">Change this property, if your application expects,
+          that selections are always drawn with a bright background colour.</p>        
+        <p class="semiparagraph">Supported values are:</p>        <ul>
+            <li class="semiparagraph"><code>bright</code> (uses bright selection
+              background)</li>
+          <li><code>dark</code> (selection backgrounds in lists, tables and
+              trees are dark).</li>
+          </ul>      </td>
+    </tr>
+    
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua<br />
+        .showNonEditableCaret</code></td>
+      <td><code>true</code></td>
+      <td><p>Quaqua shows a non-blinking caret in non-editable text components, like OS X does.</p>
+          <p class="semiparagraph">Set this property to false to turn this behavior off<code></code>.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua<br />
+    .visualMargin</code></td>
+      <td><code>3,3,3,3</code></td>
+      <td><p>Specifies the margin (<code>java.awt.Insets</code>) around the visually
+          perceived borders of a component and its clip bounds.</p>
+          <p class="semiparagraph">Set the insets to a smaller value, if your
+            layouts grow too big, and you don't want to invest the time for fine
+            tuning the visual margin of individual components using the client
+            property <code>Quaqua.Component.visualMargin</code>.</p>      </td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua<br />
+    .enforceVisualMargin</code></td>
+      <td><code>false</code></td>
+      <td><p>Enforces the visual margin around components. Set this to true to
+          work around NetBeans Matisse issue <a href="http://www.netbeans.org/issues/show_bug.cgi?id=74522" target="_blank">#74522</a>.</p>      </td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua<br />
+      .jniIsPreloaded</code></td>
+      <td><code>false</code></td>
+      <td><p>Set this to true, to prevent Quaqua from loading its JNI library
+          on its own.</p>      </td>
+    </tr>
+  </table>
+  <h5 class="doubleparagraph">Properties for Java 1.6 only</h5>
+  <table class="graybox" width="460" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <th>Property</th>
+      <th>Default Value</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Quaqua.Table<br />
+        .useJ2SE5MouseHandler</code></p></td>
+      <td><code>false</code></td>
+      <td> <p>Set this to true, if you don't need drag and drop support in JTable.</p>
+        <p>Quaqua currently uses the mouse handler from the Basic look and feel, because it does not implement yet drag and drop for JTable.</p>
+        <p>(Hopefully) in a future version, Quaqua will implement drag and drop handling on its own.</p>
+      </td>
+    </tr>
+  </table>
+  <h5 class="doubleparagraph">Properties for Java 1.5 only</h5>
+  <table class="graybox" width="460" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <th>Property</th>
+      <th>Default Value</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Quaqua.FileChooser<br />
+      .autovalidate</code></p>      </td>
+      <td><code>true</code></td>
+      <td>Makes JFileChooser's automatically validate the contents of a directory,
+        when the user clicks at it. Set this to <code>false</code>, if you experience
+        performance problems, e.g. when using JFileChooser's to choose files
+        from large directories (&gt; 1000 entries) over a slow network connection.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Quaqua.FileChooser<br />
+        .quickLookEnabled</code></p></td>
+      <td><code>true</code></td>
+      <td>Displays a file preview using Apple's QuickLook API. Set this to <code>false</code>, if you experience
+        crashes with QuickLook.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Quaqua</code></p>
+          <p><code>.tabLayoutPolicy</code></p>      </td>
+      <td><code>auto</code></td>
+      <td><p>Chooses a default layout policy for tabbed panes. Set this to <code>wrap</code> or
+          to <code>scroll.</code></p>
+        <p><code>auto</code> will result in wrap tab layout policy for the Jaguar
+          design and scroll layout policy for the Panther and the Tiger design.</p>
+        <p>&nbsp;</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Quaqua.TabbedPane<br />
+      .design<br />
+      </code><span class="info">(<strong>deprecated</strong>, use <code>Quaqua.tabLayoutPolicy </code>instead)</span></p>      </td>
+      <td><code>auto</code></td>
+      <td><p>Chooses a design for tabbed panes. Set this to <code>panther</code> or
+        to <code>jaguar</code> to enforce a specific design.</p>      </td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Quaqua.TextComponent<br />
+        .autoSelect</code><span class="info"></span></p></td>
+      <td><code>true</code></td>
+      <td><p>If set to true, text components automatically select all text, when the user presses the tabulator key to set the focus on the field. This affects JTextField, JPasswordField and JFormattedTextField.</p></td>
+    </tr>
+    
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>apple.laf<br />
+      .useScreenMenuBar</code></td>
+      <td><code>false</code></td>
+      <td>Puts Swing menus
+        in the Mac OS X menu bar. Note that JMenuBars in JDialogs are not moved
+      to the Mac OS X menu bar.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>apple.awt<br />
+      .brushMetalLook</code></td>
+      <td><code>false</code></td>
+      <td>        Displays JFrame's with the &#8220;textured&#8221; Aqua
+      window appearance.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>apple.awt<br />
+      .showGrowBox</code></td>
+      <td><code>true</code></td>
+      <td>Most native Mac OS X windows have a resize control in the bottom-right
+        corner. By default, Java application windows that use the Quaqua look
+        and feel show this control, but there may be circumstances where you
+        want
+        it to be hidden. This property is used to decide if the grow box is shown
+      or not.</td>
+    </tr>
+  </table>
+  <h5 class="doubleparagraph">&nbsp;</h5>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

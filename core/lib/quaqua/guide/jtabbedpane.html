@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:450px; z-index:7">
+  <h3>JTabbedPane</h3>
+  <h5 class="semiparagraph">Client properties:</h5>
+  <table  width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th><p>Property</p>      </th>
+      <th>Type</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>JComponent</code></p>
+          <p><code>.sizeVariant</code></p></td>
+      <td><code>java.lang.String</code></td>
+      <td>Values: &quot;regular&quot;, &quot;small&quot;</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.TabbedPane<br />
+      .contentBorderPainted</code></td>
+      <td><code>java.lang.Boolean</code></td>
+      <td>Set this to false to hide the content border.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.TabbedPane<br />
+  .shortenTabs</code></td>
+      <td><code>java.lang.Boolean</code></td>
+      <td>Set this to false to prevent tabs from being shortened.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.TabbedPaneChild<br />
+      .contentBackground</code></td>
+      <td><code>java.awt.Color</code></td>
+      <td>To be set on a child of a JTabbedPane</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.TabbedPaneChild<br />
+      .contentInsets</code></td>
+      <td><code>java.awt.Insets</code></td>
+      <td>To be set on a child of a JTabbedPane</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.Component</code><br />
+          <code>.visualMargin</code> <br />      </td>
+      <td><code>java.awt.Insets</code></td>
+      <td><p>See <a href="layout_intro.html">layout</a></p>      </td>
+    </tr>
+  </table>
+  <h5 class="doubleparagraph">&nbsp;</h5>
+  <h4 class="doubleparagraph">Tab Layout Policy</h4>
+  <p class="semiparagraph">The Quaqua Look and Feel supports tabbed panes with
+    the &quot;wrap&quot; tab layout policy and the &quot;scroll&quot; tab layout policy.</p>
+  <p class="semiparagraph">Tabbed panes with &quot;wrap&quot; layout policy work best,
+    when used in conjuction with the Jaguar design, as used by Mac OS X 10.2
+    and earlier versions:</p>
+  <p class="semiparagraph"><img src="images/jtabbedpane-jaguar.png" alt="Quaqua Look and Feel - Laying out Components" width="460" height="401" border="0" /></p>
+  <p class="semiparagraph">Tabbed panes with &quot;scroll&quot; layout policy
+    work best, when used with the Panther and Tiger designs as used
+    by Mac OS X 10.3 and later versions:</p>
+  <p class="semiparagraph"></p>
+  <p class="semiparagraph"><img src="images/jtabbedpane-panther.png" width="460" height="398" /></p>
+  <p class="semiparagraph">The default layout policy is determined at
+    startup. For the Jaguar design, the default layout policy is &quot;wrap&quot;,
+    for other designs, the default layout policy is &quot;scroll&quot;. You can
+    explicitly specific the default layout policy by setting the system property <code>Quaqua.tabLayoutPolicy</code> to <code>wrap</code> or
+    to <code>scroll. </code>If you want Quaqua to determine the design automatically,
+    dont' set this property, or specify the value <code>auto.</code><br />
+&nbsp; </p>
+  <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p><code>System.setProperty(</code></p>
+          <p><code>&nbsp;&nbsp;&nbsp;&quot;Quaqua.tabLayoutPolicy&quot;, &quot;wrap&quot;</code></p>
+          <p><code>);</code></p>
+      </td>
+    </tr>
+  </table>
+  <p class="semiparagraph"></p>
+  <p class="doubleparagraph">The  following screenshots show what happens when
+    the tabs don't fit into a single run. The &quot;wrap&quot; layout policy
+     stacks the tabs into multiple runs. The &quot;scroll&quot; layout policy
+     first attempts to shorten the width of the tabs. If shortening is not possible,
+     the tabs are
+    put into a JComboBox.</p>
+  <p class="semiparagraph"><img src="images/jtabbedpane-stacking.png" alt="Quaqua - JTabbedPane with stacking tabs" width="384" height="104" /></p>
+  <p class="semiparagraph"><img src="images/jtabbedpane-popup.png" alt="Quaqua - JTabbedPane with popup menu" width="460" height="176" /></p>
+  <p class="doubleparagraph">Set the client property &quot;Quaqua.TabbedPane.shortenTabs&quot; to
+    Boolean.false to prevent shortening. In this case, the tabs are either displayed
+    fully or collapsed into a JComboBox. Shortening still happens for vertical
+    tab runs.</p>
+  <p class="semiparagraph"></p>
+  <table  class="semiparagraph" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p>JTabbedPane tp = <strong>new </strong>JTabbedPane();</p>
+        <p>tp.setLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);</p>
+        <p> tp.putClientProperty(</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&quot;Quaqua.TabbedPane.shortenTabs&quot;,<strong> </strong>Boolean.FALSE</p>
+          <p>);</p>
+      </td>
+    </tr>
+  </table>
+  <p class="semiparagraph">&nbsp;</p>
+  <h4 class="doubleparagraph">Regular and small sizes</h4>
+  <p class="semiparagraph">Quaqua's Jaguar tabbed panes supports regular and
+    small sized tabbed panes. To get the small size style, set the font to Lucida
+    Grande
+    11. The
+    regular
+    size style uses the font Lucida Grande 13.</p>
+  <p class="semiparagraph">&nbsp;</p>
+  <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p>JTabbedPane tp = <strong>new </strong>JTabbedPane();</p>
+          <p> tp.setFont(</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>new</strong> Font(&quot;Lucida Grande&quot;,
+            Font.PLAIN, 11)</p>
+          <p>);</p>
+      </td>
+    </tr>
+  </table>
+  <h4 class="doubleparagraph">TabbedPanes edge to edge</h4>
+  <p class="semiparagraph">The image below shows an outer tabbed pane that goes
+  to the edges of the JFrame and an inner tabbed pane that does not do so.</p>
+  <p class="semiparagraph"><img src="images/jtabbedpane-edgetoedge.png" alt="Quaqua - JTabbedPane edge to edge" width="460" height="267" /></p>
+  <p class="semiparagraph">To achive an edge to edge style, set the <code>Quaqua.Component.visualMargin</code>    property to negative values, until the border of the tabbed pane disappears
+    on the right, left and bottom edge.</p>
+  <p class="semiparagraph">&nbsp;</p>
+  <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p>JTabbedPane tp = <strong>new </strong>JTabbedPane();</p>
+        <p> tp.putClientProperty(</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&quot;Quaqua.Component.visualMargin&quot;,<strong> new</strong>          Insets(3,-3,-4,-3)</p>
+        <p>);</p></td>
+    </tr>
+  </table>
+  <h4 class="doubleparagraph">Content border</h4>
+  <p class="semiparagraph">The client property <code>Quaqua.TabbedPane.contentBorderPainted</code>    can be used to switch the content border off.</p>
+  <table  class="semiparagraph" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p>JTabbedPane tp = <strong>new </strong>JTabbedPane();</p>
+          <p> tp.putClientProperty(</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&quot;Quaqua.TabbedPane.contentBorderPainted&quot;,<strong> </strong>Boolean.FALSE</p>
+          <p>);</p>
+      </td>
+    </tr>
+  </table>
+  <h4 class="doubleparagraph">Content area</h4>
+  <p class="semiparagraph">The insets and the background color of the content
+    area of a JTabbedPane can be changed by specifiying the following client
+properties on the children of a JTabbedPane: <code>Quaqua.TabbedPaneChild.contentInsets</code>,
+<code>Quaqua.TabbedPaneChild.contentBackground</code>.</p>
+  <table  class="semiparagraph" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p>JTabbedPane tp = <strong>new </strong>JTabbedPane();</p>
+        <p>JScrollPane child = <strong>new</strong> JScrollPane();</p>
+        <p>child.setBorder(<strong>new</strong> EmptyBorder(0,0,0,0));</p>
+        <p> child.putClientProperty(</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&quot;Quaqua.TabbedPaneChild.contentInsets&quot;,<strong> new</strong>            Insets(0,0,0,0)</p>
+          <p>);</p>
+          <p>child.putClientProperty(</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&quot;Quaqua.TabbedPaneChild.contentBackground&quot;,<strong> </strong>Color.white</p>
+          <p>);</p>
+          <p>tp.addTab(&quot;Notes&quot;, child);</p></td>
+    </tr>
+  </table>
+  <p class="semiparagraph">The TabbedPaneChild properties are especially useful
+    for placing a JScrollPane into a JTabbedPane with &quot;scroll&quot; tab layout policy. </p>
+  <p class="semiparagraph">Here is a sample usage of the code snippet  above:</p>
+  <p class="semiparagraph"><img src="images/jtabbedpane-child.png" width="460" height="200" /></p>
+  <p class="semiparagraph"><br />
+  </p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; z-index:7;">
+  <h3>JOptionPane</h3>
+  <h5 class="semiparagraph">Client properties:</h5>
+  <table  width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th><p>Property</p>
+      </th>
+      <th>Type</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Quaqua.OptionPane<br />
+        .destructiveOption</code> </p>
+      </td>
+      <td><code>java.lang.Integer</code></td>
+      <td>Specifies the index of the destructive option.</td>
+    </tr>
+  </table>
+  <h4 class="doubleparagraph">General</h4>
+  <p class="semiparagraph">Quaqua displays JOptionPanes like a Mac OS X
+    style alert.</p>
+  <p class="semiparagraph"><img src="images/joptionpane.png" alt="Quaqua Look and Feel - JOptionPane" width="576" height="180" /></p>
+  <p class="semiparagraph">Unfortunately lots of the visual elements are controlled
+    by the application and not by the UI.</p>
+  <p class="semiparagraph">To perfectly follow <a href="http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuidelines/XHIGWindows/chapter_17_section_6.html#//apple_ref/doc/uid/20000961-BACFBACB" target="_blank">Apple's
+    Human Interface Guidelines for Dialogs</a>, you should do the following:</p>
+  <ul>
+    <li>Replace the following icons in the Swing UIManager by a 64 x 64 pixel
+      version of your application icon:<br />
+OptionPane.errorIcon, OptionPane.informationIcon, OptionPane.questionIcon, <br />
+OptionPane.warningIcon.</li>
+    <li>Use Lucida Grande Bold 13 for the main message text
+    and Lucida Grande Plain 11 for the information message text.</li>
+    <li>Don't display a title on your option pane.</li>
+    <li>Tell Quaqua which option is destructive, so that it can be placed at
+    a distance to non-destructive options.</li>
+    <li>Use <a href="jsheet.html">JSheet</a> where appropriate.</li>
+  </ul>
+  <h4 class="semiparagraph">Replacing the OptionPane icons</h4>
+  <p class="semiparagraph">Create a 64 x 64 pixel PNG version of your application
+    icon, and replace the default JOptionPane icons. This is best done immediately
+    after setting the look and feel.</p>
+  <table class="semiparagraph" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td><p class="listing">UIManager.setLookAndFeel(QuaquaManager.getLookAndFeel());</p>
+        <p>&nbsp;</p>
+        <p class="listing"> Object appIcon = LookAndFeel.makeIcon(</p>
+        <p class="listing">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;getClass(), &quot;appicon.png&quot;</p>
+        <p class="listing">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br />
+  UIManager.put(&quot;OptionPane.errorIcon&quot;, appIcon);<br />
+  UIManager.put(&quot;OptionPane.informationIcon&quot;, appIcon);<br />
+  UIManager.put(&quot;OptionPane.questionIcon&quot;, appIcon);<br />
+  UIManager.put(&quot;OptionPane.warningIcon&quot;, appIcon);</p></td>
+    </tr>
+  </table>
+  <h4 class="doubleparagraph">Using appropriate fonts</h4>
+  <p class="semiparagraph">One way to do this with minimal impact on the application
+    logic, is putting a CSS style sheet into the UIManager, and using it whenever
+    a dialog is created.</p>
+  <table class="semiparagraph" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td><p class="listing">String css = &quot;&lt;head&gt;&quot;+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;&lt;style type=\&quot;text/css\&quot;&gt;&quot;+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;b { font: 13pt \&quot;Lucida Grande\&quot; }&quot;+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;p { font: 11pt \&quot;Lucida Grande\&quot;; margin-top: 8px }&quot;+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;&lt;/style&gt;&quot;+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;&lt;/head&gt;&quot;;<br />
+        UIManager.<strong>put</strong>(&quot;OptionPane.css&quot;, css);<br />
+        </p>
+      </td>
+    </tr>
+  </table>
+  <p class="semiparagraph">Using this approach, you can specify a different CSS
+  style sheet for each look and feel your application is using. Seen the code
+    snippet below, on how to use this CSS style sheet.</p>
+  <h4 class="doubleparagraph">Specifying the destructive option</h4>
+  <p class="semiparagraph">If your option pane contains a destructive option,
+    you should use the client property <code>Quaqua.OptionPane.destructiveOption</code> to
+    specify its index using an Integer value.</p>
+  <p>&nbsp;</p>
+  <p>The code snippet below makes use of the CSS style sheet we have defined
+    above.</p>
+  <table class="semiparagraph" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td><p class="listing"> JOptionPane pane = <strong>new</strong> JOptionPane(<br />
+&nbsp;&nbsp;&nbsp;&quot;&lt;html&gt;&quot;+<font color="#990000">UIManager.<strong>get</strong>(&quot;OptionPane.css&quot;)</font>+<br />
+&nbsp;&nbsp;&nbsp;&quot;&lt;b&gt;You have 4 documents with unsaved
+changes. &quot;+</p>
+        <p class="listing">&nbsp;&nbsp;&nbsp;&quot;Do you want to&lt;br&gt;&quot;+<br />
+&nbsp;&nbsp;&nbsp;&quot;review these changes before quitting?&lt;/b&gt;&lt;p&gt;&quot;+<br />
+&nbsp;&nbsp;&nbsp;&quot;If you don't review your documents, &quot;+<br />
+&nbsp;&nbsp;&nbsp;&quot;all your changes
+will be lost.&quot;,<br />
+  &nbsp;&nbsp;&nbsp;JOptionPane.QUESTION_MESSAGE<br />
+  );<br />
+  Object[] options = { </p>
+        <p class="listing">&nbsp;&nbsp;&quot;Review Changes&quot;, &quot;Cancel&quot;, &quot;Discard
+    Changes&quot; </p>
+        <p class="listing">};<br />
+          pane.<strong>setOptions</strong>(options);<br />
+          pane.<strong>setInitialValue</strong>(options[0]);<br />
+        <font color="#990000">pane.<strong>putClientProperty</strong>(</font></p>
+        <p class="listing"><font color="#990000">&nbsp;&nbsp;&nbsp;&quot;Quaqua.OptionPane.destructiveOption&quot;,
+            new Integer(2)</font></p>
+        <p class="listing"><font color="#990000">);</font><br />
+          JDialog dialog = pane.<strong>createDialog</strong>(null, null);<br />
+          dialog.<strong>show</strong>();
+        </p></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <h4 class="doubleparagraph">Specifying the width of the option pane</h4>
+  <p class="doubleparagraph">Quaqua uses the UIManager property <code>OptionPane.messageLabelWidth=360</code>
+    to determine the width of HTML messages and <code>OptionPane.maxCharacterPerLineCount=60</code>
+    to determine the width of text messages. You can change these values if they don't fit your requirements.</p>
+  <p class="semiparagraph"></p>
+  <p>&nbsp;</p>
+  <p class="semiparagraph">&nbsp;</p>
+  <p>&nbsp;</p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

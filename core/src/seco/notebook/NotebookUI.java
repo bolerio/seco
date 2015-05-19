@@ -186,7 +186,7 @@ public class NotebookUI extends JTextPane implements DocumentListener,
         setCaretPosition(0);
         initKeyBindings();
         setDragEnabled(true);
-        setDoubleBuffered(!TopFrame.PICCOLO);
+        setDoubleBuffered(GUIUtil.getFrame().doubleBuffer());
         setTransferHandler(new NotebookTransferHandler());
         createPopup();
         addMouseListener(popupListener);

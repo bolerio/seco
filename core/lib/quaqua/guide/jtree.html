@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:450px; z-index:7">
+  <h3>JTree</h3>
+  <h5 class="semiparagraph">Client properties:</h5>
+  <table  width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th><p>Property</p>      </th>
+      <th>Type</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>JComponent</code></p>
+          <p><code>.sizeVariant</code></p></td>
+      <td><code>java.lang.String</code></td>
+      <td>Values: &quot;regular&quot;, &quot;small&quot;</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Quaqua.Tree<br />
+        .style</code> </p>      </td>
+      <td><code>java.lang.String</code></td>
+      <td>Values: &quot;plain&quot;, &quot;striped&quot;, &quot;sourceList&quot;</td>
+    </tr>
+  </table>
+  <h5 class="doubleparagraph">&nbsp;</h5>
+  <h4>Client property: Quaqua.Tree.style</h4>
+  <p class="semiparagraph">The Quaqua Look and Feel supports trees with &quot;plain&quot;
+    style and with &quot;striped&quot; style (aka alternating row colors).</p>
+  <p class="semiparagraph">The picture below shows the three styles &quot;plain&quot;, &quot;striped&quot; and &quot;sourceList&quot; at the top left, top right, bottom left respectively. The JTree at the bottom right is a disabled &quot;plain&quot; tree.</p>
+  <p class="semiparagraph"><img src="images/jtree.png" alt="Quaqua Look and Feel - striped JTable" width="460" height="507" border="0" /><br />
+    You can specify the desired style by setting the client property <code>Quaqua.Tree.style</code> to
+    <code>striped</code> or to <code>plain</code>. If you don't specify a value,
+    the plain style is used.<br />
+&nbsp;  </p>
+  <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p><code>myTree.putClientProperty(</code></p>
+        <p><code>&nbsp;&nbsp;&nbsp;&quot;Quaqua.Tree.style&quot;, &quot;striped&quot;</code></p>        
+        <p><code>);</code></p></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <h4 class="doubleparagraph">Implementing a TreeCellRenderer</h4>
+  <p class="semiparagraph">If you implement a TreeCellRenderer on your own,
+    make sure that the renderer component is non-opaque. If your renderer component
+    is opaque, the component obscurs the stripes of a striped tree.</p>
+  <p class="semiparagraph">&nbsp;</p>
+  <p>&nbsp;</p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

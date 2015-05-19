@@ -27,8 +27,13 @@ public abstract class TopFrame extends JFrame implements GUIController
 
     public TopFrame() throws HeadlessException
     {
+    }
+
+    public void initFrame()
+    {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        initFrame();
+        original_title = "[" + ThisNiche.graph.getLocation() + "] ";
+        set_original_title_and_icon();
         Log.start();
         addWindowFocusListener(new WindowFocusListener() {
 
@@ -43,15 +48,14 @@ public abstract class TopFrame extends JFrame implements GUIController
             {
             }
 
-        });
+        });    	
     }
 
-    protected void initFrame()
+    public boolean doubleBuffer()
     {
-        original_title = "[" + ThisNiche.graph.getLocation() + "] ";
-        set_original_title_and_icon();
+    	return false;
     }
-
+    
     public void blink(String message)
     {
         if (isFocused()) return;
@@ -130,8 +134,8 @@ public abstract class TopFrame extends JFrame implements GUIController
     @Override
     protected void processWindowEvent(WindowEvent e)
     {
-        if (e.getID() != WindowEvent.WINDOW_CLOSING) super
-                .processWindowEvent(e);
+        if (e.getID() != WindowEvent.WINDOW_CLOSING) 
+        	super.processWindowEvent(e);
         else
         {
             exit();

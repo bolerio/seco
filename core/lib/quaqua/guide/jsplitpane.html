@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; z-index:7; height: 773px;">
+  <h3>JSplitPane</h3>
+  <h5 class="semiparagraph">Client properties:</h5>
+  <table  width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th><p>Property</p>
+      </th>
+      <th>Type</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.SplitPane<br />
+      .style</code></td>
+      <td><code>java.lang.String</code></td>
+      <td>Values: &quot;thumb&quot;, &quot;bar&quot;</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.Component</code><br />
+          <code>.visualMargin</code> <br />
+      </td>
+      <td><code>java.awt.Insets</code></td>
+      <td><p>See <a href="layout_intro.html">layout</a></p>
+      </td>
+    </tr>
+  </table>
+  <h5 class="doubleparagraph">&nbsp;</h5>
+  <h4 class="doubleparagraph">Client property: Quaqua.SplitPane.style</h4>
+  <p class="semiparagraph">Quaqua's SplitPaneUI supports two different styles:</p>
+  <ul>
+    <li>thumb</li>
+    <li>bar</li>
+  </ul>
+  <p>The thumb style is very lean. Only a round knob at the center of the divider
+    and (if switched on) the one touch expansion buttons are drawn.</p>
+  <p>With the bar style, the divider is a bar that
+      goes across
+      the split
+      pane. The
+    thumb style is the default. </p>
+  <p class="semiparagraph"><img src="images/jsplitpane.png" width="460" height="253" /></p>
+  <p class="semiparagraph">You can specify a style using the <code>Quaqua.SplitPane.style</code>      client
+  property and passing in the String &quot;thumb&quot; or &quot;bar&quot;.</p>
+  <p>&nbsp;</p>
+    <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+      <tr>
+        <td class="listing"><p><code>mySplitPane.putClientProperty(</code></p>
+            <p><code>&nbsp;&nbsp;&nbsp;&quot;Quaqua.SplitPane.style&quot;, &quot;bar&quot;</code></p>
+            <p><code>);</code></p>
+        </td>
+      </tr>
+    </table>
+  <p>&nbsp;</p>
+  <p>Popular Mac OS X applications such as iTunes and Mail often use a 1 pixel
+    wide divider. You can achieve this by using the &quot;bar&quot; style and
+by    setting the divider width to 1.</p>
+  <p class="semiparagraph">The screenshot below shows a horizontal and a vertical
+    split pane. Both use the &quot;bar&quot; style. The horizontal split pane
+    has its divider width set to 1. Also, all scroll panes have an empty border,
+    in order to have them go from edge to edge of the window and the split bars.</p>
+  <p class="semiparagraph"><img src="images/jsplitpane2.png" width="460" height="299" /></p>
+  <p class="semiparagraph">Here is the code snippet that was used to configure
+    the horizontal split pane:</p>
+  <table class="semiparagraph" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p> <code>splitPane.putClientProperty(&quot;Quaqua.SplitPane.style&quot;,&quot;bar&quot;);<br />
+splitPane.setDividerSize(1);</code></p>
+      </td>
+    </tr>
+  </table>
+  <p class="semiparagraph">&nbsp;</p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

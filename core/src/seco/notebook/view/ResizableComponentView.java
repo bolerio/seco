@@ -20,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.event.CaretEvent;
@@ -36,6 +37,7 @@ import seco.gui.TopFrame;
 import seco.notebook.NotebookUI;
 import seco.notebook.SelectionManager;
 import seco.notebook.SelectionManager.Selection;
+import seco.util.GUIUtil;
 
 
 public class ResizableComponentView extends HidableComponentView implements
@@ -99,7 +101,7 @@ public class ResizableComponentView extends HidableComponentView implements
         Component comp = (Component) attr
                 .getAttribute(StyleConstants.ComponentAttribute);
         panel = new ResizableComponent(comp);
-        panel.setDoubleBuffered(!TopFrame.PICCOLO);
+        panel.setDoubleBuffered(GUIUtil.getFrame().doubleBuffer());
        
         final NotebookUI ui = (NotebookUI) getContainer();
         ui.getSelectionManager().put(getElement(), this);

@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:450px; z-index:7">
+  <h3>JToggleButton</h3>
+  <h5 class="semiparagraph">Client properties:</h5>
+  <table  width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th><p>Property</p>      </th>
+      <th>Type</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>JComponent</code></p>
+          <p><code>.sizeVariant</code></p></td>
+      <td><code>java.lang.String</code></td>
+      <td>Values: &quot;regular&quot;, &quot;small&quot;</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Quaqua.Button<br />
+        .style</code> </p>      </td>
+      <td><code>java.lang.String</code></td>
+      <td>Values: &quot;toggle&quot;, &quot;toggleEast&quot;, 
+        &quot;toggleCenter&quot;, &quot;toggleWest&quot;, 
+      &quot;toolBarTab&quot;</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>JButton<br />
+      .buttonType</code></td>
+      <td><code>java.lang.String</code></td>
+      <td>Values: &quot;square&quot;, &quot;gradient&quot;, &quot;bevel&quot;, &quot;segmented&quot;</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>JButton<br />
+        .segmentPosition</code></td>
+      <td><code>java.lang.String</code></td>
+      <td>Values: &quot;first&quot;, &quot;middle&quot;, &quot;last&quot;, &quot;only&quot;</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.Component</code><br />
+          <code>.visualMargin</code> <br />      </td>
+      <td><code>java.awt.Insets</code></td>
+      <td><p>See <a href="layout_intro.html">layout</a></p>      </td>
+    </tr>
+  </table>
+  <h5 class="doubleparagraph">Client property: Quaqua.Component.visualMargin</h5>
+  <p class="semiparagraph">This client property can be used to change the visual
+    margin of the JButton. For details see <a href="layout_intro.html">layout</a>.</p>
+  <h4 class="doubleparagraph">Client property: Quaqua.Button.style</h4>
+  <p class="semiparagraph"></p>
+  <p class="semiparagraph">The picture below shows the effect of the styles. The styles are available
+    for the regular System Font of Mac OS X (Lucida Grande 13) and the Small
+    System Font (Lucida Grande 11). The styles work also with other font sizes,
+    but then, the results aren't necessarily optimal.</p>
+  <p class="semiparagraph"><img src="images/jtogglebutton.png" alt="Quaqua Look and Feel - JToggleButton styles" width="460" height="259" border="0" /><br />
+    You can specify a style using the client property <code>Quaqua.Button.style</code><br />
+&nbsp;  </p>
+  <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p><code>myButton.putClientProperty(</code></p>
+        <p><code>&nbsp;&nbsp;&nbsp;&quot;Quaqua.Button.style&quot;, &quot;toggleCenter&quot;</code></p>        
+        <p><code>);</code></p></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p class="semiparagraph">&nbsp;</p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

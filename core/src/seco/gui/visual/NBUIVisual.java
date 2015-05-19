@@ -22,6 +22,7 @@ import seco.things.Cell;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.CellVisual;
+import seco.util.GUIUtil;
 
 public class NBUIVisual implements CellVisual
 {
@@ -55,7 +56,7 @@ public class NBUIVisual implements CellVisual
             ui.addCaretListener(ThisNiche.guiController.getNotebookUICaretListener());
         
         final JScrollPane scrollPane = new JScrollPane(ui);
-        scrollPane.setDoubleBuffered(!TopFrame.PICCOLO);
+        scrollPane.setDoubleBuffered(GUIUtil.getFrame().doubleBuffer());
         scrollPane.addComponentListener(new ComponentAdapter() {
             public void componentShown(ComponentEvent ce)
             {

@@ -1,0 +1,450 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:850px; z-index:7">
+  <h3>Client Properties</h3>
+  <p class="semiparagraph">The Quaqua Look and Feel supports the  client
+    properties listed below. You may notice, that the list also contains some
+    properties defined in Apple's <a href="http://developer.apple.com/documentation/Java" target="_blank">Release
+    Notes for their Java Virtual Machines</a>    and in Sun's <a href="http://java.sun.com/products/jlf/" target="_blank">Java
+    Look and Feel Design Guidelines</a>. These properties are listed
+    here, because they directly or indirectly affect the appearance and behaviour
+    of
+    components
+    using the
+    Quaqua
+    Look and
+    Feel.</p>
+  <h5 class="semiparagraph">Common Properties</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>JComponent</code><code>.sizeVariant</code></p>
+      </td>
+      <td><p>Changes the size variant of a component, if set to <code>regular</code>, <code>small</code> or <code>mini</code>. The default value is <code>regular</code>.</p>
+        <p>&nbsp;</p>
+        <p>Note: Setting this property causes the UI delegate, to set an appropriate font on the component. <br />
+          </p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.Component<br />
+    .cellRendererFor</code></td>
+      <td><p>If a component is used as a cell renderer, this property can be
+          used to specify the <code>JComponent</code> which contains the cels.
+          For example, set this to a JTable, a JTree or a JList object.</p>
+        <p>&nbsp;</p>
+        <p>This has the following effect:</p>
+        <ul>
+          <li>The cell renderer can draw itself differently, so that it fits
+            visually into a cell of the specified JComponent.</li>
+          <li>The cell renderer can determine its selection color depending
+            on the focus state of the specified JComponent rather than on its
+            own focus state.</li>
+      </ul></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.Component<br />
+      .visualMargin</code></td>
+      <td><p>If set to a <code>java.awt.Insets</code> value, specifies the margin around
+          the visually perceived borders of a component and its clip bounds.<br />
+        If no value is specified, then the UIManager property <code>Component.visualMargin</code>        is
+        used.</p>
+        <p class="semiparagraph">This property is honoured only by ComponentUI's
+          that have been implemented in Quaqua. Thus the following components
+          ignore currently the visual margin:</p>
+        <ul>
+          <li class="semiparagraph">JSlider</li>
+          <li>JSpinner</li>
+          <li>JTabbedPane with Panther design<br />
+          </li>
+        </ul></td>
+    </tr>
+  </table>
+  <h5>JCheckBox</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.Label<br />
+        .style</code></td>
+      <td>Changes the style of the label portion of the JCheckBox if set to: <code>&quot;plain&quot;</code>, <code>&quot;shadow&quot;</code> or <code>&quot;emboss&quot;</code>.<br />
+      If no value is specified, the <code>plain</code> style is used.</td>
+    </tr>
+  </table>
+  <h5></h5>
+  <h5><a name="JButton" id="JButton"></a>JComboBox</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>JComboBox<br />
+      .isTableCellEditor</code></td>
+      <td><p>If set to <code>Boolean.TRUE</code> causes the JComboBox to render
+        without a border, so that it fits visually into a JTable cell.</p>
+        <p>Alternatively to this, <code>Quaqua.Component.isCellRendererFor</code> can be used.</p></td>
+    </tr>
+  </table>
+  <h5></h5>
+  <h5>JFileChooser</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.FileChooser<br />
+      .preview</code></td>
+      <td><p>If set to a <code>java.awt.Component</code>, specifies the component used for rendering the file preview in the last column of the column view in the file browser.</p>
+        <p>If this property is not set, or if its value is null, the file chooser renders the preview using its own renderer.</p></td>
+    </tr>
+  </table>
+  <h5>JButton</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.Button<br />
+        .style</code></td>
+      <td>Changes the style of a button, if set to one of the following String
+        values: <code>bevel</code>, <code>square</code>, <code>push</code>, <code>colorWell</code>, <code>toggle</code>, <code>toggleWest</code>, <code>toggleCenter</code>, <code>toggleEast,
+          toolBar, toolBarRollover, toolBarTab, help</code>.<br />
+        If no value is specified, the <code>push</code> style is used.<br />
+        This property overrides the <code>JButton.buttonType</code> property.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>JButton<br />
+        .buttonType</code></td>
+      <td>Changes the style of a button, if set to one of the following String
+        values: <code>icon, toolbar, text</code>.<br />
+        If no value is specified, the <code>text</code> style is used.<br />
+        This property is here for backwards compatibility with Apple's Aqua Look and
+        Feel only. It is overriden, if the <code>Quaqua.Button.style</code> property is set.</td>
+    </tr>
+  </table>
+  <h5></h5>
+  <h5>JOptionPane</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.OptionPane<br />
+      .destructiveOption</code></td>
+      <td><p>Specifies the index of the destructive option on the JOptionPane.<br />
+        If no value is specified, all option buttons are aligned to the lower
+            right corner of the option pane.</p>
+        <p>If an <code>Integer</code> value is specified, all option buttons with a lower
+          index than the Integer value are aligned to the lower right corner,
+        the other option buttons are left aligned with the message text.</p></td>
+    </tr>
+  </table>
+  <h5></h5>
+  <h5>JLabel</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.Label<br />
+      .style</code></td>
+      <td>Changes the style of a label if set to: <code>&quot;plain&quot;</code>, <code>&quot;shadow&quot;</code> or <code>&quot;emboss&quot;</code>.<br />
+      If no value is specified, the <code>plain</code> style is used.</td>
+    </tr>
+  </table>
+  <h5></h5>
+  <h5>JList</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.List<br />
+      .style</code></td>
+      <td>Changes the style of a list, if set to: <code>&quot;striped&quot;</code> or
+        to
+        <code>&quot;plain&quot;</code>.<br />
+If no value is specified, the <code>plain</code> style is used.</td>
+    </tr>
+  </table>
+  <h5>JPopupMenu</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.PopupMenu<br />
+      .windowAlpha</code></td>
+      <td>A float value which specifies the alpha transparency of the popup window.<br />
+      If no value or null is specified, a system dependent transparency value is chosen.</td>
+    </tr>
+  </table>
+  <h5></h5>
+  <h5>JRootPane</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.RootPane<br />
+    .isPalette</code></td>
+      <td><p>If set to <code>Boolean.TRUE</code>, turns a JDialog or a JFrame
+          into a palette window.<br />
+      The title bar of a palette window will always render in activated state.
+      It is your responsibility to hide the palette window, when none of your
+      application has focus.</p>
+          <p>This property will only take into effect, when  the JRootPane
+            decorates the window.</p>      </td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.RootPane<br />
+      .isVertical</code></td>
+      <td><p>If set to <code>Boolean.TRUE</code>, renders the title bar of a
+          JDialog or a JFrame on the left instead of on the top.</p>
+        <p>This property will only take into effect, when  the JRootPane
+          decorates the window.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code><a name="brushMetalLook" id="brushMetalLook"></a>apple.awt.brushMetalLook</code></td>
+      <td><p>If set to <code>Boolean.TRUE</code>, fuses the title bar of the JFrame with the JToolBar at the top of the window, and fuses the border with the JToolBar at the bottom of the window, if the appropriate style of the JToolBar is set.</p>
+      <p>See <a href="#JToolBar">JToolBar</a></p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>windowModified</code></td>
+      <td>See <a href="#JInternalFrame">JInternalFrame</a></td>
+    </tr>
+  </table>
+  <h5></h5>
+  <h5>JScrollBar</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.ScrollBar<br />
+      .placeButtonsTogether</code></td>
+      <td><p>Places the buttons of the scroll bar together or appart. Supported
+          values are Boolean.TRUE and Boolean.FALSE. </p>
+        <p>If no value is specified, the UIManager property <code>ScrollBar.placeButtonsTogether</code>          is used.</p></td>
+    </tr>
+  </table>
+  <h5>JScrollPane</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.ScrollPane<br />
+      .style</code></td>
+      <td>Changes the style of a list, if set to: <code>&quot;plain&quot;</code> or
+        to <code>&quot;bar&quot;</code>.<br />
+If no value is specified, the <code>plain</code> style is used.</td>
+    </tr>
+  </table>
+  <h5></h5>
+  <h5>JTable</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.Table<br />
+      .style</code></td>
+      <td>Changes the style of a table, if set to: <code>striped</code> or to <code>plain</code>.<br />
+      If no value is specified, the <code>plain</code> style is used.</td>
+    </tr>
+  </table>
+  <h5>JTabbedPane</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.TabbedPane<br />
+    .contentBorderPainted</code></td>
+      <td>Switches rendering of the content border on and off. Set this to <code>Boolean.FALSE</code> to
+        not draw the content border of the tabbed pane.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.TabbedPane<br />
+    .shortenTabs</code></td>
+      <td>For use with tabbed panes with scroll layout policy. Set this to <code>Boolean.FALSE</code> to
+        prevent tabs from being shortened.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.TabbedPaneChild<br />
+.contentBackground</code></td>
+      <td><p>Specifies the background color of the content area.</p>
+        <p>This property needs
+            to be set on a child of a JTabbedPane. This allows to have individual
+        background colors for each child of the tabbed pane.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.TabbedPaneChild<br />
+.contentInsets</code></td>
+      <td><p>Specifies the insets of the content area.</p>
+      <p>This property needs to be set on a child of a JTabbedPane. This allows
+      to have individual insets for each child of the tabbed pane.</p></td>
+    </tr>
+  </table>
+  <h5></h5>
+  <h5>JTextComponent (JTextField, JTextArea, JTextPane, JEditorPane, JPasswordField)</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.TextComponent<br />
+.autoSelect</code></td>
+      <td>Set this to <code>Boolean.FALSE</code> to prevent that all text is selected, when the user tabs into the field. <br />
+This property does not affect JTextPane and JTextArea.<br />
+Note: You can set the UIManager property <code>TextComponent.autoSelect</code> to false, to turn this off globally.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.TextComponent<br />
+      .showPopup</code></td>
+      <td>Set this to <code>Boolean.FALSE</code> to disable the text component
+        popup menu.</td>
+    </tr>
+  </table>
+  <h5></h5>
+  <h5>JTextField</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.TextField<br />
+      .style</code></td>
+      <td><p>If set to <code>&quot;search&quot;</code>, renders a rounded border
+        like the border of Mac OS X SpotLight search fields.</p>
+        <p>If set to <code>&quot;plain&quot;</code>, renders a rectangular border like for regular text
+        fields. The default value is <code>&quot;plain&quot;</code>.</p></td>
+    </tr>
+  </table>
+  <h5><a name="JToolBar" id="JToolBar"></a>JToolBar</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.ToolBar<br />
+        .style</code></td>
+      <td><p>Changes the style of a tool bar, if set to: <code>plain, title, bottom</code> or <code>gradient</code>.<br />
+        If no value is specified, the <code>plain</code> style is used.</p>
+        <p>The <code>&quot;title&quot;</code> style requires that the client property <code>apple.awt.brushMetalLook</code> is set on the JRootPane.<br />
+      </p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.ToolBar<br />
+      .isDividerDrawn</code></td>
+      <td>If set to <code>Boolean.FALSE</code>, turns the  divider line between the
+        toolbar and the center area of its panel off.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>JToolBar<br />
+      .isRollover</code></td>
+      <td>If set to <code>Boolean.TRUE</code>, turns a roll over effect for the
+        buttons on the toolbar on.<br />
+      This requires Java 1.4 to work.</td>
+    </tr>
+  </table>
+  <h5 class="semiparagraph"></h5>
+  <h5>JTree</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.Tree<br />
+      .style</code></td>
+      <td>Changes the style of a tree, if set to: <code>plain, striped</code> or  <code>sourceList</code>.<br />
+      If no value is specified, the <code>plain</code> style is used.</td>
+    </tr>
+  </table>
+  <h5></h5>
+  <h5 class="semiparagraph"><a name="JInternalFrame" id="JInternalFrame"></a>JInternalFrame</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>JInternalFrame<br />
+      .isPalette</code></td>
+      <td>If set to <code>Boolean.TRUE</code>, turns a JInternalFrame into a palette window.<br />
+      See Sun's Java Look And Feel Design Guidelines for <a href="http://java.sun.com/products/jlf/ed1/dg/higk.htm#36807" target="_blank">Palettes</a>.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>windowModified</code></td>
+      <td>If set to  <code>Boolean.TRUE</code>, the red close button in the title
+        bar visually indicates that the document contained in the window has
+        changed.<br />
+      See Apple's Technical Q&amp;A <a href="http://developer.apple.com/qa/qa2001/qa1146.html" target="_blank">QA1146</a>.</td>
+    </tr>
+  </table>
+  <h5 class="semiparagraph">&nbsp;</h5>
+  <h5>JToggleButton</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.Button<br />
+      .style</code></td>
+      <td>See <a href="#JButton">JButton</a>.<br />
+      If no value is specified, the <code>toggle</code> style is used.</td>
+    </tr>
+  </table>
+  <h5 class="semiparagraph"></h5>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

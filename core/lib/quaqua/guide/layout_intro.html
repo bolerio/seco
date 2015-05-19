@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - Creating Layouts for Mac OS X</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:650px; z-index:7">
+  <h3>Creating Layouts for Mac OS X</h3>
+  <p class="semiparagraph">You may want to read the <a href="http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuidelines/XHIGLayout/chapter_19_section_1.html#//apple_ref/doc/uid/TP30000360-TP9" target="_blank">Layout
+    Examples</a> chapter of the <a href="http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuidelines/" target="_blank">Apple
+    Human Interface Guidelines (AHIG)</a> before you start creating layouts for
+    Mac OS X.</p>
+  <p class="semiparagraph">When you create layouts based on the AHIG guidelines
+    using the Quaqua Look and Feel (Quaqua), it
+    is important,
+    that
+    you are
+    aware
+    of the following issues:</p>
+  <ul>
+    <li class="semiparagraph">Mac OS X controls should always be center-equalized. On most other platforms,
+      controls are often left justified. <br />
+      Quaqua does not provide a facility for cross-platform layouts. That is,
+      Quaqua does not automatically turn a left justified layout into a center-equalized
+      layout. The task for
+      creating
+    center-equalized layouts is  yours.</li>
+    <li class="semiparagraph">A Mac OS X control can come in up to three different size styles: full
+      size, small and mini.<br />
+      Quaqua supports the full size and the mall size style as a side effect
+      of the font size. Set the font of a JComponent to Lucida Grande 13 for
+      full size
+      style,
+      and to
+      Lucida
+      Grande
+      11
+    for the small size style. The mini size style is currently not supported.</li>
+    <li class="semiparagraph">The AHIG describes the spacing around a control
+      in pixels. The spacing is given for the visually perceived bounds of a
+      control. These values need to be translated when used for Swing
+      JComponents, because most Java layout managers need spacing values given
+      for the
+      clip
+      bounds
+      of a control.<br />
+      Quaqua adds a margin of 3 pixels around the visually perceived
+      bounds in
+      order
+      to
+      accomodate
+      for cast
+      shadows and
+      focus rings within the clip bounds of a JComponent.
+      To translate AHIG spacing values into Quaqua spacing values, subtract 3
+      pixels for spacings given between a control
+      and
+      its
+      parent
+      container,
+      subtract
+      6 pixels
+      for
+      spacing givens between adjacent
+      controls. Sometimes this may result in negative spacing values, which is
+      okay, because the margin of Quaqua is translucent.<br />
+      Please note that only the Quaqua look and feel supports visual margins.
+      All other look and feels, including the Apple look and feel, don't support
+      visual margins, i.e. the amount of pixels that needs to be added or subtracted
+    to the spacings given in the AHIG, is different for each control!</li>
+    <li class="semiparagraph">The preferred spacing around a control depends
+      on its relationship to other components on a form (related, unrelated,
+      indented) and also
+      on the type of the control and on its size style.<br />
+      Quaqua together with LayoutStyle aware layout managers, such as GroupLayout,
+    can automatically take into account most of these spacing guidelines.</li>
+  </ul>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

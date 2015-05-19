@@ -49,8 +49,6 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
         if (isTopContainer(element))
         {
             maximized = null;
-            if(ThisNiche.guiController == null)
-               ThisNiche.initGUIController();
             canvas = ThisNiche.getCanvas();
             Rectangle r = (Rectangle) element.getAttribute(VisualAttribs.rect);
             if (r != null && GUIUtil.getFrame() != null) 
@@ -87,13 +85,6 @@ public class CellContainerVisual implements CellVisual, GroupVisual, EventHandle
                 }
             });
         }
-        
-//        if(CellUtils.getZoom(elementH) != null)
-//        {
-//            AffineTransformEx tr = CellUtils.getZoom(elementH);
-//            canvas.getCamera().setViewTransform(tr.getTransform());
-//        }
-        
         return canvas;
     }
 

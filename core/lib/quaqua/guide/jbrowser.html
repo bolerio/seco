@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:726px; z-index:7">
+  <h3>JBrowser</h3>
+  <p class="semiparagraph">JBrowser roughly implements the look and behaviour
+    of a Mac OS X Cocoa NSBrowser component (aka column view).</p>
+  <p class="semiparagraph">Like NSBrowser, JBrowser provides a user interface
+    for displaying and selecting items from a list of data or from hierarchically
+    organized
+    lists of data such as directory paths. When working with a hierarchy of data,
+  the levels are displayed in columns, which are numbered from left to right.</p>
+  <p class="semiparagraph">JBrowser uses a TreeModel, and can be used as a replacement
+    for a JTree. It does not have all the features of a JTree though. Especially
+    cell editing is not supported.</p>
+  <p>&nbsp;</p>
+  <p><img src="images/jbrowser.png" width="460" height="220" /></p>
+  <p>&nbsp;</p>
+  <p>JBrowser is designed to work with the Quaqua Look and Feel. If
+    you want to use it with another Look and Feel, you need to implement
+    the
+    user
+    interface delegate BrowserUI, and you need to adapt the  ViewportUI. Changes
+    in ViewportUI are needed, in order to draw empty columns at the
+    right of the
+    JBrowser,
+    when the viewport is wider than the currently selected path.</p>
+  <p class="semiparagraph">If for some reason, you can't implement the user interface delegate classes
+    BrowserUI and ViewportUI by yourself, you can use the helper class JBrowserViewport,
+    to achieve the desired effect.</p>
+  <p class="semiparagraph">The following sample code shows how to use JBrowser
+    without the Quaqua Look and Feel, and without implementig user interface
+    delegates. Note the use of the JBrowserViewport helper class!</p>
+  <p class="semiparagraph">&nbsp;</p>
+  <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td height="210" class="listing"><p class="listing"><code><strong>public import </strong>ch.randelshofer.quaqua.*;<strong><br />
+  import </strong>javax.swing.*;<strong><br />
+  </strong></code></p>
+        <p class="listing"><code><strong>public class</strong> BrowserTest3 {<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;<strong>public static void</strong> main(String[] args) {<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JFrame f = <strong>new</strong> JFrame(&quot;Browsertest 3&quot;);<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);<br />
+    <br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JBrowser browser = <strong>new</strong> JBrowser();<br />
+    <br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JScrollPane scrollPane = <strong>new</strong> JScrollPane();<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scrollPane.setViewport(<strong>new</strong> JBrowserViewport());<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scrollPane.setViewportView(browser);<br />
+    <br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f.getContentPane().add(scrollPane);<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f.setSize(400,200);<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f.show();<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+    }</code></p></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

@@ -37,7 +37,8 @@ import seco.things.CellGroupMember;
  */
 public class StandaloneFrame extends TopFrame
 {
-    private StatusBar status;
+	private static final long serialVersionUID = 1L;
+	private StatusBar status;
     private JPanel statusPane;
     public HGHandle tabbedPaneGroupHandle;
 
@@ -46,8 +47,9 @@ public class StandaloneFrame extends TopFrame
         PICCOLO = false;
     }
 
-    protected void initFrame()
+    public void initFrame()
     {
+    	super.initFrame();
         // Create the status area.
         statusPane = new JPanel(new GridLayout(1, 1));
         status = new StatusBar(this);
@@ -62,7 +64,8 @@ public class StandaloneFrame extends TopFrame
         getContentPane().add(statusPane, BorderLayout.SOUTH);
         setPreferredSize(new Dimension(1000, 700));
         setMinimumSize(new Dimension(1000, 700));
-        pack();
+//        pack();
+        validate();
     }
     
     private Component getJTabbedPane()
@@ -101,10 +104,11 @@ public class StandaloneFrame extends TopFrame
 
     public static class AKDockLayout extends BorderLayout 
     {
-      private ArrayList north = new ArrayList(1);
-      private ArrayList south = new ArrayList(1);
-      private ArrayList east = new ArrayList(1);
-      private ArrayList west = new ArrayList(1);
+	  private static final long serialVersionUID = 1L;
+	  private ArrayList<Component> north = new ArrayList<Component>(1);
+      private ArrayList<Component> south = new ArrayList<Component>(1);
+      private ArrayList<Component> east = new ArrayList<Component>(1);
+      private ArrayList<Component> west = new ArrayList<Component>(1);
       private Component center = null;
       private int northHeight, southHeight, eastWidth, westWidth;
      
@@ -195,7 +199,7 @@ public class StandaloneFrame extends TopFrame
      
     // Returns the ideal width for a vertically oriented toolbar
     // and the ideal height for a horizontally oriented tollbar:
-      private Dimension getPreferredDimension(ArrayList comps) {
+      private Dimension getPreferredDimension(ArrayList<Component> comps) {
         int w = 0, h = 0;
      
         for (int i = 0; i < comps.size(); i++) {
@@ -208,7 +212,7 @@ public class StandaloneFrame extends TopFrame
         return new Dimension(w, h);
       }
      
-      private void placeComponents(Container target, ArrayList comps,
+      private void placeComponents(Container target, ArrayList<Component> comps,
                                    int x, int y, int w, int h, int orientation) {
         int offset = 0;
         Component c = null;

@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:921px; z-index:7">
+  <h3>Designs</h3>
+  <p class="semiparagraph">The following table shows which  Mac OS
+    X designs are supported by the Quaqua Look and Feel:</p>
+  <p class="semiparagraph">&nbsp;</p>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th><p>Design</p>      </th>
+      <th>Mac OS X Release</th>
+      <th>Quaqua support</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td>Mavericks</td>
+      <td>10.9, Jun 2013</td>
+      <td><p>supported</p>
+          <p class="info"> Known issues: <br />
+            JFileChooser renders with Mountain Lion design.<br />
+            JTabbedPanes with tab layout policy &quot;wrap&quot; will
+            render with Jaguar design</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td>Mountain Lion</td>
+      <td>10.8, Feb 2012</td>
+      <td><p>supported</p>
+          <p class="info"> Known issues: JTabbedPanes with tab layout policy &quot;wrap&quot; will
+            render with Jaguar design</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td>Lion</td>
+      <td>10.7, Jul 2011</td>
+      <td><p>supported</p>
+          <p class="info"> Known issues: JTabbedPanes with tab layout policy &quot;wrap&quot; will
+            render with Jaguar design</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td>Snow Leopard</td>
+      <td>10.6, Aug 2009</td>
+      <td><p>supported</p>
+          <p class="info"> Known issues: JTabbedPanes with tab layout policy &quot;wrap&quot; will
+            render with Jaguar design</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td>Leopard</td>
+      <td>10.5, Oct 2007</td>
+      <td><p>supported</p>
+          <p class="info"> Known issues: JTabbedPanes with tab layout policy &quot;wrap&quot; will
+            render with Jaguar design</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td>Tiger</td>
+      <td>10.4, Apr 2005</td>
+      <td><p>supported</p>
+          <p class="info"> Known issues: JTabbedPanes with tab layout policy &quot;wrap&quot; will
+            render with Jaguar design</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td>Panther</td>
+      <td>10.3, Oct 2003</td>
+      <td><p>supported</p>
+        <p class="info"> Known issues: JTabbedPanes with tab layout policy &quot;wrap&quot; will
+          render with Jaguar design</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td>Jaguar</td>
+      <td>10.2, Aug 2002</td>
+      <td><p> supported</p>
+      <p class="info"> Known issues: JButtons will render with Panther design.
+        JTabbedPanes with tab layout policy &quot;scroll&quot; will render with Panther design</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td>Puma</td>
+      <td>10.1, Sep 2001</td>
+      <td>not supported</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td>Cheetah</td>
+      <td>10.0, Mar 2001</td>
+      <td><p>not supported</p>      </td>
+    </tr>
+  </table>
+  <p class="semiparagraph">The Quaqua Look and Feel automatically detects which
+    design is in use by the operating system and chooses appropriate look and
+    feel properties.</p>
+  <p class="semiparagraph">It is not recommended to use a different design than
+    the one used by the underlying native operating systems. </p>
+  <p class="semiparagraph">For testing purposes you can explicitly specify a
+    design using the system property <code>Quaqua.design</code>. Make sure you
+    set this property before you create a QuaquaLookAndFeel instance. Quaqua.design
+    supports the values listed above (in lower case) and the value &quot;auto&quot;.</p>
+  <p>&nbsp;</p>
+  <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td height="210" class="listing"><p><code><strong>public class</strong> MyApplication
+            {<br />
+&nbsp;&nbsp;&nbsp;&nbsp; <strong>public static void</strong> main(String[] args)
+{</code></p>
+          <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#666666">//
+                explicitly set the design to jaguar</font><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;System.setProperty(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Quaqua.design&quot;,&quot;jaguar&quot;</code></p>
+          <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);</code></p>
+          <p><code></code></p>
+          <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#666666">//
+                set the Quaqua Look and Feel in the UIManager</font><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>try</strong> { <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UIManager.setLookAndFeel(<br />
+            </code><code>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &quot;ch.randelshofer.quaqua.QuaquaLookAndFeel&quot;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; </code><code>);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#666666">// set
+UI manager properties here that affect Quaqua</font><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } <strong>catch</strong> (Exception
+e) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#666666">//
+take an appropriate action here</font><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#666666">// insert
+your application initialization code here</font><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br />
+&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+        }</code></p>
+      </td>
+    </tr>
+  </table>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

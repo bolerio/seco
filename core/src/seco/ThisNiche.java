@@ -27,6 +27,7 @@ import seco.classloader.AdaptiveClassLoader;
 import seco.gui.GUIController;
 import seco.gui.PiccoloCanvas;
 import seco.gui.PiccoloFrame;
+import seco.gui.StandaloneFrame;
 import seco.rtenv.ContextLink;
 import seco.rtenv.EvaluationContext;
 import seco.rtenv.SEDescriptor;
@@ -41,7 +42,7 @@ public final class ThisNiche
     static EvaluationContext topContext;
     static HashMap<HGHandle, EvaluationContext> allContexts = new HashMap<HGHandle, EvaluationContext>();
 
-    public static String guiControllerClassName = PiccoloFrame.class.getName();
+    public static String guiControllerClassName = StandaloneFrame.class.getName();//PiccoloFrame.class.getName();
     public static GUIController guiController;
     
     public static final HGPersistentHandle NICHE_NAME_HANDLE = UUIDHandleFactory.I
@@ -81,6 +82,7 @@ public final class ThisNiche
         {
             Class<?> c = cl.loadClass(guiControllerClassName);
             guiController = (GUIController) c.newInstance();
+            guiController.initFrame();
         }
         catch (Throwable t)
         {

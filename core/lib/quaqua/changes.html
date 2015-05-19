@@ -1,0 +1,2046 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!--
+ * @(#)changes.html
+ *
+ * Copyright (c) 2003-2013 Werner Randelshofer, Switzerland.
+ * All rights reserved.
+ *
+ * The copyright of this software is owned by Werner Randelshofer.
+ * You may not use, copy or modify this software, except in
+ * accordance with the license agreement you entered into with
+ * Werner Randelshofer. For details see accompanying license terms.
+ *
+ * @author  Werner Randelshofer
+ * @version $Id: changes.html 462 2014-03-22 09:23:12Z wrandelshofer $
+ *-->
+
+<head>
+<title>Quaqua Look and Feel &middot; Changes</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="guide/stylesheet.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+<!--
+li li {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+-->
+</style>
+</head>
+
+<body>
+<div id="Spalte1" style="position:absolute; left:10px; top:10px; width:460px; height:60px; z-index:3">
+  <div id="Spalte5" style="position:absolute; left:480px; top:70px; width:220px; height:120px; z-index:7">
+            <h3 class="dividerparagraph">Documentation </h3>
+            <p class="semiparagraph"><a href="readme.html">Readme</a></p>
+    <p><strong>Changes</strong></p>
+    <p><a href="license.html">License</a></p>
+    <p><a href="guide/index.html">Usage</a></p>
+  </div>
+  <h3>Quaqua Look and Feel</h3>
+  <h1>Changes</h1>
+</div>
+<div id="Spalte2" style="position:absolute; left:10px; top:80px; width:460px; z-index:4;">
+  <h3>Version 9.1<br />
+    <font size="-1">2014-03-22</font></h3>
+  <p>&nbsp;</p>
+  <h4>Changes</h4>
+  <p>OS X</p>
+  <ul>
+    <li>Adds support for OS X 10.9 Mavericks.</li>
+  </ul>
+  <h3>Version 9.0<br />
+    <font size="-1">2013-05-30</font></h3>
+  <p>&nbsp;</p>
+  <h4>Changes</h4>
+  <p>OS X</p>
+  <ul>
+    <li>Adds support for OS X 10.8 Mountain Lion.</li>
+  </ul>
+  <p>JVM</p>
+  <ul>
+    <li>Adds support for J2SE7 from Oracle. The native Quaqua library for this JVM has the name libquaqua64.dylib.</li>
+    <li>Removes support for J2SE5.</li>
+    <li>Removes support for org.jdesktop.layout API. </li>
+    <li>Removes support for PPC.</li>
+  </ul>
+  <p>Known Issues with J2SE7 from Oracle:</p>
+  <ul>
+    <li> Popup menus are not translucent.</li>
+    <li>JSheet is shown and hidden without a transition animation.</li>
+    <li>JProgressBar is not animated.</li>
+  </ul>
+  <h3>Version 8.0<br />
+    <font size="-1">2011-10-02</font></h3>
+  <p>&nbsp;</p>
+  <h4>Fixes</h4>
+  <p>JButton</p>
+  <ul>
+    <li>Fixes NullPointerException in QuaquaNativeButtonBorder.</li>
+  </ul>
+  <p>JColorChooser</p>
+  <ul>
+    <li>Fixes appearance of toolbar buttons.</li>
+  </ul>
+  <p>JComboBox</p>
+  <ul>
+    <li>Fixes QUAQUA-151 JComponent.getBaseline() is not available on J2SE5.    </li>
+    <li>Fixes QUAQUA-137 firePopupMenuWillBecomeVisible no longer being called.
+      <h3></h3>
+    </li>
+  </ul>
+  <h3></h3>
+  <p>JFileChooser</p>
+  <ul>
+    <li>Fixes QUAQUA-148 NullPointerException when sidebar contains a link to an unmounted network folder.    </li>
+  </ul>
+  <p>JPopupMenu</p>
+  <ul>
+    <li>Method sun.awt.SunToolkit.ungrab() is not available on J2SE5.</li>
+  </ul>
+  <p>JScrollPane</p>
+  <ul>
+    <li>Fixes focus ring painting on J2SE5 by enforcing the opacity setting of the L&amp;F on JScrollPane objects.</li>
+  </ul>
+  <p>JTable</p>
+  <ul>
+    <li>Fixes QUAQUA-146 wrong background color in table cell editor when cell is selected.
+      <h3></h3>
+    </li>
+  </ul>
+  <h3></h3>
+  <p>JTextField</p>
+  <ul>
+    <li>Fixes QUAQUA-149 NullPointerException in QuaquaTextFieldBorder.    <h3></h3>
+    </li>
+  </ul>
+  <h3>Version 8.0alpha10<br />
+    <font size="-1">2011-09-02</font></h3>
+  <p>&nbsp;</p>
+  <h4>Fixes</h4>
+  <p>JTabbedPane</p>
+  <ul>
+    <li>In 8.0alpha9, Quaqua used the Leopard design for tabbed panes instead of the Lion design.</li>
+  </ul>
+  <p>&nbsp;</p>
+  <h3>Version 8.0alpha9<br />
+    <font size="-1">2011-09-01</font></h3>
+  <p>&nbsp;</p>
+  <h4>Fixes</h4>
+  <p>JButton</p>
+  <ul>
+    <li>Fixes excessive CPU usage when a flashing default button is shown. The CPU usage continued to be high even when the default button was not showing anymore.</li>
+    <li>Fixes NullPointerException in QuaquaButtonUI.</li>
+    <li>Fixes a layout issue with JButton's on a JToolBar.</li>
+  </ul>
+  <h3>Version 8.0alpha7<br />
+    <font size="-1">2011-08-07</font></h3>
+  <p>&nbsp;</p>
+  <h4>Enhancements</h4>
+  <p>OS X 10.7 Lion</p>
+  <ul>
+    <li>Adds a file-chooser only version of the Quaqua Look and Feel for use on Mac OS X 10.7 Lion. </li>
+    <li>Uses native painters for most components so that they will (hopefully) stay in synch with future updates of OS X.</li>
+    <li>Adds support for the &quot;mini&quot; size variant for most controls.</li>
+    <li>Adds a preliminary  Quaqua Look and Feel for Lion.<br />
+      Currently, UI delegates for the following components are provided by Quaqua:<br />
+      <ul>
+        <li>JButton</li>
+        <li>JCheckBox</li>
+        <li>JColorChooser</li>
+        <li>JComboBox</li>
+        <li>JFileChooser</li>
+        <li>JFormattedTextField</li>
+        <li>JPasswordField</li>
+        <li>JRadioButton</li>
+        <li>JScrollBar</li>
+        <li>JScrollPane</li>
+        <li>JSplitPane</li>
+        <li>JTextArea</li>
+        <li>JTextField</li>
+        <li>JTextPane</li>
+        <li>JToolBar</li>
+        <li>JToggleButton</li>
+        <li>JEditorPane</li>
+        <li>JTree</li>
+        <li>JLabel</li>
+        <li>JList</li>
+        <li>JTable</li>
+        <li>JOptionPane</li>
+        <li>JPanel</li>
+        <li>JViewport</li>
+        <li>JRootPane</li>
+      </ul>
+    </li>
+  </ul>
+  
+  <p>JButton</p>
+  <ul>
+    <li>Adds support for the JButton.segmentPosition property for the following button types: &quot;segmented&quot;, &quot;segmentedRoundRect&quot;, &quot;segmentedGradient&quot;, &quot;square&quot;, &quot;gradient&quot;.</li>
+  </ul>
+  <p>JTextComponent </p>
+  <ul>
+    <li>The non-blinking caret which is shown in non-editable text components can now be turned off by setting the system property &quot;Quaqua.showNonEditableCaret&quot; to &quot;false&quot;.</li>
+  </ul>
+  <h4>Fixes</h4>
+  <p>JComboBox</p>
+  <ul>
+    <li>Issue 98: Combo box popup did not work with the Leopard design.</li>
+    <li>Issue 142: Combo box popup did not work with the cross-platform Leopard design. The fix may cause a regression of Issue 132. But since this regression will likely only happen on unsupported platforms, it is not critical.</li>
+    <li>The ComboBox popup stays now open when a mouse wheel event occurs.</li>
+  </ul>
+  <p>Gradients</p>
+  <ul>
+    <li>Fixes gradients when the Quartz rendering engine is used.</li>
+  </ul>
+  <h4>Changes</h4>
+  <p>License</p>
+  <ul>
+    <li>Some code (as marked) has been derived from the OpenJDK project and is thus licensed under the term of the GNU 2 license with &quot;Classpath&quot; exception.<br />
+    </li>
+  </ul>
+  <h3>Version 7.4.2<br />
+    <font size="-1">2011-07-05</font></h3>
+  <p>&nbsp;</p>
+  <h4>Fixes</h4>
+  <p>JButton</p>
+  <ul>
+    <li>Issue 135: Fixes alignment issues with GroupLayout and borderless JButtons. Icons are now treated as part of the visual bounds of a button.</li>
+    <li>Issue 127: Fixes a layout bug when adding JButtons to a JPanel. Borderless JButtons and JButtons with custom borders can now be made smaller than the minimal button width.</li>
+    <li>JButton ignored the client property JComponent.sizeVariant=small, if the font was not also set to a size smaller than 12.</li>
+  </ul>
+  <h3></h3>
+  <p>JComboBox</p>
+  <ul>
+    <li>Issue 131: Fixes Z-order issues for JComboBox popups when one of the ancestor windows has alwaysOnTop set to true. Popups appear now on top of the window.</li>
+  </ul>
+  <p>JFileChooser</p>
+  <ul>
+    <li>Issue 134: Fixes a NullPointer in the SidebarSelectionListener, when the user clicks on an item in the sidebar which has been removed from the file system.</li>
+    <li>Issue 131: Hard crashes caused by unstable QuickLook plugins can now be prevented by setting the system property <code>-DQuaqua.FileChooser.quickLookEnabled=false</code></li>
+  </ul>
+  <h3></h3>
+  <p>JOptionPane</p>
+  <ul>
+    <li>Issue 133: Adds additional text translations in French, German, Italian and Swedish.</li>
+  </ul>
+  <h3></h3>
+  <p>JTabbedPane</p>
+  <ul>
+    <li>JTabbedPane.indexAtLocation(x,y) now properly reports the tab index when all tabs are collapsed into a single JComboBox.</li>
+  </ul>
+  <h3></h3>
+  <p>JTable</p>
+  <ul>
+    <li>Improves visual fidelity of table headers on Snow Leopard.</li>
+  </ul>
+  <h3></h3>
+  <h3>Version 7.4.1<br />
+    <font size="-1">2011-03-10</font></h3>
+  <p>&nbsp;</p>
+  <h4>Fixes</h4>
+  <p>JComboBox</p>
+  <ul>
+    <li>Quaqua tries now harder to fit the entire popup window of the combo box into the available screen area, instead of cropping it at the bounds of the screen.</li>
+  </ul>
+  <p>PopupFactory</p>
+  <ul>
+    <li>Issue 126: The QuaquaPopupFactory is not installed anymore if the Popup UI is excluded.</li>
+  </ul>
+  <p>General</p>
+  <ul>
+    <li>Fixes a fatal NullPointerException which  sometimes occured after setting the QuaquaLookAndFeel in the UIManager.</li>
+  </ul>
+  <h3>Version 7.4<br />
+    <font size="-1">2011-02-27</font></h3>
+  <p>&nbsp;</p>
+  <h4>Enhancements</h4>
+  <p>JLabel / JCheckBox</p>
+  <ul>
+    <li>Adds support for the client property &quot;Quaqua.Label.style&quot;.</li>
+  </ul>
+  <p>BinaryPListParser</p>
+  <ul>
+    <li>BinaryPListParser can now parse dates.</li>
+  </ul>
+  <p>General</p>
+  <ul>
+    <li>Quaqua can now load its JNI-libs when running on OpenJDK 7.</li>
+  </ul>
+  <h4>Fixes</h4>
+  <p>JButton</p>
+  <ul>
+    <li>Issue 122: Fixes a NullPointerException when switching from Nimbus L&amp;F to Quaqua L&amp;F.</li>
+  </ul>
+  <p>JPopupMenu</p>
+  <ul>
+    <li>Issue 125: Mouse wheel events on popup menus do not close the popup menu anymore.</li>
+  </ul>
+  <p>JTextComponent</p>
+  <ul>
+    <li>Issue 130: Fixes a ClassCastException in QuaquaTextCursorHandler.</li>
+  </ul>
+  <p>QuaquaLookAndFeel</p>
+  <ul>
+    <li>The Quaqua mouse grabbers and keyboard grabbers are now uninstalled when the QuaquaLookAndFeel is uninstalled.</li>
+  </ul>
+  <h3>Version 7.3.4<br />
+    <font size="-1">2010-12-28</font></h3>
+  <p>Fixes</p>
+  <p>JBrowser</p>
+  <ul>
+    <li>Fixes potential issues with lead selection handling.</li>
+  </ul>
+  <p>JCheckBoxMenuItem, JRadioButtonMenuItem</p>
+  <ul>
+    <li>Fixes the location of the check icons when running Quaqua with J2SE 6 on Mac OS X 10.5.</li>
+  </ul>
+  <p>JFileChooser</p>
+  <ul>
+    <li>Files with name &quot;desktop.ini&quot; are now treated like hidden files.</li>
+  </ul>
+  <p>JTree</p>
+  <ul>
+    <li>Fixes potential issues when JTree is not displaying.</li>
+  </ul>
+  <p>Batik</p>
+  <ul>
+    <li>Removes unused FileCacheSeekableStream class.</li>
+  </ul>
+  <p>Potential issues</p>
+  <ul>
+    <li>Fixes a number of correctness issues reported by FindBugs.</li>
+  </ul>
+  <p></p>
+  <h3>Version 7.3.3<br />
+    <font size="-1">2010-11-07</font></h3>
+  <p>Fixes</p>
+  <p>J2SE5 compatibility</p>
+  <ul>
+    <li>Fixes J2SE5 incompatibility caused by the LayoutStyle fix made in Quaqua 7.3.2. To work on J2SE5 the Quaqua look and feel must now be retrieved from QuaquaManager or the class name &quot;ch.randelshofer.quaqua.QuaquaLookAndFeel15&quot; must be used.</li>
+  </ul>
+  <p>JTable</p>
+  <ul>
+    <li>Fixes focus behavior of JCheckBox editors in a JTable.</li>
+    <li>Fixes flickering when selecting a JCheckBox in a JTable which currently is not focused.</li>
+    <li>Fixes the size variant of JCheckBox editors in JTable. </li>
+    <li>Selection color (InactivatiableColorUIResource) extends now UIResource.</li>
+  </ul>
+  <p></p>
+  <p>Keyboard focus traversal</p>
+  <ul>
+    <li>The setting &quot;System Preferences &gt; Keyboard &gt; Full Keyboard Access&quot; was not always picked up.</li>
+  </ul>
+  <p>Potential issues</p>
+  <ul>
+    <li>Fixes 20 correctness issues, 11 multithreaded correctness issues and 215 other potential issues reported by FindBugs.</li>
+  </ul>
+  <p></p>
+  <h3>Version 7.3.2<br />
+    <font size="-1">2010-11-04</font></h3>
+  <p>Fixes</p>
+  <p>JBrowser</p>
+  <ul>
+    <li>BasicBrowserUI attempts now to load the &quot;Browser.sizeHandleIcon&quot; from the UIManager before falling back to loading the icon directly.</li>
+  </ul>
+  <p>JRadioButton</p>
+  <ul>
+    <li>Fixes issue 107. On mouse clicks, radio buttons request focus <em>before</em> notifying listeners, so that listeners can request focus for a desired component. On keyboard actions, radio buttons request focus <em>after</em> notifying listeners, so that focus stays on the radio buttons regardless of focus requests performed by the listeners.</li>
+  </ul>
+  <p>JRootPane</p>
+  <ul>
+    <li>JRootPane is now opaque and uses the same background color as a JPanel.</li>
+  </ul>
+  <p>LayoutStyle</p>
+  <ul>
+    <li>Fixes issue 121: StackOverflowException when requesting LayoutStyle from QuaquaLookAndFeel.</li>
+  </ul>
+  <h3>Version 7.3.1<br />
+    <font size="-1">2010-09-20</font></h3>
+  <p>Fixes</p>
+  <p>JFileChooser</p>
+  <ul>
+    <li>Fixes issue 115 with a different approach: Files that aren't matched by the file filter can be opened and saved with the approve button but not by double clicking in the file browser.</li>
+  </ul>
+  <h3>Version 7.3<br />
+    <font size="-1">2010-08-20</font></h3>
+  <p>Enhancements</p>
+  <p>JTable </p>
+  <ul>
+    <li>Paints table headers of sorted columns with blue background color.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>JComboBox
+      <ul>
+        <li>Fixes focused state of scrollbars in popup menu.</li>
+      </ul>
+    </li>
+    <li>JFileChooser
+      <ul>
+          <li>Fixes issue 120: &quot;Drag and dropping issue with JFileChooser and iPhoto&quot;. The JFileChooser can now browse through folders contained in a non-traversable parent folder.</li>
+          <li>Displays horizontal scrollbar on Leopard filechooser only if needed.</li>
+      </ul>
+    </li>
+    <li>JTable
+      <ul>
+        <li>Fixes issue 53: &quot;JTable does render the background of editing cells properly&quot;. The background color of the cell editor is now explicitly set to  the background of the table.</li>
+      </ul>
+    </li>
+    <li>JTextField
+      <ul>
+        <li>Fixes issue 59: &quot;Make non-editable text fields visually more different from editable ones&quot;. Displays a non-blinking caret when text field is non-editable.</li>
+      </ul>
+    </li>
+    <li>QuaquaPopupFactory</li>
+    <ul>
+      <li>Sets the name of the popup window to &quot;###focusableSwingPopup###&quot;.</li>
+    </ul>
+  </ul>
+  <h3>Version 7.2.1<br />
+    <font size="-1">2010-08-01</font></h3>
+  <p>Fixes</p>
+  <ul>
+    <li>JRadioButton
+      <ul>
+        <li>Fixes issue 107: &quot;Clicking a JRadioButton does not forward focus&quot;.</li>
+      </ul>
+    </li>
+  </ul>
+  <h3>Version 7.2<br />
+    <font size="-1">2010-07-28</font></h3>
+  <p>Enhancements</p>
+  <ul>
+    <li>JPopupMenu
+      <ul>
+        <li>Adds support for client property &quot;Quaqua.PopupMenu.windowAlpha&quot;.</li>
+      </ul>
+    </li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>QuaquaLookAndFeel
+      <ul>
+        <li>Installs now QuaquaKeyboardFocusManager when running on J2SE 5.</li>
+        <li>Uninstalls now QuaquaPopupFactory and QuaquaKeyboardFocusManager when removed from the UIManager.</li>
+      </ul>
+    </li>
+    <li>JColorChooser
+      <ul>
+        <li>Fixes slider values of the &quot;Gray&quot; chooser.</li>
+        <li>Fixes inadverted color changes caused by &quot;RGB&quot; chooser.</li>
+      </ul>
+    </li>
+    <li>JFileChooser
+      <ul>
+        <li>Fixes issue 114: &quot;FileChooser allows creation of directories with a colon in the name&quot;.</li>
+        <li>Fixes issue 115: &quot;File Chooser allows files that don't match a filter to be opened with double clicking&quot;.</li>
+        <li>The foreground color of non-acceptable files stays now gray when a file is selected.</li>
+        <li>Changes the label of the approve button of the &quot;Create Folder&quot; dialog from &quot;OK&quot; to &quot;Create Folder&quot;.</li>
+      </ul>
+    </li>
+    <li>JList
+      <ul>
+        <li>Fixes the key bindings for &quot;Select All&quot; and &quot;Clear Selection&quot;.</li>
+      </ul>
+    </li>
+    <li>JMenu
+      <ul>
+        <li>Partially fixes issue 112: &quot;JMenu.setBackground() has no effect&quot;. (JMenuBar.setBackground still has no effect).</li>
+      </ul>
+    </li>
+    <li>JPopupMenu
+      <ul>
+        <li>Components on a popup menu are now rendered in their active state.</li>
+      </ul>
+    </li>
+    <li>JRadioButton
+      <ul>
+        <li>Fixes issue 107: &quot;Clicking a JRadioButton does not forward focus&quot;.<br />
+        (This fix did not work. An improved fix is in Quaqua 7.2.1).</li>
+      </ul>
+    </li>
+    <li>JScrollPane
+      <ul>
+        <li>Fixes issue 117: &quot;Two finger horizontal swipe treated as vertical swipe&quot;.</li>
+      </ul>
+    </li>
+    <li>JSplitPane
+      <ul>
+        <li>Doesn't expand on double click anymore when JSplitPane is not one-touch-expandable.</li>
+      </ul>
+    </li>
+    <li>JTable:
+      <ul>
+        <li>Fixes issue 53: &quot;JTable does (not) render the background of editing cells properly&quot;.</li>
+          <li>Fixes issue 118: &quot;Paste into JTable not working properly&quot;.</li>
+          <li>Fixes flashing when cells are being edited.</li>
+      </ul>
+    </li>
+    <li>JTree
+      <ul>
+        <li>Trees with &quot;sourceList&quot; style do not turn gray anymore when a sheet dialog is opened on the parent window.</li>
+      </ul>
+    </li>
+  </ul>
+  <p>Known Issues</p>
+  <ul>
+    <li>JColorChooser
+      <ul>
+        <li>&quot;CMYK&quot; chooser doesn't pick up selected color.</li>
+      </ul>
+    </li>
+  </ul>
+  <h3>Version 7.1.1<br />
+    <font size="-1">2010-06-22</font></h3>
+  <p>Fixes</p>
+  <ul>
+    <li>JFileChooser:
+      <ul>
+        <li>Issue 113: JFileChooser causes JVM crash if Universal Access is enabled.</li>
+        <li>Removed debug output on System.out.</li>
+      </ul>
+    </li>
+  </ul>
+  <h3>Version 7.1<br />
+    <font size="-1">2010-06-20</font></h3>
+  <p>Fixes</p>
+  <ul>
+    <li>JBrowser:
+      <ul>
+        <li>Issue 100: Scrolling to the left should reveal two columns. Tooltip texts should be created using &quot;convertValueToText&quot;. </li>
+      </ul>
+    </li>
+    <li>JComboBox:
+      <ul>
+        <li>Issue 61: Lists with very long lines were wider than the screen.</li>
+      </ul>
+    </li>
+    <li>JFileChooser:
+      <ul>
+        <li>Issue 95: The default value for &quot;fileHidingEnabled&quot; should be read from the Finder preferences.</li>
+        <li>The default value for the sort order (by name or folders first) should be read from the Finder preferences.</li>
+        <li>Some hidden directories were not displayed even if &quot;fileHidingEnable&quot; was set to false.</li>
+        <li>The &quot;/opt&quot; directory was always displayed even if &quot;fileHidingEnable&quot; was set to true.S</li>
+      </ul>
+    </li>
+    <li>JOptionPane:
+      <ul>
+        <li>Issue 111: Components were cut off.</li>
+      </ul>
+    </li>
+    <li>JRadioButton:
+      <ul>
+        <li>Issue 107: A radio buttons should request focus when a button in the same button group already has focus.</li>
+      </ul>
+    </li>
+    <li>JSlider:
+      <ul>
+        <li>Issue 73: Fixed NullPointerException in method getIconWidth.</li>
+      </ul>
+    </li>
+    <li>JSpinner rendered poorly when ButtonUI and TextFieldUI was excluded.</li>
+    <li>JTabbedPane:
+      <ul>
+        <li>Issue 52: Titles were not properly updated when they contained HTML text.</li>
+      </ul>
+    </li>
+    <li>JTable:
+      <ul>
+        <li>Issue 48: Implemented mouse handler with drag and drop support.</li>
+      </ul>
+    </li>
+    <li>JTree supports now the &quot;sidebar&quot; style on Tiger.</li>
+    <li>Package of SwingUtilities2 changed in J2SE6.</li>
+    <li>BinaryPListParser could not read UId's.</li>
+  </ul>
+  <p>Changes</p>
+  <ul>
+    <li>Removed  SwingWorker class.</li>
+  </ul>
+  <h3>Version 7.0.1<br />
+    <font size="-1">2010-06-13</font></h3>
+  <p>Changes</p>
+  <ul>
+    <li>Reverted changes on SwingWorker class, since it is not clear from the license whether we may do changes on this class.</li>
+  </ul>
+  <h3>Version 7<br />
+    <font size="-1">2010-05-26</font></h3>
+  <p>Enhancements</p>
+  <ul>
+    <li>Button controls are focusable by default  only if the option &quot;All controls&quot; is checked in &quot;System Preferences &gt; Keyboard &gt; Keyboard Shortcuts&quot;. (In earlier versions, button controls where always focusable).</li>
+    <li>JFileChooser: A custom file preview component can now be set using the client property &quot;Quaqua.FileChooser.preview&quot;.</li>
+  </ul>
+  <p>Changes</p>
+  <ul>
+    <li>Removed support for Java 1.4.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>The system font was not an UIResource.</li>
+    <li>Class &quot;Images&quot;: Replaced code which wasn't properly licensed.</li>
+    <li>JBrowser:
+      <ul>
+        <li>The column views did not update when a leaf node was converted into a composite node. </li>
+      </ul>
+    </li>
+    <ul>
+      <li>The browser was not properly rendered with the Nimbus Look and Feel.</li>
+    </ul>
+    <li>JButton, JComboBox: Fixed NPE when getMinimumSize returns null.</li>
+    <li>JRadioButton: Issue 106: The focus ring was painted if the radio button was disabled.</li>
+    <li>JTable:
+      <ul>
+        <li>Issue 108: Fixed a performance problem when millions of rows were selected.</li>
+        <li>The font of the table cell editor was force replaced even if the font was not an UIResource.</li>
+      </ul>
+    </li>
+    <li>JToolBar: &quot;bottom style&quot; only renders in &quot;textured&quot; look, if the window is also textured.</li>
+    <li>LayoutStyle: Fixed a NPE with components which return a null font.</li>
+  </ul>
+  <h3>&nbsp; </h3>
+  <h3>Version 6.5<br />
+    <font size="-1">2010-04-07</font></h3>
+  <p>Enhancements</p>
+  <ul>
+    <li>JPopupMenu, JComboBox:
+      <ul>
+          <li>Popup menus use now a rounded border on Leopard and Snow-Leopard.</li>
+      </ul>
+    </li>
+  </ul>
+  <h3>Version 6.4.1<br />
+    <font size="-1">2010-03-20</font></h3>
+  <p>Fixes</p>
+  <ul>
+    <li>JFileChooser: 
+      <ul>
+        <li>The &quot;quick look&quot; preview caused crashes on Mac OS X 10.5. It is now only available on systems running 10.6 and higher.</li>
+      </ul>
+    </li>
+    <li>JListUI:
+      <ul>
+        <li>Issue 101: Fixed NullPointerException in mouseDragged handler of QuaquaListUI.</li>
+      </ul>
+    </li>
+  </ul>
+  <h3>Version 6.4<br />
+    <font size="-1">2010-01-30</font></h3>
+  <p>Enhancements</p>
+  <ul>
+    <li>JFileChooser: The &quot;quick look&quot; preview is now expandable. By default it is collapsed. The expanded state is stored in user preferences.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>JButton:
+      <ul>
+        <li>Issue 25: Ability to set minimum button width.</li>
+      </ul>
+    </li>
+    <li>JRadioButtonMenuItem, JCheckBoxMenuItem: 
+      <ul>
+        <li>Issue 97: JRadioButtonMenuItem renders icon in text.</li>
+      </ul>
+    </li>
+  </ul>
+  <h3>Version 6.3.1<br />
+    <font size="-1">2010-01-10</font></h3>
+  <p>Fixes</p>
+  <ul>
+    <li>OSXFile: Increased version number of native library from 4 to 5.</li>
+  </ul>
+  <h3>Version 6.3<br />
+    <font size="-1">2010-01-10</font></h3>
+  <p>Enhancements</p>
+  <ul>
+    <li>JFileChooser: The preview column shows a preview of the file content instead of a larger version of the file icon.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>Class &quot;Preferences&quot; catches now a security exception which can occur when it attempts to read the user.home system property.</li>
+    <li>JFileChooser: Files with numbers in the filename were not sorted with OSX Collation rules.</li>
+    <li>JTree:
+      <ul>
+        <li>Issue 90: &quot;Clicking below a tree should not select the last line&quot;.</li>
+        <li>The tree doesn't start editing anymore, when the mouse has been moved after it has been pressed.</li>
+      </ul>
+    </li>
+  </ul>
+  <h3>Version 6.2.2<br />
+    <font size="-1">2009-11-08</font></h3>
+  <p>Fixes</p>
+  <ul>
+    <li>Quaqua did not run on J2SE 5 and J2SE 1.4 due to J2SE 6 classes being the extdirs path during compilation.</li>
+    <li>A NullPointerException was thrown in GraphicsUtil, when attempting to retrieve the application icon.</li>
+    <li>JPanel had the wrong background color on textured windows when running Quaqua on Mac OS X 10.5.</li>
+    <li>Tooltips:
+      <ul>
+        <li>Issue 92: &quot;Tooltips broken on Java 1.4 (OS X 10.5.8)&quot;</li>
+      </ul>
+    </li>
+  </ul>
+  <h3>Version 6.2.1<br />
+    <font size="-1">2009-10-28</font></h3>
+  <p>Enhancements</p>
+  <ul>
+    <li>Improved performance of conversion from TIFF images into Java Buffered Images.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>OSXApplication could crashed in native code, when it was invoked before the AWT Event Queue was started, or when the application icon was retrieved concurrently.</li>
+  </ul>
+  <h3>Version 6.2<br />
+    <font size="-1">2009-10-18</font></h3>
+  <p>Enhancements</p>
+  <ul>
+    <li>ImageBevelBorder can render faster, if a color is provided for filling the center area.</li>
+    <li>Improved appearance of popup menus on Snow Leopard.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>JTable: Issue 48: If the system property &quot;Quaqua.Table.useJ2SE5MouseHandler&quot; was set to true, rows in disabled tables could be selected.</li>
+    <li>OSXClipboardTransferable returns now an InputStream by default - instead of a byte array.</li>
+  </ul>
+  <h3>Version 6.1.1<br />
+    <font size="-1">2009-10-04</font></h3>
+  <p>Enhancements</p>
+  <ul>
+    <li>JToolBar with &quot;bottom&quot; style can now also be used on windows which are not textured.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>JToolBar with &quot;bottom&quot; style did not repaint when the &quot;active&quot; state of the window changed.</li>
+    <li>JOptionPane on Snow Leopard opened very slowly the first time, because retrieving and scaling the application icon from OS X was done synchronously. JOptionPane opens now immediately – the  icon is rendered after a short delay.</li>
+    <li>JComboBox hit a NullPointerException, when it was the only UI-delegate, that was included using method QuaquaManager.setIncludedUIs().</li>
+  </ul>
+  <h3>Version 6.1<br />
+    <font size="-1">2009-09-27</font></h3>
+  <p>Enhancements</p>
+  <ul>
+    <li>JToolBar supports now the client property &quot;Quaqua.ToolBar.style&quot; with the styles &quot;plain&quot;, &quot;title&quot;, &quot;bottom&quot; and &quot;gradient&quot;.</li>
+    </ul>
+  <h3>Version 6.0.1<br />
+    <font size="-1">2009-09-15</font></h3>
+  <p>Fixes</p>
+  <ul>
+    <li>Rebuilt Quaqua against J2SE 5 and J2SE 4 classes of Mac OS X 10.5, so that it works on Mac OS X 10.4 through 10.5.</li>
+    <li>quaqua-filechooser-only.jar did not work on Snow Leopard and did not autovalidate.</li>
+    <li>JList: The mouse handler does not fallback to the implementation of the BasicLookAndFeel anymore, when Quaqua runs on J2SE 6.</li>
+    <li>JTree: Fixed some colors used for the &quot;sideBar&quot; style.</li>
+    <li>QuaquaManager couldn't read the file laf.txt if it contains '_' characters.</li>
+  </ul>
+  <h3>Version 6.0<br />
+    <font size="-1">2009-09-13</font></h3>
+  <p>Enhancements</p>
+  <ul>
+    <li>Added a look and feel for Snow Leopard.</li>
+    <li>Upgraded the FileChooserUI for Snow Leopard.</li>
+    <li>Text components hide the cursor when a key is pressed. The cursor reappears when the mouse is moved.</li>
+  </ul>
+  <h3>Version 5.4.1<br />
+    <font size="-1">2009-07-14</font></h3>
+  <p>Fixes</p>
+  <ul>
+    <li>JComboBox: Popup menu did not have the correct selection color background. The popup menu did only work with the Leopard design.</li>
+  </ul>
+  <h3>Version 5.4<br />
+    <font size="-1">2009-07-07</font></h3>
+  <p>Enhancements</p>
+  <ul>
+    <li>JPopupMenu, JComboBox, JOptionPane, JSheet: The Command-Period key can now be used to cancel popup menus and dialogs.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>JFileChooser: Fixed a null pointer exception in the sidebar of the file chooser for Mac OS X 10.5 Leopard.</li>
+    <li>JComboBox: Fixed keyboard support for the drop down menu.</li>
+    <li>JTree: The root handles are now always visible, so that these nodes can be opened.</li>
+  </ul>
+  <h3>Version 5.3<br />
+    <font size="-1">2009-06-21</font></h3>
+  <p>Enhancements</p>
+  <ul>
+    <li>JPopupMenu: Added support for client property Quaqua.PopupMenu.alpha</li>
+    <li>JFileChooser: Leopard file chooser shows now the proper icons in the sidebar for the following well known folders: Applications, Desktop, Documents, Downloads, Library, Movies, Music, Picutres, Public, and Sites.</li>
+    <li>Classes which provide access to usefull Mac OS X native API functions are now in a package named ch.randelshofer.quaqua.osx.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>JFileChooser: The approve button was not made the default button when the file chooser was added to a root pane ancestor. The selected file was not always visible the first time the file chooser was opened.</li>
+    <li>JSheet: Transparency works now for J2SE 5 and 6 on Leopard.</li>
+  </ul>
+  <h3>Version 5.2.2<br />
+    <font size="-1">2009-04-13</font></h3>
+  <p> </p>
+  <p>Fixes</p>
+  <ul>
+    <li>JTree: Don't render icons in first row of a sideBar-tree or sourceList-tree if tree is disabled.</li>
+    <li>JList, issue #65: Selection of disabled JList must not be changeable by the user.</li>
+  </ul>
+  <h3>Version 5.2.1<br />
+    <font size="-1">2009-04-03</font></h3>
+  <p> </p>
+  <p>Fixes</p>
+  <ul>
+    <li>JTextField, JPasswordField, JFormattedTextField: Background color was never painted, if the field had no border.</li>
+  </ul>
+  <h3>Version 5.2<br />
+    <font size="-1">2009-04-01</font></h3>
+  <p> </p>
+  <p>Enhancements</p>
+  <ul>
+    <li>JBrowser: Double clicking the resize icon sets the column to its preferred width. Revalidate is now called, after a column has been resized to avoid problems with the parent JScrollPane.</li>
+    <li>Quaqua-FileChooserOnly-L&amp;F: On Mac OS X 10.5, the Leopard File Chooser is now used.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>JBrowser: Horizontal scrollable block increment to the right moves the the view to the left by one column. In prior versions, the view was moved by multiple columns to the left, and sometimes it was not moved at all.</li>
+  </ul>
+  <h3>Version 5.1.1<br />
+    <font size="-1">2009-03-13</font></h3>
+  <p> </p>
+  <p>Enhancements</p>
+  <ul>
+    <li>JTree: Use Quaqua's own handler for mouse events, even when running with J2SE6.</li>
+  </ul>
+  <h3>Version 5.1<br />
+    <font size="-1">2009-03-13</font></h3>
+  <p> </p>
+  <p>Enhancements</p>
+  <ul>
+      <li>JTree: Can be set to a Sourcelist-style using the client property &quot;sourceList&quot;.</li>
+      <li>Added support for Apple's J2SE6 virtual machine.</li>
+      <li>JFileChooser: Always resolve aliases. (Prior versions only resolved aliases when used as an &quot;Open&quot; file dialog.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>JTable: Select all had to be performed by pressing Ctrl+A instead of by Meta+A.</li>
+    <li>Native libraries. Fallback to non-native code, if native functions can be loaded
+    but not used for unknown reasons.</li>
+    <li>OSXLeopardFileSystemView. Added $RECYCLE.BIN to list of hidden files.</li>
+  </ul>
+  <h3>Version 5.0.1<br />
+    <font size="-1">2008-11-16</font></h3>
+  <p> </p>
+  <p>Fixes</p>
+  <ul>
+    <li>JEditorPane - issue #70: Up and down arrow keys didn't work.</li>
+    <li>JTable - issue #72: Rendering of huge tables was slow, when the table used the &quot;striped&quot; style.</li>
+  </ul>
+  <h3>Version 5.0<br />
+    <font size="-1">2008-07-22</font></h3>
+  <p> </p>
+  <p>Enhancements</p>
+  <ul>
+    <li>General: Quaqua can be selectively applied to Apple's Aqua Look and Feel.</li>
+    <li>JBrowser: Added support for resizable columns contributed by 'fedr'.</li>
+    <li>ComboBoxUI: Implemented Leopard-design gradient for selection background color.</li>
+    <li>FileChooserUI does now fall back to javax.swing.FileSystemView rather than falling back to package private FileView objects of Apple's Aqua L&amp;F. Added missing translations for 'devices' and 'places' in sidebar. Fixed issue #48 (race condition in the file chooser tree model).</li>
+    <li>Files: Added more native methods to Files class.</li>
+    <li>MenuUI: Draw menu selection with blue gradient for Leopard design.</li>
+    <li>ToolBarUI: Paint toolbar on drag window.</li>
+    <li>TreeUI: Selection  border did not honor insets of the JTree.</li>
+    <li>Added libquaqua64.jnilib for use with 64-bit J2SE6 on Mac OS X 10.5.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>TableUI: Set selection foreground color to inactive (=black) when the current cell is not selected to avoid white text on white background. Fixed row and column selection using Meta-key for Java 1.4.</li>
+    <li>LeopardCrossPlattformLookAndFeel: Fixed list selection colors (they are now dark blue instead of bright blue).</li>
+  </ul>
+  <h3>Version 4.4.7<br />
+    <font size="-1">2008-07-16</font></h3>
+  <p> </p>
+  <p>Fixes</p>
+  <ul>
+    <li>TableUI: Fixed row and column selection using Meta-Key in Java 1.4 and J2SE5. Not fixed for J2SE6! For J2SE6 a system property &quot;Quaqua.Table.useJ2SE5MouseHandler&quot; can be set to &quot;true&quot;, to use the fix for J2SE5 on J2SE6. This breaks drag and drop functionality and sorting functionality on J2SE6 though.</li>
+    <li>LeopardFileChooserUI - Issue #48: Fixed a race condition in AliasFileSystemTreeModel, and fixed a problem in SidebarTreeModel which caused the sidebar to fail, when the /Volumes folder contained items which weren't directories.</li>
+  </ul>
+  <h3>Version 4.4.6<br />
+      <font size="-1">2008-06-22</font></h3>
+  <p> </p>
+  <p>Fixes</p>
+  <ul>
+    <li>LeopardFileChooserUI - Issue #47: AliasFileSystemTreeModel fired events for nodes which were not in the tree anymore.</li>
+  </ul>
+  <h3>Version 4.4.5<br />
+    <font size="-1">2008-05-10</font></h3>
+  <p> </p>
+  <p>Fixes</p>
+  <ul>
+    <li>TableUI: Draw focused selection color, if table is editing a cell.</li>
+  </ul>
+  <h3>Version 4.4.4<br />
+    <font size="-1">2008-05-04</font></h3>
+  <p> </p>
+  <p>Enhancements</p>
+  <ul>
+    <li>Added build target for 64 bit version of Quaqua native library: libquaqua64.jnilib. - This file is not part of the distribution yet, because it needs to be built with a 64-bit Intel Mac.</li>
+    <li>Quaqua loads libquaqua64.jnilib when running on 64 bit VM.</li>
+  </ul>
+  <p>&nbsp;</p>
+  <p>Fixes</p>
+  <ul>
+    <li>FileChooserUI: Squashed NullPointerExceptions which occured when closing the file chooser,  when approving the file chooser, and when changing the directory.</li>
+    <li>TigerCrossPlatformUI: Use system colors for table, list and tree selection colors when running on SoyLatte. Draw Menu background with pin stripes.</li>
+    <li> LeopardCrossPlatformUI: Use system colors for table, list and tree selection colors when running on SoyLatte. Draw menu background with white color. Draw Menu selection background with a blue gradient.</li>
+    <li>TableUI: Issue #39 Multiple table cell selection did not work.</li>
+  </ul>
+  <h3>Version 4.4.3<br />
+    <font size="-1">2008-04-24</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Fixes:</p>
+  <ul>
+    <li>ColorChooserUI: Uses now the generic ICC profile for CMYK color sliders instead of a linear profile.</li>
+    <li>FileChooserUI:  NullPointerException occured when the sidebar contained an unresolvable alias. Removed debugging output from QuaquaPantherFileChooserUI and QuaquaLeopardFileChooserUI.</li>
+  </ul>
+  <h3>Version 4.4.2<br />
+    <font size="-1">2008-04-22</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Fixes:</p>
+  <ul>
+    <li>CachedPainter14 does not cache large areas anymore.</li>
+    <li>FileChooserUI: SidebarTreeModel fired wrong event to TreeListener. SidebarTreeModel and SidebarTableModel invoked too many workers for reading file icons. The approve button was not always enabled, when the JFileChooser was in directory selection mode. LeopardFileChooserUI.SidebarListCellRenderer.getPreferredSize threw a NullPointerException, when the font of the list cell renderer was null.</li>
+    <li>GroupBox does not use cached painting for its border anymore.</li>
+    <li>JBrowser: Fixed a NullPointerException in method getSelectionPath. BrowserCellRendererWrapper now forwards setFont calls to wrapped cell renderer.</li>
+    <li> ListUI: Calls requestFocusInWindow on mouse pressed.</li>
+    <li> RootPaneUI: Fixed memory leak, causing root panes never to be reclaimed.</li>
+    <li>ScrollBarUI: Fixed NullPointerException in method getTrackAndButtonBorders.</li>
+    <li>TabbedPaneUI: Fixed NullPointerException in method getInsets.</li>
+    <li>TableUI: It was not possible to edit cells consecutively without explicitly setting focus on another component. Calls requestFocusInWindow on mouse pressed.</li>
+    <li> TreeUI: Calls requestFocusInWindow on mouse pressed.</li>
+  </ul>
+  <h3>Version 4.4.1<br />
+    <font size="-1">2008-03-26</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Fixes:</p>
+  <ul>
+    <li>PantherFileChooserUI: Ignore clicks in the sidebar on files which are not traversable.</li>
+    <li>LeopardFileChooserUI: Ignore clicks in the sidebar on files which are not traversable. Rewrote sidebar view updates from the AliasFileSystemTreeModel.</li>
+    <li>TreeUI: Fixed repaint on selection changes. Fixed an updating issue with the leadSelectionPath property in JTree.</li>
+    <li>JNI native library: The library is now versioned, so that version mismatches between Quaqua.jar and the library can be detected. The library is now loaded lazily.</li>
+  </ul>
+  <h3>Version 4.4<br />
+    <font size="-1">2008-03-22</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Enhancements:</p>
+  <ul>
+    <li>JBrowser: Added support for default TransferHandler. Added  BrowserCellRenderer interface. Renamed the existing cell renderer classes and methods.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>ButtonUI: Reduced margins of rounded push buttons by 2 pixels on each side.</li>
+    <li>FileChooserUI: Increased vertical spacing between files in Filechooser-only-L&amp;F.</li>
+    <li>JBrowser: Fixed anArrayIndexOutOfBoundsException.</li>
+    <li>ListUI: Reimplemented selection behavior to make it more consistent with native  behavior.</li>
+    <li>TableUI: Reimplemented selection behavior to make it more consistent with native  behavior.Pressing the Meta-Key does not start editing a cell anymore.</li>
+    <li>TreeUI: Reimplemented selection behavior to make it more consistent with native  behavior.</li>
+  </ul>
+  <h3>Version 4.3.1<br />
+    <font size="-1">2008-03-17</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Fixes</p>
+  <ul>
+    <li>FileChooserUI: Fixed issue #21: BitSet IndexOutOfBoundsException.</li>
+    <li>TabbedPaneUI, SliderUI: Fixed issue #33: Incomplete support for graphite appearance.</li>
+    <li>OptionPaneUI: Improved scaling quality of application icon under Java 1.5.</li>
+  </ul>
+  <h3>Version 4.3<br />
+    <font size="-1">2008-03-16</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Fixes</p>
+  <ul>
+    <li>JSheet: When running on Java 1.5 or older, explicitly blocks input on owner window using a glass pane. The focus is now set on the first component on the JSheet, to better support keyboard navigation.</li>
+    <li>FileChooserUI: File chooser draws now a focus ring around selected grayed files.</li>
+    <li>RootPaneUI: The maximize button was hidden instead of disabled, if a frame is not resizable.</li>
+    <li>ScrollPaneUI: Don't cache border texture.</li>
+  </ul>
+  <h3>Version 4.2.3<br />
+    <font size="-1">2008-02-21</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Fixes</p>
+  <ul>
+    <li>FileChooserUI: Fixed Issue #26 - set current directory does not work.</li>
+  </ul>
+  <h3>Version 4.2.2<br />
+    <font size="-1">2008-02-12</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Fixes</p>
+  <ul>
+    <li>FileChooserUI: Attempted to fix issue #26 - set current directory does not work.</li>
+    <li>TableUI: Fixed issue #29 - selection was drawn one pixel too high, and had repaint artifacts.</li>
+    <li>TreeUI: Fixed issue #32 - selection  was drawn blue instead of grey, if tree is disabled.</li>
+  </ul>
+  <h3>Version 4.2.1<br />
+    <font size="-1">2008-01-25</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Fixes</p>
+  <ul>
+    <li>Fixed broken client property &quot;Quaqua.Component.cellRendererFor&quot;.</li>
+    <li>TreeUI: Fixed keyboard navigation in tree.</li>
+  </ul>
+  <h3>Version 4.2<br />
+    <font size="-1">2008-01-21</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Enhancements</p>
+  <ul>
+    <li>SliderUI with Tiger look added (work in progress).</li>
+    <li>Subset look and feels are now included in quaqua.jar.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>PantherLookAndFeel: The proper pinstripes were only drawn, when the 
+    current OS was Panther.</li>
+    <li>ButtonUI, ComboBoxUI: Only draw focus border for enabled components.</li>
+    <li>FileChooserUI: Current directory did not always change when setDirectory
+    was invoked on a JFileChooser. Native code crashed when a volume was removed. 
+    Sidebar did not update when a volume was inserted or removed.</li>
+    <li>TabbedPaneUI: Reduced top insets of tabs.</li>
+    <li>TableUI: Set 'showHorizontalLines' and 'showVerticalLines' to
+ false once when installing the UI, instead of overwriting these properties every
+ time when the client property &quot;Quaqua.Table.style&quot; is changed. The UIManager-property
+'Table.gridColor' is now light gray instead of white.</li>
+    <li>LookAndFeel: Quaqua now overrides the UIManager property &quot;ClassLoader&quot;.</li>
+    <li>TextFieldBorder: Did draw focus ring even when text component was disabled.</li>
+    <li>PasswordFieldUI: Only replace echo character with a bullet character, if the echo character is a '*'.</li>
+  </ul>
+  <h3>Version 4.1<br />
+    <font size="-1">2007-11-25</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Enhancements</p>
+  <ul>
+    <li>FileChooserUI with Leopard design added. (The quaqua-filechooser-only.jar still only contains a file chooser in Tiger design).</li>
+    <li>Support for Open Source Java 1.6 Developer Preview Release 2 (SoyLatte binaries) added. </li>
+    <li>Updated selection handling code of TreeUI to better support J2SE 5 drag and drop features.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>FileChooserUI for Panther rendered the preview icon with a width of 64 pixels instead of 128 pixels.</li>
+  </ul>
+  <h3>Version 4.0<br />
+    <font size="-1">2007-11-03</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Enhancements</p>
+  <ul>
+    <li>Support for Mac OS X 10.5 Leopard added. Most of the Quaqua components are rendered with Tiger design though.</li>
+    <li>Quaqua can now be built on Mac OS X 10.5.</li>
+  </ul>
+  <p>Changes</p>
+  <ul>
+    <li>Dropped support for Java 1.3.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>TigerLookAndFeel and JaguarLookAndFeel now properly render with their background colors, when used on Leopard.</li>
+    <li>QuaquaFileChooserUI: Now only renders folders in the volumes area of the sidebar. Huge Leopard icons in the preview column are now scaled down, if the native code only delivers large versions of the icons.</li>
+    <li>ComponentUI's did never render with inactive state.</li>
+    <li>QuaquaTabbedPaneUI with wrap tab layout now properly renders the click-through state on inactive windows.</li>
+    <li>QuaquaScrollPaneBorder does not throw anymore a class cast exception, when the viewport view of the JScrollPane is not a JComponent.</li>
+  </ul>
+  <h3>Version 3.9.5<br />
+    <font size="-1">2007-10-21</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Enhancements</p>
+  <ul>
+    <li>QuaquaFileChooserUI: Added support for keyboard shortcuts.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>QuaquaFileChooserUI: The filechooser did not properly navigate into another directory, if a file was dropped onto it.</li>
+    </ul>
+  <h3>Version 3.9.4<br />
+    <font size="-1">2007-09-02</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Fixes</p>
+  <ul>
+    <li>QuaquaFileChooserUI: Fixed NullPointerExceptions when attempting to 
+    immediately resolve aliases.</li>
+    <li>quaqua-filechooser-only.jar: Included missing resource files.</li>
+  </ul>
+  <h3>Version 3.9.3<br />
+    <font size="-1">2007-08-18</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Enhancements</p>
+  <ul>
+    <li>QuaquaTextFieldUI, QuaquaPasswordFieldUI, QuaquaFormattedTextFieldUI:
+      Added new UIManager properties &quot;TextField.autoSelect&quot;, &quot;FormattedTextField.autoSelect&quot;, &quot;PasswordField.autoSelect&quot;.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>Fixed broken keyboard focus traversal.</li>
+  </ul>
+  <h3>Version 3.9.2<br />
+    <font size="-1">2007-08-09</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Enhancements</p>
+  <ul>
+      <li>QuaquaTextFieldUI, QuaquaPasswordFieldUI, QuaquaFormattedTextFieldUI:
+      Added a new client property &quot;Quaqua.TextComponent.autoSelect&quot;</li>
+      <li>UIManager: Added a new property &quot;TextComponent.autoSelect&quot;</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+      <li>QuaquaHighlighter: Must use inactive selection background, when
+      the text component has a selection, but is not on an active window.</li>
+      <li>QuaquaUtilities: Method isFocused() did not properly
+  determine the focused state of a JComponent, when the user
+  clicked on another JFrame or another JDialog.</li>
+      <li>QuaquaListUI, QuaquaTableUI, QuaquaTreeUI: Don't change the selection of an already
+      selected item, when the mouse click is a popup trigger.</li>
+      <li>QuaquaTreeUI: Support multiple selection by mouse dragging.
+        By default, the invokesStopCellEditing property of a JTree is set to true.</li>
+      <li>BasicQuaquaLookAndFeel: Look and feel decorated title bar did not render properly.</li>
+      <li>RootPaneUI: Only snap to the edge of another window, if the window
+          is within close distance. Don't snap, if the use holds the alt key down, while dragging a window.</li>
+      <li>QuaquaTextFieldUI, QuaquaPasswordFieldUI, QuaquaFormattedTextFieldUI:
+      Transferring the focus to one of these components using the Tabulator key
+      automatically selects all text on the component.</li>
+  </ul>
+  <h3>Version 3.9.1<br />
+    <font size="-1">2007-07-31</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Fixes</p>
+  <ul>
+      <li>QuaquaComboBoxUI: Removed debugging output. UIManager property
+  &quot;ComboBox.harmonizePreferredHeight&quot; had no effect.</li>
+  </ul>
+  <h3>Version 3.9<br />
+    <font size="-1">2007-07-30</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Enhancements</p>
+  <ul>
+      <li>JBrowser: Added support for KeyListener to API. This allows to listen for key
+        events which occur on the currently focused column.</li>
+      <li>ComboBoxUI: Added UIManager property &quot;ComboBox.harmonizePreferredHeight&quot;. Setting this to true causes editable and non-editable combo boxes to have the
+        same preferred height, resulting in better layouts with some layout managers.</li>
+      <li>TextFieldUI: Added client property &quot;Quaqua.TextField.style&quot; with the values &quot;plain&quot;
+        and &quot;search&quot;. Set this property to &quot;search&quot; to get a text field with
+        rounded corners like
+        the
+        Spotlight
+        search field.</li>
+      <li>RootPaneUI: Added UIManager property &quot;RootPane.windowSnapDistance&quot;. Setting this
+        to an Integer value greater than 0 causes windows to snap to the edges
+        of each other and to the screen bounds. This property is only in effect
+        for look and feel decorated windows.</li>
+      <li>LayoutStyle: Added support for Java 1.6 javax.swing.LayoutStyle API.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul><li>FileChooserUI: File chooser ran into an inconsistent state, when
+the JFileChooser was constructed with a different directory than the users
+home directory.</li>
+    <li>MenuUI: Listeners were not properly installed, due to this, accelerators did
+    not work always.</li>
+    <li>OptionPaneUI: The application icon was not scaled properly, when 
+    Quaqua ran without native code.</li>
+    <li>RootPaneUI: Resize icon wasn't drawn for look and feel decorated
+JDialog windows; Look and feel decorated windows couldn't always be dragged from
+      a secondary screen to the main screen.</li>
+    <li>TextFieldUI, FormattedTextFieldUI, PasswordFieldUI: Added two pixels to
+    preferred width.</li>
+    <li>All text component UI's:Fixed input map for backspace key (replaced &quot;typed \010&quot; by &quot;BACK_SPACE&quot;).</li>
+    <li>quaqua-filechooser-only.jar, quaqua-menu-only.jar, 
+    quaqua-colorchooser-only.jar: Added missing QuaquaLookAndFeel class.</li>
+  </ul>
+  <h3>Version 3.8.1<br />
+    <font size="-1">2007-06-18</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Fixes</p>
+  <ul>
+    <li>QuaquaFileChooserUI: Aliases in the sidebar were resolved with user interaction before the user 
+      clicked on them, causing remote volumes to be mounted too early.</li>
+    <li>QuaquaColorChooserUI: The color picker threw an exception when it was moved to a secondary screen. The color picker now degrades its functionality when it is moved on a secondary screen.</li>
+    <li>QuaquaOptionPaneUI: The OK button sometimes had no text.</li>
+  </ul>
+  <h3>Version 3.8<br />
+    <font size="-1">2007-05-26</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Enhancements</p>
+  <p>&nbsp;</p>
+  <ul>
+    <li>Experimental Swedish resource file added. The resource file is mostly
+      in English, only some texts for the JFileChooser and the JOption pane have
+      been translated
+      into Swedish.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>QuaquaFileChooserUI: Aliases were resolved with user interaction before the user 
+    clicked on them, causing remote volumes to be mounted too early. Aliases
+       to folders didn't behave like regular folders.</li>
+     <li>QuaquaFileChooserUI PreviewPane: File icons render now properly, when
+    Quartz is turned off. The file kind is now retrieved from the Finder.</li>
+     <li>QuaquaIconFactory: The application icon is now rendered properly, when
+    Quartz is turned off.</li>
+    <li>Quaqua14RootPaneUI: Repaints 200 milliseconds after a resize to 
+    workaround 'double striking' of components. If someone nows how to actually
+    fix this problem - let me know!</li>
+ </ul>
+  <h3>Version 3.7.7<br />
+    <font size="-1">2007-04-16</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Fixes</p>
+  <ul>
+    <li>QuaquaLayoutStyle returns now clones of  Insets object.</li>
+  </ul>
+  <h3>Version 3.7.6<br />
+    <font size="-1">2007-04-12</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Fixes</p>
+  <ul>
+    <li>QuaquaTextFieldBorder takes margin of JTextComponent into account.</li>
+  </ul>
+  <h3>Version 3.7.5<br />
+    <font size="-1">2007-04-11</font></h3>
+  <p><font size="-1">&nbsp;</font></p>
+  <p>Enhancements</p>
+  <ul>
+    <li>To resolve issues with selection colors: Added client
+        property <code>Quaqua.Component.cellRendererFor</code>.
+        This can be set on a component that is used as a cell renderer. The value
+        is the component that holds the cells, for example a JTable, a JTree
+        or a JList.</li>
+    <li>FileChooserUI: Double clicking the file preview approves
+        now the current selection.</li>
+  </ul>
+  <p>Fixes</p>
+  <ul>
+    <li>Removed  unnecessary console output.</li>
+  </ul>
+  <p>&nbsp;</p>
+        <h3>Version 3.7.4<br />
+          <font size="-1">2007-02-24</font></h3>
+        <p>&nbsp;</p>
+        <p>Enhancements</p>
+        <ul>
+          <li>ColorChooserUI: The text in the text fields is now selected, when
+            the text fields gain focus.</li>
+          <li>ButtonUI: The UIManager property <code>Button.defaultButtonFollowsFocus</code>            is
+            now supported on all J2SE versions (not just in J2SE 5 and later
+            versions). The default value for this property is <code>false</code>.</li>
+        </ul>
+        <p>Fixes</p>
+        <ul>
+          <li>ColorChooserUI: Due to rounding errors, some colors, such as RGB
+            0,170,0 were changed to other values when the color chooser was opened;
+            The text fields were too short for J2SE 1.3; The text fields in the
+            HTMLChooser were updated with integer values instead of with Hex
+            values.</li>
+          <li>OptionPaneUI: Sometimes, when creating the icons for a JOptionPane
+            the following was output on the console, and the application froze:
+            &quot;Please Attach Debugger: No Autorelease pool exists. 
+            Press any key to continue&#8230;&quot;.</li>
+        </ul>
+        <h3>Version 3.7.3<br />
+          <font size="-1">2007-02-17</font></h3>
+        <p>&nbsp;</p>
+        <p>Enhancements</p>
+        <ul>
+          <li>OptionPaneUI: The UIManager property &quot;OptionPane.messageLabelWidth&quot; can
+            be set to 0, to prevent Quaqua from enforcing the width of HTML messages
+            displayed in option panes. The UIManager property &quot;OptionPane.maxCharacterPerLineCount&quot;
+            has now been added, it can be used to use a smaller value than returned
+            by JOptionPane.getMaxCharacterPerLineCount().</li>
+        </ul>
+        <p>&nbsp;</p>
+        <p>Fixes</p>
+        <ul>
+          <li>ComboBoxUI: Combo box editor had the wrong background color.</li>
+          <li>PopupMenuUI: Mouse released events were just closing the popup
+            menu without performing menu actions.</li>
+          <li>ColorChooserUI: The color chooser did not work in security restricted
+            Java web-start applications.</li>
+        </ul>
+        <h3>Version 3.7.2<br />
+          <font size="-1">2007-02-10</font></h3>
+        <p>&nbsp;</p>
+        <p>Fixes</p>
+        <ul>
+          <li>FileChooserUI: Improved  performance of file sorting.</li>
+          <li>PopupMenuUI: When Quaqua
+            is run in a security restricted environment, it turns off the fix
+            for the mouse release behavior.</li>
+        </ul>
+        <h3>Version 3.7.1<br />
+          <font size="-1">2007-02-10</font></h3>
+        <p>&nbsp;</p>
+        <p>Fixes</p>
+        <ul>
+          <li>ListUI: Only repaints changed cells on contentsChanged event.</li>
+          <li>PopupMenuUI: Menu items on a heavyweight popup invoke their actions
+            now on mouse release</li>
+          <li>TabbedPaneUI: Fixed keyboard navigation when
+            vertical tab runs are shown on the left or on the right. Panther
+            style tabbed panes were not always rendered with antialasing.</li>
+          <li>TableUI:
+              Did only repaint the lead selection cell instead of all selected
+          cells when focus changed.</li>
+          <li>Text components: Added client property <code>Quaqua.TextComponent.showPopup</code>            that allows to disable the popup menu created by the Quaqua look
+            and feel.</li>
+          <li>When run with Java 5 or higher, opaqueness is changed
+            using LookAndFeel.installProperty instead of setting it directly.</li>
+          <li>Fixed RequestFocusEnabled for some components.</li>
+          <li>JSheet sometimes couldn't get focus.</li>
+        </ul>
+        <h3>Version 3.7<br />
+          <font size="-1">2007-01-28</font></h3>
+        <p>&nbsp;</p>
+        <p>Enhancements</p>
+        <ul>
+          <li>Support for Graphite appearance contributed by Karl von Randow.</li>
+          <li>ComboBoxUI: maximumRowCount was set too high for editable combo
+            boxes. Baseline was not computed correctly when current value was
+            null. Clip bounds were not computed correctly for cell renderer.
+            Issue #13: ComboBox text was not always legible when used as a table
+            cell renderer. </li>
+          <li>EditorPaneUI, FormattedTextFieldUI, PasswordFieldUI, TextAreaUI,
+            TextFieldUI, TextPaneUI: Popup menu with cut/copy and paste action
+          added.</li>
+          <li>FileChooserUI: Renders now a file icon in the preview column.
+            Made some tweaks for better fidelity with Tiger design.</li>
+          <li>MenuUI:
+              Improved fidelity of menus, especially when screen menu bar is
+            turned on.</li>
+          <li>ScrollPaneUI: Threw exception when scroll pane was set wider or
+            higher than the maximum size allowed.</li>
+          <li>TreeUI: Selection was not fully repainted on focusGained/focusLost.</li>
+          <li>Added UIManager-property &quot;Component.enforceVisualMargin&quot; to
+            workaround issue <a href="http://www.netbeans.org/issues/show_bug.cgi?id=74522">#74522</a> with
+          the Matisse GUI builder.</li>
+          <li>JSheet: Uses native sheet dialogs when running with J2SE6. Bounces
+            dock icon when sheet is opened (implemented using JNI).</li>
+          <li>TabbedPaneUI: Added support for HTML tabs. Fixed keyboard navigation.
+            Fixed class-cast exception when running the Idea IDE with the Quaqua
+            Look and Feel.</li>
+          <li>The RequestFocusEnabled and the Focusable properties are set to
+            false for all components except text fields. Added the system property
+            &quot;Quaqua.requestFocusEnabled&quot; to alter this behavior.</li>
+  </ul>
+        <p>Changes</p>
+        <ul>
+          <li>Migrating from NetBeans 3.6 to 5.0 (work in progress).</li>
+        </ul>
+        <p>Fixes</p>
+        <ul>
+          <li>Refined fix for issue #7: Selection line stays blue even if control
+            looses focus.</li>
+          <li>ListUI: Uses now a non-opaque default cell renderer.</li>
+          <li>MenuUI: Arrow icon doesn't overlap with menu text anymore.</li>
+          <li>TableUI: Uses now a non-opaque default cell renderer.</li>
+          <li>TreeUI: Uses now a non-opaque default cell renderer.</li>
+          <li>ViewportUI: Repaints the border of its parent JScrollPane if the
+            focus of its view changes.</li>
+          <li>All components render now also with focused appearance when they
+            are permanent focus owner.</li>
+          <li>JBrowser: Lead selection index was not
+            updated when tree items were inserted/removed.</li>
+          <li>FileChooserUI (Panther):
+            Focus was not set correctly when dialog is opened.</li>
+          <li>ToolBarSeparatorUI:
+            Fixed preferred and minimum size.</li>
+          <li>QuaquaUtilites: Added workaround
+            for NPE in methods beginGraphics/endGraphics.</li>
+          <li>TabbedPaneUI: Fixed
+            a class cast exception.</li>
+          <li>ComboBoxUI: Parts of the popup button were
+            cut of when the visual margin was set to zero.</li>
+          <li>quaqua-filechooser-only.jar:
+              Included ConcurrentDispatcher class into jar file. Jar file didn't
+            work with J2SE 1.5.</li>
+          <li>quaqua-colorchooser-only.jar: Jar file didn't
+            work with J2SE1.5.</li>
+          <li>TitledBorder did not render the border line when
+            applied to a javax.swing.Box component.</li>
+          <li>Issue #1: QuaquaIconFactory.LazyOptionPaneIcon
+            breaks the contract of Icon interface.</li>
+          <li>Issue #2: Display tree stripes
+            even if tree empty.</li>
+          <li>Issue #4: JSheet lags behind when parent window
+            is moved (fix needs J2SE6, older Java versions can't be fixed).</li>
+          <li>Issue
+            #7: Selection line stays blue even if control looses focus.</li>
+          <li>Issue
+            #11: JTable cells draw selection background when rowSelectionAllowed</li>
+          <li>Issue
+              #12: JComboBox as TableCellEditor offset error.</li>
+  </ul>
+        <h3>Version 3.6.8-3.6.11<br />
+  <font size="-1">2006-05-27</font></h3>
+        <p>&nbsp;</p>
+        <p>Fixes</p>
+        <ul>
+          <li>FileChooserUI: Aliases to directories were not always resolved.
+            View was not always updated when a file or a folder was created.</li>
+        </ul>
+        <h3>Version 3.6.7<br />
+            <font size="-1">2006-05-14</font></h3>
+        <p>&nbsp;
+  </p>
+        <ul><li>ColorChooserUI: Fixed NullPointerException when running on Java
+            1.3.</li>
+        </ul>
+        <p>&nbsp;</p>
+        <h3>Version 3.6.6<br />
+          <font size="-1">2006-04-19</font></h3>
+        <p>&nbsp;</p>
+        <p>Enhancements</p>
+        <ul>
+          <li>TabbedPaneUI with scroll tab layout policy: Client property &quot;Quaqua:TabbedPane.shortenTabs&quot;
+            added. This allows to disable tab shortening.</li>
+        </ul>
+        <p>Fixes </p>
+        <ul>
+          <li>TabbedPaneUI with scroll tab layout policy: Combo box inherits
+            now font size from tabbed pane. Selecting the first item of the combo
+            box did not always work.</li>
+          <li>JSheet:  Inherit title of parent frame
+            when displaying JSheet like a regular dialog.</li>
+          <li>TableUI: Display black border around active cell.</li>
+          <li>RootPaneUI: The title bar of Floating palette windows can't be
+            fully dragged outside of the usable screen bounds anymore.</li>
+        </ul>
+        <h3>Version 3.6.5<br />
+          <font size="-1">2006-04-08</font></h3>
+        <p>&nbsp;</p>
+        <p>Fixes </p>
+        <ul>
+          <li>TabbedPaneUI: Fixed NullPointerException when using scroll tab
+            layout with Panther design.</li>
+          <li>AliasFileSystemTreeModel: Changed  thread sceduling and 
+            sequence of directory and file info validation.</li>
+          <li>TableHeaderUI: Takes now border size into account when deciding
+            whether table headers are empty or not. </li>
+          <li>TableUI: Fixed colors for focused cell.</li>
+          <li>CheckBoxUI: Renders with small icon when the JCheckBox implements
+            TableCellRenderer or TableCellEditor.</li>
+  </ul>
+        <h3>Version 3.6.4<br />
+          <font size="-1">2006-04-02</font></h3>
+        <p>&nbsp;</p>
+        <p>Fixes </p>
+        <ul>
+          <li>FileChooserUI: Approve button was not properly enabled/disabled
+            when text in the file name field was entered or removed.</li>
+          <li>ComboBoxUI did not fire an action event when user pressed the enter
+            key in the text field.</li>
+        </ul>
+        <h3>Version 3.6.3<br />
+          <font size="-1">2006-03-28</font></h3>
+        <p>&nbsp;</p>
+        <p>Fixes </p>
+        <ul>
+          <li>FileChooserUI: setSelectedFile() did not always set the selected
+            file in the JFileChooser; A new folder was sometimes created a level
+            higher than the current directory; Entering a file name which starts
+            with the same name as an existing folder immediately selected the
+            folder while typing.</li>
+  </ul>
+        <h3>Version 3.6.2<br />
+          <font size="-1">2006-03-15</font></h3>
+        <p>&nbsp;</p>
+        <p>Fixes
+  </p>
+        <ul>
+          <li>FileChooserUI: Couldn't save to a new file.</li>
+          <li>ColorChooserUI: Color picker threw a null pointer exception when
+            used.</li>
+  </ul>
+        <h3>Version 3.6.1<br />
+          <font size="-1">2006-03-12</font></h3>
+        <p>&nbsp;</p>
+        <p>Enhancements</p>
+        <ul>
+          <li>JNI Library: Libraries which preload the Quaqua JNI library by
+            themselves can set system property &quot;Quaqua.JNI.isPreloaded&quot; to true,
+            to prevent Quaqua from loading the library again.</li>
+  </ul>
+        <p>Fixes</p>
+        <ul>
+          <li>FileChooserUI: Double clicking a folder does not anymore approve
+            the file chooser  when directory selection is enabled. Multiple file
+            selection returns now all selected files. Using a JFileChooser both
+            for loading and saving files made method setSelectedFile not working
+            properly.</li>
+          <li>JNI Library: Universal binary did not work on Intel  computers.</li>
+          <li>ColorChooserUI: Color picker can be canceled using the escape key.
+            Color picker is not displayed, when pixels from the screen can not
+            be read due to security restrictions.</li>
+          <li>JSheet does not show a white background anymore when it can't set
+            its parent JDialog to translucency due to security restrictions.</li>
+        </ul>
+        <h3>Version 3.6.0.4<br />
+          <font size="-1">2006-02-19</font></h3>
+        <p>&nbsp;</p>
+        <p>Enhancements</p>
+        <ul>
+          <li>FileChooserUI: Displays a warning dialog when the user attempts
+            to save to a file that already exists. Does not support  Unix
+            wildcards in the filename text field anymore. Improves performance
+            on slow network volumes, such as WebDAV folders.</li>
+          <li>ColorChooserUI: Has now a color picker tool. This requires Java
+            1.5.</li>
+          <li>ButtonUI: Has now two new styles: &quot;placard&quot; and &quot;tableHeader&quot;.</li>
+          <li>TabbedPaneUI: Replaces Apple's TabbedPaneUI for Panther. The new
+            Panther TabbedPaneUI squeezes tabs and eventually collapses them
+            into a combo box if not enough space is available. The TabbedPaneUI
+            can now be customized by more client properties.</li>
+          <li>TableUI supports now the client property &quot;Table.isFileList&quot;.</li>
+          <li>OptionPaneUI: Displays the application icon in the option pane.
+            This requires Java for Cocoa.</li>
+          <li>JNI library is now a Universal binary supporting PowerPC and
+            Intel Macs.</li>
+          <li>RootPaneUI: Can draw frame decorations in three sizes: standard,
+            small and mini. This is intended for use by floating palettes as
+            well as for use by the ToolBarUI. The title pane of a frame can be
+            placed at the top or at the left of the content pane.</li>
+          <li>ToolBarUI: Uses now a mini sized title pane.</li>
+  </ul>
+        <p>Fixes</p>
+        <ul>
+          <li>JSheet showed with white background when running with
+          Java 1.4.2_05 on Mac OS X 10.3.5. To avoid this, JSheet is shown without
+            a translucent background.</li>
+          <li>QuaquaManager: Prints now a warning message, when resource files
+            can not be accessed.</li>
+          <li>JFileChooser did not work on Windows XPJ (Japanese).</li>
+        </ul>
+        <h3>Version 3.5<br />
+          <font size="-1">2005-12-11</font></h3>
+        <p>&nbsp;</p>
+        <p>Enhancements</p>
+        <ul>
+          <li>QuaquaLookAndFeel: Reduced start up latency.</li>
+          <li>FileChooserUI: reads file icons and file labels asynchronously
+            to improve perceived performance. Uses now the user defined sorting
+            sequence in
+            the sidebar.
+            Uses new
+            imagery for folders and files.</li>
+          <li>SplitPaneUI added.</li>
+          <li>ScrollBarUI: Client property &quot;Quaqua.ScrollBar.placeButtonsTogether&quot;
+            added.</li>
+          <li>MenuBarUI supports now Tiger design.</li>
+          <li>JSheet shows and hides with a transition effect.</li>
+        </ul>
+        <p>Changes</p>
+        <ul>
+          <li>The resource bundle for labels is now retrieved from an UIManager
+            property to facilitate reuse of the Quaqua L&amp;F in other L&amp;F's.</li>
+          <li>QuaquaManagerMethod getLookAndFellClassName does not use UIManager.getDefaultLookAndFeel
+            anymore to decide which Quaqua look and feel implementation to use.</li>
+          <li>System property &quot;Quaqua.Debug.crossPlatform&quot; removed.</li>
+          <li>TableHeaderUI defaults now to &quot;leading&quot; aligned labels, instead
+            of &quot;center&quot; aligned labels.</li>
+          <li>LabelUI supports now BackgroundBorder drawing.</li>
+          <li>Reorganized some packages.</li>
+        </ul>
+        <p>Fixes</p>
+        <ul>
+          <li>FileChooserUI: Does not change text of the filename  field
+            while it has focus. Hides more files.</li>
+          <li>ViewportUI: Now properly delegates background drawing to ViewportPainter's.</li>
+          <li>ColorChooserUI: Does not write to System.out anymore, if user enters
+          non-numeric text into color value fields.</li>
+          <li>QuaquaUtilities.repaintBorder does not throw an NPE anymore in
+            method repaintBorder, if the component has no parent.</li>
+          <li>BrowserUI: Tweaked disclosure icons</li>
+          <li>ScrollBarUI: Tweaked vertical topmost position of thumb. Small
+            separated scroll bar buttons were not drawn with the correct state.</li>
+          <li>QuaquaBorderFactory: Due to a bug, the factory never created CachedImageBevelBorder's.</li>
+          <li>Text component borders and scroll pane borders  now properly draw
+            in a lighter color, if the component is disabled.</li>
+        </ul>
+  <h3>Version 3.4 - 3.4.1<br />
+    <font size="-1">2005-10-02 - 2005-10-03</font></h3>
+        <p>&nbsp;</p>
+        <p>Enhancements</p>
+        <ul>
+          <li>JSheet added.</li>
+          <li>TitledBorder: Draws now in a NSBox like style. </li>
+          <li>ScrollBarUI added. Places scroll arrows according to system
+            preferences. Changes &quot;Click in the scroll bar&quot; behaviour
+            according to system preferences. Supports regular and small size
+            style.</li>
+          <li>ButtonUI provides  a new &quot;help&quot; button style.</li>
+          <li>Startup latency has been improved by making more use of UIDefaults.LazyValue.</li>
+          <li>Drawing speed has been improved by introducing a CachedImageBevelBorder.</li>
+          <li>ColorChooserUI: Color Palettes panel added.
+            This UI depends now on more UIManager properties. This allows to
+            better
+            support
+            a &quot;color
+            chooser-only&quot; subset
+             of the Quaqua Look and Feel.</li>
+          <li>FileChooserUI shows a tooltip for a filename, if the filename
+            does not fit into a column.</li>
+          <li>TreeUI: Behaviour and appearance of tree selection changed. This
+            change was inspired by the article &quot;<a href="http://www.walkersoftware.net/2005/09/22/giving-jtree-fitts/">Giving
+            JTree Fitts</a>&quot; by Adam Walker.</li>
+        </ul>
+        <p>Fixes</p>
+        <ul>
+          <li>ButtonUI: Borders draw now in pressed state only, if the button
+            is pressed and armed.</li>
+          <li>ScrollPaneUI: Does not fill its background anymore when it
+          is set to non-opaque.</li>
+          <li>Fixed quaqua-filechooser-only.jar</li>
+          <li>ButtonUI:&quot;Quaqua.Button.style&quot; = &quot;help&quot; does
+            draw now properly when in pressed but not in armed state. &quot;Quaqua.Button.style&quot; = &quot;push&quot; does
+            not draw the blue flashing default animation, if it is in pressed
+            but not armed state.</li>
+          <li>TitledBorder: Increased insets.</li>
+        </ul>
+        <p>Build</p>
+        <ul>
+          <li>Three example subsets of the Quaqua Look and Feel are now provided
+            as bundled jar files: quaqua-filechooser-only.jar, quaqua-colorchooser-only.jar,
+            quaqua-menu-only.jar</li>
+  </ul>
+        <h3>Version 3.3 - 3.3.1<br />
+        <font size="-1">2005-08-28 - 2005-09-08</font></h3>
+<p>&nbsp;</p>
+        <p>Enhancements</p>
+        <ul>
+          <li>ColorChooserUI: Added a Color Wheel panel and a Crayons panel.</li>
+          <li>ScrollPaneUI: Ensures that the ScrollBars don't overlap with
+            the grow-box of the window.</li>
+          <li>JBrowser: Renders now empty columns to the right, when there is
+              room left in the JViewport.</li>
+          <li>QuaquaMetalLookAndFeel: Improved color fidelity.</li>
+        </ul>
+        <p>Build / Sourcecode</p>
+        <ul>
+          <li>Included source of swing-layout project, in order to ensure that
+            Quaqua can be built from source.</li>
+          <li>Removed dated layout examples.</li>
+        </ul>
+        <p>Fixes</p>
+        <ul>
+          <li>JPanels inside of JScrollPanes had a white background
+            instead of gray.</li>
+          <li>QuaquaColorCooserUI: The color tracks of the HTML sliders panel
+            were not always updated when the user switched the option &quot;only web-safe
+            colors&quot;
+            on and off.</li>
+          <li>JFileChoosers don't crash anymore whe running Quaqua in debug modus
+            on Windows.</li>
+          <li>QuaquaSliderUI: Moved slider buttons closer to text field.</li>
+        </ul>
+        <h3>Version 3.2 - 3.2.1<br />
+  <font size="-1">2005-07-13 - 2005-07-14</font></h3>
+        <p>&nbsp;</p>
+        <p>Enhancements</p>
+        <ul>
+          <li>Added support for JTree's with alternating row colors (stripes).</li>
+        </ul>
+        <p>Fixes</p>
+        <ul>
+          <li>Fixed NullPointerException which occured when multiple files are
+            selected in a Panther JFileChooser.</li>
+          <li>Fixed broken quaqua-filechooser.jar.</li>
+  </ul>
+        <h3>Version 3.1 - 3.1.2<br />
+  <font size="-1">2005-07-05 - 2005-07-10</font></h3>
+        <p>&nbsp;</p>
+        <p>Enhancements</p>
+        <ul>
+          <li>Added SpinnerUI.</li>
+  </ul>
+        <p>Fixes</p>
+        <ul>
+          <li>Calling putClientProperty(&quot;windowModified&quot;, Boolean.TRUE)
+            on a RootPaneUI which is not displayable does not throw a NullPointerException
+          anymore.</li>
+          <li>Setting a default button on JRootPaneUI now properly assigns
+            the key bindings for the Return key to the button.</li>
+          <li>Added missing ENTER key input map entry for text fields.</li>
+          <li>Removed unnecessary output on System.out.</li>
+          <li>Added QuaquaSpinnerUI to QuaquaMetalLookAndFeel</li>
+  </ul>
+  <h3>&nbsp;</h3>
+  <h3>Versions 3.0alpha - 3.0<br />
+          <font size="-1">2005-04-10 - 2005-06-07</font></h3>
+        <p>Enhancements</p>
+        <ul>
+          <li>ColorChooserUI added.</li>
+          <li>EditorPaneUI, FormattedTextFieldUI, PasswordFieldUI, TextAreaUI,
+            TextFieldUI, TextPaneUI added or enhanced.</li>
+          <li>LabelUI added.</li>
+          <li>ButtonUI, CheckBoxUI, RadioButtonUI, ToggleButtonUI added.</li>
+          <li>ToolBarSeparatorUI, ToolBarUI added.</li>
+          <li>PanelUI, RootPaneUI added.</li>
+          <li>ComboBoxUI enhanced.</li>
+          <li>Support for Quaqua.Component.borderMargin property added.</li>
+          <li>ColorWell
+            style for buttons added.</li>
+          <li>Localized ColorChooserUI for German, French and Italian.</li>
+          <li>Behaviour for ColorSliderUI implemented, that now better matches
+            the one of the native color sliders.</li>
+          <li>Added debug feature to run Quaqua on top of the Metal L&amp;F instead
+            on top of Apple's Mac OS X L&amp;F's.</li>
+          <li>Added debug feature to display visual bounds and clip bounds of
+            Quaqua UI delegates.</li>
+          <li>Added experimental API to access visual layout info from Quaqua
+            UI delegates. Also added experimental VisualGridBagLayoutManager
+            to test the API.</li>
+          <li>Added a look and feel for Tiger. It doesn't do yet anything different
+            than the one for Panther though.</li>
+          <li>Added UIManager properties &quot;Button.opaque&quot;, &quot;Panel.opaque&quot;, &quot;TextField.opaque&quot;,
+            ..., to control the opaqueness of components. </li>
+          <li>Added System properties &quot;Quaqua.opaque&quot;, &quot;Quaqua.sizeStyle&quot;, &quot;Quaqua.selectionStyle&quot;, &quot;Quaqua.visualMargin&quot;, &quot;Quaqua.tabLayoutPolicy&quot;.</li>
+          <li>Added support for binary PList files. This is needed to read the
+            user preferences for the sidebar in the FileChooserUI when running
+            OS X 10.4.</li>
+          <li>Changed colors and fonts in the preview column of the FileChooserUI
+            to better match native file dialogs of Mac OS X 10.4.</li>
+          <li>Added support for file type 'Widget' to the preview column of the
+            FileChooserUI.</li>
+        </ul>
+        <p>Changes</p>
+        <ul>
+          <li>Renamed Client-Property &quot;Quaqua.Component.borderMargin&quot; to &quot;Quaqua.Component.visualMargin&quot;.</li>
+          <li>Renamed UIManager-Property &quot;Component.borderMargin&quot; to &quot;Component.visualMargin&quot;.</li>
+          <li>Moved utility classes into separate <code>util</code> package.</li>
+          <li>Moved icon of radio buttons up by one pixel.</li>
+          <li>Updated NanoXML to Java 2 Collections framework.</li>
+  </ul>
+        <p>Bug Fixes</p>
+        <ul>
+          <li>FileChooserUI supports now file names with relative path components.</li>
+          <li>Blinking default button is now drawn regardless of the window type
+            instead of just only on JDialog windows.</li>
+          <li>ColorSliderUI had misaligned color bar.</li>
+          <li>ToolBarUI had bad insets.</li>
+          <li>Panther FileChooserUI: Fixed drawing of color labels. Did some
+            minor layout tweaks.</li>
+          <li>Implemented workarounds for texture paint bugs in Java 1.4, 1.5
+            JVM on Mac OS X 10.4 Tiger.</li>
+          <li>Implemented workarounds to improve performance of texture painting
+            in Apple's Java 1.3 JVM.</li>
+          <li>JButton's does not draw a border anymore, when its &quot;borderPainted&quot; property
+            is set to false.</li>
+          <li>The &quot;Quaqua13PantherLookAndFeel&quot; (instead of the &quot;Quaqua13TigerLookAndFeel&quot;)
+            is now used when running Java 1.3 on Mac OS X 10.3.</li>
+          <li>QuaquaToolBarBorderUI does not throw a class cast exception anymore
+            if it is used on another component.</li>
+          <li>JTree does not draw white lines anymore.</li>
+          <li>Calls to System.getProperty() catch now security exceptions, in
+            order to make Quaqua work with Java Web Start applications.</li>
+          <li>On rollover, selected Buttons display now the selected icon, if
+            the rolloverSelected icon has not been supplied. In prior versions
+            the default icon was displayed.</li>
+          <li>The windowModified client property works now on JRootPane's.</li>
+          <li>Renamed variables which had the name &quot;enum&quot; to avoid
+            conflicts with the Java 1.5 programming language specification.</li>
+          <li>Fixed choice pattern exception in Italian locale of FileChooserUI.</li>
+          <li>Entering a color in the HTML field in the ColorChooserUI did not
+            update the sliders.</li>
+          <li>Controls were not updating their state on window deactivation/activation
+            when running with Java 1.5.</li>
+          <li>Quaqua is not using ProxyLazyValue for QuaquaMenuBorder anymore
+            when running with Java 1.3.</li>
+          <li>Fixed ComboBoxUI popup insets when used as a non-editable TableCellRenderer
+            with Java 1.3.</li>
+          <li>Fixed FileChooserUI insets for labels in preview panel when running
+            with Java 1.3.</li>
+          <li>Fixed broken FileChooser-only versions of Quaqua.</li>
+          <li>Quaqua is now setting dummy-insets in the UIManager for insets
+            that change their size dynamically. Prior 3.0 beta versions set these
+            insets to null which caused some JVM's to crash.</li>
+          <li>Vertically aligned labels and values in the preview column of the
+            FileChooserUI.</li>
+          <li>Borders return now always a clone of their insets.</li>
+          <li>ComboBoxButtonUI does not draw with bad insets, if the look and
+            feel is changed after the JComboBox has been created. </li>
+        </ul>
+  <h3>Version 2.8 - 2.8.3<br />
+          <font size="-1">2005-01-30 - 2005-03-21</font></h3>
+        <p>Enhancements</p>
+        <ul>
+          <li>Panther design: JFileChooser's renders color labels. This feature
+            requires the presence of libquaqua.jnilib in the library path.</li>
+          <li>Panther design: JFileChooser's show a preview column for files,
+            when used as an open dialog. This feature is localized for English,
+            German, French and Italian only. The preview column is not shown
+            for other languages.</li>
+          <li>All designs: The sorting order of Files in JFileChooser's matches
+            now much better the sorting oder of native file dialogs.</li>
+          <li>All designs: File names in JFileChooser's are abbreviated in the
+            middle (instead of at the end).</li>
+          <li>Added missing binding for TAB key
+              in multiline text fields.</li>
+          <li>Added missing files to quaqua-filechooser.jar.</li>
+          <li>Panther file chooser did not work with Java 1.3 due to missing
+            Locale, when JFileChooser has no parent.</li>
+          <li>Panther file chooser did not properly display file preview with
+            Java 1.3.</li>
+          <li>Setting illegal file paths with non-existent path elements could
+            cause IllegalStateException when opening a JFileChooser.</li>
+        </ul>
+        <p>Bug Fixes</p>
+        <ul>
+          <li>Apple's MRJ for Java 1.4.1 throws a class cast exception when Quaqua
+            tries to draw an image bevel border using a compatible buffered image.
+            To work around this, Quaqua uses now a standard ARGB image when running
+            on this JVM.</li>
+        </ul>
+  <h3>Version 2.7<br />
+          <font size="-1">2005-01-06</font></h3>
+        <p>Enhancements</p>
+        <ul>
+          <li>All Quaqua UI's that are in use for Java 1.4 are now used for Java
+            1.3 as well. This results in many improvements when running Java
+            1.3.</li>
+          <li>Panther design: Selected items in list, tables and trees are now
+            shown with white text on a darker version of the selection color.
+            This matches much better the Panther design than before.</li>
+          <li>Quaqua uses now its own MenuUI and MenuBarUI, if the screen menu
+            bar is switched off.</li>
+          <li>Panther design: Quaqua uses now a round check icon on RadioButtonMenuItems
+            instead of a diamond check icon.</li>
+          <li>Java 1.3 version: user interface elements on inactive windows are
+            now rendered with inactive appearance.</li>
+        </ul>
+        <p>Bug Fixes</p>
+        <ul>
+          <li>Quaqua closes now the file ~/Library/Preferences/com.apple.sidebarlists.plist
+            after it has read it.</li>
+        </ul>
+  <h3>Version 2.6<br />
+          <font size="-1">2004-12-22</font></h3>
+        <p>Enhancements</p>
+        <ul>
+          <li>Mouse popup triggers (Ctrl+Click) does not change the selection
+            of a JTable, JList or JTree.</li>
+          <li>Quaqua uses now the color gray consistently for focus borders in
+            JTable's, JList's and JTree's.</li>
+          <li>Setting the client property &quot;Quaqua.List.style&quot; to &quot;striped&quot; on
+            a JList renders the list with altnernating row colors. This feature
+            is only available when the JList has a vertical layout orientation.<br />
+          </li>
+        </ul>
+  <h3>Version 2.5<br />
+          <font size="-1">2004-12-05</font></h3>
+        <p>Enhancements</p>
+        <ul>
+          <li>Improved keyboard behaviour of JTextField, JTextArea and JComboBox.
+            Cursor up moves to the beginning of the text if the cursor is on
+            the first line. Cursor down moves to the end of the text if the cursor
+            is on the last line. Alt+Del deletes to the end of the word or the
+            next word. Alt+Backspace deletes to the beginning of the word or
+            the previous word. (Improvements apply to Java 1.4 only).</li>
+          <li>Changed icon of CheckBoxMenuItem to match Panther design (Java
+            1.4 only).</li>
+          <li>JFileChooser's use the last modification time of a directory to
+            decide wether its contents needs to be read again. This should greatly
+            reduce I/O when a file chooser is reused, or when a user browses
+            the same directory multiple times.</li>
+        </ul>
+        <p>Bug Fixes</p>
+        <ul>
+          <li>Added missing classes to quaqua-filechooser.jar to fix ClassNotFoundException.<br />
+          </li>
+        </ul>
+  <h3>Version 2.4<br />
+          <font size="-1">2004-11-05</font></h3>
+        <p>Enhancements</p>
+        <ul>
+          <li>The user items section of the sidebar of the QuaquaPantherFileChooserUI
+            shows now the same user items as the Finder.<br />
+    (This works only, if the JNI code of Quaqua is in the library path).</li>
+        </ul>
+        <p>Bug Fixes</p>
+        <ul>
+          <li>Vertical scrollbar in sidebar of the QuaquaPantherFileChooserUI
+            did never appear, even when there was not enough space in the sidebar
+            to display all items.</li>
+          <li>Sidebar of the QuaquaPantherFileChooserUI erroneously suported
+            multiple selection of items instead of single selection.</li>
+  </ul>
+  <h3>Versions 2.3 - 2.3.1<br />
+          <font size="-1">2004-11-02</font></h3>
+        <p>Enhancements</p>
+        <ul>
+          <li>Dropping a file on a JFileChooser selects the file.</li>
+          <li>The computer is now shown as the root of the file system in the
+            folder combo box of JFileChooser's. In previous versions, the system
+            volume was shown as the root. This fix works only on Mac OS X 10.3
+            or later.</li>
+          <li>Renamed file libQuaquaFiles.jnilib to libquaqua.jnilib.</li>
+          <li>Selecting
+              an item in the sidebar or in the location combo box using a QuaquaPantherFileChooserUI
+            did not always work.</li>
+        </ul>
+  <h3>Version 2.2<br />
+          <font size="-1">2004-10-26</font></h3>
+        <p>Enhancements</p>
+        <ul>
+          <li>The release contains now a new file quaqua-filechooser.jar which
+            contains only the Look and Feel classes for the Panther FileChooser
+            UI. This is for use in applets or applications that have size restrictions.</li>
+        </ul>
+        <p>Bug Fixes</p>
+        <ul>
+          <li>Calling setFileSelected on a JFileChooser did not work properly,
+            when the provided File object had a relative path.</li>
+          <li>When a file is selected, the open button was made enabled, but
+            not made the default button (blue flashing).</li>
+          <li>Double clicking a JFileChooser did not approve the current file
+            selection.</li>
+        </ul>
+  <h3>Version 2.1<br />
+          <font size="-1">2004-10-17</font></h3>
+        <p>Enhancements</p>
+        <ul>
+          <li>The FileChooserUI's resolve now aliases to files and directories.</li>
+          <li>Determining the name of the system volume in class PantherFileSystemView
+            now uses fallback code, if method File.getCanonicalFile() on a volume
+            fails. In prior versions this caused an InternalError, when attempting
+            to open JFileChooser.</li>
+        </ul>
+        <p>Bug Fixes</p>
+        <ul>
+          <li>The file name text field in a save file JFileChooser dialog keeps
+            now its contents, when another directory is selected.</li>
+  </ul>
+  <h3>&nbsp;</h3>
+  <h3>Versions 2.0beta - 2.0.2<br />
+  <font size="-1">2004-07-29 - 2004-10-06</font></h3>
+        <p>Enhancements</p>
+        <ul>
+          <li>Cleaned up the number of look and feel classes.</li>
+          <li>FileChooserUI with Panther design added.</li>
+          <li>QuaquaFileChooserUI label of approve button changes to &quot;Choose&quot;,
+            when the file chooser is used to choose a directory.</li>
+          <li>Added missing keyboard bindings for QuaquaComboBoxUI.</li>
+          <li>Added functionality to make Quaqua Look and Feel work in a Java
+            1.3 Applet sandbox.</li>
+        </ul>
+        <p>Bug Fixes</p>
+        <ul>
+          <li>Fixed bugs in FileChooserUI with Jaguar design.</li>
+          <li>Fixed an IndexOutOfBoundsException
+            in QuaquaFileChooserUI which caused a file chooser to become unresponsive.</li>
+          <li>Fixed a bug which caused some JComponents on a java.awt.Window
+            to always draw in inactive state.</li>
+          <li>The popup of the ComboBoxUI extends
+              its width to accomodate the widest item in the list.</li>
+        </ul>
+  <h3>Version 1.8<br />
+          <font size="-1">2004-06-26</font></h3>
+        <p>Enhancements</p>
+        <ul>
+          <li>TableUI with support for striped style added.</li>
+          <li>Jaguar design for TabbedPaneUI can be switched off.</li>
+        </ul>
+        <p>Bug Fixes</p>
+        <ul>
+          <li>Fixed bugs in FileChooserUI.</li>
+        </ul>
+  <h3>Version 1.7<br />
+          <font size="-1">2004-05-02</font></h3>
+        <p>Enhancements</p>
+        <ul>
+          <li>QuaquaComboBoxUI added.</li>
+        </ul>
+        <p>Bug Fixes</p>
+        <ul>
+          <li>FileChooserUI creates folders now at the correct location.</li>
+          <li>MenuUI has now corrected popup offsets.</li>
+          <li>When running Java 1.4 or higher, QuaquaComboBoxUI and QuaquaTabbedPaneUI
+            render in click-through state, when their parent Window is not focus
+            owner.</li>
+        </ul>
+  <h3>Version 1.6 - 1.6.2<br />
+          <font size="-1">2004-03-14 through 2004-03-30</font></h3>
+        <p class="semiparagraph">Enhancements</p>
+        <ul>
+          <li>File names are displayed in gray, when the JFileChooser is in FILE_SAVE
+            mode.</li>
+          <li>System property 'Quaqua.FileChooser.autovalidate' added. </li>
+          <li>When clicking on a file on a JFileChooser in FILE_SAVE mode, the
+            file name is now transferred into the filename text field. Thus the
+            JFileChooser behaves now like a native file dialog for Mac OS X 10.3
+            (Panther). The look of the JFileChooser is still the one of Mac OS
+            X 10.2 (Jaguar).</li>
+        </ul>
+        <p>Bug Fixes</p>
+        <ul>
+          <li>Reimplemented the update strategy for the FileSystemTreeModel.
+            A directory is now updated only when the user clicks at it. Prior
+            to this version, the whole path up to a file was refreshed frequently.
+            This resulted in an unacceptable amount of I/O operations for directories
+            located on remote computers.</li>
+          <li>Class OSXFileView catches NullPointerException's thrown by AquaFileView,
+            when trying to determine isTraversable on aliases if the the alias
+            is to a network volume that is no longer mounted.</li>
+          <li>Fixed an IndexedOutOfBoundsException which occured when a 'default'
+            file name was supplied to a JFileChooser in FILE_SAVE mode, and the
+            user aborted the JFileChooser.</li>
+          <li>OSXFileView throws a NullPointerException when method getName(File)
+            is called with a null argument. This prevents the JVM from crashing
+            in native code in the AquaFileView.</li>
+          <li>Reduced the size of quaqua.jar. Some image files in quaqua.jar
+            were unnecessarily big. The classes are now compiled without debugging
+            information.</li>
+  </ul>
+        <h3>Versions 1.5 - 1.5.1<br />
+    <font size="-1">2004-02-07 through 2004-02-15</font>
+    </h3>
+        <p class="semiparagraph">Enhancements</p>
+        <ul>
+          <li>Support for Java 1.4.2 added.</li>
+          <li>Improved the performance of the FileSystemTreeModel and the OSXFileView.
+            This significantly reduces the slugginess of the QuaquaFileChooserUI.</li>
+        </ul>
+        <p>Bug Fixes</p>
+        <ul>
+          <li>Fixed a sporadicaly occuring null pointer exception in the QuaquaFileChooserUI.</li>
+          <li>Fixed more sporadicaly occuring null pointer exceptions in the
+            QuaquaFileChooserUI which were caused by class JBrowser using method
+            JComponent.getLocationOnScreen() to determine the mouse location.</li>
+        </ul>
+        <h3>Version 1.4<br />
+          <font size="-1">2003-11-13</font></h3>
+        <p>Enhancements</p>
+        <ul>
+          <li> Support for tabbed panes with tabs on the left and on the right
+            added.</li>
+          <li>Symbols for menu accelerators using cursor keys added.</li>
+          <li>Pressing the enter or return key in the file name text field of
+            QuaquaFileChooserUI triggers the accept action. </li>
+        </ul>
+  <h3>Version 1.3<br />
+          <font size="-1">2003-10-29</font></h3>
+        <p>Enhancements</p>
+        <ul>
+          <li>Support for Mac OS X 10.3 (Panther) added.</li>
+        </ul>
+  <h3>Versions 1.1 - 1.2.2<br />
+          <font size="-1">2003-09-11 through 2003-10-09</font></h3>
+        <p class="semiparagraph">Enhancements</p>
+        <ul>
+          <li>Look and Feel with specific workarounds for Apple's Java 1.4.1
+            Update 1 added.</li>
+          <li> FileChooserUI with column view added.</li>
+        </ul>
+        <p>Bug Fixes</p>
+        <ul>
+          <li>JBrowser expands path on mouse down instead of on mouse up. This
+            provides a snappier user esperience for the FileChooserUI.</li>
+          <li>Diagnostic
+            Output to System.out removed.</li>
+          <li>Menu fixes need to be switched off
+              when useScreenMenuBar option is set, because Apple's Aqua LAF casts
+              MenuItemUI to AquaMenuItemUI.</li>
+  </ul>
+      <h3>Version 1.0<br />
+    <font size="-1">  2003-09-05</font></h3>
+  <ul>
+          <li>
+            <p> First release</p>
+          </li>
+  </ul>
+</div>
+<p>&nbsp;</p>
+</body>
+</html>

@@ -1,0 +1,1 @@
+You can try to debug/optimize your program with fs_usage.1) Open up a terminal and type: sudo fs_usage2) Start your app and observe the fs_usage outputfs_usage will tell you how many "stats" you are doing per file.

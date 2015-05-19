@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:450px; z-index:7">
+  <h3>Integration Into an Application</h3>
+  <p class="semiparagraph">To integrate the Quaqua Look and Feel in an application,
+  you need to do the following:</p>
+  <ol>
+    <li class="semiparagraph">Include the file <code><strong>quaqua.jar</strong></code> in
+      the class path.<br />
+      <span class="info">If you don't need the full functionality of the Quaqua Look and Feel, you
+      can include one of the following files instead: <code>quaqua-filechooser-only.jar</code>, <code>quaqua-colorchooser-only.jar</code> or
+    the <code>quaqua-menu-only.jar</code>.</span></li>
+    <li class="semiparagraph">Include the directory <code><strong>/System/Library/Java</strong></code> in
+              the class path.<br />
+              <span class="info">In most cases, this happens automatically, if
+              you include quaqua.jar in the class path, because quaqua.jar manifest
+              has a Class-Path attribute that points this directory. <br />
+              /System/Library/Java is needed
+              to generate application and file icons. If this directory is not
+              in the class path JOptionPane icons won't display the application
+              icon and JFileChooser will not display a large preview icon of
+    the currently selected file.</span></li>
+    <li class="semiparagraph">Include the files <code><strong>libquaqua.jnilib</strong></code>, <code><strong>libquaqua64.jnilib </strong></code> and <code><strong>libquaqua64.dylib</strong></code> in
+    the library path.<br />
+    <span class="info">In most cases, it is sufficient to put these files in the
+    same directory as the quaqua.jar file. In some cases you have to specify
+    the library path explicitly using the system property &quot;java.library.path&quot;.<br />
+    These JNI libraries are needed by the JFileChooser and by JSheet.
+    If you need either of them, you can omit this step.</span></li>
+    <li class="semiparagraph">Change the code of the <code><strong>main</strong></code> method according the
+    following code snippet:</li>
+  </ol>
+  <p>&nbsp;</p>
+  <table class="semiparagrah" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td height="210" class="listing"><p><code><strong>public class</strong> MyApplication
+            {<br />
+&nbsp;&nbsp;&nbsp;&nbsp; <strong>public static void</strong> main(String[] args)
+{</code></p>
+          <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#666666">//
+                set system properties here that affect Quaqua</font><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#666666">// for
+example the default layout policy for tabbed<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// panes:</font><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;System.setProperty(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;Quaqua.tabLayoutPolicy&quot;,&quot;wrap&quot;</code></p>
+          <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);</code></p>
+          <p><code></code></p>
+          <p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#666666">//
+                  set the Quaqua Look and Feel in the UIManager</font><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>try</strong> { <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UIManager.setLookAndFeel(<br />
+          </code><code>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; ch.randelshofer.quaqua.QuaquaManager.getLookAndFeel();<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; </code><code>);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#666666">// set
+  UI manager properties here that affect Quaqua</font><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } <strong>catch</strong> (Exception
+  e) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#666666">//
+  take an appropriate action here</font><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#666666">// insert
+  your application initialization code here</font><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br />
+&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+        }</code></p></td>
+    </tr>
+  </table>
+  <p>Alternatively, Quaqua can be set in the UIManager using a class name String. This should be avoided, because the class name may change due to incompatible changes in the Java API.</p>
+  <ul>
+    <li>For J2SE6 and J2SE7 the class name is &quot;ch.randelshofer.quaqua.QuaquaLookAndFeel&quot;. </li>
+  </ul>
+  <p>The Quaqua Look and Feel can be customized using <a href="system_properties.html">System
+  properties</a>, <a href="uimanager_properties.html">UIManager properties</a> and <a href="client_properties.html">Client
+  properties</a>.</p>
+  <p>&nbsp;</p>
+  <p class="semiparagraph"></p>
+  <p class="semiparagraph">&nbsp;</p>
+  <h3 class="tripleparagraph"></h3>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

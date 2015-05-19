@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:100px; z-index:7">
+  <h3>JTextField, JFormattedTextField, JPasswordField, JTextPane, JTextArea</h3>
+  <h5 class="semiparagraph">Client properties:</h5>
+  <table  width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th><p>Property</p>      </th>
+      <th>Type</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>JComponent</code></p>
+          <p><code>.sizeVariant</code></p></td>
+      <td><code>java.lang.String</code></td>
+      <td>Values: &quot;regular&quot;, &quot;small&quot;, &quot;mini&quot;</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.TextComponent</code><br />
+      <code>.showPopup</code> <br />      </td>
+      <td><code>Boolean</code></td>
+      <td><p>Set this to <code>Boolean.FALSE</code> to disable the
+          text component popup menu.</p>      </td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.TextComponent</code><br />
+          <code>.autoSelect</code> <br />      </td>
+      <td><code>Boolean</code></td>
+      <td><p>Set this to <code>Boolean.FALSE</code> to prevent that all text is selected, when the user tabs into the field. <br />
+        This property does not affect JTextPane and JTextArea.<br />
+      Note: You can set the UIManager property <code>TextComponent.autoSelect</code> to false, to turn this off globally.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.TextField</code><br />
+      <code>.style</code><br /></td>
+      <td><code>String</code></td>
+      <td><p>Set this to &quot;search&quot; to get rounded borders like the Spotlight search
+        field.</p>
+        <p>Set this to &quot;plain&quot; to get a rectangular border like for regular text
+        fields.</p>
+        <p>The default value is &quot;plain&quot;.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.Component</code><br />
+      <code>.visualMargin</code> <br />      </td>
+      <td><code>java.awt.Insets</code></td>
+      <td><p>See <a href="layout_intro.html">layout</a></p>      </td>
+    </tr>
+  </table>
+  <h5 class="semiparagraph">System properties:</h5>
+  <table  width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua<br />
+        .showNonEditableCaret</code></td>
+      <td><code>true</code></td>
+      <td><p>Quaqua shows a non-blinking caret in non-editable text components, like OS X does.</p>
+          <p class="semiparagraph">Set this property to false to turn this behavior off<code></code>.</p></td>
+    </tr>
+  </table>
+  <h5 class="doubleparagraph">&nbsp;</h5>
+  <h5 class="doubleparagraph">&nbsp;</h5>
+  <h4 class="doubleparagraph"></h4>
+  <h4>General
+  </h4>
+  <p>&nbsp;</p>
+  <p align="center"><img src="images/jtextfield.png" alt="Quaqua Look and Feel - JTextField" width="260" height="296" border="0" /></p>
+  <p class="semiparagraph">In order to properly display JTabbedPane's with Panther
+    design, Quaqua sets all text components to non-opaque. </p>
+  <p class="semiparagraph">Since Quaqua text fields always draw the background
+    of their content area, they appear to always be opaque. Changing the opaque
+    property of a text field only affects its border.</p>
+  <table class="semiparagraph" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p><code>myTextField.setOpaque(<strong>true</strong>);</code></p>
+      </td>
+    </tr>
+  </table>
+  <p class="semiparagraph"></p>
+  <p class="semiparagraph">If you want to achieve a text component with a see
+    through content area, you have to set it's background color to a
+    color with a translucent alpha channel value, or you have to replace its
+    border.</p>
+  <p class="semiparagraph"> Here's how to make the content
+      area completely translucent, without changing its border: </p>
+  <table  class="semiparagraph" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p><code>myTextField.setBackground(<strong>new </strong>Color(0x00000000,true);</code></p>
+      </td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p class="semiparagraph">Here's how to get a rounded border for a seach field: </p>
+  <table  class="semiparagraph" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td height="15" class="listing"><p><code>myTextField.putClientProperty(<br />
+ &nbsp;&nbsp;       &quot;Quaqua.TextField.style&quot;,&quot;search&quot;<br />
+ );</code></p>
+      </td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p class="semiparagraph"></p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:320px; z-index:7">
+  <h3>JRootPane (JFrame, JDialog and floating palette windows)</h3>
+  <h5 class="semiparagraph">Client properties:</h5>
+  <table  width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th><p>Property</p>      </th>
+      <th>Type</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>JComponent</code></p>
+          <p><code>.sizeVariant</code></p></td>
+      <td><code>java.lang.String</code></td>
+      <td>Values: &quot;regular&quot;, &quot;small&quot;, &quot;mini&quot;</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.RootPane</code><br />
+          <code>.isPalette</code> <br />      </td>
+      <td><code>Boolean</code></td>
+      <td><p>Specifies whether the parent JFrame/JDialog of the JRootPane is
+          used as a palette window.<br />
+          Works only when the JRootPane decorates a JFrame/JDialog.</p>      </td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.RootPane</code><br />
+          <code>.isVertical</code><br />      </td>
+      <td><code>Boolean</code></td>
+      <td><p>Specifies whether the title bar shall be placed vertically or horizontally.<br />
+        Works only when the JRootPane decorates a JFrame/JDialog.      </p>      </td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Window<br />
+      .alpha</code><br />      </td>
+      <td><code>Float</code></td>
+      <td><p>Sets the transparency of the window.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Window<br />
+      .documentFile</code><br />      </td>
+      <td><code>File</code></td>
+      <td><p>Shows the icon of the file in the title bar.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Window</code></p>
+        <p><code>.documentModified</code><br />
+        </p></td>
+      <td><code>Boolean</code></td>
+      <td><p>Sets the window modified indicator in the title bar.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Window</code></p>
+          <p><code>.shadow</code><br />
+        </p></td>
+      <td><code>Boolean</code></td>
+      <td><p>Sets the shadow of the window.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Window</code></p>
+          <p><code>.style</code></p></td>
+      <td><code>java.lang.String</code></td>
+      <td>Values: &quot;regular&quot;, &quot;small&quot;</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>windowModified</code><br />      </td>
+      <td><code>Boolean</code></td>
+      <td><p>Sets the window modified indicator in the title bar (deprecated).</p>      </td>
+    </tr>
+  </table>
+  <h5 class="semiparagraph">&nbsp;</h5>
+  <h5 class="semiparagraph">UIManager properties:</h5>
+  <table  width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th><p>Property</p></th>
+      <th>Type</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>RootPane</code><br />
+          <code>.windowSnapDistance</code>      </td>
+      <td><code>Integer</code></td>
+      <td><p>Specifies the distance up to which windows snap to the edges of
+          each other and to the edges of the screen. Setting this to a value
+          to 0 or smaller, disables window snapping.</p>
+      <p>Note: Snapping is only in effect for look and feel decorated windows.</p>
+      <p>Note: Users can hold down the Alt-Key while moving a window to prevent
+      snapping.</p>
+      </td></tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>RootPane<br />
+    .draggableWindowBackground</code></td>
+      <td><code>Boolean</code></td>
+      <td><p>Default value for the client property <code>&quot;apple.awt.draggableWindowBackground&quot;.
+            </code>Setting this to <code>true</code> makes all windows, which have a
+            translucent area, draggable by all of their display area. This is
+            only in rare cases desirable, for example, when only display components
+            are on a window.</p>      </td>
+    </tr>
+  </table>
+  <h5 class="doubleparagraph"></h5>
+  <h5 class="doubleparagraph">&nbsp;</h5>
+  <h4>Client property: windowModified</h4>
+  <p>&nbsp;</p>
+  <p><img src="images/jrootpane-windowModified.png" width="460" height="220" /></p>
+  <p class="semiparagraph">Sets whether the  document contained in the window
+    has been modified and not saved yet.</p>
+  <p class="semiparagraph">You should set this property with an argument
+    of <code>Boolean.TRUE</code> every time the window&#8217;s
+      document changes in such a way that it needs to be saved and with an argument
+      of <code>Boolean.FALSE</code> every time it gets saved. Then, before closing
+      the window you can use <code>getClientProperty(&quot;windowModified&quot;)</code> to determine
+      whether to allow the user a chance to save
+  the document.</p>
+  <p class="semiparagraph">&nbsp;</p>
+  <p>&nbsp;</p>
+  <p class="semiparagraph"></p>
+  <h4>Client properties: Quaqua.RootPane.isPalette and Quaqua.RootPane.isVertical</h4>
+  <p class="semiparagraph">These properties can be used to realize floating palette
+    windows.</p>
+  <p class="semiparagraph"><img src="images/jrootpane.png" width="460" height="252" /></p>
+  <p class="semiparagraph">These properties are only in effect, when the JRootPane
+    decorates the JFrame/JDialog.</p>
+  <p class="semiparagraph">Setting the property Quaqua.RootPane.isPalette to
+    true makes the title bar of the JFrame/JDialog  always draw
+    in the active state.</p>
+  <p class="semiparagraph">Setting the property Quaqua.RootPane.isVertical to
+    true places the title bar of the JFrame/JDialog on the left instead of on
+    the top.</p>
+  <p class="semiparagraph">Floating palettes work best, when the font size of
+    the JRootPane is set to 11 or to 9. Font size 11 results in a small sized
+    title bar. This is useful if you want to display a title in the title bar.
+    Font size 9 is useful, if no title shall be displayed. Instead of setting the font size, you can set the client property JComponent.sizeVariant.</p>
+  <p class="semiparagraph">The following code snippet shows how to use the client
+    properties and the font size:</p>
+  <table class="semiparagraph" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p><code>JDialog d = <strong>new</strong> JDialog(myFrame); </code></p>
+        <p><code>d.setTitle(&quot;Palette Window&quot;);<br />
+          d.setAlwaysOnTop(<strong>true</strong>);<br />
+d.setUndecorated(<strong>true</strong>);</code></p>
+        <p><code>d.setFocusableWindowState(<strong>false</strong>);</code></p>
+        <p>&nbsp;</p>
+        <p><code>JRootPane rootPane = d.getRootPane();<br />
+          rootPane.setWindowDecorationStyle(JRootPane.FRAME);<br />
+          rootPane.setFont(<strong>new</strong> Font(&quot;Lucida Grande&quot;,
+        Font.PLAIN, 11));<br />
+        rootPane().putClientProperty(&quot;Quaqua.RootPane.isVertical&quot;,
+        Boolean.TRUE);<br />
+        rootPane().putClientProperty(&quot;Quaqua.RootPane.isPalette&quot;,
+        Boolean.TRUE);</code></p>
+        <p>&nbsp;</p>
+        <p><code>d.setVisible(true); </code></p></td>
+    </tr>
+  </table>
+  <p class="semiparagraph"><strong>Note: </strong>To create a true floating palette, you are required
+    to implement a handler which hides all floating palettes when no application
+    window is active.</p>
+  <p class="semiparagraph">&nbsp;</p>
+  <p class="semiparagraph">&nbsp;</p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

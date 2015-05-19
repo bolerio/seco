@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:450px; z-index:7">
+  <h3>JScrollPane</h3>
+  <h5 class="semiparagraph">Client properties:</h5>
+  <table  width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th><p>Property</p>      </th>
+      <th>Type</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>JComponent</code></p>
+          <p><code>.sizeVariant</code></p></td>
+      <td><code>java.lang.String</code></td>
+      <td>Values: &quot;regular&quot;, &quot;small&quot;</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua.Component</code><br />
+          <code>.visualMargin</code> <br />      </td>
+      <td><code>java.awt.Insets</code></td>
+      <td><p>See <a href="layout_intro.html">layout</a></p>      </td>
+    </tr>
+  </table>
+  <h4 class="doubleparagraph">&nbsp;</h4>
+  <h4 class="doubleparagraph">General</h4>
+  <p class="doubleparagraph">The QuaquaScrollPaneUI ensures that scrollbars don't
+  overlap with the grow-box of the window.</p>
+  <p class="semiparagraph"><img src="images/jscrollpane-no-overlap.png" width="296" height="181" /></p>
+  <p class="semiparagraph">If your JScrollBar is filling the entire region of
+    a JFrame, it is best to set its border to null. This way, your application
+    will very much look like a native application.</p>
+  <p class="semiparagraph"><img src="images/jscrollpane-borderless.png" width="300" height="176" /></p>
+  <p class="semiparagraph">The following code snippet was used to create the
+    window shown above:</p>
+  <p class="semiparagraph">&nbsp;</p>
+  <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p><strong>import</strong> javax.swing.*;<br />
+&nbsp;</p>
+        <p><strong>public class</strong> ScrollPaneTest2 <strong>extends</strong> JFrame {<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;public</strong> ScrollPaneTest2() {<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>setTitle(&quot;Quaqua Scroll Pane Test 2&quot;);<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>setDefaultCloseOperation(EXIT_ON_CLOSE);<br />
+&nbsp;</p>
+        <p><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>JTextArea ta = <strong>new</strong> JTextArea();</p>
+        <p>          <strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>ta.setLineWrap(<strong>true</strong>);<br />
+        <strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>ta.setWrapStyleWord(<strong>true</strong>);</p>
+        <p>&nbsp;<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>JScrollPane sp = <strong>new</strong> JScrollPane();<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>sp.setBorder(<strong>new </strong>EmptyBorder(0,0,0,0));<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>sp.setViewportView(ta);<br />
+        <strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>getContentPane().add(sp);</p>
+        <p>&nbsp;<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>pack();<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>}<br />
+          <br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;public static void</strong> main(String
+            args[]) {<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try</strong> {<br />
+        <strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>UIManager.setLookAndFeel(</p>        <p><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>&quot;ch.randelshofer.quaqua.QuaquaLookAndFeel&quot;</p>
+        <p><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>);<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>} <strong>catch</strong> (Exception e) {<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><font color="#999999">//
+          ... insert exception handling code here</font><br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>}<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new</strong> ScrollPaneTest2().show();<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>}<br />
+      }</p></td>
+    </tr>
+  </table>
+  <p class="semiparagraph">&nbsp;</p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

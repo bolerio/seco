@@ -155,7 +155,7 @@ public class HtmlView extends HidableComponentView
             });
 
            setNavigationFilter(new CustomNavigationFilter());
-           this.setDoubleBuffered(!TopFrame.PICCOLO);
+           this.setDoubleBuffered(GUIUtil.getFrame().doubleBuffer());
         }
 
         

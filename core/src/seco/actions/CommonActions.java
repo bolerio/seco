@@ -30,6 +30,8 @@ import seco.boot.NicheManager;
 import seco.gui.GUIHelper;
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
+import seco.gui.StandaloneFrame;
+import seco.gui.TopFrame;
 import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;
@@ -49,6 +51,7 @@ import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.CellVisual;
 import seco.things.IOUtils;
+import seco.util.ExtFileFilter;
 import seco.util.FileUtil;
 import seco.util.GUIUtil;
 import seco.util.IconManager;
@@ -392,9 +395,9 @@ public class CommonActions
 
     private static void addAsBook(HGHandle h)
     {
-        CellGroup group = ThisNiche.graph.get(// (TopFrame.PICCOLO) ?
-                ThisNiche.TOP_CELL_GROUP_HANDLE);// :
-        // (StandaloneFrame).tabbedPaneGroupHandle);
+        CellGroup group = ThisNiche.graph.get( (TopFrame.PICCOLO) ?
+                ThisNiche.TOP_CELL_GROUP_HANDLE :
+          ((StandaloneFrame)GUIUtil.getFrame()).tabbedPaneGroupHandle);
 
         if (CellUtils.isBackuped(h)) CellUtils.restoreCell(h);
         CellGroupMember child = ThisNiche.graph.get(h);
@@ -415,7 +418,7 @@ public class CommonActions
     static void openNotebook()
     {
         File file = FileUtil.getFile(GUIUtil.getFrame(), "Load Notebook",
-                FileUtil.LOAD, null);
+                FileUtil.LOAD, new ExtFileFilter[]{new ExtFileFilter("nb")});
         if (file == null) return;
         importGroup(file);
     }

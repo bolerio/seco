@@ -112,7 +112,9 @@ public class SecoTabbedPane extends JTabbedPane
 
     public static class TPTransferHandler extends TransferHandler
     {
-        private SecoTabbedPane tp;
+		private static final long serialVersionUID = 1L;
+		
+		private SecoTabbedPane tp;
 
         public TPTransferHandler(SecoTabbedPane tp)
         {

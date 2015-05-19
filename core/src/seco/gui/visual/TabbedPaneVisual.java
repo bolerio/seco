@@ -1,12 +1,10 @@
 package seco.gui.visual;
 
-import java.awt.Component;
-
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
@@ -15,7 +13,6 @@ import seco.events.CellGroupChangeEvent;
 import seco.events.EventHandler;
 import seco.gui.GUIHelper;
 import seco.gui.TabbedPaneU;
-import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;

@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; z-index:7; height: 544px;">
+  <h3>JSheet</h3>
+  <p class="semiparagraph">A Sheet is a document modal dialog that is displayed
+    below the title bar of its owner window. JSheet roughly implements the look
+    and feel of a Mac OS X Cocoa NSSheet component. </p>
+  <p class="semiparagraph"><img src="images/jsheet-optionpane.png" alt="Quaqua Look and Feel - JSheet with a JOptionPane" width="468" height="227" /></p>
+  <p class="semiparagraph">JSheet provides static convenience methods for displaying
+    JOptionPane's and JFileChooser's.</p>
+  <p class="semiparagraph">Since JSheet is only document modal, its show method
+    does not block while the sheet is visible. You have to implement a SheetListener
+    to get the return value of the JSheet.</p>
+  <h4 class="doubleparagraph">Displaying a JOptionPane as a sheet</h4>
+  <p class="semiparagraph">Here is how to display the  option pane shown at the
+    top of this page. Note the use of a client property for specifying the destructive
+    choice on
+    the
+    sheet,
+    and the use of the SheetListener:</p>
+  <table class="semiparagraph" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td><p class="listing">                 JOptionPane pane = <strong>new</strong> JOptionPane(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;&lt;html&gt;&quot;+UIManager.getString(&quot;OptionPane.css&quot;)+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;&lt;b&gt;Do you want to save changes to this document&lt;br&gt;&quot;+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;before closing?&lt;/b&gt;&lt;p&gt;&quot;+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;If you don't save, your changes will be lost.&quot;,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;JOptionPane.WARNING_MESSAGE<br />
+);<br />
+Object[] options = { &quot;Save&quot;, &quot;Cancel&quot;, &quot;Don't Save&quot; };<br />
+pane.setOptions(options);<br />
+pane.setInitialValue(options[0]);<br />
+<font color="#990000">pane.putClientProperty(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;Quaqua.OptionPane.destructiveOption&quot;, <strong>new</strong> Integer(2)<br />
+);<br />
+</font>JSheet.<strong>showSheet</strong>(pane, frame, <strong><font color="#990000">new</font></strong><font color="#990000"> SheetListener()
+{<br />
+<strong>&nbsp;&nbsp;&nbsp;&nbsp;public void </strong>optionSelected(SheetEvent evt) {</font><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Object value = evt.getValue();<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> (value ==
+null || value.equals(&quot;Cancel&quot;)) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;frame.setEnabled(<strong>true</strong>);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <strong>else if</strong> (value.equals(&quot;Don't Save&quot;)) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;frame.dispose();<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <strong>else if </strong>(value.equals(&quot;Save&quot;)) {<br />
+<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>saveChanges();<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+});</p>
+      </td>
+    </tr>
+  </table>
+  <h4 class="tripleparagraph">Displaying a JFileChooser as a sheet</h4>
+  <p class="semiparagraph"><img src="images/jsheet-filechooser.png" alt="Quaqua Look and Feel - JSheet with a JFileChooser" width="540" height="455" />The following code snippet demonstrates how to display
+    a file chooser using JSheet. Please notice the use of the SheetListener:</p>
+  <table class="semiparagraph" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td><p class="listing">             <strong>final</strong> JFileChooser fileChooser = <strong>new</strong>          JFileChooser();<br />
+          <font color="#990000">JSheet.showSaveSheet(fileChooser, frame, <strong>new</strong> SheetListener()
+{<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;public void </strong>optionSelected(<strong>final</strong> SheetEvent evt) {</font><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> (evt.getOption() == JFileChooser.APPROVE_OPTION) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;File file = </p>
+        <p class="listing">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;evt.getFileChooser().getSelectedFile();<br />
+          <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>saveToFile(file);<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        });</p></td>
+    </tr>
+  </table>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

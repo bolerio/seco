@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; z-index:7">
+  <h3>JFileChooser</h3>
+  <h5 class="semiparagraph">Client properties:</h5>
+  <table  width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua<br />
+        .FileChooser
+<br />
+          .preview</code>
+      </td>
+      <td><code>java.awt.Component</code></td>
+      <td>Values: null or a Component.</td>
+    </tr>
+  </table>
+  <h3></h3>
+  <h5 class="semiparagraph">System properties:</h5>
+  <table  width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Quaqua<br />
+        .FileChooser <br />
+        .quickLookEnabled</code> </td>
+      <td><code>boolean</code></td>
+      <td>Set this to &quot;false&quot; if you experience crashes with QuickLook file previews in the file chooser.</td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <h4 class="doubleparagraph">Client property: Quaqua.FileChooser.preview</h4>
+  <p>Sets the component used for rendering the file preview in the last column of the column view in the file browser.</p>
+  <h5 class="doubleparagraph">General Description</h5>
+  <p class="semiparagraph">The FileChooserUI of the Quaqua Look and Feel roughly
+    matches the design of native file dialogs on Mac OS X 10.3 through 10.5 (Jaguar, Panther and Leopard).</p>
+  <h4 class="semiparagraph">JFileChooser with Java 1.5 and Quaqua set to the
+  Leopard design</h4>
+  <p class="semiparagraph"><img src="images/jfilechooser-leopard.png" alt="Quaqua - FileChooserUI with Leopard design" width="578" height="461" border="0" /> </p>
+  <h4 class="semiparagraph">JFileChooser with Java 1.4 and Quaqua set to the
+    Panther design</h4>
+  <p class="semiparagraph"><img src="images/jfilechooser-panther.png" alt="Quaqua - FileChooserUI with Panther design" width="546" height="431" border="0" />  </p>
+  <h4 class="doubleparagraph">JFileChooser
+    with Java 1.4 and Quaqua set to the Jaguar design:</h4>
+  <p class="semiparagraph"><img src="images/jfilechooser-jaguar.png" alt="Quaqua - JFileChooser with Jaguar design" width="460" height="405" /></p>
+  <p class="semiparagraph">The design is determined at startup.
+    You can force a specific style, by setting the system property <code>Quaqua.design</code> to <code>jaguar</code> or
+    to <code>panther. </code>If
+    you want Quaqua to determine the design automatically, dont' set this property,
+    or specify
+    the value <code>auto.</code><br />
+&nbsp;  </p>
+  <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p><code>System.setProperty(</code></p>
+        <p><code>&nbsp;&nbsp;&nbsp;&quot;Quaqua.design&quot;, &quot;panther&quot;</code></p>        
+        <p><code>);</code></p></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p class="semiparagraph">Changing the design like this, will also alter the
+    design of other user interface elements. It is not recommended to use another
+    style
+    than the one used by the operating system. Or else you will see undesired
+    artefacts, because Quaqua does not fully replace all user interface elements
+  of the underlying Aqua Look and Feel by Apple.</p>
+  <p class="semiparagraph">&nbsp;</p>
+  <p>You can use class <a href="jsheet.html">JSheet</a> to display a file chooser
+    as a document modal sheet.</p>
+  <p>&nbsp;</p>
+  <h4>Keyboard shortcuts</h4>
+  <p>The Panther filechooser supports the following keyboard shortcuts:</p>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Keystroke</th>
+      <th>Description</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Shift-Command-A</code></td>
+      <td><p>Navigates to the applications folder.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Shift-Command-C</code></td>
+      <td><p>Navigates to the computer folder.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Command-D<br />
+        </code>or<code><br />
+      Shift-Command-D</code></td>
+      <td><p>Navigates to the  desktop folder.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Shift-Command-H</code></td>
+      <td><p>Navigates to the  home folder.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>Shift-Command-K</code></td>
+      <td><p>Navigates to the network folder.</p></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; height:1050px; z-index:7">
+  <h3>UIManager Properties</h3>
+  <p class="semiparagraph">The following UIManager properties are unique to
+  the Quaqua Look and Feel.</p>
+  <h5 class="doubleparagraph">Component Specific Properties</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Default<br />
+      Value</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>FileChooser<br />
+      .autovalidate</code></p>      </td>
+      <td><code>true</code></td>
+      <td>Makes JFileChooser's automatically validate the contents of a directory,
+        when the user clicks at it. Set this to <code>false</code>, if you experience
+        performance problems, e.g. when using JFileChooser's to choose files
+        from large directories (&gt; 1000 entries) over a slow network connection.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Button.opaque,</code></p>
+        <p><code>Panel.opaque,</code></p>
+        <p><code>TextField.opaque,</code></p>
+        <p><code>ToggleButton.opaque,</code></p>
+      <p><code>...</code></p></td>
+      <td>false</td>
+      <td>Controls the default opaqueness of components. Set this to <code>true</code> if
+        your application logic depends on components being opaque.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>CheckBox</code></p>
+        <p><code>.enforceVisualMargin,</code></p>
+        <p><code>RadioButton</code></p>
+        <p><code>.enforceVisualMargin</code></p></td>
+      <td>false</td>
+      <td>Enforces the visual margin on the specified component, if set to true.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>ComboBox</code></p>
+      <p><code>.maximumRowCount</code></p></td>
+      <td>100</td>
+      <td>Sets the maximum row count for the combo box popup.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>ComboBox<br />
+    .harmonizePreferredHeight</code></td>
+      <td><code>false</code></td>
+      <td>Set this to <code>true</code>, to get the same preferred height for
+        editable and non-editable combo boxes. This may result in better layouts
+      with some layout managers.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>List<br />
+        .alternateBackground</code></p>
+        <p><code>.0</code></p>        <p class="semiparagraph"><code>List<br />
+        .alternateBackground<br />
+        </code><code>.1</code></p>      </td>
+      <td>&nbsp;</td>
+      <td>These properties define the background colors (<code>java.awt.Color</code>)
+        used for drawing alternating row colors in lists.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>OptionPane</code></p>
+          <p><code>.messageLabelWidth</code></p>      </td>
+      <td>360</td>
+      <td>Sets the width for HTML messages displayed in an option pane. Set this
+        to 0 to prevent Quaqua from enforcing the width.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>OptionPane</code></p>
+          <p><code>.maxCharactersPerLineCount</code></p>      </td>
+      <td>60</td>
+      <td>Sets the maximum number of characters in text messages displayed in
+        an option pane. Set this to Integer.MAX_VALUE if you want the width of
+        method <code>JOptionPane. getMaxCharacterPerLineCount()</code> being used instead.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>RootPane<br />
+.windowSnapDistance</code></td>
+      <td>10</td>
+      <td><p>Sets the distance up to which windows snap to the edges of each other
+          and to the edges of the screen. Setting this to 0 or less, turns snapping
+        off.</p>
+        <p><strong>Note:</strong> Snapping is only in effect for look and feel decorated windows.</p></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>RootPane<br />
+    .draggableWindowBackground</code></td>
+      <td><code>false</code></td>
+      <td><p>Default value for the client property <code>&quot;apple.awt.draggableWindowBackground&quot;</code>.
+            Setting this to <code>true</code> makes all windows, which have a
+            translucent area, draggable by all of their display area. This is
+            only in rare cases desirable,
+            for example,
+            when only display
+          components are on a window.</p>      </td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>ScrollBar<br />
+      .placeButtonsTogether</code></td>
+      <td>&nbsp;</td>
+      <td>This boolean property defines the placement of scroll bar buttons.
+        The default value is retrieved from the Appearance panel of the Mac OS
+        X System Preferences.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Table<br />
+      .alternateBackground<br />
+      .0</code></p>
+          <p class="semiparagraph"><code>Table<br />
+      .alternateBackground<br />
+      .1</code></p>      </td>
+      <td>&nbsp;</td>
+      <td>These properties define the background colors (<code>java.awt.Color</code>)
+        used for drawing alternating row colors in tables.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Tree<br />
+        .alternateBackground<br />
+        .0</code></p>
+          <p class="semiparagraph"><code>Tree<br />
+            .alternateBackground<br />
+        .1</code></p></td>
+      <td>&nbsp;</td>
+      <td>These properties define the background colors (<code>java.awt.Color</code>)
+        used for drawing alternating row colors in trees.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>TextField<br />
+        .autoSelect<br />
+        <br />
+      </code></p>
+      <p><code></code><code>PasswordField<br />
+.autoSelect</code><br />
+<br />
+      </p>
+      <p><code></code><code>FormattedTextField<br />
+.autoSelect</code></p>
+      <p><code></code></p></td>
+      <td>&nbsp;</td>
+      <td background="system_properties.html"><p>Set this to <code>Boolean.FALSE</code> to prevent that all text is selected, when the user tabs into a JTextField, a JPasswordField or a JFormattedTextField. <br />
+      Note: You can set the Client property <code>Quaqua.TextComponent.autoSelect</code> to false or true, to override this locally.</p>
+      <p>&nbsp;</p>
+      <p>The System property Quaqua.TextComponent.autoSelect determines the default value for these properties.</p></td>
+    </tr>
+  </table>
+  <h5 class="doubleparagraph">Font Properties</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>SystemFont<br />
+        </code><code></code></p>
+      </td>
+      <td rowspan="10">See the Apple Human Interface Guidelines <a href="http://developer.apple.com/documentation/UserExperience/Conceptual/OSXHIGuidelines/XHIGText/chapter_13_section_2.html#//apple_ref/doc/uid/TP30000365-TPXREF113">Fonts
+          guidelines</a>        for
+        a description on how to use these fonts.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>EmphasizedSystemFont<br />
+        </code><code></code></p>
+      </td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>SmallSystemFont<br />
+        </code><code></code></p>
+      </td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>EmphasizedSmallSystemFont<br />
+        </code><code></code></p>
+      </td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>MiniSystemFont</code></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>EmphasizedMiniSystemFont</code></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>ApplicationFont</code></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>LabelFont</code></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><code>ViewFont</code></td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>MenuFont<br />
+        </code><code></code></p>
+      </td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <h5 class="doubleparagraph">Debugging Properties</h5>
+  <table width="460" border="0" cellpadding="0" cellspacing="0" class="graybox">
+    <tr>
+      <th>Property</th>
+      <th>Notes</th>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Quaqua.Debug<br />
+      .showClipBounds<br />
+        </code><code></code></p>
+      </td>
+      <td>Set this to <code>true</code> to display the clip bounds of Quaqua
+        user interface delegates.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Quaqua.Debug<br />
+      .showVisualBounds<br />
+        </code><code></code></p>
+      </td>
+      <td>Set this to <code>true</code> to display the visual bounds of Quaqua
+        user interface delegates.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Quaqua.Debug<br />
+      .componentBoundsForeground<br />
+        </code><code></code></p>
+      </td>
+      <td>Specifies the <code>java.awt.Color</code> used for drawing the component
+        bounds when <code>Quaqua.Debug.showVisualBounds</code> is turned on.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Quaqua.Debug<br />
+      .textBoundsForeground<br />
+        </code><code></code></p>
+      </td>
+      <td>Specifies the <code>java.awt.Color</code> used for drawing the uppercase
+        text bounds when <code>Quaqua.Debug.showVisualBounds</code> is turned
+        on.</td>
+    </tr>
+    <tr valign="top" bgcolor="#ffffff">
+      <td><p><code>Quaqua.Debug<br />
+        .clipBoundsForeground<br />
+      </code><code></code></p>
+      </td>
+      <td>Specifies the <code>java.awt.Color</code> used for drawing the clip
+        bounds when <code>Quaqua.Debug.showClipBounds</code> is turned on.</td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

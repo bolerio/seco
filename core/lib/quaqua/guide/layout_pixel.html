@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Quaqua Look and Feel - User Guide</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+
+
+<script type="text/javascript">
+<!--
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+//-->
+</script>
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+<!-- InstanceEndEditable -->
+<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- InstanceBeginEditable name="body" -->
+<div id="Spalte5" style="position:absolute; left:10px; top:10px; width:460px; z-index:7">
+  <h3>Pixel-based Layout Managers</h3>
+  <p class="semiparagraph"> ComponentUI's implemented by the Quaqua Look and
+    Feel (Quaqua) have a translucent  margin with a size of 3 pixels. The
+    purpose of the  margin, is to visually even out the cast shadows and
+    focus rings of the components.</p>
+  <p class="semiparagraph">On the picture below, all components have been implemented by Quaqua.<em> </em>All components
+     align to each
+    other, without requiring
+    additional
+    work
+    by
+    the designer
+    of the layout.</p>
+  <p class="semiparagraph"><img src="images/visual_margin.png" alt="Quaqua Look and Feel - Laying out Components" width="484" height="409" border="0" /><br />
+    If you are working with a bixel-based 
+    layout manager, you have
+    to
+    subtract
+    the 3 pixel margin 
+    from
+    the distance
+    between
+    the
+    components.
+    All
+    values
+    shown
+    in the
+    picture
+    below
+    must have the value 3 or 6 subtracted. 3 must be subtracted from the component
+  bounds to the frame bounds, 6 must be subtracted between two components.</p>
+  <p class="semiparagraph"><img src="images/border_margin_measured.png" alt="Quaqua Look and Feel - Border Margin" width="460" height="383" /></p>
+  <p class="semiparagraph">To create distances smaller than 6 pixels between
+    two components <strong>it is recommended to have these components overlap. </strong></p>
+  <p class="semiparagraph">In case you can't do the overlapping, you can achieve
+    a similar result, by <strong>manually
+      overriding the margin</strong> for a single component. Here's a code snippet
+      which sets the visual margin at the bottom of the component to 0 and lets
+      all other margins use 3.<br />
+  </p>
+  <table class="semiparagraph" width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p><code>colorsLabel.</code><code>putClientProperty(</code></p>
+        <p><code>&nbsp;&nbsp;&nbsp;&quot;Quaqua.Component.visualMargin&quot;,</code><code>&nbsp;new
+        Insets(3,3,0,3)</code></p>        
+        <p><code>);</code></p></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p class="semiparagraph">Overlapping the components is the preferred way for
+    achieving a small spacing between components. In case the  margin
+    is generally too wide, and you can't have your components overlap, you can
+    change the default value for the visual margin, as shown in the code snippet
+    below. </p>
+  <p>&nbsp; </p>
+  <table width="460" border="0" cellpadding="0" cellspacing="10" bgcolor="#F0F0F0">
+    <tr>
+      <td class="listing"><p><code>UIManager.</code><code>put(</code></p>
+          <p><code>&nbsp;&nbsp;&nbsp;&quot;Component.visualMargin&quot;, </code><code>new
+          Insets(2,2,2,2)</code></p>
+          <p><code>);</code></p>
+      </td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+</div>
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>

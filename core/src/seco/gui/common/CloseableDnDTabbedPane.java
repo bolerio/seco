@@ -37,11 +37,12 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import seco.util.GUIUtil;
 
-public class CloseableDnDTabbedPane extends org.wonderly.swing.tabs.CloseableTabbedPane//JTabbedPane
+public class CloseableDnDTabbedPane extends /*org.wonderly.swing.tabs.CloseableTabbedPane// */ JTabbedPane
 {
 	private static final int LINEWIDTH = 3;
 	public static final String mimeType = DataFlavor.javaJVMLocalObjectMimeType + 

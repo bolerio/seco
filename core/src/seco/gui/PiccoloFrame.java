@@ -24,7 +24,7 @@ public class PiccoloFrame extends TopFrame
         PICCOLO = true;
     }
 
-    protected void initFrame()
+    public void initFrame()
     {
         super.initFrame();        
         canvas = new PiccoloCanvas();

@@ -21,8 +21,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.hypergraphdb.HGHandle;
-import org.wonderly.swing.tabs.TabCloseEvent;
-import org.wonderly.swing.tabs.TabCloseListener;
+//import org.wonderly.swing.tabs.TabCloseEvent;
+//import org.wonderly.swing.tabs.TabCloseListener;
 
 import seco.ThisNiche;
 import seco.actions.CGMActionsHelper;
@@ -249,16 +249,16 @@ public class TabbedPaneU
         }
     }
 
-    public static final class TabbedPaneCloseListener implements  TabCloseListener
-    {
-        public void tabClosed(TabCloseEvent evt)
-        {
-            int res = promptAndSaveDoc();
-            if (res == JOptionPane.CANCEL_OPTION
-                    || res == JOptionPane.CLOSED_OPTION) return;
-            closeAt((JTabbedPane) evt.getSource(), evt.getClosedTab());
-        }
-    }
+//    public static final class TabbedPaneCloseListener implements  TabCloseListener
+//    {
+//        public void tabClosed(TabCloseEvent evt)
+//        {
+//            int res = promptAndSaveDoc();
+//            if (res == JOptionPane.CANCEL_OPTION
+//                    || res == JOptionPane.CLOSED_OPTION) return;
+//            closeAt((JTabbedPane) evt.getSource(), evt.getClosedTab());
+//        }
+//    }
     
     private static NotebookUI getNotebookUIAt(JTabbedPane tp, int index)
     {
@@ -282,12 +282,12 @@ public class TabbedPaneU
         {
             tabbedPane = new CloseableDnDTabbedPane();
             ((CloseableDnDTabbedPane) tabbedPane).setPaintGhost(true);
-            ((CloseableDnDTabbedPane) tabbedPane)
-                    .addTabCloseListener(new TabbedPaneCloseListener());
+//            ((CloseableDnDTabbedPane) tabbedPane)
+//                    .addTabCloseListener(new TabbedPaneCloseListener());
         }
         else
             tabbedPane = new SecoTabbedPane(ThisNiche.handleOf(group));
-        tabbedPane.setDoubleBuffered(!TopFrame.PICCOLO);
+        tabbedPane.setDoubleBuffered(GUIUtil.getFrame().doubleBuffer());
         tabbedPane.putClientProperty(
                 com.jgoodies.looks.Options.NO_CONTENT_BORDER_KEY, Boolean.TRUE);
         // tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.0" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <Properties>
+    <Property name="title" type="java.lang.String" value="Quaqua Scroll Pane Test 2"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+  </SyntheticProperties>
+
+  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+  <SubComponents>
+    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="null"/>
+        </Property>
+      </Properties>
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+          <BorderConstraints direction="Center"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JTextArea" name="jTextArea1">
+          <Properties>
+            <Property name="lineWrap" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" value="The QuaquaScrollPaneUI ensures that scrollbars don&apos;t overlap with the grow-box of the window.&#xa;&#xa;Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam sagittis. Vivamus vel metus. Quisque sagittis leo non nibh. Aenean faucibus ipsum id dolor. Proin porta, odio facilisis commodo scelerisque, mi massa commodo arcu, at laoreet sapien dui ut velit. Ut adipiscing. &#xa;&#xa;Nullam malesuada, magna in tristique cursus, tellus massa mollis nisi, et vulputate turpis lectus ut ipsum. Integer tortor. Duis tincidunt, metus vel vestibulum pharetra, risus leo vehicula velit, at ultricies ligula metus adipiscing neque. Sed sollicitudin pede eu pede. Cras molestie condimentum pede. Proin ullamcorper gravida ipsum. Praesent aliquet interdum nulla. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras dui. Nam ultrices placerat felis. Fusce rutrum mollis mauris. Maecenas eget arcu suscipit ligula placerat mattis."/>
+            <Property name="wrapStyleWord" type="boolean" value="true"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>

@@ -111,17 +111,17 @@ public class GUIHelper
 
     private static Thread.UncaughtExceptionHandler uncaughtExceptionHandler = new SecoUncaughtExceptionHandler();
 
-    static
-    {
-        PlasticLookAndFeel.setPlasticTheme(new DesertBluer());
-        try
-        {
-            UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
-        }
-        catch (Exception e)
-        {
-        }
-    }
+//    static
+//    {
+//        PlasticLookAndFeel.setPlasticTheme(new DesertBluer());
+//        try
+//        {
+//            UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
+//        }
+//        catch (Exception e)
+//        {
+//        }
+//    }
 
     public static Thread.UncaughtExceptionHandler getUncaughtExceptionHandler()
     {

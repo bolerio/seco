@@ -230,7 +230,7 @@ public class CellHandleView extends HidableComponentView
 		@Override
 		public boolean isVisible()
 		{
-			return view.isVisible();
+			return view != null && view.isVisible();
 		}
 
 		public CustomButton(CellHandleView view)

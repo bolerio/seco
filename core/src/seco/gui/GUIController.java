@@ -12,6 +12,8 @@ public interface GUIController
     
     public void setStatusBarMessage(String message);
    
+    public void initFrame();
+    
     public  JFrame getFrame();
     
     public PiccoloCanvas getCanvas();
