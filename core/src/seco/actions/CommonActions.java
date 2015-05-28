@@ -396,8 +396,8 @@ public class CommonActions
     private static void addAsBook(HGHandle h)
     {
         CellGroup group = ThisNiche.graph.get( (TopFrame.PICCOLO) ?
-                ThisNiche.TOP_CELL_GROUP_HANDLE :
-          ((StandaloneFrame)GUIUtil.getFrame()).tabbedPaneGroupHandle);
+                								ThisNiche.TOP_CELL_GROUP_HANDLE :
+                								((StandaloneFrame)GUIUtil.getFrame()).tabbedPaneGroupHandle);
 
         if (CellUtils.isBackuped(h)) CellUtils.restoreCell(h);
         CellGroupMember child = ThisNiche.graph.get(h);
