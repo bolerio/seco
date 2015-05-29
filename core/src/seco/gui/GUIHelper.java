@@ -32,7 +32,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
@@ -69,11 +68,6 @@ import seco.things.CellUtils;
 import seco.util.GUIUtil;
 import seco.util.IconManager;
 import seco.util.SecoUncaughtExceptionHandler;
-
-import com.jgoodies.looks.plastic.PlasticLookAndFeel;
-import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
-import com.jgoodies.looks.plastic.theme.DesertBluer;
-
 import edu.umd.cs.piccolox.pswing.PSwing;
 
 public class GUIHelper

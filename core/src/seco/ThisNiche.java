@@ -104,13 +104,6 @@ public final class ThisNiche
         graph.freeze(TOP_CONTEXT_HANDLE);
         allContexts.clear();
         topContext = getEvaluationContext(TOP_CONTEXT_HANDLE);
-        // TODO  - the following won't work with multiple contexts. This
-        // is a very though problem to solve because it's hard to 
-        // track in what context exactly code is executing, especially
-        // for global threads like the Swing dispatcher thread (well perhaps
-        // this is the only global thread with this problem, but it's causing
-        // enough headaches already).
-       // graph.getTypeSystem().setClassLoader(topContext.getClassLoader());  
     }
 
     public static HGHandle getContextHandleFor(HGHandle entityHandle)

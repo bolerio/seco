@@ -90,14 +90,6 @@ public class PiccoloCanvas extends PSwingCanvas
                     	relayout(b);
                     }
                 });
-        // camera.addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM,
-        // new PropertyChangeListener() {
-        // public void propertyChange(PropertyChangeEvent evt)
-        // {
-        // PAffineTransform t = (PAffineTransform) evt
-        // .getNewValue();
-        // }
-        // });
         removePSwingEventHandler();
         new PSwingEventHandlerEx(this, getCamera()).setActive(true);
         getCamera().addInputEventListener(new PToolTipHandler(getCamera()));

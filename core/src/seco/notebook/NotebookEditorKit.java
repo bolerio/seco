@@ -297,7 +297,6 @@ public class NotebookEditorKit extends StyledEditorKit
                 ((CellHandleView) containerV).setCollapsed(false);
 
             doc.evalCellInAuxThread(el);
-
             Utilities.adjustScrollBar(ui, pos, Position.Bias.Forward);
         }
 

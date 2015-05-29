@@ -27,6 +27,7 @@ import seco.things.CellUtils;
 
 public class OutputCellDocument extends NotebookDocument
 {
+    private static final long serialVersionUID = 1L;
 
     public OutputCellDocument(HGHandle h)
     {

@@ -22,7 +22,6 @@ import seco.util.GUIUtil;
 
 public class VisPropsProvider implements DynamicMenuProvider
 {
-    private static final long serialVersionUID = -6896106906804231842L;
     transient MouseListener mouseListener;
 
     public VisPropsProvider()

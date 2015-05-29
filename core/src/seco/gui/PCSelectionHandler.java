@@ -21,12 +21,9 @@ import java.util.Map;
 import javax.swing.SwingConstants;
 
 import seco.ThisNiche;
-import seco.gui.piccolo.CopyHandle;
-import seco.gui.piccolo.TitlePaneNode;
-import seco.gui.piccolo.MaximizeHandle;
-import seco.gui.piccolo.MinimizeHandle;
 import seco.gui.piccolo.OffsetPBoundsLocator;
 import seco.gui.piccolo.PSmallBoundsHandle;
+import seco.gui.piccolo.TitlePaneNode;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import edu.umd.cs.piccolo.PCamera;

@@ -14,7 +14,7 @@ import seco.U;
 /**
  * Main class loaded reflectively with a custom class loader.
 s */
-class Main
+public class Main
 {
 	/**
 	 * <p>
