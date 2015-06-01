@@ -277,19 +277,19 @@ public class TabbedPaneU
 
     public static JTabbedPane createTabbedPane(CellGroup group)
     {
-        JTabbedPane tabbedPane = null;
-        if (DRAGGABLE_TABS)
-        {
-            tabbedPane = new CloseableDnDTabbedPane();
-            ((CloseableDnDTabbedPane) tabbedPane).setPaintGhost(true);
-//            ((CloseableDnDTabbedPane) tabbedPane)
-//                    .addTabCloseListener(new TabbedPaneCloseListener());
-        }
-        else
-            tabbedPane = new SecoTabbedPane(ThisNiche.handleOf(group));
-        tabbedPane.setDoubleBuffered(GUIUtil.getFrame().doubleBuffer());
-        tabbedPane.putClientProperty(
-                com.jgoodies.looks.Options.NO_CONTENT_BORDER_KEY, Boolean.TRUE);
+        JTabbedPane tabbedPane = new JTabbedPane();;
+//        if (DRAGGABLE_TABS)
+//        {
+//            tabbedPane = new CloseableDnDTabbedPane();
+//            ((CloseableDnDTabbedPane) tabbedPane).setPaintGhost(true);
+////            ((CloseableDnDTabbedPane) tabbedPane)
+////                    .addTabCloseListener(new TabbedPaneCloseListener());
+//        }
+//        else
+//            tabbedPane = new SecoTabbedPane(ThisNiche.handleOf(group));
+//        tabbedPane.setDoubleBuffered(GUIUtil.getFrame().doubleBuffer());
+//        tabbedPane.putClientProperty(
+//                com.jgoodies.looks.Options.NO_CONTENT_BORDER_KEY, Boolean.TRUE);
         // tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         tabbedPane.addMouseListener(new TabbedPaneMouseListener(tabbedPane));
         tabbedPane.addChangeListener(new TabbedPaneChangeListener(tabbedPane));

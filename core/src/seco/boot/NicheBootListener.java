@@ -17,6 +17,7 @@ import org.hypergraphdb.event.HGListener;
 import seco.ThisNiche;
 import seco.actions.CommonActions;
 import seco.gui.GUIHelper;
+import seco.gui.TopFrame;
 import seco.rtenv.RuntimeContext;
 import seco.talk.ConnectionManager;
 import seco.things.CellGroup;
@@ -51,7 +52,7 @@ public class NicheBootListener implements HGListener
                     new CommonActions.TopCellTreeAction().actionPerformed(null);
                     DEBUG_NICHE = false; 
                 }
-                else
+                else if (TopFrame.PICCOLO)
                 {
                    CellUtils.evaluateVisibleInitCells();
                    v.bind(group);
@@ -59,6 +60,9 @@ public class NicheBootListener implements HGListener
                       f.setVisible(true);
                     ConnectionManager.startConnections();
                 }
+                else if (f != null)
+                	f.setVisible(true);
+            	
             	Thread.currentThread().setUncaughtExceptionHandler(GUIHelper.getUncaughtExceptionHandler());                
             }
         });

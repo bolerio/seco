@@ -42,7 +42,7 @@ public final class ThisNiche
     static EvaluationContext topContext;
     static HashMap<HGHandle, EvaluationContext> allContexts = new HashMap<HGHandle, EvaluationContext>();
 
-    public static String guiControllerClassName = StandaloneFrame.class.getName();//PiccoloFrame.class.getName();
+    public static String guiControllerClassName = PiccoloFrame.class.getName();
     public static GUIController guiController;
     
     public static final HGPersistentHandle NICHE_NAME_HANDLE = UUIDHandleFactory.I
