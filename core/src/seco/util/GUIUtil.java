@@ -19,6 +19,7 @@ import seco.gui.GUIHelper;
 import seco.gui.PSwingNode;
 import seco.gui.PiccoloCanvas;
 import seco.gui.TopFrame;
+import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;
 import seco.gui.common.NotifyDescriptor.Confirmation;
@@ -88,12 +89,15 @@ public static void centerOnScreen(Component c)
 
 public static void createAndShowDlg(Frame f, String title, Component c, Dimension dim)
 {
-    JDialog dialog = new JDialog(f, title);
-    if(dim != null)  dialog.setSize(dim);
-    dialog.add(c);
-    if(f == null) dialog.setIconImage(GUIHelper.LOGO_IMAGE);
-    centerOnScreen(dialog);
-    dialog.setVisible(true);
+    DialogDescriptor dd = new DialogDescriptor(f, c, title);
+    DialogDisplayer.getDefault().notify(dd);
+//    
+//    JDialog dialog = new JDialog(f, title);
+//    if(dim != null)  dialog.setSize(dim);
+//    dialog.add(c);
+//    if(f == null) dialog.setIconImage(GUIHelper.LOGO_IMAGE);
+//    centerOnScreen(dialog);
+//    dialog.setVisible(true);
 }
 
 public static void createAndShowDlg(String title, Component c, Dimension dim)

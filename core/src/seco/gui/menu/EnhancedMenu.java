@@ -84,11 +84,11 @@ public class EnhancedMenu extends JMenu implements MenuListener
 
 	public void menuSelected(MenuEvent e)
 	{
-		SwingUtilities.invokeLater(new Runnable(){
-			public void run(){
+//		SwingUtilities.invokeLater(new Runnable(){
+//			public void run(){
 				update();
-			}
-		});
+//			}
+//		});
 	} 
 
 	public void menuDeselected(MenuEvent e) {}

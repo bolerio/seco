@@ -7,23 +7,29 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.handle.UUIDHandleFactory;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
 import seco.gui.TabbedPaneU;
-import seco.gui.TopFrame;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
-import seco.rtenv.ContextLink;
 import seco.things.Cell;
 import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.things.CellVisual;
 import seco.util.GUIUtil;
 
+/**
+ * 
+ * <p>
+ * The {@link seco.things.CellVisual} of a complete Seco notebook. 
+ * </p>
+ *
+ * @author Borislav Iordanov
+ *
+ */
 public class NBUIVisual implements CellVisual
 {
     private static final HGPersistentHandle handle = 

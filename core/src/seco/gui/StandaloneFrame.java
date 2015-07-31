@@ -58,10 +58,13 @@ public class StandaloneFrame extends TopFrame
         statusPane.add(status);
 
         setJMenuBar(GUIHelper.getMenuBar());
+        getJMenuBar().remove(5); // remove Window menu which is only valid for 2D canvas-based UI
         getContentPane().setLayout(new BorderLayout());
         //getContentPane().setLayout(new AKDockLayout());
-//        getContentPane().add(GUIHelper.getMainToolBar(), AKDockLayout.NORTH);
-        //getContentPane().add(GUIHelper.getHTMLToolBar(), AKDockLayout.NORTH);
+        JPanel toolbarsPanel = new JPanel(new BorderLayout());
+        toolbarsPanel.add(GUIHelper.getMainToolBar(), BorderLayout.WEST);
+        toolbarsPanel.add(GUIHelper.getHTMLToolBar(), BorderLayout.CENTER);
+        getContentPane().add(toolbarsPanel, BorderLayout.NORTH);
         getContentPane().add(getJTabbedPane(), BorderLayout.CENTER);
 //        getContentPane().add(statusPane, BorderLayout.SOUTH);
         setPreferredSize(new Dimension(1000, 700));
@@ -385,6 +388,6 @@ public class StandaloneFrame extends TopFrame
     public static void main(String [] argv)
     {
         ThisNiche.guiControllerClassName = StandaloneFrame.class.getName();        
-        seco.boot.Main.go("/home/borislav/niches/test");
+        seco.boot.Main.go("/home/boris/niches/test");
     }
 }

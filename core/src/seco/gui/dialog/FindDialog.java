@@ -22,6 +22,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -30,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -43,7 +45,7 @@ import seco.notebook.html.HTMLEditor;
 import seco.notebook.view.HtmlView;
 import seco.util.GUIUtil;
 
-public class FindDialog extends JDialog 
+public class FindDialog extends SecoDialog 
 {
     private static final long serialVersionUID = 2059260096201174285L;
 
@@ -66,7 +68,7 @@ public class FindDialog extends JDialog
     protected int searchIndex = -1;
     protected boolean searchUp = false;
     protected String searchData;
-
+    
     public FindDialog(final JEditorPane owner, int index)
     {
         super(GUIUtil.getFrame(owner), "Find and Replace", false);

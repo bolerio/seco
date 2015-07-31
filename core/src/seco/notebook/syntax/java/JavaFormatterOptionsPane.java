@@ -23,7 +23,9 @@ import com.l2fprod.common.propertysheet.PropertySheetPanel;
 
 public class JavaFormatterOptionsPane extends PropertySheetPanel implements OptionPane
 {
-	protected NotebookUI nbui;
+    private static final long serialVersionUID = 1L;
+    
+    protected NotebookUI nbui;
 	protected  JavaFormatterOptions options;
 
 	public JavaFormatterOptionsPane()
