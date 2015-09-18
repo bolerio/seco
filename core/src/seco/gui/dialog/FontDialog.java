@@ -26,7 +26,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -51,8 +50,9 @@ import javax.swing.text.StyleConstants;
 import seco.gui.GUIHelper;
 import seco.notebook.style.FontEx;
 
-public class FontDialog extends JDialog
+public class FontDialog extends SecoDialog
 {
+	private static final long serialVersionUID = 1L;
 	public static final String[] defFontSizes = new String[] {"8", "9", "10",
 		"11", "12", "14", "16", "18", "20", "22", "24", "26",
 		"28", "36", "48", "72"};

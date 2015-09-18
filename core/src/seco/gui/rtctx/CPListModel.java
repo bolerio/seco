@@ -17,7 +17,7 @@ import seco.rtenv.ClassPathEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class CPListModel implements ListModel
+public class CPListModel implements ListModel<ClassPathEntry>
 {
     private ArrayList<ClassPathEntry> list;  
     private ArrayList<ListDataListener> listeners = new ArrayList<ListDataListener>();
@@ -33,7 +33,7 @@ public class CPListModel implements ListModel
         listeners.add(l);
     }
 
-    public Object getElementAt(int index)
+    public ClassPathEntry getElementAt(int index)
     {
         return list.get(index);
     }

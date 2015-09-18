@@ -194,11 +194,12 @@ public abstract class ScriptSupport
 	{
 		return lineMgr;
 	}
-	private Segment seg = new Segment();
 
 	// boolean update_in_progress = false;
 	public void insertUpdate(DocumentEvent e)
 	{
+		Segment seg = new Segment();
+
 		// update_in_progress = true;
 		int offset = e.getOffset() - el.getStartOffset();
 		int numLines = 0;

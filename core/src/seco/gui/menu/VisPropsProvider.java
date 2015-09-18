@@ -112,7 +112,7 @@ public class VisPropsProvider implements DynamicMenuProvider
             if (ui == null) return;
             CellPropsDialog dlg = new CellPropsDialog(
                     GUIUtil.getFrame(ui), ui.getDoc(), stype);
-            dlg.setSize(400, 300);
+            dlg.setSize(440, 330);
             GUIUtil.centerOnScreen(dlg);
             dlg.setVisible(true);
             if (dlg.succeeded())

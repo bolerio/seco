@@ -17,7 +17,6 @@ import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -43,19 +42,20 @@ import seco.gui.GUIHelper;
 import seco.gui.common.DialogDescriptor;
 import seco.gui.common.DialogDisplayer;
 import seco.gui.common.NotifyDescriptor;
+import seco.gui.dialog.SecoDialog;
 import seco.rtenv.NestedContextLink;
 import seco.rtenv.RtU;
 import seco.rtenv.RuntimeContext;
 import seco.util.GUIUtil;
 
-public class EditRuntimeContextDialog extends JDialog
+public class EditRuntimeContextDialog extends SecoDialog
 {
     private static final long serialVersionUID = 7894500605980514017L;
     RuntimeContext top;
 
     public EditRuntimeContextDialog(RuntimeContext ctx)
     {
-        super(GUIUtil.getFrame(), "Edit Runtime Context");
+        super(GUIUtil.getFrame(), "Edit Runtime Context", false);
         if(GUIUtil.getFrame() == null) setIconImage(GUIHelper.LOGO_IMAGE);
         top = ctx;
         getContentPane().add(new RtConfigPanel());

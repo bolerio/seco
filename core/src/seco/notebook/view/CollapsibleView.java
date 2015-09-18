@@ -10,5 +10,4 @@ package seco.notebook.view;
 public interface CollapsibleView
 {
 	boolean collapse(boolean collapse);
-	//boolean isCollapsed();
 }

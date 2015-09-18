@@ -70,6 +70,6 @@ public class PiccoloFrame extends TopFrame
     public static void main(String [] argv)
     {
         ThisNiche.guiControllerClassName = PiccoloFrame.class.getName();        
-        seco.boot.Main.go("/home/boris/niches/test");
+        seco.boot.Main.go("/home/boris/niches/test", null);
     }    
 }

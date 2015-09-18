@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -15,6 +14,7 @@ import org.hypergraphdb.HGQuery.hg;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
+import seco.gui.dialog.SecoDialog;
 import seco.rtenv.RuntimeContext;
 import seco.util.GUIUtil;
 
@@ -22,16 +22,16 @@ import seco.util.GUIUtil;
  * 
  * @author Bizi
  */
-public class NewRuntimeContextDialog extends JDialog
+public class NewRuntimeContextDialog extends SecoDialog
 {
-
-    private ClassPathPanel cpPanel;
+	private static final long serialVersionUID = 1L;
+	private ClassPathPanel cpPanel;
     private JTextField textRtCtx;
 
     /** Creates new form NewRuntimeContextPanel */
     public NewRuntimeContextDialog()
     {
-        super(GUIUtil.getFrame(), "Add New Runtime Context");
+        super(GUIUtil.getFrame(), "Add New Runtime Context", false);
         if(GUIUtil.getFrame() == null) setIconImage(GUIHelper.LOGO_IMAGE);
         getContentPane().add(new MyPanel());
         setSize(350, 350);

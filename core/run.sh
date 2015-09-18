@@ -27,7 +27,7 @@ echo "Using Seco home directory '$SECO_HOME'"
 #JAVA_EXEC=$JAVA_HOME/bin/java
 JAVA_EXEC=java
 
-SECO_CLASSPATH="$SECO_HOME/seco.jar"
+SECO_CLASSPATH="$SECO_HOME/bin"
 
 for f in lib/*.jar; do
   SECO_CLASSPATH="$SECO_CLASSPATH$pathsep$f"

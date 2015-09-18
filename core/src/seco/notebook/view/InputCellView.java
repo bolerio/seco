@@ -103,21 +103,22 @@ public class InputCellView extends HidableBoxView
 		// commented out temporarily to see if it will effect on the nasty paint bug where the whole notebook
 		// goes gray
 		
-//		Rectangle r = allocation.getBounds();
-//		if (((NotebookUI) getContainer()).isDrawCellNums())
-//		{
-//			drawNumbering(g, getCaption(), r.x, r.y, r.height);
-//			r.x += NUM_BOX_GAP;
-//			r.width -= NUM_BOX_GAP;
-//		}
-//		paintBox(g, r.x, r.y, r.width, r.height, this);
+		Rectangle r = allocation.getBounds();
+		if (((NotebookUI) getContainer()).isDrawCellNums())
+		{
+			drawNumbering(g, getCaption(), r.x, r.y, r.height);
+			r.x += NUM_BOX_GAP;
+			r.width -= NUM_BOX_GAP;
+		}
+		paintBox(g, r.x, r.y, r.width, r.height, this);
 		super.paint(g, allocation);
 	}
 	
 	String getCaption()
 	{
-		return (makeNumLabel((Cell) NotebookDocument
-				.getNBElement(((NotebookDocument)getDocument()).getWholeCellElement(getElement().getStartOffset()))));
+		return makeNumLabel(
+				(Cell) NotebookDocument
+				.getNBElement(((NotebookDocument)getDocument()).getWholeCellElement(getElement().getStartOffset())));
 	}
 
 	String makeNumLabel(Cell cell)

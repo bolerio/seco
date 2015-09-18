@@ -91,7 +91,9 @@ public class StandaloneFrame extends TopFrame
         group.setVisual(TabbedPaneVisual.getHandle());
         ThisNiche.graph.update(group);
         top.insert(top.getArity(), group);
-        return TabbedPaneU.createTabbedPane(group);
+        TabbedPaneVisual v = ThisNiche.graph.get(TabbedPaneVisual.getHandle());
+        return v.bind(group);
+        //return TabbedPaneU.createTabbedPane(group);
     }
 
     public CaretListener getNotebookUICaretListener()
@@ -388,6 +390,6 @@ public class StandaloneFrame extends TopFrame
     public static void main(String [] argv)
     {
         ThisNiche.guiControllerClassName = StandaloneFrame.class.getName();        
-        seco.boot.Main.go("/home/boris/niches/test");
+        seco.boot.Main.go("/Users/borislav/niches/test2", null);
     }
 }

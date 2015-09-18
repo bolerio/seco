@@ -54,6 +54,8 @@ import javax.swing.undo.UndoableEdit;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 
+import com.sun.prism.paint.Color;
+
 import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
@@ -142,8 +144,7 @@ public class NotebookDocument extends DefaultStyledDocument
             removeDocumentListener(ls[i]);
         if (inited) return;
         CellGroup book = ThisNiche.graph.get(bookH);
-        Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) book
-                .getAttribute(XMLConstants.CELL_STYLE);
+        Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) book.getAttribute(XMLConstants.CELL_STYLE);
         if (map != null) for (NBStyle s : map.values())
             addStyle(s);
         Vector<ElementSpec> vec = new Vector<ElementSpec>();

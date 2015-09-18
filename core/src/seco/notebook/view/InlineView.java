@@ -44,10 +44,8 @@ public class InlineView extends LabelView // implements HidableView
     public InlineView(Element elem)
     {
         super(elem);
-        isOutputCell = NotebookDocument.getUpperElement(elem,
-                ElementType.outputCellBox) != null;
-        tokenElement = NotebookDocument.getUpperElement(elem,
-                ElementType.commonCell);
+        isOutputCell = NotebookDocument.getUpperElement(elem, ElementType.outputCellBox) != null;
+        tokenElement = NotebookDocument.getUpperElement(elem, ElementType.commonCell);
     }
 
     public void setVisible(boolean visible)
@@ -117,10 +115,17 @@ public class InlineView extends LabelView // implements HidableView
 
     public Color getForeground()
     {
-        return (isOutputCell) ? StyleConstants.getForeground(getAttributes())
-                : super.getForeground();
+    	return StyleConstants.getForeground(getAttributes());
+//        return (isOutputCell) ? StyleConstants.getForeground(getAttributes())
+//                : super.getForeground();
     }
 
+    // That's for font background online, which is not configurable (yet)
+//    public Color getBackground()
+//    {
+//        return StyleConstants.getBackground(getAttributes());
+//    }
+//    
     // copied from GlyphView, removing all the ugly selection related stuff
     public void paint(Graphics g, Shape a)
     {

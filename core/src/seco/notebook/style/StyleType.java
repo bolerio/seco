@@ -11,10 +11,10 @@ import seco.notebook.XMLConstants;
 
 public enum StyleType
 {
-	global(XMLConstants.GLOBAL_STYLE, "Global"), inputCell(
-			XMLConstants.CELL_STYLE, "InputCell"), outputCell(
-			XMLConstants.OUTPUT_CELL_STYLE, "OutputCell"), error(
-			XMLConstants.OUTPUT_ERROR_STYLE, "Error");
+	global(XMLConstants.GLOBAL_STYLE, "Global"), 
+	inputCell(XMLConstants.CELL_STYLE, "InputCell"), 
+	outputCell(XMLConstants.OUTPUT_CELL_STYLE, "OutputCell"), 
+	error(XMLConstants.OUTPUT_ERROR_STYLE, "Error");
 	public final String tag_name;
 	String description;
 

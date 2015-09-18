@@ -85,8 +85,7 @@ abstract public class DocUtil
             int pos, Vector<ElementSpec> vec)
     {
         a.addAttribute(StyleConstants.NameAttribute, e);
-        ElementSpec es = new ElementSpec(a.copyAttributes(),
-                ElementSpec.StartTagType);
+        ElementSpec es = new ElementSpec(a.copyAttributes(), ElementSpec.StartTagType);
         vec.addElement(es);
     }
 
@@ -111,6 +110,7 @@ abstract public class DocUtil
                 .getDefaultValue(StyleAttribs.FG_COLOR));
         FontEx f = (FontEx) style.getDefaultValue(StyleAttribs.FONT);
         f.populateStyle(doc_style);
+        StyleConstants.setBackground(doc_style, (Color)style.getDefaultValue(StyleAttribs.BG_COLOR));
     }
 
     static void createCellHandle(MutableAttributeSet attr,
@@ -146,8 +146,7 @@ abstract public class DocUtil
         }
     }
 
-    static void createCell(NotebookDocument doc, HGHandle cellH,
-            MutableAttributeSet attr, Vector<ElementSpec> vec)
+    static void createCell(NotebookDocument doc, HGHandle cellH, MutableAttributeSet attr, Vector<ElementSpec> vec)
     {
 
         Cell cell = (Cell) ThisNiche.graph.get(cellH);
@@ -155,7 +154,8 @@ abstract public class DocUtil
         attr.addAttribute(ATTR_CELL, cellH);
         startTag(inputCellBox, attr, 0, vec);
         // attr.removeAttribute(ATTR_CELL);
-        if (!CellUtils.isHTML(cell)) startTag(commonCell, attr, 0, vec);
+        if (!CellUtils.isHTML(cell)) 
+        	startTag(commonCell, attr, 0, vec);
         else
             startTag(htmlCell, attr, 0, vec);
         String text = CellUtils.getText(cell);

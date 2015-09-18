@@ -64,7 +64,12 @@ public class ClassPathEntry
     
     public String toString()
     {
-        return "ClassPathEntry(" + getUrl() + ")";
+    	int idx = url.endsWith("/") ? url.lastIndexOf('/', url.length() - 2) : url.lastIndexOf('/');
+    	if (idx < 0)
+    		return url;
+    	else
+    		return url.substring(idx + 1) + " - " + url.substring(0, idx);
+        // return "ClassPathEntry(" + getUrl() + ")";
     }
 
     @Override

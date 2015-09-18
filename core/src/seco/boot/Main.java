@@ -7,8 +7,10 @@
  */
 package seco.boot;
 
+
 import org.hypergraphdb.HGEnvironment;
 
+import seco.ThisNiche;
 import seco.U;
 
 /**
@@ -23,8 +25,10 @@ public class Main
 	 * </p>
 	 * @param nicheLocation
 	 */
-	public static void go(String nicheLocation)
+	public static void go(String nicheLocation, String guiControllerClass)
 	{
+		if (guiControllerClass != null)
+			ThisNiche.guiControllerClassName = guiControllerClass;
         HGEnvironment.get(nicheLocation, U.dbConfig()); // boots from HG LOAD listeners            
 	}
 }

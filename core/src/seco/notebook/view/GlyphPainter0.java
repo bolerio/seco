@@ -135,6 +135,7 @@ class GlyphPainter0 extends GlyphView.GlyphPainter
 			paintSyntaxLine(g, expander, sup, info[0], x, y, p0 - p2, p1 - p2);
 		} else{
 			Segment text = v.getText(p0, p1);
+//			System.out.println("drawing text " + text);
 			Utilities.drawTabbedText(text, x, y, g, expander, p0);
 			SegmentCache.releaseSharedSegment(text);
 		}
@@ -169,13 +170,11 @@ class GlyphPainter0 extends GlyphView.GlyphPainter
 		}
 	}
 
-	public Shape modelToView(GlyphView v, int pos, Position.Bias bias, Shape a)
-			throws BadLocationException
+	public Shape modelToView(GlyphView v, int pos, Position.Bias bias, Shape a) throws BadLocationException
 	{
 		
 		sync(v);
-		Rectangle alloc = (a instanceof Rectangle) ? (Rectangle) a : a
-				.getBounds();
+		Rectangle alloc = (a instanceof Rectangle) ? (Rectangle) a : a.getBounds();
 		int p0 = v.getStartOffset();
 		int p1 = v.getEndOffset();
 		TabExpander expander = v.getTabExpander();
@@ -192,12 +191,12 @@ class GlyphPainter0 extends GlyphView.GlyphPainter
 			int width = 0;
 			ScriptSupport sup = ((InlineView) v).getScriptSupport();
 			int[] info = (sup != null) ? sup.offsetToLineCol(pos) : null;
-			boolean multiline = !(p0 == v.getElement().getStartOffset() && p1 == v
-					.getElement().getEndOffset());
+			boolean multiline = !(p0 == v.getElement().getStartOffset() && p1 == v.getElement().getEndOffset());
 			if (sup != null)
 			{
-				ChunkCache.LineInfo lineInfo = sup.getChunkCache().getLineInfo(
-						info[0]);
+//				if (multiline)
+//					System.out.println("multiline on " + v.getElement().toString());
+				ChunkCache.LineInfo lineInfo = sup.getChunkCache().getLineInfo(info[0]);
 				if (lineInfo != null)
 				{
 					width = (!multiline) ?
@@ -208,18 +207,15 @@ class GlyphPainter0 extends GlyphView.GlyphPainter
 					//				":" + p0 + ":" + p1 + ":" + v.getStartOffset() + ":" + (info[1] - (pos - p0)) +
 					//				":" + v.getEndOffset() + ":" + info[0] + ":" + info[1] +":"+ width + ":" + alloc);
 					//	}
-					return new Rectangle(alloc.x + width, alloc.y, 0, metrics
-							.getHeight());
+					return new Rectangle(alloc.x + width, alloc.y, 0, metrics.getHeight());
 				}
 			}
 			
 			// determine range to the left of the position
 			Segment text = v.getText(p0, pos);
-			width = Utilities.getTabbedTextWidth(text, metrics, alloc.x,
-					expander, p0);
+			width = Utilities.getTabbedTextWidth(text, metrics, alloc.x, expander, p0);
 			SegmentCache.releaseSharedSegment(text);
-			return new Rectangle(alloc.x + width, alloc.y, 0, metrics
-					.getHeight());
+			return new Rectangle(alloc.x + width, alloc.y, 0, metrics.getHeight());
 		}
 		throw new BadLocationException("modelToView - can't convert", p1);
 	}

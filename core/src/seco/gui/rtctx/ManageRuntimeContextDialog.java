@@ -12,7 +12,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -23,20 +22,21 @@ import org.hypergraphdb.HGHandle;
 
 import seco.ThisNiche;
 import seco.gui.GUIHelper;
+import seco.gui.dialog.SecoDialog;
 import seco.rtenv.RtU;
 import seco.rtenv.RuntimeContext;
 import seco.util.GUIUtil;
 
-public class ManageRuntimeContextDialog extends JDialog
+public class ManageRuntimeContextDialog extends SecoDialog
 {
     private static final long serialVersionUID = 3567373905090160540L;
 
     public ManageRuntimeContextDialog()
     {
-        super(GUIUtil.getFrame(), "Manage Runtime Context");
+        super(GUIUtil.getFrame(), "Manage Runtime Context", false);
         if(GUIUtil.getFrame() == null) setIconImage(GUIHelper.LOGO_IMAGE);
         getContentPane().add(new ManageRtCtxPanel());
-        setSize(250, 160);
+        setSize(280, 160);
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE , 0), "close");
         getRootPane().getActionMap().put("close", new AbstractAction() {

@@ -617,8 +617,7 @@ public class CellUtils
     @SuppressWarnings("unchecked")
     public static void addStyle(CellGroupMember c, NBStyle style)
     {
-        Map<StyleType, NBStyle> s = (Map<StyleType, NBStyle>) c
-                .getAttribute(XMLConstants.CELL_STYLE);
+        Map<StyleType, NBStyle> s = (Map<StyleType, NBStyle>) c.getAttribute(XMLConstants.CELL_STYLE);
         if (s == null)
         {
             s = new HashMap<StyleType, NBStyle>(styles);

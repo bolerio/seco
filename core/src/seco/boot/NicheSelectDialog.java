@@ -52,7 +52,7 @@ public class NicheSelectDialog extends javax.swing.JDialog
 
     private void updateNichesModel()
     {
-        DefaultListModel newModel = new DefaultListModel();
+        DefaultListModel<String> newModel = new DefaultListModel<String>();
         for (String s : (Set<String>) niches.keySet())
             newModel.addElement(s);
         lstNiches.setModel(newModel);
@@ -481,7 +481,6 @@ public class NicheSelectDialog extends javax.swing.JDialog
     JButton btnRemove = new JButton("Remove Niche");
     JButton btnCancel = new JButton("Exit");
     JButton btnNew = new JButton("New Niche");
-    JList lstNiches = new JList();
+    JList<String> lstNiches = new JList<String>();
     JScrollPane scroll = new JScrollPane(lstNiches);
-
 }

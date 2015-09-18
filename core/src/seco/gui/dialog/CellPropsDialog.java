@@ -18,7 +18,6 @@ import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
-import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
@@ -43,9 +42,10 @@ import seco.things.CellGroup;
 import seco.things.CellUtils;
 import seco.util.GUIUtil;
 
-public class CellPropsDialog extends JDialog
+public class CellPropsDialog extends SecoDialog
 {
-    protected boolean succeeded = false;
+	private static final long serialVersionUID = 1L;
+	protected boolean succeeded = false;
     protected NotebookDocument doc;
     protected JEditorPane previewPane;
     protected HGHandle bookH;
@@ -53,8 +53,7 @@ public class CellPropsDialog extends JDialog
     protected StyleType style_type;
     protected NBStyle style;
 
-    public CellPropsDialog(final Frame parent, NotebookDocument doc,
-            StyleType style_type)
+    public CellPropsDialog(final Frame parent, NotebookDocument doc, StyleType style_type)
     {
         super(parent, "Properties for: " + style_type.getDescription(), true);
         if(parent == null) setIconImage(GUIHelper.LOGO_IMAGE);
@@ -75,8 +74,8 @@ public class CellPropsDialog extends JDialog
             public void actionPerformed(ActionEvent e)
             {
                 Color bgColor = JColorChooser.showDialog(CellPropsDialog.this,
-                        "Background",
-                        (Color) style.getDefaultValue(StyleAttribs.BG_COLOR));
+								                         "Background",
+								                         (Color) style.getDefaultValue(StyleAttribs.BG_COLOR));
                 if (bgColor == null) return;
                 style.put(StyleAttribs.BG_COLOR, bgColor);
                 showColors();
@@ -92,6 +91,7 @@ public class CellPropsDialog extends JDialog
                         .getDefaultValue(StyleAttribs.FONT), (Color) style
                         .getDefaultValue(StyleAttribs.FG_COLOR));
                 GUIUtil.centerOnScreen(dlg);
+                
                 dlg.setVisible(true);
                 if (dlg.succeeded)
                 {
@@ -118,7 +118,7 @@ public class CellPropsDialog extends JDialog
         });
         pb.add(bt);
         pa.add(pb, BorderLayout.WEST);
-        initSimpleBook();
+        initSampleBook();
         previewPane = new NotebookUI(bookH);
         previewPane.setBackground(Color.white);
         previewPane.setEditable(false);
@@ -145,8 +145,8 @@ public class CellPropsDialog extends JDialog
         });
         pp.add(bt);
         getContentPane().add(pp, BorderLayout.CENTER);
-        setPreferredSize(new Dimension(430, 300));
-        pack();
+        //setPreferredSize(new Dimension(600, 430));
+        //pack();
         // setResizable(false);
         setLocationRelativeTo(parent);
     }
@@ -162,25 +162,25 @@ public class CellPropsDialog extends JDialog
         succeeded = true;
     }
 
-    private void initSimpleBook()
+    private void initSampleBook()
     {
         if (bookH != null) return;
         bookH = CellUtils.createGroupHandle();
         CellGroup book = (CellGroup) ThisNiche.graph.get(bookH);
-        HGHandle cellH = CellUtils.makeCellH("s = \"Simple Input Cell\"",
-                "beanshell");
+        HGHandle cellH = CellUtils.makeCellH("s = \"Simple Input Cell\"", "beanshell");
         book.insert(0, cellH);
-        book.insert(1, CellUtils.createOutputCellH(cellH, "Simple Output Cell",
-                null, false));
+        book.insert(1, CellUtils.createOutputCellH(cellH, "Simple Output Cell", null, false));
         cellH = CellUtils.makeCellH("s = \"Another Input Cell\"", "beanshell");
         book.insert(2, cellH);
-        book.insert(3, CellUtils.createOutputCellH(cellH, "Simple Error Cell",
-                null, true));
+        book.insert(3, CellUtils.createOutputCellH(cellH, "Simple Error Cell", null, true));
         sample_doc = new NotebookDocument(bookH);
-        Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) doc.getBook()
-                .getAttribute(XMLConstants.CELL_STYLE);
+        @SuppressWarnings("unchecked")
+		Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) doc.getBook().getAttribute(XMLConstants.CELL_STYLE);
         if (map != null) for (NBStyle s : map.values())
+        {
+        	s.put(StyleAttribs.BG_COLOR, new java.awt.Color(102, 255, 102));
             sample_doc.addStyle(s);
+        }
         sample_doc.init();
     }
 
