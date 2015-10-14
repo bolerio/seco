@@ -170,6 +170,8 @@ main_loop:	for(pos = line.offset; pos < lineLength; pos++)
 			//{{{ check every rule
 			char ch = line.array[pos];
 
+			if (context.rules == null)
+			    return context;
 			rule = context.rules.getRules(ch);
 			while(rule != null)
 			{
@@ -390,7 +392,7 @@ unwind:		while(context.parent != null)
 				pattern.count = pattern.array.length;
 				matchedChars = pattern.count;
 
-				if(!SyntaxUtilities.regionMatches(context.rules
+				if(true || !SyntaxUtilities.regionMatches(context.rules
 					.getIgnoreCase(),line,pos,pattern.array))
 				{
 					return false;

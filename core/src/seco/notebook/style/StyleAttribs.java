@@ -17,7 +17,7 @@ public enum StyleAttribs
 	// GLOB_SEL_COLOR("defaultSloppySelectionColor", Color.GRAY,
 	// PropTypeEnum.COLOR),
 
-	BG_COLOR("bgColor", new Color(123, 255, 0), PropTypeEnum.COLOR), 
+	BG_COLOR("bgColor", new Color(255, 255, 255), PropTypeEnum.COLOR), 
 	BORDER_COLOR("borderColor", new Color(200, 200, 200), PropTypeEnum.COLOR), 
 	FG_COLOR("fgColor", Color.BLACK, PropTypeEnum.COLOR), 
 	FONT("font", new FontEx("Monospace", Font.PLAIN, 12), PropTypeEnum.FONT), 

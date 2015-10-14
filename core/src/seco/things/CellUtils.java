@@ -73,7 +73,7 @@ public class CellUtils
         styles.get(StyleType.outputCell).put(StyleAttribs.BORDER_COLOR,
                 Color.white);
         styles.get(StyleType.outputCell).put(StyleAttribs.FG_COLOR,
-                new java.awt.Color(0, 128, 0));
+                new java.awt.Color(0, 0, 0));
     }
 
     private CellUtils()
@@ -624,6 +624,7 @@ public class CellUtils
             c.setAttribute(XMLConstants.CELL_STYLE, s);
         }
         s.put(style.getStyleType(), style);
+        updateCellGroupMember(c);
     }
 
     public static HGHandle getOutCellHandle(CellGroupMember cell)

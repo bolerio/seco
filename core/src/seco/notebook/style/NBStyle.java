@@ -62,8 +62,7 @@ public class NBStyle extends EnumMap<StyleAttribs, Object>
 		if (val == null)
 		{
 			// TODO: very ugly workaround to provide default red color
-			if (sa.equals(StyleAttribs.FG_COLOR)
-					&& tag.equals(StyleType.error))
+			if (sa.equals(StyleAttribs.FG_COLOR) && tag.equals(StyleType.error))
 				val = Color.red;
 			else
 				val = sa.getDefVal();

@@ -87,11 +87,10 @@ public class CellPropsDialog extends SecoDialog
         bt.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
             {
-                FontDialog dlg = new FontDialog(parent, (FontEx) style
-                        .getDefaultValue(StyleAttribs.FONT), (Color) style
-                        .getDefaultValue(StyleAttribs.FG_COLOR));
-                GUIUtil.centerOnScreen(dlg);
-                
+                FontDialog dlg = new FontDialog(parent, 
+                                               (FontEx) style.getDefaultValue(StyleAttribs.FONT), 
+                                               (Color) style.getDefaultValue(StyleAttribs.FG_COLOR));
+                GUIUtil.centerOnScreen(dlg);                
                 dlg.setVisible(true);
                 if (dlg.succeeded)
                 {
@@ -178,7 +177,7 @@ public class CellPropsDialog extends SecoDialog
 		Map<StyleType, NBStyle> map = (Map<StyleType, NBStyle>) doc.getBook().getAttribute(XMLConstants.CELL_STYLE);
         if (map != null) for (NBStyle s : map.values())
         {
-        	s.put(StyleAttribs.BG_COLOR, new java.awt.Color(102, 255, 102));
+//        	s.put(StyleAttribs.BG_COLOR, StyleAttribs.BG_COLOR.getDefVal());
             sample_doc.addStyle(s);
         }
         sample_doc.init();

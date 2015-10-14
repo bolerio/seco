@@ -106,8 +106,7 @@ abstract public class DocUtil
 
     static void populateDocStyle(Style doc_style, NBStyle style)
     {
-        StyleConstants.setForeground(doc_style, (Color) style
-                .getDefaultValue(StyleAttribs.FG_COLOR));
+        StyleConstants.setForeground(doc_style, (Color) style.getDefaultValue(StyleAttribs.FG_COLOR));
         FontEx f = (FontEx) style.getDefaultValue(StyleAttribs.FONT);
         f.populateStyle(doc_style);
         StyleConstants.setBackground(doc_style, (Color)style.getDefaultValue(StyleAttribs.BG_COLOR));

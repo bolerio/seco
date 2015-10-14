@@ -1216,7 +1216,7 @@ public class NotebookDocument extends DefaultStyledDocument
         if (style.getStyleType() == StyleType.outputCell)
         {
             outputCellFont = getFont(doc_style);
-            // updateStyles();
+            updateStyles();
         }
         else if (style.getStyleType() == StyleType.inputCell)
         {
@@ -1230,7 +1230,7 @@ public class NotebookDocument extends DefaultStyledDocument
 //            outputCellFont = getFont(DocUtil.getDocStyle(this, StyleType.outputCell));
 //            updateStyles();
 //        }
-        updateElement(getRootElements()[0]);
+//        updateElement(getRootElements()[0]);
     }
     
     public Font getInputCellFont()
