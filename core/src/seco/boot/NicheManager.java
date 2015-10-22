@@ -12,6 +12,7 @@ import java.util.concurrent.Callable;
 
 import javax.swing.JComponent;
 
+import org.hypergraphdb.HGConfiguration;
 import org.hypergraphdb.HGEnvironment;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPersistentHandle;
@@ -23,8 +24,10 @@ import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.type.HGAtomType;
 import org.hypergraphdb.type.JavaTypeFactory;
 
+import seco.AppConfig;
 import seco.ThisNiche;
 import seco.U;
+import seco.actions.CommonActions;
 import seco.gui.GUIHelper;
 import seco.gui.visual.CellContainerVisual;
 import seco.gui.visual.JComponentVisual;
@@ -163,14 +166,17 @@ public class NicheManager
      */
     public static boolean isNicheLocation(File location)
     {
-        if (!new File(location, "hgstore_idx_HGATOMTYPE").exists())
+        if (!HGEnvironment.exists(location.getAbsolutePath()))
         	return false;
         else
         {
         	HyperGraph hg = null;
         	try
         	{
-        		hg = new HyperGraph(location.getAbsolutePath());
+        		HGConfiguration config = new HGConfiguration();
+        		config.setSkipOpenedEvent(true);
+        		config.setSkipMaintenance(true);
+        		hg = HGEnvironment.get(location.getAbsolutePath(), config);
         		return hg.get(ThisNiche.NICHE_NAME_HANDLE) != null &&
         			   hg.get(ThisNiche.TOP_CONTEXT_HANDLE) != null;
         	}
@@ -335,11 +341,13 @@ public class NicheManager
         
     }
     
-    public static void populateDefaultSecoUI(HyperGraph hg)
+    public static void populateDefaultSecoUI(HyperGraph graph)
     {
-        populateSecoTypes(hg);
-        if(hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE) == null)
+    	populateSecoTypes(graph);
+        if(graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE) == null)
+        {
            GUIHelper.makeTopCellGroup();
+        }
     }   
         
     static void populateThisNiche()

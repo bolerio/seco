@@ -14,6 +14,7 @@ import seco.ThisNiche;
 import seco.U;
 import seco.classloader.AdaptiveClassLoader;
 import seco.gui.StandaloneFrame;
+import seco.gui.TopFrame;
 import seco.storage.ClassRepository;
 
 public class StartMeUp
@@ -26,7 +27,7 @@ public class StartMeUp
 		System.exit(-1);
 	}
 	
-    static String defaultNicheLocation()
+    public static String defaultNicheLocation()
     {
     	String userHome = System.getProperty("user.home");
     	return userHome + File.separatorChar + ".secoDefaultNiche";
@@ -38,9 +39,9 @@ public class StartMeUp
 		System.out.println("java.library.path: " + System.getProperty("java.library.path"));
 		System.out.println("java.home: " + System.getProperty("java.home"));
 		System.out.println("user.home: " + U.findUserHome());
-    	String nicheLocation = defaultNicheLocation();
-    	boolean showNicheDialog = true;
-    	boolean simpleUI = false;
+    	String nicheLocation = null;
+    	boolean showNicheDialog = false;
+    	boolean simpleUI = true;
     	for (int i = 0; i < argv.length; i++)
     	{
     		if ("--nicheLocation".equals(argv[i]))
@@ -52,7 +53,7 @@ public class StartMeUp
     		else
     			die("Unknown option " + argv[i], true);
     	}
-		if (showNicheDialog)
+		if (showNicheDialog && nicheLocation == null)
 		{
 			Map<String, File> niches = NicheManager.readNiches();
 			NicheSelectDialog dlg = new NicheSelectDialog();
@@ -65,9 +66,9 @@ public class StartMeUp
 				System.exit(-1);
 			}
 		}
-		if (simpleUI)
+		if (nicheLocation == null)
 		{
-			ThisNiche.guiControllerClassName = StandaloneFrame.class.getName();
+			nicheLocation = defaultNicheLocation();
 			File location = new File(nicheLocation);
 			if (!NicheManager.isNicheLocation(location))
 			{
@@ -75,23 +76,24 @@ public class StartMeUp
 					NicheManager.createNiche("default", location);
 				else
 					die("Default location for niche is not empty: " + nicheLocation, false);
-			}
-//			seco.boot.Main.go(nicheLocation, null);
+			}			
 		}
-//		else
-//		{
-			AdaptiveClassLoader cl = new AdaptiveClassLoader(new java.util.Vector<Object>(), true);
-			try
-			{
-				Class<?> c = cl.loadClass("seco.boot.Main");
-				c.getMethod("go", new Class[] { String.class, String.class }).invoke(null,
-						new Object[] { nicheLocation, simpleUI ? StandaloneFrame.class.getName() : null });
-			}
-			catch (Throwable t)
-			{
-				t.printStackTrace(System.err);
-				System.exit(-1);
-			}        
-//		}
+		if (simpleUI)
+		{
+			ThisNiche.guiControllerClassName = StandaloneFrame.class.getName();
+			TopFrame.PICCOLO = false;
+		}
+		AdaptiveClassLoader cl = new AdaptiveClassLoader(new java.util.Vector<Object>(), true);
+		try
+		{
+			Class<?> c = cl.loadClass("seco.boot.Main");
+			c.getMethod("go", new Class[] { String.class, String.class }).invoke(null,
+					new Object[] { nicheLocation, simpleUI ? StandaloneFrame.class.getName() : null });
+		}
+		catch (Throwable t)
+		{
+			t.printStackTrace(System.err);
+			System.exit(-1);
+		}        
 	}
 }

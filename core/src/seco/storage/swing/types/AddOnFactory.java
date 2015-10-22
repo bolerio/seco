@@ -272,8 +272,10 @@ public class AddOnFactory
         }
     }
 
-    static Object instantiateConstructorLink(HyperGraph hg, SwingType type,
-            ConstructorLink link, Record record)
+    static Object instantiateConstructorLink(HyperGraph hg, 
+    										 SwingType type,
+    										 ConstructorLink link, 
+    										 Record record)
     {
         Class<?>[] types = new Class[0];
         Object[] args = new Object[0];

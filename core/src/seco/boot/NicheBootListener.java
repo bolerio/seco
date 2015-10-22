@@ -7,6 +7,8 @@
  */
 package seco.boot;
 
+import java.io.File;
+
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -14,6 +16,7 @@ import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.event.HGEvent;
 import org.hypergraphdb.event.HGListener;
 
+import seco.AppConfig;
 import seco.ThisNiche;
 import seco.actions.CommonActions;
 import seco.gui.GUIHelper;
@@ -27,9 +30,9 @@ import seco.things.CellVisual;
 public class NicheBootListener implements HGListener
 {
     public static boolean DEBUG_NICHE = false;
-    public Result handle(HyperGraph hg, HGEvent event)
+    public Result handle(HyperGraph graph, HGEvent event)
     {
-    	ThisNiche.bindNiche(hg);
+    	ThisNiche.bindNiche(graph);
     	ThisNiche.initGUIController();
     	final JFrame f = ThisNiche.guiController.getFrame();
         RuntimeContext topRuntime = ThisNiche.getTopContext().getRuntimeContext(); 
@@ -38,12 +41,8 @@ public class NicheBootListener implements HGListener
         topRuntime.getBindings().put("frame", f);
         ThisNiche.graph.update(topRuntime);
         
-        // We need to make sure that we have a TOP_CELL_GROUP, no matter what, even if
-        // it was deleted by mistake.
-        if (hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE) == null)
-            GUIHelper.makeTopCellGroup();
-        final CellGroup group = hg.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
-        final CellVisual v = hg.get(group.getVisual());
+        final CellGroup group = graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
+        final CellVisual v = graph.get(group.getVisual());
         SwingUtilities.invokeLater(new Runnable(){
             public void run()
             {
@@ -61,8 +60,7 @@ public class NicheBootListener implements HGListener
                     ConnectionManager.startConnections();
                 }
                 else if (f != null)
-                	f.setVisible(true);
-            	
+                	f.setVisible(true);            	
             	Thread.currentThread().setUncaughtExceptionHandler(GUIHelper.getUncaughtExceptionHandler());                
             }
         });

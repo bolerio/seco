@@ -39,7 +39,6 @@ import seco.notebook.ElementType;
 import seco.notebook.NotebookDocument;
 import seco.notebook.NotebookUI;
 
-
 public class ExpandHandleView extends HidableComponentView
 {
 	static int X_DIM = 10;
@@ -52,16 +51,14 @@ public class ExpandHandleView extends HidableComponentView
 	}
 
 	/*
-	public int getNextVisualPositionFrom(int pos, Position.Bias b, Shape a,
-			int direction, Position.Bias[] biasRet) throws BadLocationException
-	{
-		//System.out.println("ExpandHandle - up: " + (direction == SwingConstants.NORTH));
-		//if (direction == SwingConstants.NORTH)  
-		//		return getStartOffset() - 1;
-		return -1;
-		//return super.getNextVisualPositionFrom(pos, b, a, direction, biasRet);
-	}*/
-	
+	 * public int getNextVisualPositionFrom(int pos, Position.Bias b, Shape a,
+	 * int direction, Position.Bias[] biasRet) throws BadLocationException {
+	 * //System.out.println("ExpandHandle - up: " + (direction ==
+	 * SwingConstants.NORTH)); //if (direction == SwingConstants.NORTH) //
+	 * return getStartOffset() - 1; return -1; //return
+	 * super.getNextVisualPositionFrom(pos, b, a, direction, biasRet); }
+	 */
+
 	@Override
 	public float getAlignment(int axis)
 	{
@@ -77,12 +74,12 @@ public class ExpandHandleView extends HidableComponentView
 		}
 		return super.getAlignment(axis);
 	}
-	
+
 	protected short getRightInset()
 	{
 		return 3;
 	}
-	
+
 	protected short getLeftInset()
 	{
 		return 3;
@@ -93,11 +90,11 @@ public class ExpandHandleView extends HidableComponentView
 	{
 		return getElement().getStartOffset() + 1;
 	}
-	
+
 	@Override
 	public void setVisible(boolean visible)
 	{
-		if(button != null)
+		if (button != null)
 			button.setVisible(visible);
 		super.setVisible(visible);
 	}
@@ -107,23 +104,23 @@ public class ExpandHandleView extends HidableComponentView
 		if (button == null)
 		{
 			button = new CustomButton();
-			button
-					.setCursor(Cursor
-							.getPredefinedCursor(Cursor.HAND_CURSOR));
+			button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			button.setMargin(new Insets(0, 0, 0, 0));
 			View par = getParent();
-			Dimension dim = new Dimension(X_DIM, (int) par
-					.getPreferredSpan(View.Y_AXIS));
+			Dimension dim = new Dimension(X_DIM,
+					(int) par.getPreferredSpan(View.Y_AXIS));
 			button.setPreferredSize(dim);
 			button.setMinimumSize(dim);
 			button.setBackground(Color.white);
 			button.setBorderPainted(false);
 			button.setToolTipText("Expand/Collapse Error Cell");
 			final NotebookUI ui = (NotebookUI) getContainer();
-			button.addActionListener(new ActionListener() {
+			button.addActionListener(new ActionListener()
+			{
 				public void actionPerformed(ActionEvent e)
 				{
-					if (!ui.isEditable()) return;
+					if (!ui.isEditable())
+						return;
 					button.collapse = !button.collapse;
 					expand();
 				}
@@ -132,29 +129,30 @@ public class ExpandHandleView extends HidableComponentView
 		}
 		return button;
 	}
-	
+
 	private void expand()
 	{
 		View cell = getParent().getView(0).getView(0);
-		for(int i = 1; i< cell.getViewCount(); i++)
+		for (int i = 1; i < cell.getViewCount(); i++)
 		{
-			CellParagraphView p = (CellParagraphView)
-			      cell.getView(i);
+			CellParagraphView p = (CellParagraphView) cell.getView(i);
 			p.setVisible(!button.collapse);
 		}
-		((NotebookUI)getContainer()).getDoc().updateElement(getParent().getElement());
+		((NotebookUI) getContainer()).getDoc().updateElement(
+				getParent().getElement());
 	}
-	
-	class CustomButton extends JButton 
+
+	class CustomButton extends JButton
 	{
 		boolean collapse = false;
-								
+
 		public CustomButton()
 		{
 			super();
-			final NotebookUI ui = (NotebookUI) 
-			     ExpandHandleView.this.getContainer();
-			this.addKeyListener(new KeyAdapter() {
+			final NotebookUI ui = (NotebookUI) ExpandHandleView.this
+					.getContainer();
+			this.addKeyListener(new KeyAdapter()
+			{
 				public void keyReleased(KeyEvent e)
 				{
 					if (KeyEvent.VK_DELETE == e.getKeyCode())
@@ -163,27 +161,29 @@ public class ExpandHandleView extends HidableComponentView
 					}
 				}
 			});
-		} 
-	
+		}
+
 		@Override
 		public void paint(Graphics g1)
 		{
 			super.paint(g1);
-			Graphics2D g = (Graphics2D) g1; 
+			Graphics2D g = (Graphics2D) g1;
 			Rectangle b = this.getBounds();
-			int x = b.x;	int y = b.y;	int w = b.width; int h = b.height;
+			int x = b.x;
+			int y = b.y;
+			int w = b.width;
+			int h = b.height;
 			Color c = Color.blue;
 			g.setColor(c);
 			Stroke old = g.getStroke();
 			g.setStroke(stroke);
 			// |
-			if (collapse) 
-			  g.drawLine((x + w/2), (y + h/2 -5), (x + w/2), (y + h/2 + 5));
+			if (collapse)
+				g.drawLine((x + w / 2), (y + h / 2 - 5), (x + w / 2), (y + h
+						/ 2 + 5));
 			// -
-			g.drawLine((x + w - 10), (y + h/2), (x + w), (y + h/2));
+			g.drawLine((x + w - 10), (y + h / 2), (x + w), (y + h / 2));
 			g.setStroke(old);
 		}
-  }
+	}
 }
-
-

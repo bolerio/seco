@@ -12,34 +12,17 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.Shape;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import javax.swing.JButton;
+import java.awt.Shape;
+
 import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.ComponentView;
 import javax.swing.text.Element;
 import javax.swing.text.Position;
 import javax.swing.text.View;
-import javax.swing.text.Position.Bias;
 
 import seco.notebook.NotebookUI;
 import seco.notebook.SelectionManager;
-import seco.notebook.view.CellHandleView.CustomButton;
 
 
 
@@ -57,10 +40,8 @@ public class InsertionPointView extends HidableComponentView
 		if (button == null)
 		{
 			button = new CustomButton();
-			button.setCursor(Cursor
-							.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
-			Dimension dim = new Dimension((int) getPreferredSpan(View.X_AXIS),
-					3);
+			button.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+			Dimension dim = new Dimension((int) getPreferredSpan(View.X_AXIS), 3);
 			button.setPreferredSize(dim);
 			button.setBackground(Color.white);
 		}
@@ -156,8 +137,7 @@ public class InsertionPointView extends HidableComponentView
 					.getStartOffset() || !getContainer().isFocusOwner()) return;
 			Rectangle bounds = this.getBounds();
 			g.setColor(java.awt.Color.black);
-			g.drawLine(bounds.x, bounds.y + 1, bounds.x + bounds.width,
-					bounds.y + 1);
+			g.drawLine(bounds.x, bounds.y + 1, bounds.x + bounds.width, bounds.y + 1);
 		}
 		
 		public void setSelected(boolean selected)

@@ -423,7 +423,7 @@ public class CommonActions
         importGroup(file);
     }
 
-    static void importGroup(File file)
+    public static void importGroup(File file)
     {
         try
         {

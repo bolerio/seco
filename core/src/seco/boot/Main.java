@@ -12,6 +12,7 @@ import org.hypergraphdb.HGEnvironment;
 
 import seco.ThisNiche;
 import seco.U;
+import seco.gui.TopFrame;
 
 /**
  * Main class loaded reflectively with a custom class loader.
@@ -29,6 +30,7 @@ public class Main
 	{
 		if (guiControllerClass != null)
 			ThisNiche.guiControllerClassName = guiControllerClass;
+		TopFrame.PICCOLO = false;
         HGEnvironment.get(nicheLocation, U.dbConfig()); // boots from HG LOAD listeners            
 	}
 }

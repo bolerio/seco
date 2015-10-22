@@ -105,13 +105,10 @@ public class CellHandleView extends HidableComponentView
 		{
 			final NotebookUI ui = (NotebookUI) getContainer();
 			button = new CustomButton(this);
-			button
-					.setCursor(Cursor
-							.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+			button.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
 			button.setMargin(new Insets(0, 0, 0, 0));
 			View par = getParent();
-			Dimension dim = new Dimension(X_DIM, (int) par
-					.getPreferredSpan(View.Y_AXIS));
+			Dimension dim = new Dimension(X_DIM, (int) par.getPreferredSpan(View.Y_AXIS));
 			// System.out.println("CellHandleView - createComponent(): " + dim);
 			button.setPreferredSize(dim);
 			button.setMinimumSize(dim);
@@ -128,12 +125,13 @@ public class CellHandleView extends HidableComponentView
 					{
 						if ((mode & ActionEvent.SHIFT_MASK) != 0)
 						{
-							manager
-									.addCellRangeSelection(getEnclosingElement());
-						} else if ((mode & ActionEvent.CTRL_MASK) != 0)
+							manager.addCellRangeSelection(getEnclosingElement());
+						} 
+						else if ((mode & ActionEvent.CTRL_MASK) != 0)
 						{
 							manager.addCellSelection(getEnclosingElement());
-						} else
+						} 
+						else
 						{
 							manager.clearSelections();
 							manager.addCellSelection(getEnclosingElement());
@@ -152,8 +150,8 @@ public class CellHandleView extends HidableComponentView
 
 	boolean isOutputCell()
 	{
-		return NotebookDocument.getUpperElement(getElement(),
-				ElementType.outputCellBox) != null;
+		return NotebookDocument.getUpperElement(getElement(), 
+											    ElementType.outputCellBox) != null;
 		// return ViewUtils.getUpperView(this, ElementType.outputCellBox) !=
 		// null;
 	}
@@ -358,8 +356,7 @@ public class CellHandleView extends HidableComponentView
 
 		private boolean isCollapsed()
 		{
-			return CellUtils.isCollapsed(NotebookDocument.getNBElement(
-			        view.getElement()));
+			return CellUtils.isCollapsed(NotebookDocument.getNBElement(view.getElement()));
 		}
 
 		public void setSelected(boolean selected)
@@ -371,8 +368,7 @@ public class CellHandleView extends HidableComponentView
 		}
 	}
 
-	private static class DragMouseListener extends MouseAdapter implements
-			MouseMotionListener
+	private static class DragMouseListener extends MouseAdapter implements MouseMotionListener
 	{
 		private CustomButton button;
 

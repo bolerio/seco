@@ -14,6 +14,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -26,7 +27,10 @@ import javax.swing.event.CaretListener;
 
 import org.hypergraphdb.HGHandle;
 
+import seco.AppConfig;
 import seco.ThisNiche;
+import seco.actions.CommonActions;
+import seco.boot.StartMeUp;
 import seco.gui.visual.TabbedPaneVisual;
 import seco.notebook.StatusBar;
 import seco.things.CellGroup;
@@ -92,8 +96,14 @@ public class StandaloneFrame extends TopFrame
         ThisNiche.graph.update(group);
         top.insert(top.getArity(), group);
         TabbedPaneVisual v = ThisNiche.graph.get(TabbedPaneVisual.getHandle());
-        return v.bind(group);
-        //return TabbedPaneU.createTabbedPane(group);
+        Component tabbedPane = v.bind(group);
+        if (ThisNiche.graph.getLocation().equals(StartMeUp.defaultNicheLocation()))
+        {
+     	   File tutorialBook = new File(new File(AppConfig.getJarDirectory(), "examples"), "SecoWelcome.nb");
+     	   System.out.println("Importing tutorial: " + tutorialBook);
+     	   CommonActions.importGroup(tutorialBook);
+        }
+        return tabbedPane;
     }
 
     public CaretListener getNotebookUICaretListener()

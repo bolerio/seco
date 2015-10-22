@@ -2,7 +2,7 @@
 <project basedir="." name="Seco">
 	<description>Seco Build File</description>
 
-	<property name="version" value="0.5" />
+	<property name="version" value="0.6" />
 	<property name="jar-name" value="seco.jar"/>
 	
 	<!-- The directory containing library jar files -->
@@ -68,6 +68,7 @@
 			<exclude name="**/*.jar" />
 			<exclude name="**/*.bak" />
 		</jar>
+       <copy todir="." file="${build}/seco/seco.jar"/>
 	</target>
 
 	<target name="dist-prepare" depends="jars" description="Copy distribution files for zip.">
