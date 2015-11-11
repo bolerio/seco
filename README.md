@@ -7,7 +7,7 @@ Seco is a collaborative scripting development environment for the Java platform.
 * [Latest Release](https://github.com/bolerio/seco/wiki/Latest-Release) - download links etc.
 * [Installing and Starting Seco](https://github.com/bolerio/seco/wiki/Installing-and-Starting-Seco) - it's basically unpack and run 'run.sh', but here are some details.
 * [Google group for discussion](https://groups.google.com/forum/#!forum/scriba) - post questions & ideas there rather than writing personally to me.
-* [Become a Seco Developer](https://github.com/bolerio/seco/wiki/Installing-and-Starting-Seco) - yes, come and help!
+* [Become a Seco Developer](https://github.com/bolerio/seco/wiki/Become-a-Seco-Developer) - yes, come and help!
 
 ## Take a Glance 
 Here is a screenshot of the full GUI, though out of the box you'd see a simplified version with a single tabbed pane:
