@@ -1,6 +1,16 @@
 # Seco
 
-Seco is a collaborative scripting development environment for the Java platform. You can write code in many JVM scripting languages. The code editor in Seco is based on the Mathematica notebook UI, but the full GUI is richer and much more ambitious. In a notebook, you can mix rich text with code and output, including interactive components created by your code. This makes Seco into a live environment because you can evaluate expression and immediately see the changes to your program. Here is a screenshot:
+Seco is a collaborative scripting development environment for the Java platform. You can write code in many JVM scripting languages. The code editor in Seco is based on the Mathematica notebook UI, but the full GUI is richer and much more ambitious. In a notebook, you can mix rich text with code and output, including interactive components created by your code. This makes Seco into a live environment because you can evaluate expression and immediately see the changes to your program. 
+
+## Jump To:
+
+* [Latest Release](https://github.com/bolerio/seco/wiki/Latest-Release) - download links etc.
+* [Installing and Starting Seco](https://github.com/bolerio/seco/wiki/Installing-and-Starting-Seco) - it's basically unpack and run 'run.sh', but here are some details.
+* [Google group for discussion](https://groups.google.com/forum/#!forum/scriba) - post questions & ideas there rather than writing personally to me.
+* [Become a Seco Developer](https://github.com/bolerio/seco/wiki/Installing-and-Starting-Seco) - yes, come and help!
+
+## Take a Glance 
+Here is a screenshot of the full GUI, though out of the box you'd see a simplified version with a single tabbed pane:
 
 ![Alt text](http://kobrix.com/images/secofullshot.png "Seco Screenshot")
 
