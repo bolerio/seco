@@ -28,7 +28,7 @@ A collaborative live development environment for building large-scale systems ba
 
 ## Brief History
 
-Seco is more than a decade old. Initially called _Scriba_, it was funded and developed by [Kobrix Software, Inc.](http://www.kobrix.com) with the double goal of being a practical programming tool for daily use, initially complementing standard IDEs, and working towards achieving a new vision for knowledge-driven programming as outlined in the above mentioned paper. While it matured quickly, as funds dried out, development staled. Currenly the project is being maintained sporadically. Most of the code was written by Konstantin Vandev. It is currently maintained by Borislav Iordanov (@bolerio). Actively seeking help! 
+Seco is more than a decade old (circa 2004). Initially called _Scriba_, it was funded and developed by [Kobrix Software, Inc.](http://www.kobrix.com) with the double goal of being a practical programming tool for daily use, initially complementing standard IDEs, and working towards achieving a new vision for knowledge-driven programming as outlined in the above mentioned paper. While it matured quickly, as funds dried out, development staled. Currenly the project is being maintained sporadically. Most of the code was written by Konstantin Vandev. It is currently maintained by Borislav Iordanov (@bolerio). Actively seeking help! 
 
 ## Comparison with Beaker/IPython/Jupyter
 
