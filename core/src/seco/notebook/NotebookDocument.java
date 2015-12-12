@@ -54,8 +54,6 @@ import javax.swing.undo.UndoableEdit;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 
-import com.sun.prism.paint.Color;
-
 import seco.ThisNiche;
 import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;

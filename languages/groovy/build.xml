@@ -60,7 +60,7 @@
 	</target>
 
 	<target name="jars" depends="compile, jars-prepare" description="Build Groovy Jar file.">
-		<jar basedir="${build}/compile" jarfile="${dist_jars}/${jar-name}">
+		<jar basedir="${build}/compile" jarfile="${jar-name}">
 			<exclude name="**/*.jar" />
 			<exclude name="**/*.bak" />
 		</jar>
