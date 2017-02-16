@@ -35,4 +35,5 @@ if $cygwin; then
   [ -n "$SECO_HOME" ] && SECO_CLASSPATH=`cygpath --absolute --path --windows "$SECO_CLASSPATH"`
 fi
 
+echo $SECO_CLASSPATH
 exec $JAVA_EXEC -cp $SECO_CLASSPATH seco.boot.StartMeUp "$@"

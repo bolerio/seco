@@ -67,17 +67,15 @@ public class StartMeUp
 			}
 		}
 		if (nicheLocation == null)
-		{
 			nicheLocation = defaultNicheLocation();
-			File location = new File(nicheLocation);
-			if (!NicheManager.isNicheLocation(location))
-			{
-				if (NicheManager.isLocationOk(location))
-					NicheManager.createNiche("default", location);
-				else
-					die("Default location for niche is not empty: " + nicheLocation, false);
-			}			
-		}
+		File location = new File(nicheLocation);
+		if (!NicheManager.isNicheLocation(location))
+		{
+			if (NicheManager.isLocationOk(location))
+				NicheManager.createNiche("default", location);
+			else
+				die("Default location for niche is not empty: " + nicheLocation, false);
+		}			
 		if (simpleUI)
 		{
 			ThisNiche.guiControllerClassName = StandaloneFrame.class.getName();

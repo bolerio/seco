@@ -77,7 +77,7 @@ import org.codehaus.groovy.ast.expr.PostfixExpression;
 import org.codehaus.groovy.ast.expr.PrefixExpression;
 import org.codehaus.groovy.ast.expr.PropertyExpression;
 import org.codehaus.groovy.ast.expr.RangeExpression;
-import org.codehaus.groovy.ast.expr.RegexExpression;
+//import org.codehaus.groovy.ast.expr.RegexExpression;
 import org.codehaus.groovy.ast.expr.SpreadExpression;
 import org.codehaus.groovy.ast.expr.SpreadMapExpression;
 import org.codehaus.groovy.ast.expr.StaticMethodCallExpression;
@@ -471,12 +471,12 @@ public class PathFinderVisitor extends ClassCodeVisitorSupport {
         }
     }
 
-    @Override
-    public void visitRegexExpression(RegexExpression node) {
-        if (isInside(node, line, column)) {
-            super.visitRegexExpression(node);
-        }
-    }
+//    @Override
+//    public void visitRegexExpression(RegexExpression node) {
+//        if (isInside(node, line, column)) {
+//            super.visitRegexExpression(node);
+//        }
+//    }
 
     @Override
     public void visitGStringExpression(GStringExpression node) {

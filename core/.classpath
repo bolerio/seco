@@ -6,11 +6,6 @@
 	<classpathentry kind="lib" path="lib/asm-commons-3.0.jar"/>
 	<classpathentry kind="lib" path="lib/beanshell.jar"/>
 	<classpathentry kind="lib" path="lib/grouplayout.jar"/>
-	<classpathentry kind="lib" path="lib/hgbdbje-1.3-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/hgdb-1.3-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/hgdbmanagement-1.3-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/hgdbp2p-1.3-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="lib/hgdbtest-1.3-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/je-5.0.34.jar"/>
 	<classpathentry kind="lib" path="lib/jscheme-jsr.jar"/>
 	<classpathentry kind="lib" path="lib/jscheme.jar"/>
@@ -24,6 +19,10 @@
 	<classpathentry kind="lib" path="lib/smack.jar"/>
 	<classpathentry kind="lib" path="lib/smackx.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/mjson-1.4-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="/Users/borislav/code/seco/core/lib/hgbdbje-1.4-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="/Users/borislav/code/seco/core/lib/hgdb-1.4-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="/Users/borislav/code/seco/core/lib/hgdbmanagement-1.4-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="/Users/borislav/code/seco/core/lib/hgdbp2p-1.4-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/mjson-1.4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -219,7 +219,7 @@ public abstract class ScriptSupport
 		chunkCache.invalidateChunksFromPhys(line);
 		Completion.get().insertUpdate(e, this);
 		DocumentEvent.ElementChange ch = e.getChange(el);
-		if (ch != null && getParser() != null) getParser().insertUpdate(e);
+		if (/*ch != null && */ getParser() != null) getParser().insertUpdate(e);
 		// update_in_progress = false;
 	}
 

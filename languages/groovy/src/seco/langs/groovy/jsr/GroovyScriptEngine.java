@@ -39,6 +39,7 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import org.codehaus.groovy.runtime.MetaClassHelper;
 import org.codehaus.groovy.runtime.MethodClosure;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.control.CompilationFailedException;
 import java.lang.reflect.*;
 
@@ -54,6 +55,7 @@ public class GroovyScriptEngine
     public Map<String, Closure> globalClosures;
     // class loader for Groovy generated classes
     public GroovyClassLoader loader;
+    private ImportCustomizer importsCustomizer = new ImportCustomizer();
     // lazily initialized factory
     private volatile GroovyScriptEngineFactory factory;
 
@@ -64,11 +66,50 @@ public class GroovyScriptEngine
         counter = 0;
     }
     
+    private void extractImports(String script) {
+    	BufferedReader reader = new BufferedReader(new StringReader(script));
+    	reader.lines().forEach(line -> {
+    		int pos = 0;
+    		String [] tokens = line.trim().split("\\s+");    		
+    		if (pos == tokens.length) return;
+    		if (!"import".equals(tokens[pos++])) return;
+    		if (pos == tokens.length) return;    		
+    		boolean is_static = false;
+    		if ("static".equals(tokens[pos])) { is_static = true; pos++; }
+    		if (pos == tokens.length) return;    		
+    		String theimport = tokens[pos++];
+			int lastdot = theimport.lastIndexOf('.');
+			String importMain = theimport.substring(0, lastdot);
+			String importLastPart = theimport.substring(lastdot+1);
+    		if (pos == tokens.length) 
+    		{ 
+    			if (is_static)
+    				importsCustomizer.addStaticImport(importMain, importLastPart);
+    			else if (theimport.endsWith("*"))
+    				importsCustomizer.addStarImports(importMain);
+    			else
+    				importsCustomizer.addImports(theimport); 
+    			return; 
+    		}
+    		if (!"as".equals(tokens[pos++]) || pos == tokens.length) 
+    			throw new RuntimeException("Can't parse Groovy import statement " + line);
+    		String alias = tokens[pos];
+    		if (is_static)
+    		{
+    			importsCustomizer.addStaticImport(alias, importMain, importLastPart);
+    		}
+    		else
+    			importsCustomizer.addImport(alias, theimport);
+    	});
+    }
+    
     public GroovyScriptEngine() {    
         //classMap = Collections.synchronizedMap(new HashMap<String, Class<?>>());
         globalClosures = Collections.synchronizedMap(new HashMap<String, Closure>());
+        CompilerConfiguration compileConfiguration = new CompilerConfiguration();
+        compileConfiguration.addCompilationCustomizers(importsCustomizer);
         loader = new GroovyClassLoader(getParentLoader(),
-                                       new CompilerConfiguration());
+                                       compileConfiguration);
     }
 
     public Object eval(Reader reader, ScriptContext ctx) 
@@ -79,6 +120,7 @@ public class GroovyScriptEngine
     public Object eval(String script, ScriptContext ctx) 
                        throws ScriptException {
         try {
+        	extractImports(script);
             return eval(getScriptClass(script), ctx);
         } catch (SyntaxException e) {
             throw new ScriptException(e.getMessage(), 

@@ -104,8 +104,7 @@ public class TokenMarker
 	/**
 	 * Do not call this method directly; call Buffer.markTokens() instead.
 	 */
-	public LineContext markTokens(LineContext prevContext,
-		TokenHandler tokenHandler, Segment line)
+	public LineContext markTokens(LineContext prevContext, TokenHandler tokenHandler, Segment line)
 	{
 		// Set up some instance variables
 		// this is to avoid having to pass around lots and lots of
