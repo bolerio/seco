@@ -2,8 +2,8 @@
 <project basedir="." name="Seco Prolog">
 	<description>Seco Prolog Language Support Build File</description>
 
-	<property name="version" value="1.0" />
-	<property name="jar-name" value="seco-prolog.jar"/>	
+	<property name="version" value="0.7.0" />
+	<property name="jar-name" value="seco-prolog-${version}.jar"/>	
 	<!-- Path to seco.jar -->
 	<!--<property name="seco.jar" value="../${basedir}/seco.jar" />-->
 	<!-- The directory containing library jar files -->
