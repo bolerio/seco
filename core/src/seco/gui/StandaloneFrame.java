@@ -9,19 +9,11 @@ package seco.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Rectangle;
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
@@ -35,6 +27,7 @@ import seco.gui.visual.TabbedPaneVisual;
 import seco.notebook.StatusBar;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
+import seco.things.CellUtils;
 
 /**
  * 
@@ -101,7 +94,7 @@ public class StandaloneFrame extends TopFrame
         {
      	   File tutorialBook = new File(new File(AppConfig.getJarDirectory(), "examples"), "SecoWelcome.nb");
      	   System.out.println("Importing tutorial: " + tutorialBook);
-     	   CommonActions.importGroup(tutorialBook);
+     	   CellGroupMember welcomeBook = CommonActions.importGroup(tutorialBook);
         }
         return tabbedPane;
     }

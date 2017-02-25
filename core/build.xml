@@ -75,17 +75,19 @@
 		<copy todir="${build}/seco">
 			<fileset dir=".">
 				<include name="lib/**" />
-				<include name="run.**" />
 				<include name="Readme.txt" />
 				<include name="LicensingInformation" />
                 <include name="BERKELEYDB_LICENSE.txt" />
 			</fileset>
 		</copy>
-        <copy todir="${build}/seco">
-            <fileset dir=".">
-                <include name="examples/**"/>
-            </fileset>
-        </copy>        
+		<exec executable="cp">
+		    <arg line=" run.sh run.cmd ${build}/seco"/>
+		</exec>		
+    <copy todir="${build}/seco">
+        <fileset dir=".">
+            <include name="examples/**"/>
+        </fileset>
+    </copy>        
 	</target>
 
 	<target name="dist-zip" depends="dist-prepare" description="Build Windows distribution">
@@ -98,13 +100,17 @@
 
 	<target name="dist-tgz" depends="dist-prepare" description="Build Linux distribution">
 		<tar destfile="${dist}/seco-dist-${version}.tar">
+		  <tarfileset dir="${build}" filemode="755" username="ant" group="ant">
+		    <include name="seco/run.sh"/>
+		  </tarfileset>			
 			<tarfileset dir="${build}">
 				<include name="seco/**" />
+				<exclude name="seco/run.sh"/>
 			</tarfileset>
-         </tar>
-         <gzip src="${dist}/seco-dist-${version}.tar"
-               destfile="${dist}/seco-dist-${version}.tgz"/>
-         <delete file="${dist}/seco-dist-${version}.tar"/>
+     </tar>
+     <gzip src="${dist}/seco-dist-${version}.tar"
+           destfile="${dist}/seco-dist-${version}.tgz"/>
+     <delete file="${dist}/seco-dist-${version}.tar"/>
 	</target>
 
 	<target description="clean up" name="clean">

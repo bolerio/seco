@@ -7,8 +7,6 @@
  */
 package seco.boot;
 
-import java.io.File;
-
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -16,7 +14,6 @@ import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.event.HGEvent;
 import org.hypergraphdb.event.HGListener;
 
-import seco.AppConfig;
 import seco.ThisNiche;
 import seco.actions.CommonActions;
 import seco.gui.GUIHelper;
@@ -32,7 +29,8 @@ public class NicheBootListener implements HGListener
     public static boolean DEBUG_NICHE = false;
     public Result handle(HyperGraph graph, HGEvent event)
     {
-    	ThisNiche.bindNiche(graph);
+		NicheManager.populateDefaultScriptingLanguages(graph);    	
+    	ThisNiche.bindNiche(graph);    	
     	ThisNiche.initGUIController();
     	final JFrame f = ThisNiche.guiController.getFrame();
         RuntimeContext topRuntime = ThisNiche.getTopContext().getRuntimeContext(); 
@@ -46,6 +44,7 @@ public class NicheBootListener implements HGListener
         SwingUtilities.invokeLater(new Runnable(){
             public void run()
             {
+                CellUtils.evaluateVisibleInitCells();            	
                 if(DEBUG_NICHE)
                 {
                     new CommonActions.TopCellTreeAction().actionPerformed(null);
@@ -53,14 +52,13 @@ public class NicheBootListener implements HGListener
                 }
                 else if (TopFrame.PICCOLO)
                 {
-                   CellUtils.evaluateVisibleInitCells();
                    v.bind(group);
                    if(f != null)
                       f.setVisible(true);
                     ConnectionManager.startConnections();
                 }
                 else if (f != null)
-                	f.setVisible(true);            	
+                	f.setVisible(true);                
             	Thread.currentThread().setUncaughtExceptionHandler(GUIHelper.getUncaughtExceptionHandler());                
             }
         });

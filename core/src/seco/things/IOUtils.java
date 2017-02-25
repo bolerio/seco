@@ -43,9 +43,11 @@ public class IOUtils
         try
         {
             FileReader in = new FileReader(filename);
-            Document doc = DocumentBuilderFactory.newInstance()
-                    .newDocumentBuilder().parse(new InputSource(in));
-            HGHandle groupH = CellUtils.createGroupHandle(filename);
+            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(in));
+            String name = doc.getDocumentElement().getAttribute("title");
+            if (name.isEmpty())
+            	name = filename;
+            HGHandle groupH = CellUtils.createGroupHandle(name);
             loadTopGroup(doc.getDocumentElement(), groupH);
             return groupH;
         }

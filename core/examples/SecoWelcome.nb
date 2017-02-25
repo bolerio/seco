@@ -1,4 +1,4 @@
-<notebook title="F:\kosta\ticl\seco\core\examples\scribawelcome.nb">
+<notebook title="Welcome Book">
     <output-cell-style borderColor="255,255,255" fgColor="0,128,0"/>
     <cell-group name="CG0">
         <cell html-preview="true">

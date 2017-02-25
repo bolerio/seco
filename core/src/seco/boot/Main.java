@@ -9,7 +9,6 @@ package seco.boot;
 
 
 import org.hypergraphdb.HGEnvironment;
-
 import seco.ThisNiche;
 import seco.U;
 import seco.gui.TopFrame;
@@ -31,6 +30,7 @@ public class Main
 		if (guiControllerClass != null)
 			ThisNiche.guiControllerClassName = guiControllerClass;
 		TopFrame.PICCOLO = false;
-        HGEnvironment.get(nicheLocation, U.dbConfig()); // boots from HG LOAD listeners            
+        HGEnvironment.get(nicheLocation, U.dbConfig()); // boots from HG LOAD listeners
+
 	}
 }

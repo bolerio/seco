@@ -18,6 +18,7 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGTypeSystem;
 import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.event.HGListenerAtom;
 import org.hypergraphdb.event.HGOpenedEvent;
 import org.hypergraphdb.indexing.ByPartIndexer;
@@ -182,6 +183,7 @@ public class NicheManager
         	}
         	catch (Throwable T)
         	{
+        		T.printStackTrace(System.err);
         		return false;
         	}
         	finally
@@ -223,42 +225,50 @@ public class NicheManager
         return (String) hg.get(ThisNiche.NICHE_NAME_HANDLE);
     }
     
+    static HGHandle assertLanguage(HyperGraph graph, String name, String factory, String [] packageNames, String editSupport)
+    {
+    	HGHandle h = graph.findOne(hg.and(hg.type(SEDescriptor.class), hg.eq("language", name)));
+    	if (h == null)
+    		h = graph.add(new SEDescriptor(name, factory, packageNames, editSupport));
+    	return h;
+    }
+    
     static void populateDefaultScriptingLanguages(HyperGraph graph)
     {
-    	graph.add(new SEDescriptor(
-    			"beanshell", 
-    			"bsh.engine.BshScriptEngineFactoryEx",
-                new String[] { "bsh", "bsh.engine", "bsh.classpath",
-                        "bsh.collection", "bsh.reflect", "bsh.util",
-                        "bsh.commands", "bsh.reflect", "bsh.util" },
-                        "bsh.BshScriptSupportFactory"));
-        graph.add(new SEDescriptor(
+    	assertLanguage(graph,
+	    			"beanshell", 
+	    			"bsh.engine.BshScriptEngineFactoryEx",
+	                new String[] { "bsh", "bsh.engine", "bsh.classpath",
+	                        "bsh.collection", "bsh.reflect", "bsh.util",
+	                        "bsh.commands", "bsh.reflect", "bsh.util" },
+	                        "bsh.BshScriptSupportFactory");
+    	assertLanguage(graph,
         		"jscheme",
                 "jscheme.scriptingapi.JSchemeScriptEngineFactory",
                 new String[] { "jsint", "jscheme", "jscheme.scriptingapi" },
-                "seco.langs.jscheme.JSchemeScriptSupportFactory"));        
-        graph.add(new SEDescriptor(
+                "seco.langs.jscheme.JSchemeScriptSupportFactory");        
+    	assertLanguage(graph,
                 "html", 
                 null, 
                 new String[0], 
-                "seco.notebook.html.HTMLScriptSupportFactory"));
+                "seco.notebook.html.HTMLScriptSupportFactory");
         // Try other know languages:
         try
         {
             Class.forName("seco.langs.groovy.jsr.GroovyScriptEngineFactory");
-            graph.add(new SEDescriptor("groovy",  
+        	assertLanguage(graph,"groovy",  
                                        "seco.langs.groovy.jsr.GroovyScriptEngineFactory",
                                         new String[] {},  
-                                        "seco.langs.groovy.GroovyScriptSupportFactory"));            
+                                        "seco.langs.groovy.GroovyScriptSupportFactory");            
         }
         catch (/*ClassNotFoundException*/Throwable t) { }
         try
         {
             Class.forName("seco.langs.ruby.JRubyScriptEngineFactory");
-            graph.add(new SEDescriptor("jruby",  
+        	assertLanguage(graph,"jruby",  
                                        "seco.langs.ruby.JRubyScriptEngineFactory",
                                         new String[] {},   
-                                        "seco.langs.ruby.RubyScriptSupportFactory"));
+                                        "seco.langs.ruby.RubyScriptSupportFactory");
         }
         catch (/*ClassNotFoundException*/Throwable t) { }
 //        try
@@ -273,19 +283,19 @@ public class NicheManager
         try
         {
             Class.forName("alice.tuprologx.TuScriptEngineFactory");
-            graph.add(new SEDescriptor("prolog",   
+        	assertLanguage(graph,"prolog",   
                                        "alice.tuprologx.TuScriptEngineFactory",   
                                         new String[] {},      
-                                        "seco.langs.prolog.PrologScriptSupportFactory"));            
+                                        "seco.langs.prolog.PrologScriptSupportFactory");            
         }
         catch (/*ClassNotFoundException*/Throwable t) { }       
         try
         {
             Class.forName("seco.langs.javascript.jsr.RhinoScriptEngineFactory");
-            graph.add(new SEDescriptor("javascript",   
+        	assertLanguage(graph,"javascript",   
                                        "seco.langs.javascript.jsr.RhinoScriptEngineFactory",   
                                         new String[] {},      
-                                        "seco.langs.javascript.JSScriptSupportFactory"));            
+                                        "seco.langs.javascript.JSScriptSupportFactory");            
         }
         catch (/*ClassNotFoundException*/Throwable t) { }          
     }
@@ -361,6 +371,11 @@ public class NicheManager
     	}});
     }
     
+    public static HyperGraph openNicheDatabase(File path)
+    {
+    	return HGEnvironment.get(path.getAbsolutePath(), U.dbConfig());
+    }
+    
     public static void createNiche(String name, File path)
     {
         int levelsToDeleteOnFail = 0;
@@ -369,7 +384,7 @@ public class NicheManager
         HyperGraph graph = null;
         try
         {
-            graph = HGEnvironment.get(path.getAbsolutePath(), U.dbConfig());
+            graph = openNicheDatabase(path);
             // Scriptlet s = new Scriptlet("jscheme", "(load \"jscheme/scribaui.scm\")(install-runtime-menu)");            
           //  hg.add(new HGValueLink("on-load", new HGHandle[] {ThisNiche.TOP_CONTEXT_HANDLE, hg.add(s)}));
             HyperGraph saveHG = ThisNiche.graph; // likely, this is null, but just in case

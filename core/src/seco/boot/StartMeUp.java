@@ -10,6 +10,8 @@ package seco.boot;
 import java.io.*;
 import java.util.*;
 
+import org.hypergraphdb.HyperGraph;
+
 import seco.ThisNiche;
 import seco.U;
 import seco.classloader.AdaptiveClassLoader;
@@ -76,6 +78,7 @@ public class StartMeUp
 			else
 				die("Default location for niche is not empty: " + nicheLocation, false);
 		}			
+			
 		if (simpleUI)
 		{
 			ThisNiche.guiControllerClassName = StandaloneFrame.class.getName();

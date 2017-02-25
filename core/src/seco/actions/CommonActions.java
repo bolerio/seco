@@ -76,7 +76,9 @@ public class CommonActions
 
     public static class OpenAction extends AbstractAction
     {
-        public OpenAction()
+		private static final long serialVersionUID = 6006070314360334574L;
+
+		public OpenAction()
         {
             putValue(Action.NAME, OPEN);
             putValue(Action.SMALL_ICON, IconManager.resolveIcon("Open16.gif"));
@@ -168,7 +170,9 @@ public class CommonActions
 
     public static class ExportAction extends AbstractAction
     {
-        public ExportAction()
+		private static final long serialVersionUID = 3884880488012788579L;
+
+		public ExportAction()
         {
             this.putValue(Action.NAME, EXPORT);
             this.putValue(Action.SMALL_ICON,
@@ -192,7 +196,9 @@ public class CommonActions
 
     public static class ImportAction extends AbstractAction
     {
-        public ImportAction()
+		private static final long serialVersionUID = -1821022831639305424L;
+
+		public ImportAction()
         {
             this.putValue(Action.NAME, IMPORT);
             this.putValue(Action.SMALL_ICON,
@@ -208,7 +214,9 @@ public class CommonActions
 
     public static class ExitAction extends AbstractAction
     {
-        public ExitAction()
+		private static final long serialVersionUID = 8476778358094184234L;
+
+		public ExitAction()
         {
             this.putValue(Action.NAME, EXIT);
             this.putValue(Action.SHORT_DESCRIPTION, "Exit Seco");
@@ -393,7 +401,7 @@ public class CommonActions
         addAsBook(bookH);
     }
 
-    private static void addAsBook(HGHandle h)
+    private static CellGroupMember addAsBook(HGHandle h)
     {
         CellGroup group = ThisNiche.graph.get( (TopFrame.PICCOLO) ?
                 								ThisNiche.TOP_CELL_GROUP_HANDLE :
@@ -406,13 +414,14 @@ public class CommonActions
                 new Rectangle(100, 100, 500, 400));
         if (!CellUtils.isShowTitle(child)) CellUtils.toggleShowTitle(child);
         group.insert(group.getArity(), h);
+        return child;
     }
 
-    static void newNotebook()
+    static CellGroupMember newNotebook()
     {
         CellGroup nb = new CellGroup("CG");
         HGHandle nbHandle = ThisNiche.graph.add(nb);
-        addAsBook(nbHandle);
+        return addAsBook(nbHandle);
     }
 
     static void openNotebook()
@@ -423,15 +432,16 @@ public class CommonActions
         importGroup(file);
     }
 
-    public static void importGroup(File file)
+    public static CellGroupMember importGroup(File file)
     {
         try
         {
             String fn = file.getAbsolutePath();
             HGHandle knownHandle = IOUtils.importCellGroup(fn);
-            addAsBook(knownHandle);
+            CellGroupMember cgm = addAsBook(knownHandle);
             AppConfig.getInstance().getMRUF().add(knownHandle);
             AppConfig.getInstance().setMRUD(file.getParent());
+            return cgm;
         }
         catch (Throwable t)
         {
@@ -441,7 +451,7 @@ public class CommonActions
                             + file.getAbsolutePath());
             DialogDisplayer.getDefault().notify(ex);
             // strange requirement to open new Notebook, if file doesn't exist
-            newNotebook();
+            return newNotebook();
         }
     }
 

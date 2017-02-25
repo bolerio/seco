@@ -61,7 +61,7 @@ public abstract class FileUtil
 	 * Returns a File object, this method should be used instead of rolling your
 	 * own JFileChooser.
 	 * 
-	 * @return the location of the selcted file
+	 * @return the location of the selected file
 	 * @param title the title of the dialog box
 	 * @param load_save_custom a flag for the type of file dialog
 	 * @param filters an array of ExtFileFilters to filter based on extension
@@ -70,9 +70,13 @@ public abstract class FileUtil
 	 * @param custom_approve_text if this is a custom dialog, then custom text
 	 * should be on the approve button.
 	 */
-	public static File getFile(Frame frame, String title, int load_save_custom,
-			ExtFileFilter[] filters, String start_dir,
-			String custom_approve_text, boolean dir_only)
+	public static File getFile(Frame frame, 
+							   String title, 
+							   int load_save_custom,
+							   ExtFileFilter[] filters, 
+							   String start_dir,
+							   String custom_approve_text, 
+							   boolean dir_only)
 	{
 		File start = null;
 		if (start_dir == null)
@@ -91,25 +95,22 @@ public abstract class FileUtil
 		if (osName.startsWith("Mac"))
 		{
 			// this is a Macintosh, use the AWT style file dialog
-			FileDialog chooser = new FileDialog(frame, title,
-					load_save_custom);
+			FileDialog chooser = new FileDialog(frame, title, load_save_custom);
 			// we can only set the one filter; therefore, create a special
 			// version of ExtFileFilter that contains all extensions
 			if (!dir_only)
 			{
 				ExtFileFilter fileFilter = new ExtFileFilter();
-				for (int i = 0; i < filters.length; i++)
+				if (filters != null) for (int i = 0; i < filters.length; i++)
 				{
-					Iterator iter;
-					for (iter = filters[i].getExtensionSet().iterator(); iter
-							.hasNext();)
-					{
-						fileFilter.addExtension((String) iter.next());
-					}
+					for (@SuppressWarnings("unchecked")
+					Iterator<String> iter = filters[i].getExtensionSet().iterator(); iter.hasNext();)
+						fileFilter.addExtension(iter.next());
 				}
 				fileFilter.setDescription("All files");
 				chooser.setFilenameFilter(fileFilter);
-			} else
+			} 
+			else
 			{
 				chooser.setFilenameFilter(new CustomFileFilter());
 			}
@@ -126,7 +127,8 @@ public abstract class FileUtil
 				return result;
 			}
 			return null;
-		} else
+		} 
+		else
 		{
 			// this is not a mac, use the Swing based file dialog
 			JFileChooser chooser = new JFileChooser(start);
