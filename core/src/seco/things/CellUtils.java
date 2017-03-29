@@ -56,6 +56,7 @@ import seco.notebook.XMLConstants;
 import seco.notebook.style.NBStyle;
 import seco.notebook.style.StyleAttribs;
 import seco.notebook.style.StyleType;
+import seco.rtenv.ContextLink;
 import seco.rtenv.EvaluationContext;
 import seco.rtenv.RuntimeContext;
 import edu.umd.cs.piccolo.util.PAffineTransform;
@@ -538,7 +539,13 @@ public class CellUtils
     public static HGHandle getEvalContextH(CellGroupMember c)
     {
         HGHandle ctxH = ThisNiche.findContextLink(ThisNiche.handleOf(c));
-        return ctxH;
+        if (ctxH != null)
+        {
+        	ContextLink link = ThisNiche.graph.get(ctxH);
+        	return link.getContext();
+        }
+        else
+        	return null;
     }
     
     public static void setEvalContextH(CellGroupMember c, HGHandle h)

@@ -132,7 +132,7 @@ public final class ThisNiche
             EvaluationContext result = allContexts.get(rcContextHandle);
             if (result == null)
             {
-                graph.freeze(rcContextHandle);                
+                graph.freeze(rcContextHandle);            
                 result = new EvaluationContext(rcContextHandle);
                 allContexts.put(rcContextHandle, result);                
                 initEvaluationContext(result);                
