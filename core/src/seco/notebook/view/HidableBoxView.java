@@ -76,4 +76,11 @@ public class HidableBoxView extends BoxView implements HidableView
 	{
 		super.layoutMinorAxis(targetSpan, axis, offsets, spans);
 	}
+	
+	public int getBreakWeight(int axis, float pos, float len) {
+		//if (len > getPreferredSpan(axis)) {
+		//	return GoodBreakWeight;
+		//}
+		return GoodBreakWeight;
+	}
 }

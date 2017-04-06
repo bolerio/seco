@@ -7,26 +7,11 @@
  */
 package seco.notebook.view;
 
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import javax.swing.SizeRequirements;
-import javax.swing.border.LineBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.BoxView;
 import javax.swing.text.Element;
-import javax.swing.text.Position;
-import javax.swing.text.StyleConstants;
 import javax.swing.text.View;
-import javax.swing.text.ViewFactory;
 
-import seco.notebook.ElementType;
 import seco.notebook.NotebookDocument;
-import seco.notebook.NotebookUI;
 import seco.things.Cell;
 import seco.things.CellGroup;
 import seco.things.CellGroupMember;
@@ -61,10 +46,10 @@ public class WholeCellView extends HidableBoxView implements CollapsibleView
 			//if (((Cell) nb).getOutputCell() == null)
 			//	collapsed = false;
 			//else
-			{
+			//{
 				for (int i = 1; i < getViewCount(); i++)
 					((HidableView) getView(i)).setVisible(!collapsed);
-			}
+			//}
 		}
 		return collapsed;
 	}
@@ -119,15 +104,11 @@ public class WholeCellView extends HidableBoxView implements CollapsibleView
 			int[] spans)
 	{
 		super.layoutMinorAxis(targetSpan, axis, offsets, spans);
-		System.out.println("WholeCellView - layoutMinorAxis: " +
-				targetSpan + ":" + getElement());
-		for (int i = 0; i < getViewCount(); i++){
+//		System.out.println("WholeCellView - layoutMinorAxis: " +
+//				targetSpan + ":" + getElement());
+		for (int i = 0; i < getViewCount(); i++)
 			if (getView(i) instanceof InsertionPointView)
 					spans[i] = targetSpan - 20;
-			else 
-				System.out.println("getView(i)" +
-					getView(i) + ":" + getView(i).getMinimumSpan(axis) + ":" + getView(i).getPreferredSpan(axis));
-		}
 	}
 	
 	

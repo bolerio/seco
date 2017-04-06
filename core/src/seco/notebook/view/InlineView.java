@@ -9,20 +9,25 @@ package seco.notebook.view;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.FontMetrics;
-import java.text.BreakIterator;
-import javax.swing.event.DocumentEvent;
-import javax.swing.text.*;
-import javax.swing.text.Position.Bias;
+
+import javax.swing.text.BadLocationException;
+import javax.swing.text.ComponentView;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.Highlighter;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.LabelView;
+import javax.swing.text.LayeredHighlighter;
+import javax.swing.text.Segment;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.View;
 
 import seco.notebook.ElementType;
 import seco.notebook.NotebookDocument;
-import seco.notebook.style.StyleType;
 import seco.notebook.syntax.ScriptSupport;
 import seco.util.SegmentCache;
 

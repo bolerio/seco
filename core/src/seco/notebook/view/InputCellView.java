@@ -52,64 +52,20 @@ public class InputCellView extends HidableBoxView
 		setPropertiesFromAttributes();
 	}
 	
-//	protected SizeRequirements calculateMinorAxisRequirements(int axis,
-//			SizeRequirements r)
-//	{
-//		r = super.calculateMinorAxisRequirements(axis, r);
-//		// Offset by the margins so that pref/min/max return the
-//		// right value.
-//		int margin = (axis == X_AXIS) ? getLeftInset() + getRightInset()
-//				: getTopInset() + getBottomInset();
-//		r.minimum -= margin;
-//		r.preferred -= margin;
-//		r.maximum -= margin;
-//		return r;
-//	}
-	
-	protected SizeRequirements calculateMinorAxisRequirements(int axis, SizeRequirements r) {
-        int min = 0;
-        long pref = 0;
-        int max = Integer.MAX_VALUE;
-        int n = getViewCount();
-        for (int i = 0; i < n; i++) {
-            View v = getView(i);
-            min = Math.max((int) v.getMinimumSpan(axis), min);
-            pref = Math.max((int) v.getPreferredSpan(axis), pref);
-            max = Math.max((int) v.getMaximumSpan(axis), max);
-        }
-
-        if (r == null) {
-            r = new SizeRequirements();
-            r.alignment = 0.5f;
-        }
-        r.preferred = (int) pref;
-        r.minimum = min;
-        r.maximum = max;
-        
-        
+	protected SizeRequirements calculateMinorAxisRequirements(int axis,
+			SizeRequirements r)
+	{
+		r = super.calculateMinorAxisRequirements(axis, r);
 		// Offset by the margins so that pref/min/max return the
 		// right value.
-		int margin = (axis == X_AXIS) ? getLeftInset() + getRightInset() : getTopInset() + getBottomInset();
+		int margin = (axis == X_AXIS) ? getLeftInset() + getRightInset()
+				: getTopInset() + getBottomInset();
 		r.minimum -= margin;
 		r.preferred -= margin;
 		r.maximum -= margin;
 		return r;
-     
-    }
-	
-	
-
-	@Override
-	public float getMinimumSpan(int axis) {
-		if(axis == 0 && this.isOutputCell())
-		{
-			int b = 5;
-			b++;
-		}
-		float f = super.getMinimumSpan(axis);
-		return f;
 	}
-
+	
 	@Override
 	protected short getBottomInset()
 	{
