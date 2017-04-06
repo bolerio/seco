@@ -13,6 +13,8 @@ import javax.swing.text.Element;
 import javax.swing.text.Position;
 import javax.swing.text.View;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+
 import seco.notebook.ElementType;
 import seco.notebook.NotebookDocument;
 import seco.things.Cell;
@@ -104,6 +106,22 @@ public class CellBoxView extends HidableBoxView implements CollapsibleView
 			return super.getPreferredSpan(axis);
 	}
 	
+
+	@Override
+	public float getMinimumSpan(int axis) {
+		return Math.min(getPreferredSpan(axis), super.getMinimumSpan(axis));
+		
+	}
+	
+	
+
+	@Override
+	public float getMaximumSpan(int axis) {
+		return Math.max(getPreferredSpan(axis), super.getMaximumSpan(axis));
+	}
+
+
+
 	float collapsedWidth;
 	
 	protected void layoutMinorAxis(int targetSpan, int axis, int[] offsets,
@@ -112,14 +130,14 @@ public class CellBoxView extends HidableBoxView implements CollapsibleView
 		//System.out.println("CellBoxView - layoutMinorAxis: " +
 		//		targetSpan + ":" + getElement() + ":" + isVisible() +
 		//		":" + getPreferredSpan(axis) + ":"+ collapsed);
-	  // if(collapsed){
+//	   if(collapsed){
 		collapsedWidth = getView(0).getPreferredSpan(axis);
 		spans[0] = (int) collapsedWidth;
 		if(spans.length > 1) spans[1] = spans[0];
-		//}
-//	    else
+//		}
+//	   else
 //	    {
-//	    //    super.layoutMinorAxis(targetSpan, axis, offsets, spans);
+//	        super.layoutMinorAxis(targetSpan, axis, offsets, spans);
 //	        int n = getViewCount();
 //	        for (int i = 0; i < n; i++) {
 //	            View v = getView(i);
@@ -156,4 +174,10 @@ public class CellBoxView extends HidableBoxView implements CollapsibleView
 		if(CellUtils.isCollapsed(nb))
 			collapse(true);
 	}
+
+	@Override
+	public String toString() {
+		return "CellBoxView [" + getElement() + "]";
+	}
+	
 }

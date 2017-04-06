@@ -119,12 +119,22 @@ public class WholeCellView extends HidableBoxView implements CollapsibleView
 			int[] spans)
 	{
 		super.layoutMinorAxis(targetSpan, axis, offsets, spans);
-		//System.out.println("WholeCellView - layoutMinorAxis: " +
-		//		targetSpan + ":" + getElement());
-		//super.layoutMinorAxis(targetSpan, axis, offsets, spans);
-		for (int i = 0; i < getViewCount(); i++)
+		System.out.println("WholeCellView - layoutMinorAxis: " +
+				targetSpan + ":" + getElement());
+		for (int i = 0; i < getViewCount(); i++){
 			if (getView(i) instanceof InsertionPointView)
 					spans[i] = targetSpan - 20;
+			else 
+				System.out.println("getView(i)" +
+					getView(i) + ":" + getView(i).getMinimumSpan(axis) + ":" + getView(i).getPreferredSpan(axis));
+		}
+	}
+	
+	
+
+	@Override
+	public float getMinimumSpan(int axis) {
+		return super.getMinimumSpan(axis);
 	}
 
 	public void setParent(View parent)

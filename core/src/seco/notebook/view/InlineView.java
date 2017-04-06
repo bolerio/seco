@@ -229,5 +229,28 @@ public class InlineView extends LabelView // implements HidableView
             }
         }
     }
+    
+    public float getMinimumSpan(int axis) {
+        float maxmin = 0;
+        float min = 0;
+        boolean nowrap = false;
+        int n = getViewCount();
+        for (int i = 0; i < n; i++) {
+            View v = getView(i);
+            if (v.getBreakWeight(axis, 0, Integer.MAX_VALUE) == BadBreakWeight) {
+                min += v.getPreferredSpan(axis);
+                nowrap = true;
+            } else if (nowrap) {
+                maxmin = Math.max(min, maxmin);
+                nowrap = false;
+                min = 0;
+            }
+            if (v instanceof ComponentView) {
+                maxmin = Math.max(maxmin, v.getMinimumSpan(axis));
+            }
+        }
+        maxmin = Math.max(maxmin, min);
+        return maxmin;
+    }
 
 }
