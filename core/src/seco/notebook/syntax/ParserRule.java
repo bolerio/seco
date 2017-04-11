@@ -30,6 +30,8 @@
 
 package seco.notebook.syntax;
 
+import java.util.Arrays;
+
 import gnu.regexp.*;
 
 /**
@@ -237,4 +239,16 @@ public class ParserRule
 			}
 		}
 	} //}}}
+
+	@Override
+	public String toString() {
+		return "ParserRule [hashChar=" + hashChar + ", startPosMatch=" + startPosMatch + ", start="
+				+ Arrays.toString(start) + ", startRegexp=" + startRegexp + ", endPosMatch=" + endPosMatch + ", end="
+				+ Arrays.toString(end) + ", action=" + action + ", token=" + token + ", delegate=" + delegate + "]";
+	}
+
+	
+	
+	
+	
 }

@@ -30,7 +30,6 @@ import seco.actions.CommonActions;
 import seco.events.AttributeChangeEvent;
 import seco.events.CellGroupChangeEvent;
 import seco.events.EvalCellEvent;
-import seco.gui.common.CloseableDnDTabbedPane;
 import seco.gui.common.SecoTabbedPane;
 import seco.gui.menu.EnhancedMenu;
 import seco.gui.menu.ScriptEngineProvider;
@@ -277,20 +276,19 @@ public class TabbedPaneU
 
     public static JTabbedPane createTabbedPane(CellGroup group)
     {
-        JTabbedPane tabbedPane = new JTabbedPane();;
-//        if (DRAGGABLE_TABS)
-//        {
-//            tabbedPane = new CloseableDnDTabbedPane();
-//            ((CloseableDnDTabbedPane) tabbedPane).setPaintGhost(true);
-////            ((CloseableDnDTabbedPane) tabbedPane)
-////                    .addTabCloseListener(new TabbedPaneCloseListener());
-//        }
-//        else
-//            tabbedPane = new SecoTabbedPane(ThisNiche.handleOf(group));
-//        tabbedPane.setDoubleBuffered(GUIUtil.getFrame().doubleBuffer());
-//        tabbedPane.putClientProperty(
-//                com.jgoodies.looks.Options.NO_CONTENT_BORDER_KEY, Boolean.TRUE);
-        // tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		JTabbedPane tabbedPane = new JTabbedPane();
+		if (TopFrame.PICCOLO) {
+//			if (!DRAGGABLE_TABS) {
+//				tabbedPane = new CloseableDnDTabbedPane();
+//				((CloseableDnDTabbedPane) tabbedPane).setPaintGhost(true);
+//				// ((CloseableDnDTabbedPane) tabbedPane)
+//				// .addTabCloseListener(new TabbedPaneCloseListener());
+//			} else
+				tabbedPane = new SecoTabbedPane(ThisNiche.handleOf(group));
+			//tabbedPane.setDoubleBuffered(GUIUtil.getFrame().doubleBuffer());
+			tabbedPane.putClientProperty(com.jgoodies.looks.Options.NO_CONTENT_BORDER_KEY, Boolean.TRUE);
+			//tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		}
         tabbedPane.addMouseListener(new TabbedPaneMouseListener(tabbedPane));
         tabbedPane.addChangeListener(new TabbedPaneChangeListener(tabbedPane));
         return tabbedPane;

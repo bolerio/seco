@@ -391,7 +391,7 @@ unwind:		while(context.parent != null)
 				pattern.count = pattern.array.length;
 				matchedChars = pattern.count;
 
-				if(true || !SyntaxUtilities.regionMatches(context.rules
+				if(!SyntaxUtilities.regionMatches(context.rules
 					.getIgnoreCase(),line,pos,pattern.array))
 				{
 					return false;
