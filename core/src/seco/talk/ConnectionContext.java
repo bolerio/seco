@@ -1,7 +1,7 @@
 package seco.talk;
 
 import java.awt.Rectangle;
-
+import java.awt.Dialog.ModalityType;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import mjson.Json;
@@ -303,6 +304,18 @@ public class ConnectionContext
         }
 
         addConnectionListener(panel);
+        
+        if (ThisNiche.getCanvas() == null)
+        {
+        	JDialog dlg = new JDialog();
+        	dlg.setModalityType(ModalityType.MODELESS);
+        	dlg.setSize(200, 200);
+        	dlg.setLocation(300,  300);
+        	dlg.add(panel);
+        	dlg.setVisible(true);
+        	return panel;
+        }
+        
         // Find an existing cell with that panel:
         HGHandle existingH = GUIHelper.getCellHandleByValueHandle(
                 ThisNiche.TOP_CELL_GROUP_HANDLE, panelHandle);
@@ -424,6 +437,17 @@ public class ConnectionContext
 
         panel.joinRoom();
 
+        if (ThisNiche.getCanvas() == null)
+        {
+        	JDialog dlg = new JDialog();
+        	dlg.setModalityType(ModalityType.MODELESS);
+        	dlg.setSize(400, 400);
+        	dlg.setLocation(300,  300);
+        	dlg.add(panel);
+        	dlg.setVisible(true);
+        	return;
+        }
+        
         // Find an existing cell with this panel:
         HGHandle existingH = GUIHelper.getCellHandleByValueHandle(
                 ThisNiche.TOP_CELL_GROUP_HANDLE, panelH);

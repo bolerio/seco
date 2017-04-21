@@ -35,7 +35,6 @@ import seco.talk.ConnectionContext;
 import seco.talk.ConnectionManager;
 import seco.talk.ConnectionPanel;
 import seco.things.CellGroup;
-import seco.things.CellGroupMember;
 import seco.things.CellUtils;
 import seco.util.GUIUtil;
 
@@ -48,7 +47,7 @@ public class NetworkConnectionDlg extends JDialog
 {
     private static final long serialVersionUID = 1L;
     private NetworkConnectionPanel networkPanel;
-    private JComboBox contextList;
+    private JComboBox<ConnectionContext> contextList;
 
     private void resetConnectionPanel()
     {
@@ -92,10 +91,24 @@ public class NetworkConnectionDlg extends JDialog
         ThisNiche.graph.update(getCurrentContext());
     }
 
-    private void initComponents()
+	private void initComponents()
     {
-        contextList = new JComboBox(hg.getAll(ThisNiche.graph, hg.type(ConnectionContext.class)).toArray());
-        //contextList.setRenderer(new ConnectionListCellRenderer());
+        contextList = new JComboBox<ConnectionContext>(hg.getAll(
+        		ThisNiche.graph, 
+        		hg.type(ConnectionContext.class)).toArray(new ConnectionContext[0]));
+        // Choose first configuration that looks valid. Actually we should be saving
+        // the last one used in the graph as part of the "state" to be saved
+        //
+        // So that is a TODO!
+        for (int i = 0; i < contextList.getItemCount(); i++)
+        {
+        	if (contextList.getItemAt(i).getConfig() != null && 
+        		contextList.getItemAt(i).getConfig().getHostname() != null)
+        	{
+        		contextList.setSelectedIndex(i);
+        		break;
+        	}
+        }
         contextList.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e)
             {
@@ -239,9 +252,6 @@ public class NetworkConnectionDlg extends JDialog
         private JTextField txtProxyPort;
         private JTextField txtProxyUsername;
         private JTextField txtUsername;
-        private JCheckBox chkEnabled;
-        
-//        protected ConnectionContext ctx;
 
         /** Creates new form NetworkConnectionPanel */
         public NetworkConnectionPanel()
@@ -540,7 +550,7 @@ public class NetworkConnectionDlg extends JDialog
         }
     }
 
-    class ConnectionListCellRenderer extends JLabel implements ListCellRenderer
+    class ConnectionListCellRenderer extends JLabel implements ListCellRenderer<ConnectionContext>
     {
         private static final long serialVersionUID = 1L;
 
@@ -549,11 +559,13 @@ public class NetworkConnectionDlg extends JDialog
             setOpaque(true);
         }
 
-        public Component getListCellRendererComponent(JList list, Object value,
-                                                      int index,
-                                                      boolean isSelected,
-                                                      boolean cellHasFocus)
-        {
+		@Override
+		public Component getListCellRendererComponent(JList<? extends ConnectionContext> list,
+													  ConnectionContext value, 
+													  int index, 
+													  boolean isSelected,
+													  boolean cellHasFocus)
+		{
             ConnectionContext ctx = (ConnectionContext) value;
             setText(ctx.getConfig().getName());
 
@@ -574,6 +586,6 @@ public class NetworkConnectionDlg extends JDialog
             setForeground(foreground);
 
             return this;
-        }
+		}
     }
 }

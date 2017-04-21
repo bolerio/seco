@@ -40,7 +40,7 @@
 	</target>
 
 	<target name="compile" depends="init" description="compile the Seco source">
-		<javac source="1.5" classpathref="classpath" debug="on" destdir="${build}/compile" srcdir="${src}">
+		<javac source="1.7" classpathref="classpath" debug="on" destdir="${build}/compile" srcdir="${src}">
 		</javac>
 	</target>
 
