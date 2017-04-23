@@ -476,7 +476,7 @@ public class CommonActions {
 				ThisNiche.TOP_CELL_GROUP_HANDLE :
 				((StandaloneFrame)GUIUtil.getFrame()).tabbedPaneGroupHandle);
 
-        if (existingH == null)
+        if (existingH == null) 
         {
         	Map<Object, Object> attribs = new HashMap<Object, Object>();
         	attribs.put(VisualAttribs.showTitle, true);

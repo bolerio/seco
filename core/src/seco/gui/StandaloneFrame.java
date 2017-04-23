@@ -42,7 +42,7 @@ public class StandaloneFrame extends TopFrame
     public HGHandle tabbedPaneGroupHandle;
     public JTabbedPane tabbedPane;
 
-    public StandaloneFrame()
+    public StandaloneFrame() 
     {
         PICCOLO = false;
     }
