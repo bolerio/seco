@@ -253,6 +253,15 @@ public class NicheManager
                 new String[0], 
                 "seco.notebook.html.HTMLScriptSupportFactory");
         // Try other know languages:
+    	try
+    	{
+    		Class.forName("symja.engine.SymjaScriptEngineFactoryEx");
+    		assertLanguage(graph, "symja", 
+        			"symja.engine.SymjaScriptEngineFactoryEx",
+                    new String[] { "m", "symja.engine", "org.matheclipse" },
+                            "symja.SymjaScriptSupportFactory");    		
+    	}
+    	catch (/*ClassNotFoundException*/Throwable t) { }
         try
         {
             Class.forName("seco.langs.groovy.jsr.GroovyScriptEngineFactory");

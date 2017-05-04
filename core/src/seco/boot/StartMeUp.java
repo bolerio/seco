@@ -42,12 +42,15 @@ public class StartMeUp
 		System.out.println("java.home: " + System.getProperty("java.home"));
 		System.out.println("user.home: " + U.findUserHome());
     	String nicheLocation = null;
+    	String defaultLanguage = "beanshell";
     	boolean showNicheDialog = false;
     	boolean simpleUI = true;
     	for (int i = 0; i < argv.length; i++)
     	{
     		if ("--nicheLocation".equals(argv[i]))
     			nicheLocation = argv[++i];
+    		else if ("--defaultLanguage".equals(argv[i]))
+    			defaultLanguage = argv[i];
     		else if ("--showNicheDialog".equals(argv[i]))
     			showNicheDialog = Boolean.valueOf(argv[++i]);
     		else if ("--simpleUI".equals(argv[i]))

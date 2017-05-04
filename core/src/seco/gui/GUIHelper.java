@@ -52,6 +52,7 @@ import seco.gui.layout.LayoutHandler;
 import seco.gui.layout.RefPoint;
 import seco.gui.menu.EnhancedMenu;
 import seco.gui.menu.RecentFilesProvider;
+import seco.gui.menu.ScriptEngineProvider;
 import seco.gui.menu.VisPropsProvider;
 import seco.gui.piccolo.TitlePaneNode;
 import seco.gui.visual.CellContainerVisual;
@@ -255,6 +256,7 @@ public class GUIHelper
         if (menuBar == null)
         {
             menuBar = new JMenuBar();
+            menuBar.add(createNicheMenu());
             menuBar.add(createFileMenu());
             menuBar.add(createEditMenu());
             menuBar.add(createFormatMenu());
@@ -564,6 +566,17 @@ public class GUIHelper
         return menu;
     }
 
+    private static JMenu createNicheMenu()
+    {
+        JMenu menu = new PiccoloMenu("Niche");
+        menu.setMnemonic('h');
+        ScriptEngineProvider provider = new ScriptEngineProvider();
+        provider.setContextualized(false);
+        menu.add(new EnhancedMenu("Niche Default Language", 
+        						  provider));
+        return menu;
+    }
+    
     private static JMenu createFileMenu()
     {
         ActionManager man = ActionManager.getInstance();

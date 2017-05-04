@@ -36,7 +36,7 @@ public class ScriptletAction extends AbstractAction
     
     public ScriptletAction(String code)
     {
-        this(CellUtils.defaultEngineName, code);
+        this(ThisNiche.defaultLanguage(), code);
     }
     
     public void actionPerformed(ActionEvent e)

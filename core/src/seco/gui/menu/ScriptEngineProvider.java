@@ -14,11 +14,24 @@ import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 
+import seco.ThisNiche;
 import seco.notebook.NotebookUI;
 
 
 public class ScriptEngineProvider implements DynamicMenuProvider 
 {
+	private boolean contextualized = true;
+		
+	public void setContextualized(boolean contextualized)
+	{
+		this.contextualized = contextualized;
+	}
+	
+	public boolean isContextualized()
+	{
+		return this.contextualized;
+	}
+	
 	public boolean updateEveryTime() 
 	{
 		return true;
@@ -27,10 +40,12 @@ public class ScriptEngineProvider implements DynamicMenuProvider
 	public void update(JMenu menu) 
 	{		
 	    final NotebookUI ui = NotebookUI.getFocusedNotebookUI();
-        if (ui == null) return;
-		String def_name = ui.getDoc().getDefaultEngineName();
+	    if (contextualized && ui == null) return;
+		String def_name = contextualized ? ui.getDoc().getDefaultEngineName() : ThisNiche.defaultLanguage();
 		ButtonGroup group = new ButtonGroup();		
-		java.util.Iterator<String> all = ui.getDoc().getEvaluationContext().getLanguages();
+		java.util.Iterator<String> all = contextualized
+				? ui.getDoc().getEvaluationContext().getLanguages()
+				: ThisNiche.allLanguages().keySet().iterator();
 		while (all.hasNext())			
 		{
 			final String language = all.next();
@@ -41,7 +56,12 @@ public class ScriptEngineProvider implements DynamicMenuProvider
 				public void itemStateChanged(ItemEvent e) 
 				{
 					if (m.isSelected())
-						ui.getDoc().setDefaultEngineName(language);
+					{
+						if (contextualized)
+							ui.getDoc().setDefaultEngineName(language);
+						else
+							ThisNiche.defaultLanguage(language);
+					}
 				}
 			});
 			group.add(m);

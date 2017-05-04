@@ -418,4 +418,6 @@
 <MODE NAME="zpt"		FILE="zpt.xml"
 				FILE_NAME_GLOB="*.{pt,zpt}"/>
 
+<MODE NAME="symja"      FILE="java.xml"
+                FILE_NAME_GLOB="*.m" />
 </MODES>

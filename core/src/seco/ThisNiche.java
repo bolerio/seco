@@ -7,8 +7,10 @@
  */
 package seco;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -31,7 +33,18 @@ import seco.gui.StandaloneFrame;
 import seco.rtenv.ContextLink;
 import seco.rtenv.EvaluationContext;
 import seco.rtenv.SEDescriptor;
+import seco.things.CellUtils;
 
+/**
+ * 
+ * <p>
+ * There is one global niche (a HyperGrapDB instance) opened for the JVM. Multiple other databases can
+ * be accessed, and multiple runtime contexts can be created within that niche.
+ * </p>
+ *
+ * @author Borislav Iordanov
+ *
+ */
 public final class ThisNiche
 {
     //
@@ -51,6 +64,8 @@ public final class ThisNiche
             .makeHandle("8e579278-391d-11db-b473-e61fbd5cb97a");
     public static final HGPersistentHandle TOP_CELL_GROUP_HANDLE = UUIDHandleFactory.I
             .makeHandle("f00a2f20-e177-11dd-ad8b-0800200c9a66");
+    public static final HGPersistentHandle DEFAULT_LANGUAGE_HANDLE = UUIDHandleFactory.I
+            .makeHandle("140a6df3-bd7d-4bc7-9f65-5e12d17691ab");    
    // public static final HGPersistentHandle TABBED_PANE_GROUP_HANDLE = HGHandleFactory
    //         .makeHandle("7b01b680-e186-11dd-ad8b-0800200c9a66");
     
@@ -141,6 +156,17 @@ public final class ThisNiche
         }
     }
 
+    public static Map<String, SEDescriptor> allLanguages()
+    {
+    	Map<String, SEDescriptor> result = new HashMap<String, SEDescriptor>();
+    	for (Object x : hg.getAll(graph, hg.type(SEDescriptor.class)))
+    	{
+    		SEDescriptor desc = (SEDescriptor)x;
+    		result.put(desc.getLanguage(), desc);
+    	}
+    	return result;
+    }
+    
     /**
      * <p>
      * Add scripting engines and default global variables to a newly created
@@ -167,6 +193,24 @@ public final class ThisNiche
         ctx.onLoad();
     }
 
+    public static String defaultLanguage()
+    {
+    	String language = getHyperGraph().get(ThisNiche.DEFAULT_LANGUAGE_HANDLE);
+    	return (language == null) ? CellUtils.defaultEngineName : language;
+    }
+    
+    public static String defaultLanguage(String languageName)
+    {
+    	if (!allLanguages().containsKey(languageName))
+    		throw new IllegalArgumentException("Unknown language '" + languageName + "'");
+    	String current = getHyperGraph().get(ThisNiche.DEFAULT_LANGUAGE_HANDLE);    	
+    	if (getHyperGraph().get(ThisNiche.DEFAULT_LANGUAGE_HANDLE) == null)
+    		getHyperGraph().define(ThisNiche.DEFAULT_LANGUAGE_HANDLE, languageName);
+    	else
+    		getHyperGraph().replace(ThisNiche.DEFAULT_LANGUAGE_HANDLE, languageName);
+    	return current;
+    }
+    
     public static EvaluationContext getTopContext()
     {
         return topContext;

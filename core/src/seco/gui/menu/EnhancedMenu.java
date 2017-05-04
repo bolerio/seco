@@ -35,11 +35,8 @@ import java.awt.Component;
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-
-
 
 public class EnhancedMenu extends JMenu implements MenuListener
 {

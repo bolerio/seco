@@ -1317,7 +1317,7 @@ public class NotebookDocument extends DefaultStyledDocument
     public String getDefaultEngineName()
     {
         String name = CellUtils.getEngine(getBook());
-        return name != null ? name : CellUtils.defaultEngineName;
+        return name != null ? name : ThisNiche.defaultLanguage();
     }
 
     public void setDefaultEngineName(String name)
@@ -1407,7 +1407,7 @@ public class NotebookDocument extends DefaultStyledDocument
         if (CellUtils.isHTML(cell)) toggleHTMLCell(offset);
         createScriptSupport(getEnclosingCellElement(offset), true);
         updateElement(el);
-        if (engine == null) engine = CellUtils.defaultEngineName;
+        if (engine == null) engine = ThisNiche.defaultLanguage();
         if (engine.equals("html")) toggleHTMLCell(offset);
     }
 
