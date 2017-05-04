@@ -55,8 +55,8 @@ public class TabbedPaneU
         if(!(c instanceof JComponent)) return null;
         return (HGHandle) ((JComponent) c).getClientProperty(CHILD_HANDLE_KEY);
     }
-    
-    private static int getTabIndexForH(JTabbedPane tp, HGHandle h)
+     
+    public static int getTabIndexForH(JTabbedPane tp, HGHandle h)
     {
         for (int i = 0; i < tp.getTabCount(); i++)
         {

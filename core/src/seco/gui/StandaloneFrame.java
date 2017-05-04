@@ -14,6 +14,7 @@ import java.awt.GridLayout;
 import java.io.File;
 
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
@@ -39,8 +40,9 @@ public class StandaloneFrame extends TopFrame
     private StatusBar status;
     private JPanel statusPane;
     public HGHandle tabbedPaneGroupHandle;
+    public JTabbedPane tabbedPane;
 
-    public StandaloneFrame()
+    public StandaloneFrame() 
     {
         PICCOLO = false;
     }
@@ -62,14 +64,14 @@ public class StandaloneFrame extends TopFrame
         toolbarsPanel.add(GUIHelper.getMainToolBar(), BorderLayout.WEST);
         toolbarsPanel.add(GUIHelper.getHTMLToolBar(), BorderLayout.CENTER);
         getContentPane().add(toolbarsPanel, BorderLayout.NORTH);
-        getContentPane().add(getJTabbedPane(), BorderLayout.CENTER);
+        getContentPane().add(tabbedPane = getJTabbedPane(), BorderLayout.CENTER);
 //        getContentPane().add(statusPane, BorderLayout.SOUTH);
         setPreferredSize(new Dimension(1000, 700));
         setMinimumSize(new Dimension(1000, 700));
         validate();
     }
 
-    private Component getJTabbedPane()
+    private JTabbedPane getJTabbedPane()
     {
         CellGroup top = ThisNiche.graph.get(ThisNiche.TOP_CELL_GROUP_HANDLE);
         for (int i = 0; i < top.getArity(); i++)
@@ -79,7 +81,7 @@ public class StandaloneFrame extends TopFrame
             {
                 tabbedPaneGroupHandle = top.getTargetAt(i);
                 TabbedPaneVisual v = ThisNiche.graph.get(TabbedPaneVisual.getHandle());
-                return v.bind(cgm);
+                return (JTabbedPane) v.bind(cgm);
             }
         }
         // no tabbedPane, add one
@@ -89,7 +91,7 @@ public class StandaloneFrame extends TopFrame
         ThisNiche.graph.update(group);
         top.insert(top.getArity(), group);
         TabbedPaneVisual v = ThisNiche.graph.get(TabbedPaneVisual.getHandle());
-        Component tabbedPane = v.bind(group);
+        JTabbedPane tabbedPane = (JTabbedPane) v.bind(group);
         if (ThisNiche.graph.getLocation().equals(StartMeUp.defaultNicheLocation()))
         {
      	   File tutorialBook = new File(new File(AppConfig.getJarDirectory(), "examples"), "SecoWelcome.nb");
