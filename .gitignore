@@ -2,3 +2,4 @@
 *.swp
 *.log
 tmp/
+sigplanconf.cls
