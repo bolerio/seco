@@ -1,0 +1,14 @@
+#TeXlipse project settings
+#Sat May 20 18:59:07 SAMT 2017
+markTmpDer=true
+builderNum=2
+outputDir=docs/
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=docs
+mainTexFile=rse.tex
+outputFile=rse.pdf
+langSpell=
+markDer=true
+srcDir=docs/
