@@ -1,0 +1,98 @@
+% Universal LaTeX headers for e-book publications
+\documentclass[oneside,10pt]{book}
+%% mobile phone optimized papaer size
+\usepackage[paperwidth=118.8mm,paperheight=68.2mm,margin=2mm]{geometry}
+%% hyperlinks pdf style
+\usepackage[unicode,colorlinks=true]{hyperref}
+%% fix first title page
+\usepackage{atbegshi}\AtBeginDocument{\AtBeginShipoutNext{\AtBeginShipoutDiscard}}
+%% font setup for screen reading
+\renewcommand{\familydefault}{\sfdefault}\normalfont
+%% fix heading styles for tiny paper
+\usepackage{titlesec}
+\titleformat{\chapter}{\Large\bfseries}{\thechapter.}{1em}{}
+\titleformat{\section}{\large\bfseries}{\thesection.}{1em}{}
+
+% relative sectioning
+\usepackage{ifthen}
+\newcounter{secdepth}\setcounter{secdepth}{0}
+\newcommand{\secup}{\addtocounter{secdepth}{1}}
+\newcommand{\secdown}{\addtocounter{secdepth}{-1}}
+\newcommand{\secrel}[1]{
+\ifthenelse{\equal{\value{secdepth}}{0}}{\part{#1}}{}
+\ifthenelse{\equal{\value{secdepth}}{-1}}{\chapter{#1}}{}
+\ifthenelse{\equal{\value{secdepth}}{-2}}{\section{#1}}{}
+\ifthenelse{\equal{\value{secdepth}}{-3}}{\subsection{#1}}{}
+\ifthenelse{\equal{\value{secdepth}}{-4}}{\subsubsection{#1}}{}
+}
+\newcommand{\secly}[1]{
+\section*{#1}
+\addcontentsline{toc}{section}{#1}
+}
+
+% [nosep] option in lists/enums
+\usepackage{enumitem}
+% frame box
+\usepackage{framed}
+
+% misc
+\newcommand{\email}[1]{$<$\href{mailto:#1}{#1}$>$}
+\renewcommand{\emph}[1]{\textcolor{red}{#1}}
+\newcommand{\note}[1]{\,\footnote{\ #1}}
+
+%% languages
+\newcommand{\seco}{$Seco$}
+\newcommand{\hgdb}{$HGDB$}
+\newcommand{\java}{$Java$}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\author{\copyright\ Dmitry Ponyatov \email{dponyatov@gmail.com}}
+\title{\ \\\ \\Become a Seco Developer\\newbie guide}
+\begin{document}
+\maketitle
+\tableofcontents
+
+\secly{Intro to Seco IDE}
+
+\seco\ is a collaborative scripting development environment for the \java\
+platform. You can write code in many JVM scripting languages. The code editor in
+Seco is based on the Mathematica notebook UI, but the full GUI is richer and
+much more ambitious. In a notebook, you can mix rich text with code and output,
+including interactive components created by your code. This makes Seco into a
+live environment because you can evaluate expression and immediately see the
+changes to your program.
+
+\begin{description}
+\item[GitHub]\ \\
+\url{https://github.com/bolerio/seco}
+\item[binary release builds]\ \\
+\url{https://github.com/bolerio/seco/releases/latest}
+\end{description}
+
+You can use \seco\ from prebuild binary archive, but this manual will guide you
+to become a developer able to expand \seco\ in ways you want.
+
+\bigskip
+This manual appeared when I found
+\href{http://www.hypergraphdb.org/}{hypergraphdb} usable in my AI and knowledge
+database research. \seco\ was noted as visual tool for experimenting with \hgdb,
+and I was impressed by it's compact design. But \seco
+
+\begin{description}[nosep]
+\item[\href{https://github.com/bolerio/seco/issues/46}{issue 46}]
+lacks of extension for \href{http://xsb.sourceforge.net/}{XSB Prolog} and
+\href{http://coherentknowledge.com/comparison-of-ergo-suite-to-flora-2/}{Ergo/Flora}
+system and
+\item[\href{https://github.com/bolerio/seco/issues/45}{issue 45}]
+has some problems and low usability with visual interface.
+\end{description}
+
+\bigskip
+So I started some development without any notable experience \java\ development,
+and add this manual going this way. You can track me on github, but note this is
+fork project, and my modifications may be merged into core project:
+\url{https://github.com/ponyatov/seco}
+
+
+\end{document}

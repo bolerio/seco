@@ -1,11 +1,13 @@
 CWD = $(CURDIR)
 
-all: 
+all: docs/SECO_Developer.pdf
 #tmp/rse.pdf
 
 LATEX = pdflatex -interaction=nonstopmode -output-directory=$(CWD)/tmp
+docs/%.pdf: tmp/%.pdf
+	mv $< $@
 tmp/%.pdf: docs/%.tex Makefile
-	$(LATEX) $< && touch $@ 
+	$(LATEX) $< 
 
 docs/rse.tex: ./sigplanconf.cls
 ./sigplanconf.cls:
