@@ -13,7 +13,7 @@ CYGWIN*)
   ;;
 *) 
   systemname='linux'
-  JAVA_FIX='-Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
+  JAVA_FIX='-Dawt.useSystemAAFontSettings=lcd'
   ;;
 esac
 
