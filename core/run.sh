@@ -1,5 +1,6 @@
 #!/bin/sh
 JAVA_EXEC=java
+JAVA_FIX=''
 # OS specific support.  $var _must_ be set to either true or false.
 pathsep=':'
 systemname='windows'
@@ -12,6 +13,7 @@ CYGWIN*)
   ;;
 *) 
   systemname='linux'
+  JAVA_FIX='-Dawt.useSystemAAFontSettings=lcd'
   ;;
 esac
 
@@ -36,4 +38,4 @@ if $cygwin; then
 fi
 
 echo $SECO_CLASSPATH
-exec $JAVA_EXEC -cp $SECO_CLASSPATH seco.boot.StartMeUp "$@"
+exec $JAVA_EXEC $JAVA_FIX -cp $SECO_CLASSPATH seco.boot.StartMeUp "$@"
