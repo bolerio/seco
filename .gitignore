@@ -1,0 +1,9 @@
+*~
+*.swp
+*.log
+tmp/
+docs/SECO_Developer.pdf
+.project
+.texlipse
+.externalToolBuilders/
+.settings/
