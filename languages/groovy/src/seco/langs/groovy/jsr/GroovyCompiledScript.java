@@ -35,15 +35,16 @@ import javax.script.*;
 public class GroovyCompiledScript extends CompiledScript {
     
     private GroovyScriptEngine engine;
-    private Class clasz;
+    private Class<?> clasz;
     
-    public GroovyCompiledScript(GroovyScriptEngine engine, Class clasz) {
+    public GroovyCompiledScript(GroovyScriptEngine engine, Class<?> clasz) {
         this.engine = engine;
         this.clasz = clasz;
     }
     
     public Object eval(ScriptContext context) throws ScriptException {
-        return engine.eval(clasz, context);
+    	throw new UnsupportedOperationException();
+        //return engine.eval(clasz, context);
     }    
     
     public ScriptEngine getEngine() {

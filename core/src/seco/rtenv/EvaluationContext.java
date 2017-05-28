@@ -179,7 +179,7 @@ public class EvaluationContext
             if(engine == null) return null;
             if(NotebookUI.getFocusedNotebookUI() != null)
               runtimeContext.getBindings().put("notebook", NotebookUI.getFocusedNotebookUI());
-    		Object result = engine.eval(expression);//, runtimeContext.getBindings());
+    		Object result = engine.eval(expression, runtimeContext.getBindings());
     		return result;
         }
         finally

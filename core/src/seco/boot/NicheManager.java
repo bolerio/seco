@@ -40,6 +40,7 @@ import seco.notebook.OutputCellDocument;
 import seco.notebook.ScriptletDocument;
 import seco.rtenv.RuntimeContext;
 import seco.rtenv.SEDescriptor;
+import seco.rtenv.SELoader;
 import seco.storage.notebook.NotebookDocumentType;
 import seco.storage.notebook.NotebookUIType;
 import seco.storage.notebook.OutputCellDocumentType;
@@ -235,6 +236,10 @@ public class NicheManager
     
     static void populateDefaultScriptingLanguages(HyperGraph graph)
     {
+    	// To detect which languages are present, we try to load their engine factory class. But
+    	// we don't load it in the AppClassLoader because we'll get linkage violations down the lines
+    	// 
+    	SELoader tryLoader = new SELoader(NicheManager.class.getClassLoader(), new String[]{});     	
     	assertLanguage(graph,
 	    			"beanshell", 
 	    			"bsh.engine.BshScriptEngineFactoryEx",
@@ -255,7 +260,7 @@ public class NicheManager
         // Try other know languages:
     	try
     	{
-    		Class.forName("symja.engine.SymjaScriptEngineFactoryEx");
+    		tryLoader.loadHere("symja.engine.SymjaScriptEngineFactoryEx");
     		assertLanguage(graph, "symja", 
         			"symja.engine.SymjaScriptEngineFactoryEx",
                     new String[] { "m", "symja.engine", "org.matheclipse" },
@@ -264,16 +269,17 @@ public class NicheManager
     	catch (/*ClassNotFoundException*/Throwable t) { }
         try
         {
-            Class.forName("seco.langs.groovy.jsr.GroovyScriptEngineFactory");
+        	tryLoader.loadHere("seco.langs.groovy.jsr.GroovyScriptEngineFactory");
+        	//Class.forName("org.codehaus.groovy.jsr223.GroovyScriptEngineFactory");
         	assertLanguage(graph,"groovy",  
                                        "seco.langs.groovy.jsr.GroovyScriptEngineFactory",
                                         new String[] {},  
                                         "seco.langs.groovy.GroovyScriptSupportFactory");            
         }
-        catch (/*ClassNotFoundException*/Throwable t) { }
+        catch (/*ClassNotFoundException*/Throwable t) { t.printStackTrace(System.err	);}
         try
         {
-            Class.forName("seco.langs.ruby.JRubyScriptEngineFactory");
+        	tryLoader.loadHere("seco.langs.ruby.JRubyScriptEngineFactory");
         	assertLanguage(graph,"jruby",  
                                        "seco.langs.ruby.JRubyScriptEngineFactory",
                                         new String[] {},   
@@ -291,7 +297,7 @@ public class NicheManager
 //        catch (/*ClassNotFoundException*/Throwable t) { }        
         try
         {
-            Class.forName("alice.tuprologx.TuScriptEngineFactory");
+        	tryLoader.loadHere("alice.tuprologx.TuScriptEngineFactory");
         	assertLanguage(graph,"prolog",   
                                        "alice.tuprologx.TuScriptEngineFactory",   
                                         new String[] {},      
@@ -300,13 +306,23 @@ public class NicheManager
         catch (/*ClassNotFoundException*/Throwable t) { }       
         try
         {
-            Class.forName("seco.langs.javascript.jsr.RhinoScriptEngineFactory");
+        	tryLoader.loadHere("seco.langs.javascript.jsr.RhinoScriptEngineFactory");
         	assertLanguage(graph,"javascript",   
                                        "seco.langs.javascript.jsr.RhinoScriptEngineFactory",   
                                         new String[] {},      
                                         "seco.langs.javascript.JSScriptSupportFactory");            
         }
-        catch (/*ClassNotFoundException*/Throwable t) { }          
+        catch (/*ClassNotFoundException*/Throwable t) { }
+        try
+        {
+        	tryLoader.loadHere("seco.langs.python.jsr223.PyScriptEngineFactory");
+        	assertLanguage(graph,"python",  
+                                       "seco.langs.python.jsr223.PyScriptEngineFactory",
+                                        new String[] {},   
+                                        "seco.langs.python.PythonScriptSupportFactory");
+        }
+        catch (/*ClassNotFoundException*/Throwable t) { }
+        
     }
     
     static void populateDefaultVisuals(HyperGraph graph)

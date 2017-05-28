@@ -2,6 +2,7 @@ package seco.langs.groovy;
 
 import java.util.List;
 
+
 import javax.swing.JTree;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelEvent;
@@ -23,6 +24,7 @@ import org.codehaus.groovy.syntax.SyntaxException;
 
 import seco.AppConfig;
 import seco.langs.groovy.jsr.GroovyScriptEngine;
+import seco.langs.groovy.jsr.ShellLikeGroovyEngine;
 import seco.notebook.syntax.Formatter;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.ScriptSupportFactory;
@@ -71,7 +73,7 @@ public class GroovyScriptSupport extends ScriptSupport
     
     static class GroovyScriptParser extends NBParser
     {
-        GroovyScriptEngine engine;
+    	ShellLikeGroovyEngine engine;
         ParserRunnable parserRunnable;
         CompilationUnit compilationUnit;
         GroovyParserResult parserResult;
@@ -79,7 +81,7 @@ public class GroovyScriptSupport extends ScriptSupport
         public GroovyScriptParser(final ScriptSupport support)
         {
             super(support);
-            engine = (GroovyScriptEngine) support.getDocument()
+            engine = (ShellLikeGroovyEngine) support.getDocument()
                     .getEvaluationContext().getEngine("groovy");
         }
     
@@ -98,8 +100,8 @@ public class GroovyScriptSupport extends ScriptSupport
                         int offset = el.getStartOffset();
                         int length = el.getEndOffset() - el.getStartOffset();
                         support.getDocument().getText(offset, length, seg);
-                        compilationUnit = new CompilationUnit(engine.loader);
-                        String fileName = engine.generateScriptName();
+                        compilationUnit = new CompilationUnit(engine.getClassLoader());
+                        String fileName = seco.langs.groovy.jsr.GroovyScriptEngine.generateScriptName();
                         compilationUnit.addSource(fileName, seg.toString());
                         compilationUnit.compile(Phases.CLASS_GENERATION);
                         CompileUnit compileUnit = compilationUnit.getAST();

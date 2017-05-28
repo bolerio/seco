@@ -24,10 +24,12 @@ import org.codehaus.groovy.ast.ModuleNode;
 import org.codehaus.groovy.ast.Parameter;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.Expression;
+import org.codehaus.groovy.jsr223.GroovyScriptEngineImpl;
 import org.codehaus.groovy.runtime.MethodClosure;
 
 import seco.langs.groovy.GroovyScriptSupport.GroovyScriptParser;
 import seco.langs.groovy.jsr.GroovyScriptEngine;
+import seco.langs.groovy.jsr.ShellLikeGroovyEngine;
 import seco.notebook.NotebookDocument;
 import seco.notebook.syntax.ScriptSupport;
 import seco.notebook.syntax.completion.AsyncCompletionQuery;
@@ -185,7 +187,7 @@ public class GroovyCompletionProvider implements CompletionProvider
         }
          
          private void populateThis(CompletionResultSet resultSet,
-                 GroovyScriptEngine engine)
+                 ShellLikeGroovyEngine engine)
          {
              resultSet.setTitle("Global Context");
              Bindings b = engine.getBindings(ScriptContext.GLOBAL_SCOPE);
@@ -196,16 +198,16 @@ public class GroovyCompletionProvider implements CompletionProvider
                  item.setSubstituteOffset(queryCaretOffset);
                  resultSet.addItem(item);
              }
-             for (String s : engine.globalClosures.keySet())
-             {
-                 Closure c = engine.globalClosures.get(s);
-                 String m = (String) c.getProperty("method");
-                 if (m == null || m.indexOf("$") > -1) continue;
-                
-                 JavaResultItem item = new ClosureItem(c);
-                 item.setSubstituteOffset(queryCaretOffset);
-                 resultSet.addItem(item);
-             }
+//             for (String s : engine.getContext(). .globalClosures.keySet())
+//             {
+//                 Closure c = engine.globalClosures.get(s);
+//                 String m = (String) c.getProperty("method");
+//                 if (m == null || m.indexOf("$") > -1) continue;
+//                
+//                 JavaResultItem item = new ClosureItem(c);
+//                 item.setSubstituteOffset(queryCaretOffset);
+//                 resultSet.addItem(item);
+//             }
              add_metas(resultSet);
          } 
          
