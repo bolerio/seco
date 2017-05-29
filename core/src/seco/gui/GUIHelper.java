@@ -260,9 +260,10 @@ public class GUIHelper
             menuBar.add(createFileMenu());
             menuBar.add(createEditMenu());
             menuBar.add(createFormatMenu());
-            menuBar.add(createToolsMenu());
-            menuBar.add(createRuntimeMenu());
-            menuBar.add(createWindowMenu());
+            menuBar.add(createToolsMenu());                        
+            menuBar.add(createRuntimeMenu());            
+            if (StandaloneFrame.PICCOLO)
+            	menuBar.add(createWindowMenu());
             menuBar.add(createNetworkMenu());
 
             ThisNiche.graph.define(MENUBAR_HANDLE, menuBar);
@@ -272,6 +273,17 @@ public class GUIHelper
         return menuBar;
     }
 
+    private static JMenu createNicheMenu()
+    {
+        JMenu menu = new PiccoloMenu("Niche");
+        menu.setMnemonic('h');
+        ScriptEngineProvider provider = new ScriptEngineProvider();
+        provider.setContextualized(false);
+        menu.add(new EnhancedMenu("Niche Default Language", 
+        						  provider));
+        return menu;
+    }
+    
     private static JMenu createRuntimeMenu()
     {
         JMenu menu = new PiccoloMenu("Runtime");
@@ -563,17 +575,6 @@ public class GUIHelper
         menu.addSeparator();
         menu.add(new JMenuItem(man.getAction(NotebookEditorKit.findAction)));
         menu.add(new JMenuItem(man.getAction(NotebookEditorKit.replaceAction)));
-        return menu;
-    }
-
-    private static JMenu createNicheMenu()
-    {
-        JMenu menu = new PiccoloMenu("Niche");
-        menu.setMnemonic('h');
-        ScriptEngineProvider provider = new ScriptEngineProvider();
-        provider.setContextualized(false);
-        menu.add(new EnhancedMenu("Niche Default Language", 
-        						  provider));
         return menu;
     }
     

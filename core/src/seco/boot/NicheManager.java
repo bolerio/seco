@@ -278,7 +278,7 @@ public class NicheManager
                                         new String[] {},  
                                         "seco.langs.groovy.GroovyScriptSupportFactory");            
         }
-        catch (/*ClassNotFoundException*/Throwable t) { t.printStackTrace(System.err	);}
+        catch (/*ClassNotFoundException*/Throwable t) { }
         try
         {
         	tryLoader.loadHere("seco.langs.ruby.JRubyScriptEngineFactory");

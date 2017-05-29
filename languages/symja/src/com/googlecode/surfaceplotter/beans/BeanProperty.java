@@ -1,0 +1,159 @@
+/*
+       ____  _____  ___  ____    __      ____  _____  _    _  ____  ____ 
+      (  _ \(  _  )/ __)( ___)  /__\    (  _ \(  _  )( \/\/ )( ___)(  _ \
+       )(_) ))(_)(( (__  )__)  /(__)\    )___/ )(_)(  )    (  )__)  )   /
+      (____/(_____)\___)(____)(__)(__)  (__)  (_____)(__/\__)(____)(_)\_)
+
+* Created Oct 8, 2010 by : Eric.Atienza@doceapower.com
+* Copyright Docea Power 2010
+* Any reproduction or distribution prohibited without express written permission from Docea Power
+***************************************************************************
+*/
+package com.googlecode.surfaceplotter.beans;
+
+import java.beans.BeanInfo;
+import java.beans.EventSetDescriptor;
+import java.beans.Introspector;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyDescriptor;
+
+/** Observe a standard bean property, and provide easy access to the get and set.
+ * 
+ * @author Eric.Atienza
+ *
+ */
+public abstract class BeanProperty<BEAN, PROP> {
+
+	BEAN bean;
+	String propertyName;
+	PropertyChangeListener propertyObserver = new PropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (propertyName!=null && propertyName.equals(evt.getPropertyName() ) )
+				onPropertyChanged(evt);
+		}
+	};
+
+	transient BeanInfo beaninfo;
+	transient EventSetDescriptor eventSetDescriptor;
+	transient PropertyDescriptor propertyDescriptor;
+	
+	
+	
+	
+
+	public void setBean(BEAN model) {
+		Object old = this.bean;
+		this.bean = model;
+		bind(old);
+		
+	}
+	
+	protected abstract void onPropertyChanged(PropertyChangeEvent evt);
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.DefaultButtonModel#isSelected()
+	 */
+	public PROP getProperty() {
+		if (propertyDescriptor == null || bean == null)
+			return null;
+		try {
+			return (PROP) propertyDescriptor.getReadMethod().invoke(bean);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.swing.DefaultButtonModel#setPressed(boolean)
+	 */
+	public void setProperty(PROP value) {
+		if (propertyDescriptor == null)
+			return; // simple security
+		try {
+			propertyDescriptor.getWriteMethod().invoke(bean, value);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @return the propertyName
+	 */
+	public String getPropertyName() {
+		return propertyName;
+	}
+
+	/**
+	 * @param propertyName the propertyName to set
+	 */
+	public void setPropertyName(String propertyName) {
+		this.propertyName = propertyName;
+		bind(bean);
+	}
+
+	/**
+	 * @return the bean
+	 */
+	public BEAN getBean() {
+		return bean;
+	}
+	
+	
+	
+	private Object unregister(Object bean) {
+		if (bean != null && propertyObserver !=null) {
+			try {
+				eventSetDescriptor.getRemoveListenerMethod().invoke(bean, propertyObserver);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return getProperty(); // return the old value
+	}
+	
+	private Object register() {
+		beaninfo = null;
+		eventSetDescriptor = null;
+		propertyDescriptor = null;
+
+		if (this.bean != null) {
+			try {
+				// introspect the bean
+				beaninfo = Introspector.getBeanInfo(bean.getClass());
+
+				// extract the property
+				for (PropertyDescriptor prop : beaninfo.getPropertyDescriptors())
+					if (prop.getName().equals(propertyName)) {
+						this.propertyDescriptor = prop;
+						break;
+					}
+				// extract the events
+				for (EventSetDescriptor ev : beaninfo.getEventSetDescriptors())
+					if (ev.getListenerType() == PropertyChangeListener.class) {
+						this.eventSetDescriptor = ev;
+						break;
+					}
+				// now I know the event, and the property, I can use it 
+				if (propertyObserver!=null) 
+					eventSetDescriptor.getAddListenerMethod().invoke(this.bean, propertyObserver);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return getProperty();
+	}
+	
+	private void bind(Object oldBean) {
+		Object oldValue = unregister(oldBean);
+		Object newValue = register() ;
+		if (bean!=null && propertyName !=null) onPropertyChanged(new PropertyChangeEvent(bean, propertyName, oldValue, newValue)); 
+		
+	}
+	
+	
+	
+	
+	
+	
+}

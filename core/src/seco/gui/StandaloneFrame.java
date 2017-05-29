@@ -57,7 +57,6 @@ public class StandaloneFrame extends TopFrame
         statusPane.add(status);
 
         setJMenuBar(GUIHelper.getMenuBar());
-        getJMenuBar().remove(5); // remove Window menu which is only valid for 2D canvas-based UI
         getContentPane().setLayout(new BorderLayout());
         //getContentPane().setLayout(new AKDockLayout());
         JPanel toolbarsPanel = new JPanel(new BorderLayout());
