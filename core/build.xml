@@ -27,6 +27,17 @@
 	</path>
 
 
+	<macrodef name="include-lang-dist">
+		<attribute name="language"/>
+		<sequential>
+			<echo>Building language @{language}</echo>
+			<ant dir="../languages/@{language}" target="dist"/>
+			<copy todir="${build}/seco/lib">
+				<fileset dir="../languages/@{language}/dist"/>
+			</copy>
+		</sequential>
+	</macrodef>
+
 	<target name="timestamp">
 		<!-- Create the time stamp -->
 		<tstamp />
@@ -77,7 +88,7 @@
 				<include name="lib/**" />
 				<include name="Readme.txt" />
 				<include name="LicensingInformation" />
-                <include name="BERKELEYDB_LICENSE.txt" />
+        <include name="BERKELEYDB_LICENSE.txt" />
 			</fileset>
 		</copy>
 		<exec executable="cp">
@@ -88,6 +99,12 @@
             <include name="examples/**"/>
         </fileset>
     </copy>        
+    <include-lang-dist language="groovy"/>
+    <include-lang-dist language="javascript"/>
+    <include-lang-dist language="prolog"/>
+    <include-lang-dist language="python"/>
+		<include-lang-dist language="ruby"/>
+		<include-lang-dist language="symja"/>
 	</target>
 
 	<target name="dist-zip" depends="dist-prepare" description="Build Windows distribution">

@@ -249,8 +249,8 @@ public class NicheManager
 	                        "bsh.BshScriptSupportFactory");
     	assertLanguage(graph,
         		"jscheme",
-                "jscheme.scriptingapi.JSchemeScriptEngineFactory",
-                new String[] { "jsint", "jscheme", "jscheme.scriptingapi" },
+                "jscheme.engine.JSchemeScriptEngineFactory",
+                new String[] { "jsint", "jscheme", "jscheme.engine" },
                 "seco.langs.jscheme.JSchemeScriptSupportFactory");        
     	assertLanguage(graph,
                 "html", 
@@ -266,7 +266,9 @@ public class NicheManager
                     new String[] { "m", "symja.engine", "org.matheclipse" },
                             "symja.SymjaScriptSupportFactory");    		
     	}
-    	catch (/*ClassNotFoundException*/Throwable t) { }
+    	catch (/*ClassNotFoundException*/Throwable t) {
+//    		t.printStackTrace(System.err);
+    	}
         try
         {
         	tryLoader.loadHere("seco.langs.groovy.jsr.GroovyScriptEngineFactory");

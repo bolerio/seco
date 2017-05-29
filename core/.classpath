@@ -7,7 +7,6 @@
 	<classpathentry kind="lib" path="lib/beanshell.jar"/>
 	<classpathentry kind="lib" path="lib/grouplayout.jar"/>
 	<classpathentry kind="lib" path="lib/je-5.0.34.jar"/>
-	<classpathentry kind="lib" path="lib/jscheme-jsr.jar"/>
 	<classpathentry kind="lib" path="lib/jscheme.jar"/>
 	<classpathentry kind="lib" path="lib/jstyle.jar"/>
 	<classpathentry kind="lib" path="lib/l2fprod-common-sheet.jar"/>

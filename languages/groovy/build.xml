@@ -73,7 +73,7 @@
 		</jar>
 	</target>
 
-    <target description="clean up" name="clean">
+  <target description="clean up" name="clean">
 		<!-- Delete the ${build} and ${dist} directory trees -->
 		<delete dir="${build}" />
 		<delete dir="${dist}" />
