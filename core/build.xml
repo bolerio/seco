@@ -2,7 +2,7 @@
 <project basedir="." name="Seco">
 	<description>Seco Build File</description>
 
-	<property name="version" value="0.8.0" />
+	<property name="version" value="0.9.0" />
 	<property name="jar-name" value="seco.jar"/>
 	
 	<!-- The directory containing library jar files -->
@@ -105,6 +105,7 @@
     <include-lang-dist language="python"/>
 		<include-lang-dist language="ruby"/>
 		<include-lang-dist language="symja"/>
+		<include-lang-dist language="scala"/>
 	</target>
 
 	<target name="dist-zip" depends="dist-prepare" description="Build Windows distribution">

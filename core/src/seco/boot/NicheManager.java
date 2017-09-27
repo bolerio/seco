@@ -324,6 +324,18 @@ public class NicheManager
                                         "seco.langs.python.PythonScriptSupportFactory");
         }
         catch (/*ClassNotFoundException*/Throwable t) { }
+        try
+        {
+        	tryLoader.loadHere("scala.tools.nsc.interpreter.Scripted");
+        	assertLanguage(graph,
+        				   "scala",  
+                           "scala.tools.nsc.interpreter.Scripted$Factory",
+                           new String[] {"scala.tools.nsc.interpreter"},
+                           "seco.langs.scala.jsr223.ScalaScriptSupportFactory");
+        }
+        catch (/*ClassNotFoundException*/Throwable t) { 
+        	t.printStackTrace(System.err);
+        }
         
     }
     
