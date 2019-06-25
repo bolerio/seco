@@ -39,5 +39,3 @@ In recent years, a few comparable tools have emerged around the IPython web base
 * From a more practical perspective, those newer tools are web-based while Seco is a plain desktop Java application. An advantage of IPython for example is that it looks prettier at the moment because Seco is written in Swing. A rewritten of Seco in JavaFX would bring the graphics on par. 
 * Also notably, a crucial difference is in the evaluation architecture: IPython based tools are client-server, which implies that the environment where the computation takes places is *separate* from the environment where user interaction happens. This leads to rather different possibility spaces. And it is no accident. It is a conscious decision for Seco to be part of the computation. Client-server, cloud based computational resources can always be plugged as evaluation engines for Seco, of course. But I'd rather embed a browser or a web rendering engine inside the enviorment instead of running within a browser. That's because the ultimate long term dream remains taking a shot at an alternative P2P, crowd-sourced programming model.
 
-
- http://s000.tinyupload.com/?del_id=37851430565814937503
