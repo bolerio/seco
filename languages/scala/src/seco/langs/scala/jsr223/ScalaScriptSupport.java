@@ -13,7 +13,9 @@ import seco.notebook.syntax.java.JavaFormatterOptions;
 
 public class ScalaScriptSupport extends ScriptSupport
 {
-	private static CompletionProvider[] providers = new CompletionProvider[] { new ScalaCompletionProvider() };
+	private static CompletionProvider[] providers = new CompletionProvider[] { 
+	//	new ScalaCompletionProvider() 
+	};
 
 	public ScalaScriptSupport(ScriptSupportFactory factory, Element el) {
 		super(factory, el);
