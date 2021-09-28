@@ -21,7 +21,7 @@
 	<classpathentry kind="lib" path="/Users/borislav/code/seco/core/lib/hgbdbje-1.4-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="/Users/borislav/code/seco/core/lib/hgdb-1.4-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="/Users/borislav/code/seco/core/lib/hgdbmanagement-1.4-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="/Users/borislav/code/seco/core/lib/hgdbp2p-1.4-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/mjson-1.4.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/hgdbp2p"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

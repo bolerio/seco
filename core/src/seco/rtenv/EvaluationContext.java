@@ -49,12 +49,13 @@ public class EvaluationContext
             {
                 try
                 {
-                    SELoader loader = new SELoader(getClassLoader(), 
-                                                   seDesc.getPackageNames());
+//                    SELoader loader = new SELoader(getClassLoader(), 
+//                                                   seDesc.getPackageNames());
                     //TODO:??? HTML support doesn't have eval engine, so it's
                     //better to return null here instead of throwinng RTE
                     if(seDesc.getFactoryClassName() == null)  return null;
-                    Class<?> factoryClass = loader.loadHere(seDesc.getFactoryClassName());
+                    //Class<?> factoryClass = loader.loadHere(seDesc.getFactoryClassName());
+                    Class<?> factoryClass = getClassLoader().loadClass(seDesc.getFactoryClassName());
                     ScriptEngineFactory factory = (ScriptEngineFactory)factoryClass.newInstance();
                     E = factory.getScriptEngine();
                     E.setBindings(runtimeContext.getBindings(), ScriptContext.GLOBAL_SCOPE);

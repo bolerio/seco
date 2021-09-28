@@ -239,7 +239,8 @@ public class NicheManager
     	// To detect which languages are present, we try to load their engine factory class. But
     	// we don't load it in the AppClassLoader because we'll get linkage violations down the lines
     	// 
-    	SELoader tryLoader = new SELoader(NicheManager.class.getClassLoader(), new String[]{});     	
+    	//SELoader tryLoader = new SELoader(NicheManager.class.getClassLoader(), new String[]{});
+    	ClassLoader loader = NicheManager.class.getClassLoader();
     	assertLanguage(graph,
 	    			"beanshell", 
 	    			"bsh.engine.BshScriptEngineFactoryEx",
@@ -260,7 +261,8 @@ public class NicheManager
         // Try other know languages:
     	try
     	{
-    		tryLoader.loadHere("symja.engine.SymjaScriptEngineFactoryEx");
+    		//tryLoader.loadHere("symja.engine.SymjaScriptEngineFactoryEx");
+    		loader.loadClass("symja.engine.SymjaScriptEngineFactoryEx");
     		assertLanguage(graph, "symja", 
         			"symja.engine.SymjaScriptEngineFactoryEx",
                     new String[] { "m", "symja.engine", "org.matheclipse" },
@@ -271,7 +273,8 @@ public class NicheManager
     	}
         try
         {
-        	tryLoader.loadHere("seco.langs.groovy.jsr.GroovyScriptEngineFactory");
+        	//tryLoader.loadHere("seco.langs.groovy.jsr.GroovyScriptEngineFactory");
+        	loader.loadClass("org.codehaus.groovy.jsr223.GroovyScriptEngineFactory");
         	//Class.forName("org.codehaus.groovy.jsr223.GroovyScriptEngineFactory");
         	assertLanguage(graph,"groovy",  
                                        "seco.langs.groovy.jsr.GroovyScriptEngineFactory",
@@ -281,7 +284,8 @@ public class NicheManager
         catch (/*ClassNotFoundException*/Throwable t) { }
         try
         {
-        	tryLoader.loadHere("seco.langs.ruby.JRubyScriptEngineFactory");
+        	//tryLoader.loadHere("seco.langs.ruby.JRubyScriptEngineFactory");
+        	loader.loadClass("seco.langs.ruby.JRubyScriptEngineFactory");
         	assertLanguage(graph,"jruby",  
                                        "seco.langs.ruby.JRubyScriptEngineFactory",
                                         new String[] {},   
@@ -299,7 +303,8 @@ public class NicheManager
 //        catch (/*ClassNotFoundException*/Throwable t) { }        
         try
         {
-        	tryLoader.loadHere("alice.tuprologx.TuScriptEngineFactory");
+        	//tryLoader.loadHere("alice.tuprologx.TuScriptEngineFactory");
+        	loader.loadClass("alice.tuprologx.TuScriptEngineFactory");
         	assertLanguage(graph,"prolog",   
                                        "alice.tuprologx.TuScriptEngineFactory",   
                                         new String[] {},      
@@ -308,7 +313,8 @@ public class NicheManager
         catch (/*ClassNotFoundException*/Throwable t) { }       
         try
         {
-        	tryLoader.loadHere("seco.langs.javascript.jsr.RhinoScriptEngineFactory");
+        	//tryLoader.loadHere("seco.langs.javascript.jsr.RhinoScriptEngineFactory");
+        	loader.loadClass("seco.langs.javascript.jsr.RhinoScriptEngineFactory");
         	assertLanguage(graph,"javascript",   
                                        "seco.langs.javascript.jsr.RhinoScriptEngineFactory",   
                                         new String[] {},      
@@ -317,7 +323,8 @@ public class NicheManager
         catch (/*ClassNotFoundException*/Throwable t) { }
         try
         {
-        	tryLoader.loadHere("seco.langs.python.jsr223.PyScriptEngineFactory");
+        	//tryLoader.loadHere("seco.langs.python.jsr223.PyScriptEngineFactory");
+        	loader.loadClass("seco.langs.python.jsr223.PyScriptEngineFactory");
         	assertLanguage(graph,"python",  
                                        "seco.langs.python.jsr223.PyScriptEngineFactory",
                                         new String[] {},   
@@ -326,11 +333,12 @@ public class NicheManager
         catch (/*ClassNotFoundException*/Throwable t) { }
         try
         {
-        	tryLoader.loadHere("scala.tools.nsc.interpreter.Scripted");
+        	//tryLoader.loadHere("scala.tools.nsc.interpreter.Scripted");
+        	loader.loadClass("scala.tools.nsc.interpreter.Scripted");
         	assertLanguage(graph,
         				   "scala",  
                            "scala.tools.nsc.interpreter.Scripted$Factory",
-                           new String[] {"scala.tools.nsc.interpreter"},
+                           new String[] {},
                            "seco.langs.scala.jsr223.ScalaScriptSupportFactory");
         }
         catch (/*ClassNotFoundException*/Throwable t) { 

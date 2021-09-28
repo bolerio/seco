@@ -41,7 +41,7 @@ public class InputCellView extends HidableBoxView
 	static int WHITE_GAP_SPAN = 60;
 	static final int NUM_GAP = 5;
 	static int NUM_BOX_GAP = 50;
-	static final Font FONT = new Font(null, 0, 12);
+	static final Font FONT = new Font(null, 0, 16);
 	private Color bgColor;
 	private Color borderColor;
 	

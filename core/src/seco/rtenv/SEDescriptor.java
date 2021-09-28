@@ -8,6 +8,7 @@
 package seco.rtenv;
 
 import seco.ThisNiche;
+import seco.boot.NicheManager;
 import seco.notebook.syntax.ScriptSupportFactory;
 
 /**
@@ -106,7 +107,8 @@ public class SEDescriptor
             try
             {
                 if (editSupportClassName != null)
-                    editSupportFactory = (ScriptSupportFactory)ThisNiche.graph.getTypeSystem().loadClass(editSupportClassName).newInstance();
+                    editSupportFactory = //(ScriptSupportFactory)ThisNiche.graph.getTypeSystem().loadClass(editSupportClassName).newInstance();
+                    		(ScriptSupportFactory)NicheManager.class.getClassLoader().loadClass(editSupportClassName).newInstance();
             }
             catch (Exception ex)
             {
