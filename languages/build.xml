@@ -1,12 +1,14 @@
 <project basedir="." name="Seco Languages">
-<target name="Build All"> 
+<target name="all"> 
 	<!-- First build Seco -->
 	<ant antfile="../core/build.xml" target="jars" inheritall="false" /> 
 	<ant antfile="groovy/build.xml" target="dist" inheritall="false" /> 
-	<ant antfile="javafx/build.xml" target="dist" inheritall="false" />
+	<!-- <ant antfile="javafx/build.xml" target="dist" inheritall="false" /> -->
 	<ant antfile="javascript/build.xml" target="dist" inheritall="false"/> 
 	<ant antfile="prolog/build.xml" target="dist" inheritall="false" /> 
     <ant antfile="ruby/build.xml" target="dist" inheritall="false" /> 
 	<ant antfile="python/build.xml" target="dist" inheritall="false" /> 
+  <ant antfile="symja/build.xml" target="dist" inheritall="false" /> 
+	<ant antfile="scala/build.xml" target="dist" inheritall="false" /> 
 </target>
 </project>
