@@ -9,7 +9,7 @@
   <name>Seco Scripting: Scala</name>
 
   <properties>
-    <scala.version>2.12.2</scala.version>
+    <scala.version>2.12.4</scala.version>
     <junit.version>4.12</junit.version>
   </properties>
 
